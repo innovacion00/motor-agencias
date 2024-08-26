@@ -1,24 +1,77 @@
+---
+interface Props {
+  imageUrl: string;
+  title: string;
+  buttonText: string;
+  buttonLink: string;
+}
+
+// Se reciben las propiedades pasadas al componente
+const { imageUrl, title, buttonText, buttonLink } = Astro.props as Props;
+---
+
+<div class="HotelCard">
+  <!-- Imagen de la tarjeta -->
+  <img src={imageUrl} alt={title} class="HotelCard-image" />
+
+  <!-- Contenido de la tarjeta -->
+  <div class="HotelCard-content">
+      <h3 class="HotelCard-title">{title}</h3>
+      <a href={buttonLink} class="HotelCard-button">{buttonText}</a>
+  </div>
+</div>
+
 <style>
-  .hotel-card {
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 5px;
-    text-align: center;
-    background-color: #fff;
+  .HotelCard {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      width: 300px;
+      margin: 20px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center;
   }
-  .hotel-card img {
-    width: 100%;
-    border-radius: 5px;
+
+  .HotelCard:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   }
-  .hotel-card h3 {
-    margin-top: 1rem;
+
+  .HotelCard-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+  }
+
+  .HotelCard-content {
+      padding: 20px;
+  }
+
+  .HotelCard-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #333;
+  }
+
+  .HotelCard-description {
+      font-size: 1rem;
+      margin-bottom: 20px;
+      color: #555;
+  }
+
+  .HotelCard-button {
+      padding: 10px 20px;
+      background-color: #007BFF; /* Color principal del botón */
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      transition: background-color 0.3s;
+      display: inline-block;
+  }
+
+  .HotelCard-button:hover {
+      background-color: #15273a; /* Color de hover */
   }
 </style>
-
-<div class="hotel-card">
-  <img src="/images/hotel.jpg" alt="Imagen del Hotel" />
-  <h3>Nombre del Hotel</h3>
-  <p>Ubicación: Ciudad, País</p>
-  <p>Precio: $100 por noche</p>
-  <a href="/reserva" class="button">Reservar ahora</a>
-</div>

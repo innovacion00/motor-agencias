@@ -1,7 +1,80 @@
-<div class="room-card">
-	<img src="/images/room.jpg" alt="Imagen de Habitación" />
-	<h3>Habitación Estándar</h3>
-	<p>Descripción de la habitación...</p>
-	<button>Reservar</button>
-  </div>
-  
+---
+// Propiedades para pasar al componente Card
+interface Props {
+  imageUrl: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonLink: string;
+}
+
+// Se reciben las propiedades pasadas al componente
+const { imageUrl, title, description, buttonText, buttonLink } = Astro.props as Props;
+---
+
+<div class="card">
+    <!-- Imagen de la tarjeta -->
+    <img src={imageUrl} alt={title} class="card-image" />
+
+    <!-- Contenido de la tarjeta -->
+    <div class="card-content">
+        <h3 class="card-title">{title}</h3>
+        <p class="card-description">{description}</p>
+        <a href={buttonLink} class="card-button">{buttonText}</a>
+    </div>
+</div>
+
+<style>
+    .card {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 300px;
+        margin: 20px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-align: center;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-content {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .card-description {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        color: #555;
+    }
+
+    .card-button {
+        padding: 10px 20px;
+        background-color: #007BFF; /* Color principal del botón */
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+        display: inline-block;
+    }
+
+    .card-button:hover {
+        background-color: #0056b3; /* Color de hover */
+    }
+</style>

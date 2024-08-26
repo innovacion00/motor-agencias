@@ -1,16 +1,47 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import RoomCard from '../components/RoomCard.astro';
+import Card from '../components/RoomCard.astro';
 ---
 
 <BaseLayout title="Habitaciones Disponibles - Reserva de Hoteles">
   <h1>Habitaciones Disponibles</h1>
   <section>
-    <div class="room-list">
-      <!-- Aquí se mapearían las habitaciones disponibles -->
-      <RoomCard />
-      <RoomCard />
-      <RoomCard />
-    </div>
-  </section>
+    <html>
+  <body>
+    <section class="cards-section">
+        <Card 
+            imageUrl="/images/roomEstandar.jpg"
+            title="Habitación Estandar"
+            description="Disfruta de una estancia cómoda y lujosa con todas las comodidades."
+            buttonText="Reservar"
+            buttonLink="/booking"
+        />
+
+        <Card 
+            imageUrl="/images/roomcuadruple.jpg"
+            title="Habitacion Cuadruple"
+            description="Disfruta de una estancia cómoda y lujosa con capacidad para cuatro personas."
+            buttonText="Explorar"
+            buttonLink="/services"
+        />
+
+        <Card 
+            imageUrl="/images/RoomDoble.jpg"
+            title="Habitacion Doble "
+            description="Disfruta de una estancia cómoda y lujosa con todas las comodidades.."
+            buttonText="Ver Oferta"
+            buttonLink="/promotions"
+        />
+    </section>
+  </body>
+</html>
+
+<style>
+    .cards-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 20px;
+    }
+</style>
 </BaseLayout>

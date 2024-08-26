@@ -1,19 +1,85 @@
+---
+// Footer.astro
+// Aquí puedes incluir cualquier lógica de Astro si es necesario.
+---
+
+<footer class="footer">
+  <div class="footer-container">
+      <div class="footer-logo">
+          <img src="/path/to/logo.png" alt="Geh Suites Logo" />
+      </div>
+      <div class="footer-links">
+          <a href="/about">Sobre Nosotros</a>
+          <a href="/rooms">Habitaciones</a>
+          <a href="/services">Servicios</a>
+          <a href="/contact">Contacto</a>
+      </div>
+      <div class="footer-social">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              <img src="/path/to/facebook-icon.png" alt="Facebook" />
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+              <img src="/path/to/twitter-icon.png" alt="Twitter" />
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <img src="/path/to/instagram-icon.png" alt="Instagram" />
+          </a>
+      </div>
+      <div class="footer-info">
+          <p>&copy; 2024 Geh Suites. Todos los derechos reservados.</p>
+          <p><a href="/privacy-policy">Política de Privacidad</a> | <a href="/terms">Términos y Condiciones</a></p>
+      </div>
+  </div>
+</footer>
+
 <style>
-  footer {
-    background-color: #333;
-    color: #fff;
-    padding: 2rem;
-    text-align: center;
+  .footer {
+      background-color: #333;
+      color: #fff;
+      padding: 20px 0;
+      text-align: center;
   }
-  footer a {
-    color: #fff;
-    text-decoration: none;
+
+  .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .footer-logo img {
+      width: 150px;
+      margin-bottom: 20px;
+  }
+
+  .footer-links {
+      margin-bottom: 20px;
+  }
+
+  .footer-links a {
+      color: #fff;
+      margin: 0 15px;
+      text-decoration: none;
+  }
+
+  .footer-social a {
+      margin: 0 10px;
+  }
+
+  .footer-social img {
+      width: 24px;
+      height: 24px;
+  }
+
+  .footer-info {
+      font-size: 0.9em;
+  }
+
+  .footer-info a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 5px;
   }
 </style>
-
-<footer>
-  <p>&copy; 2024 GEH Suites. Todos los derechos reservados.</p>
-  <nav>
-    <a href="/privacy">Política de Privacidad</a> | <a href="/terms">Términos de Servicio</a>
-  </nav>
-</footer>
