@@ -1,3 +1,8 @@
+
+@import 'bootstrap/dist/css/bootstrap.min.css';  
+/* src/styles/global.css */
+@import 'swiper/swiper-bundle.css';
+
 /* Reset básico */
 * {
   margin: 0;
@@ -8,7 +13,7 @@
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
-  color: #333;
+  color: #1C3D5A;
   background-color: #f4f4f4;
 }
 
@@ -59,6 +64,7 @@ header nav a:hover {
 
 .hero p {
   font-size: 1.2rem;
+  color: #1C3D5A;
 }
 
 /* Estilos para la lista de hoteles */
@@ -89,7 +95,7 @@ header nav a:hover {
 }
 
 .hotel-card p {
-  color: #666;
+  color: #1C3D5A;
 }
 
 /* Estilos de pie de página */
@@ -108,3 +114,80 @@ footer a {
 footer a:hover {
   text-decoration: underline;
 }
+
+/* Estilos de contenedor principal para el layout de la página */
+body, html {
+  height: 100%; /* Asegura que el HTML y el cuerpo tengan una altura completa */
+  margin: 0;
+  padding: 0;
+  color:#1C3D5A
+}
+
+.wrapper {
+  min-height: 100vh; /* La altura mínima es la altura completa de la ventana */
+  display: flex;
+  flex-direction: column; /* Organiza los hijos en una columna */
+}
+
+main {
+  flex: 1; /* Permite que el contenido principal crezca y ocupe el espacio restante */
+  padding: 20px; /* Espaciado dentro del contenido principal */
+  background-color: #ffffff;
+}
+
+/* Estilos para las secciones de ciudades */
+.city-section {
+  display: none; /* Por defecto, oculta todas las secciones */
+  
+}
+
+.city-section.active {
+  display: block; /* Muestra la sección activa */
+  
+}
+
+/* Estilo para los botones de la navegación */
+.nav button.active {
+  background-color: #1C3D5A; /* Color de fondo para el botón activo */
+  color: #fff; /* Color del texto del botón activo */
+  
+}
+
+
+/* Puedes añadir tus propios estilos para personalizar Swiper más allá de lo que se incluye por defecto. */
+.swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #ffffff;
+  display: flex;/* Centrando el texto vertical y horizontalmente */
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .swiper-container {
+    width: 90%;
+  }
+}
+
+/* src/styles/global.css */
+.splide__slide img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.splide__arrow {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  color: #fff;
+}
+
+

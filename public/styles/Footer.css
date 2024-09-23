@@ -1,0 +1,69 @@
+.footer {
+    background-color: #1C3D5A; /* Color de fondo del footer */
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 10px;
+    
+    padding-top: 20px;
+}
+
+.footer-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo-section img {
+    height: 40px; /* Ajusta el tamaño según sea necesario */
+    margin-bottom: 10px;
+}
+
+.contact-section h4,
+.legal-section h4 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+}
+
+.social-icons a {
+    margin: 0 10px;
+}
+
+.social-icons img {
+    width: 30px; /* Ajusta el tamaño de los íconos según sea necesario */
+    height: 30px;
+}
+
+.legal-section a {
+    color: white;
+    text-decoration: none;
+    margin-top: 5px;
+    display: block;
+    font-size: 14px;
+}
+
+.footer-bottom {
+    border-top: 1px solid #fff;
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+/* Estilos para los divisores */
+.divider {
+    width: 1px;
+    height: 90px; /* Altura de la línea divisora */
+    background-color: white;
+    margin: 0 20px; /* Espacio alrededor de la línea */
+}
