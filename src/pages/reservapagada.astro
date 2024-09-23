@@ -1,0 +1,473 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+---
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+
+  <html>
+
+  <head>
+
+    <link rel="stylesheet" href="/public/styles/ReservationForm.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="">
+          Consultar mis reservas
+        </a>
+        /
+        <a href="#">
+          Consultar y gestionar reserva
+        </a>
+      </div>
+      <h1>
+        Confirmación de tu reserva
+      </h1>
+      <div class="success-message">
+        <i class="fas fa-check-circle">
+        </i>
+        Reserva realizada con éxito
+      </div>
+      <div class="reservation-details">
+        <h2>
+          Datos de la reserva
+        </h2>
+        <div class="hotel-info">
+          <img alt="Imagen del Hotel " height="150"
+            src="https://cdn.pixabay.com/photo/2016/03/21/20/05/image-1271454_640.png" width="200" />
+          <div>
+            <h3>
+              Nombre del Hotel
+            </h3>
+            <p>
+              Dirección del hotel
+            </p>
+            <p>
+              <i class="fas fa-phone">
+              </i>
+              Numero del hotel
+            </p>
+          </div>
+          <div>
+            <p>
+              Cod. Reserva:
+              <strong>
+
+              </strong>
+            </p>
+          </div>
+        </div>
+        <div class="dates-info">
+          <div>
+            <p>
+              <strong>
+                Check-in
+              </strong>
+            </p>
+            <p>
+              Fecha Chekc-in
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>
+                Check-out
+              </strong>
+            </p>
+            <p>
+              Fecha Check-in
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>
+                Noches
+              </strong>
+            </p>
+            <p>
+              #NOCHES
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>
+                Huéspedes
+              </strong>
+            </p>
+            <p>
+              #HUÉSPEDES
+            </p>
+          </div>
+          <div>
+            <p>
+              <strong>
+                Habitaciones
+              </strong>
+            </p>
+            <p>
+              #HABITACIONES
+            </p>
+          </div>
+        </div>
+        <div class="room-info">
+          <strong>Tipo de Habitación</strong>
+          <p>
+            Doble Estándar
+            <br />
+
+          </p>
+          <p style="text-align: right;">
+            <strong>
+              $$$
+            </strong>
+          </p>
+        </div>
+        <div class="total-info" style="text-align: right; margin-top: 10px;">
+          <p>
+            <strong>
+              Total valor pagado
+            </strong>
+          </p>
+          <p>
+            <strong>
+              $$$$
+            </strong>
+          </p>
+        </div>
+      </div>
+      <div class="guest-info">
+        <h2>
+          Información de los huéspedes:
+        </h2>
+        <div class="guest">
+          <h3>
+            Huésped 1 (Principal)
+          </h3>
+          <p>
+            <strong>
+              Cédula de ciudadanía:
+            </strong>
+            #CEDULA
+          </p>
+          <p>
+            <strong>
+              Nombre completo:
+            </strong>
+            #NOMBREHUESPED1
+          </p>
+          <p>
+            <strong>
+              Fecha de nacimiento:
+            </strong>
+            #FECHA
+          </p>
+          <p>
+            <strong>
+              Correo electrónico:
+            </strong>
+            #EMAIL
+          </p>
+          <p>
+            <strong>
+              Celular:
+            </strong>
+            #CELULAR
+          </p>
+        </div>
+        <div class="guest">
+          <h3>
+            Huésped 2
+          </h3>
+          <p>
+            <strong>
+              Cédula de ciudadanía:
+            </strong>
+            #CEDULA
+          </p>
+          <p>
+            <strong>
+              Nombre completo:
+            </strong>
+            #NOMBREHUESPED
+          </p>
+          <p>
+            <strong>
+              Fecha de nacimiento:
+            </strong>
+            #FECHA
+          </p>
+          <p>
+            <strong>
+              Correo electrónico:
+            </strong>
+            #EMAIL
+          </p>
+          <p>
+            <strong>
+              Celular:
+            </strong>
+            #CELULAR
+          </p>
+        </div>
+      </div>
+      <div class="reservation-includes">
+        <h2>
+          La reserva incluye:
+        </h2>
+        <br>
+        <ul>
+          <li>
+            * Desayuno tipo buffet de lunes a viernes de 6:00 am a 09:00 am / sábado y Domingos de 7:00 am a 10:00 am.
+          </li>
+          <li>
+            * Servicio Wi-Fi en todo el Hotel.
+          </li>
+          <li>
+            * Llamadas locales ilimitadas de cortesía.
+          </li>
+          <li>
+            * Cortesía de Pod de café y Botella de agua en la habitación
+          </li>
+          <li>
+            * Parqueadero 24 horas de cortesía en el hotel según disponibilidad - Alianza parqueadero con el centro
+            comercial contiguo
+          </li>
+          <li>
+            * Check in 3:00 Pm.
+          </li>
+          <li>
+            * Check out 1:00 Pm.
+          </li>
+        </ul>
+        <p>
+          Por favor tenga en cuenta que debe presentar un documento de identidad (cédula de ciudadanía, cédula de
+          extranjería, pasaporte, tarjeta de identidad o registro civil de nacimiento para menores).
+        </p>
+        <p>
+          Restaurante: Pensando en el viajero que llega después de un largo trayecto buscando descansar y cenar algo
+          ligero ponemos a su disposición una carta que le aportará una experiencia gastronómica deliciosa e informal.
+          Nuestro hotel cuenta con servicio de restaurante de lunes a sábado de 6:00 am a 9:00 pm y domingos y festivos
+          de 7:00 am a 8:00 pm. Adicionalmente ofrecemos asesorarle en su pedido a domicilio en caso de desear una
+          oferta diferente en su alimentación.
+        </p>
+      </div>
+      <div class="reservation-policies">
+        <h2>
+          Políticas de la reserva:
+        </h2>
+        <br>
+        <ul>
+          <li>
+            <strong>
+              Cambios o cancelaciones:
+            </strong>
+            Para cambio o cancelación de la reserva, se debe informar por escrito a través del correo electrónico y con
+            mínimo 48 horas de anticipación. En caso de no realizar su cancelación fuera del tiempo límite, se hará
+            cobro por el equivalente a una noche de alojamiento.
+          </li>
+          <li>
+            <strong>
+              No Show:
+            </strong>
+            Las reservas que no se utilicen o que no se cancelen a tiempo, generarán el cobro por No-Show, que es
+            equivalente a una noche de alojamiento más impuestos.
+          </li>
+          <li>
+            <strong>
+              Early Departure:
+            </strong>
+            En caso que un huésped anticipe su salida sin dar aviso al hotel (mínimo 24 horas de anticipación), se hará
+            el cargo del 50% de la tarifa en el momento del check out.
+          </li>
+          <li>
+            <strong>
+              Late Check Out:
+            </strong>
+            La hora de entrega de la habitación es a la 1:00 pm, si un huésped sale del hotel después de esta hora y sin
+            previo aviso a la recepción, se le hará el cargo del 50% de la tarifa hasta las 6:00 pm, después de esta
+            hora se hará el cargo del 100% del valor de la tarifa.
+          </li>
+          <li>
+            <strong>
+              Early Check In:
+            </strong>
+            La hora de check in del hotel es a las 3:00 pm. Cualquier ingreso antes de esta hora tendrá un recargo del
+            50% de la tarifa teniendo en cuenta la disponibilidad.
+          </li>
+          <li>
+            <strong>
+              La Ley Colombiana:
+            </strong>
+            otorga un beneficio tributario de exención del 19% de IVA, siempre y cuando cumpla una de las siguientes
+            condiciones: "Solo se aplicará para los extranjeros que ingresen al país sin ánimo de establecerse,
+            comprando un paquete turístico con la agencia de viajes y/o con el hotel, y que su pasaporte sea sellado con
+            el Permiso de Ingreso y Permanencia (PIP), Permiso Temporal de Permanencia (PTP), o Visa tipo (V) vigente.
+            El huésped debe presentar su pasaporte con el sello vigente del Permiso de Turismo PIP-5, PTP-5, Visa tipo
+            (V) o TP-11. En caso de no cumplir con esta normativa, se debe realizar el cobro del IVA correspondiente al
+            19% de la tarifa, de acuerdo con lo señalado el Decreto 1067 de 2015, modificado por el Decreto 174 de 2015,
+            Resolución 5512 de 2015 del Ministerio de Relaciones Exteriores, resolución 3167 de 2019, y la Resolución de
+            5477 del 22 de julio de 2020. Estas normas pueden ser modificadas, adicionadas o derogadas.
+          </li>
+        </ul>
+        <p>
+          <strong>
+            Nota:
+          </strong>
+          Por favor no efectuar retenciones a título de renta, somos exentos, ley 788 Num. 3 y Art. 207 - 2 Et.
+        </p>
+      </div>
+      <div class="buttons">
+
+        <button style="background-color: #26547B; color: #FFF; padding: 10px 20px; hover:#0056b3">
+          Compartir confirmación
+        </button>
+        <button>
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </body>
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+      color: #1C3D5A;
+      margin: 0;
+      padding: 0;
+
+    }
+
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .breadcrumb {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb a {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #1C3D5A;
+    }
+
+    .success-message {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 10px;
+      border-radius: 5px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .reservation-details,
+    .guest-info,
+    .reservation-includes,
+    .reservation-policies {
+      margin-bottom: 20px;
+    }
+
+    .reservation-details img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+    }
+
+    .reservation-details .hotel-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .reservation-details .hotel-info div {
+      margin-left: 20px;
+    }
+
+    .reservation-details .hotel-info div:last-child {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .reservation-details .dates-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .reservation-details .dates-info div {
+      text-align: center;
+    }
+
+    .reservation-details .dates-info div p {
+      margin: 5px 0;
+    }
+
+    .reservation-details .room-info {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .guest-info .guest {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .guest-info .guest h3 {
+      margin-top: 0;
+    }
+
+    .reservation-includes ul,
+    .reservation-policies ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .reservation-includes ul li,
+    .reservation-policies ul li {
+      margin-bottom: 10px;
+    }
+
+    .buttons {
+      text-align: right;
+
+    }
+
+    .buttons button {
+      background-color: #26547B;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .buttons button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+
+  </html>

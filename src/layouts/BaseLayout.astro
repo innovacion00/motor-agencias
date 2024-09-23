@@ -1,11 +1,12 @@
 ---
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import NavBar from '../components/NavBar.astro';
+
+
 ---
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,11 +14,12 @@ import NavBar from '../components/NavBar.astro';
     <link rel="stylesheet" href="/styles/global.css">
   </head>
   <body>
-    
-    <Header />
-    <main>
-      <slot />
-    </main>
-    
+    <div class="wrapper"> <!-- Añadido: contenedor flex -->
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
   </body>
 </html>

@@ -1,0 +1,798 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro"
+import DropdownSearch from "../components/DropdownSearch"
+---
+
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+  <html>
+
+  <body>
+    <div class="search-form-wrapper">
+      <DropdownSearch client:visible />
+    </div>
+
+    <div class="container">
+      <!-- Menú de botones General y Habitaciones -->
+      <div class="nav-tabs">
+        <button id="generalBtn" class="active">General</button>
+        <button id="roomsBtn">Habitaciones</button>
+      </div>
+
+      <!-- Sección General -->
+
+      <div id="generalSection" class="section active">
+        <div class="gallery">
+          <img alt="Hotel lobby with reception desk and seating area" class="main-image" height="400"
+            src="https://www.gehsuites.com/images/galeria_11_aixo.jpg" width="800" />
+          <div class="side-images">
+            <img alt="Hotel dining area with tables and chairs" height="150"
+              src="https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg" width="250" />
+            <img alt="Close-up of a breakfast dish with eggs and toast" height="150"
+              src="https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg" width="250" />
+          </div>
+        </div>
+        <h2>
+          Hotel Aixo Suites
+        </h2>
+        <p>
+          Ubicado en Cartagena de Indias – Colombia, y teniendo como vecino las hermosas
+          playas del mar caribe, se abre paso en el moderno y reconocido barrio de Marbella
+          nuestro Hotel Aixo Suites; a solo 5 minutos de la mágica e infranqueable Ciudad
+          Amurallada; podrás revivir y encontrar las hazañas de nuestros héroes, lo colonial
+          de sus calles, la belleza de sus cañones, su diversidad gastronómica y las más
+          reconocidas tiendas y bares para tu diversión.
+          <br><br>
+          El Hotel Aixo Suites By GEH Suites, guarda un concepto innovador de calidad,
+          comprometido con el medio ambiente, todos prestos para brindar una experiencia
+          cálida, amable e inolvidable a todos nuestros turistas y ejecutivos.
+        </p>
+        <br>
+        <hr>
+        <div class="services">
+          <h3>
+            Servicios destacados
+          </h3>
+          <div class="service-list">
+            <div class="service-item">
+              <span><img src="/public/images/Iconplaya.png" alt="check icon"> 
+                 Cerca a la playa                                                          
+             </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcoffee.png" alt="check icon"> 
+                Desayuno buffet (incluido)                                                         
+            </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconparking.png" alt="check icon"> 
+                Estacionamiento gratuito                                                          
+            </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconvan.png" alt="check icon"> 
+                Transporte del aereopuerto al hotel                                                        
+            </span>
+            </div>
+          </div>
+        </div>
+        <div class="services">
+
+          <br>
+          <hr>
+          <br>
+          <h3>
+            Servicios generales
+          </h3>
+          <div class="service-list">
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+               Lavanderia/Tintoreria                                                          
+            </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Recepción 24 horas
+              
+            </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Wifi gratuito
+              
+              </span>
+              
+            </div>
+
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Servicio diario de limpieza
+              
+              </span>
+
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Estacionamiento gratuito
+              
+            </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Wifi en todas las areas del hotel 
+              
+              </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Servicio de despertador
+              
+              </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Aire acondicionado 
+              
+              </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Servicio de guarda equipaje
+              
+              </span>
+            </div>
+            <div class="service-item">
+              <span><img src="/public/images/Iconcheck.png" alt="check icon"> 
+                                                                       
+              Restaurante
+              
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <br>
+      <!-- Sección Habitaciones -->
+
+      <div id="roomsSection" class="section">
+
+        <!-- Habitación Doble Vista a la ciudad -->
+
+        <div class="room">
+          <div class="room-header">
+            <div class="room-gallery">
+              <div class="room-main-image-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822217.jpg?k=d6df4249a82e1b056bc2f4a8c4a577bafda2ab323fe80e3687e9c4bab55a9a2e&o=&hp=1" alt="Habitación Doble Estándar"
+                  class="room-main-image" />
+              </div>
+              <div class="room-small-images-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243606366.jpg?k=56a1826f8a1cc73a276daa1fca9939e8ded4bd93d437ce8b5cdf108f5182ee9d&o=&hp=1" alt="Imagen pequeña 1"
+                  class="room-small-image" />
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243606570.jpg?k=7efa697acbc69cc87f03ef5fa89f88872586bdf054762fe55b943af2bf3f0a17&o=&hp=1" alt="Imagen pequeña 2"
+                  class="room-small-image" />
+              </div>
+            </div>
+            <div class="room-details">
+              <h3>Doble Vista al mar</h3>
+              <p>Habitación acogedora con cama doble, ideal para parejas.</p>
+              <br>
+              <hr>
+              <br>
+              <div class="room-icons">
+                <span>🛏 1 cama doble</span>
+                <span>📶 Wifi gratuito</span>
+                <span>❄️ Aire acondicionado</span>
+              </div>
+              <br>
+              <hr>
+              <br>
+              <div class="room-services">
+                <h4>Instalaciones</h4>
+                <ul>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Aire acondicionado</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Caja de seguridad</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Baño con ducha</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Toallas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Artículos de aseo</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Pantuflas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Wifi gratuito</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> TV Satelital</li>
+                </ul>
+              </div>
+              <button class="availability-button">Ver disponibilidad</button>
+            </div>
+
+          </div>
+          <!-- Habitación Doble Vista al mar -->
+        </div>
+        <div class="room">
+          <div class="room-header">
+            <div class="room-gallery">
+              <div class="room-main-image-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822196.jpg?k=b0cf6c2c7473c6904939307e198dbc450595fa7b31276a526636601f50d7cd0b&o=&hp=1" alt="Habitación Doble Estándar"
+                  class="room-main-image" />
+              </div>
+              <div class="room-small-images-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822212.jpg?k=a952a8491f9d7ef59dde500bb8f4a3848ff65bf59947885a8c865ab120cb99c8&o=&hp=1" alt="Imagen pequeña 1"
+                  class="room-small-image" />
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822207.jpg?k=f81460acf551724e27dbf3575af720a4856baa51769517ebd0d84686651eb1f4&o=&hp=1" alt="Imagen pequeña 2"
+                  class="room-small-image" />
+              </div>
+            </div>
+            <div class="room-details">
+              <h3>Cuadruple vista al mar</h3>
+              <p>Habitación acogedora con cama doble, ideal para parejas.</p>
+              <br>
+              <hr>
+              <br>
+              <div class="room-icons">
+                <span>🛏 1 cama doble</span>
+                <span>📶 Wifi gratuito</span>
+                <span>❄️ Aire acondicionado</span>
+              </div>
+              <br>
+              <hr>
+              <br>
+              <div class="room-services">
+                <h4>Instalaciones</h4>
+                <ul>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Aire acondicionado</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Caja de seguridad</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Baño con ducha</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Toallas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Artículos de aseo</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Pantuflas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Wifi gratuito</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> TV Satelital</li>
+                </ul>
+              </div>
+              <button class="availability-button">Ver disponibilidad</button>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="room">
+          <div class="room-header">
+            <div class="room-gallery">
+              <div class="room-main-image-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/277764369.jpg?k=fd77fa5491ffe7d4798985d53bd83a6d678cf7912730a95da78d224f43e9db91&o=&hp=1" alt="Habitación Doble Estándar"
+                  class="room-main-image" />
+              </div>
+              <div class="room-small-images-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243604358.jpg?k=204560397c2a8805509a69aa6b658e302d5ac75e6bf0796006feac48e1cb1287&o=&hp=1" alt="Imagen pequeña 1"
+                  class="room-small-image" />
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243819566.jpg?k=6a60fad0868491cbd202339d13f3683ea490ef8e33ec25e45511b97e7b3c4b50&o=&hp=1" alt="Imagen pequeña 2"
+                  class="room-small-image" />
+              </div>
+            </div>
+            <div class="room-details">
+              <h3>Doble Vista a la ciudad</h3>
+              <p>Habitación acogedora con cama doble, ideal para parejas.</p>
+              <br>
+              <hr>
+              <br>
+              <div class="room-icons">
+                <span>🛏 1 cama doble</span>
+                <span>📶 Wifi gratuito</span>
+                <span>❄️ Aire acondicionado</span>
+              </div>
+              <br>
+              <hr>
+              <br>
+              <div class="room-services">
+                <h4>Instalaciones</h4>
+                <ul>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Aire acondicionado</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Caja de seguridad</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Baño con ducha</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Toallas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Artículos de aseo</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Pantuflas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Wifi gratuito</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> TV Satelital</li>
+                </ul>
+              </div>
+              <button class="availability-button">Ver disponibilidad</button>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="room">
+          <div class="room-header">
+            <div class="room-gallery">
+              <div class="room-main-image-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/245913368.jpg?k=c797277d02ed79ad1e762412e74b9cc289de13e7def62739f012f36bd8b28574&o=&hp=1" alt="Habitación Doble Estándar"
+                  class="room-main-image" />
+              </div>
+              <div class="room-small-images-container">
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822181.jpg?k=4fe61a142fd7b7db782f34e6ea7840c69a1410144320158a8735ff12fc130149&o=&hp=1" alt="Imagen pequeña 1"
+                  class="room-small-image" />
+                <img src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822173.jpg?k=97a91a240cce8a8a05befdebcff824e5310e23f43bf25e563aae0b23c8163749&o=&hp=1" alt="Imagen pequeña 2"
+                  class="room-small-image" />
+              </div>
+            </div>
+            <div class="room-details">
+              <h3>Cuadruple Vista a la ciudad</h3>
+              <p>Habitación acogedora con cama doble, ideal para parejas.</p>
+              <br>
+              <hr>
+              <br>
+              <div class="room-icons">
+                <span>🛏 1 cama doble</span>
+                <span>📶 Wifi gratuito</span>
+                <span>❄️ Aire acondicionado</span>
+              </div>
+              <br>
+              <hr>
+              <br>
+              <div class="room-services">
+                <h4>Instalaciones</h4>
+                <ul>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Aire acondicionado</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Caja de seguridad</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Baño con ducha</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Toallas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Artículos de aseo</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Pantuflas</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> Wifi gratuito</li>
+                  <li><img src="/public/images/Iconcheck.png" alt="check icon"> TV Satelital</li>
+                </ul>
+              </div>
+              <button class="availability-button">Ver disponibilidad</button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Botones en la parte inferior -->
+      <div class="info-box">
+        <div class="contact-info">
+          <i class="fas fa-phone-alt">
+          </i>
+          +57 333 602 50 21
+          <i class="fas fa-map-marker-alt" style="margin-left: 20px;">
+          </i>
+          Cra. 1 #47-10, Marbella, Cartagena de Indias, Provincia de Cartagena, Bolívar
+          <a href="https://www.google.com/maps/place/Hotel+Aixo+Suites+By+GEH/@10.4306705,-75.5330912,15.92z/data=!4m9!3m8!1s0x8ef62f9966357c8d:0x3377f5a11170d0ac!5m2!4m1!1i2!8m2!3d10.436384!4d-75.5363788!16s%2Fg%2F11sv6wc7r6?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D"
+            target="_blank" rel="noopener noreferrer">Ver mapa</a>
+        </div>
+        <div class="buttons">
+          <button>
+            Ver habitaciones
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Seleccionamos los botones y las secciones
+      const generalBtn = document.getElementById('generalBtn');
+      const roomsBtn = document.getElementById('roomsBtn');
+      const generalSection = document.getElementById('generalSection');
+      const roomsSection = document.getElementById('roomsSection');
+
+      // Funciones para mostrar/ocultar secciones
+      generalBtn.addEventListener('click', () => {
+        generalSection.classList.add('active');
+        roomsSection.classList.remove('active');
+        generalBtn.classList.add('active');
+        roomsBtn.classList.remove('active');
+      });
+
+      roomsBtn.addEventListener('click', () => {
+        roomsSection.classList.add('active');
+        generalSection.classList.remove('active');
+        roomsBtn.classList.add('active');
+        generalBtn.classList.remove('active');
+      });
+    </script>
+  </body>
+
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #fff;
+      color: #1C3D5A;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 80%;
+      margin: 0 auto;
+      padding: 20px 0;
+
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: flex-start;
+      margin-bottom: 20px;
+    }
+
+
+    /* Menú de navegación */
+    .nav-tabs {
+      display: flex;
+
+      margin-bottom: 20px;
+    }
+
+    .nav-tabs button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #1C3D5A;
+      border-bottom: 2px solid transparent;
+      transition: border-bottom 0.1s ease;
+    }
+
+    .nav-tabs button.active {
+      border-bottom: 4px solid #8B4513;
+      font-weight: bold;
+    }
+
+    .nav-tabs button:hover {
+      border-bottom: 2px solid #8B4513;
+    }
+
+    /* Secciones ocultables */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .gallery {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .main-image {
+      width: 60%;
+      height: auto;
+      padding-bottom: 20px;
+
+    }
+
+    .side-images {
+      width: 38%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+    }
+
+    .side-images img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+      border-radius: 5px;
+
+    }
+
+    .description {
+      margin-top: 20px;
+
+
+    }
+
+    .description h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+
+    }
+
+    .description p {
+      font-size: 16px;
+      line-height: 1.5;
+
+
+    }
+
+    .services {
+      margin-top: 20px;
+
+    }
+
+    .services h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .services .service-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .services .service-item {
+      width: 25%;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .services .service-item i {
+      margin-right: 10px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      padding: 20px 0;
+      border-top: 1px solid #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer .contact-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .footer .contact-info i {
+      margin-right: 10px;
+    }
+
+    .footer .buttons {
+      display: flex;
+    }
+
+    .footer .buttons button {
+      background-color: #fff;
+      color: #1C3D5A;
+      padding: 10px 20px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .info-box {
+      background-color: #f0f0f0;
+      padding: 20px;
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+    }
+
+    .info-box .contact-info {
+      display: flex;
+      align-items: center;
+    }
+
+    .info-box .contact-info i {
+      margin-right: 10px;
+    }
+
+    .info-box .contact-info a {
+      color: #1C3D5A;
+      text-decoration: none;
+      margin-left: 10px;
+    }
+
+    .info-box .buttons {
+      display: flex;
+    }
+
+    .info-box .buttons button {
+      background-color: #1C3D5A;
+      color: #fff;
+      padding: 10px 20px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+
+    .highlighted-services,
+    .general-services {
+      margin-bottom: 20px;
+    }
+
+    .highlighted-services img {
+      width: 50px;
+      margin-right: 10px;
+    }
+
+    .highlighted-services {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .general-services ul {
+      list-style-type: none;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .general-services ul li {
+      width: 45%;
+      margin-bottom: 10px;
+    }
+
+    /* Botones en la parte inferior */
+    .bottom-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+
+    .bottom-buttons button {
+      background-color: #007BFF;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .bottom-buttons button:hover {
+      background-color: #0056b3;
+    }
+
+    .bottom-buttons a {
+      text-decoration: none;
+      color: white;
+    }
+
+
+
+
+    .search-form-wrapper {
+      background-color: #1C3D5A;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .dropdownSearchContainer {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background-color: #F29C38;
+      /* Cambia el color del fondo */
+      border-radius: 8px;
+    }
+
+    hr {
+      height: auto;
+      width: 100%;
+      opacity: 0.5;
+
+    }
+
+    .room h3 {
+      padding: 20px;
+    }
+
+
+
+    .room p {
+      padding-left: 20px;
+      padding-bottom: 8px;
+      padding-top: 8px
+    }
+
+    .room {
+      margin-bottom: 30px;
+      border: 1px solid #eaeaea;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      background-color: #f5f5f5;
+    }
+
+    .room-header {
+      display: flex;
+    }
+
+    .room-gallery {
+      width: 40%;
+    }
+
+    .room-main-image-container {
+      margin-bottom: 10px;
+      padding-right: 20px;
+    }
+
+    .room-main-image {
+      width: 100%;
+      border-radius: 1px;
+
+    }
+
+    .room-small-images-container {
+      display: flex;
+      justify-content: space-between;
+      padding-right: 20px;
+    }
+
+    .room-small-image {
+      width: 49%;
+      border-radius: 1px;
+    }
+
+    .room-details {
+      width: 55%;
+    }
+
+    .room-icons {
+      padding-left: 20px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .room-icons span {
+      display: flex;
+      align-items: center;
+    }
+
+    .room h4 {
+      padding-left: 20px;
+    }
+
+    .room-services ul {
+      list-style-type: none;
+      padding-left: 20px;
+      padding-top: 13px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .room-services ul li {
+      padding-left: 20px;
+      padding-top: 20px;
+      width: 45%;
+      margin-bottom: 5px;
+    }
+
+    .availability-button {
+      margin-top: 10px;
+      padding: 20px 20px;
+      background-color: #033f97;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    
+  </style>

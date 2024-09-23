@@ -1,0 +1,199 @@
+--- 
+import BaseLayout from '../layouts/BaseLayout.astro';
+--- 
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <html>
+
+    <head>
+        <title>Resultados Cartagena de Indias </title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="breadcrumb"><a href="src/pages/index.astro">Inicio </a>/ <a href="#">Resultados de búsqueda </a></div>
+            <div class="title">Resultados Santa Marta </div>
+            <div class="filter"><select>
+                    <option>Menor precio </option>
+                </select></div>
+            <div class="hotel"><img alt="Hotel Rodadero Inn" height="200"
+                    src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg"
+                    width="300" />
+                <div class="hotel-info">
+                    <h3>Hotel Rodadero Inn <a href="http://localhost:4321/inforodadero"> Ver detalle de hotel </a></h3>
+                    <div class="icons"><i class="fas fa-wifi"></i><i class="fas fa-swimming-pool"></i><i
+                            class="fas fa-concierge-bell"></i><i class="fas fa-utensils"></i><i
+                            class="fas fa-dumbbell"></i></div>
+                    <div class="availability"># Habitaciones disponibles </div>
+                    <div class="offer">Oferta </div>
+                    <div class="price"># Noches # Adultos # Niños <br /> Desde: $$$ | Incluye impuestos </div>
+                    <div class="button">Ver habitaciones </div>
+                </div>
+            </div>
+            <div class="hotel"><img alt="Hotel 1525" height="200"
+                src="https://www.gehsuites.com/images/fachada_1525.jpg"
+                width="300" />
+            <div class="hotel-info">
+                <h3>Hotel 1525<a href="http://localhost:4321/info1525"> Ver detalle de hotel </a></h3>
+                <div class="icons"><i class="fas fa-wifi"></i><i class="fas fa-swimming-pool"></i><i
+                        class="fas fa-concierge-bell"></i><i class="fas fa-utensils"></i><i
+                        class="fas fa-dumbbell"></i></div>
+                <div class="availability"># Habitaciones disponibles </div>
+                <div class="offer">Oferta </div>
+                <div class="price"># Noches # Adultos # Niños  <br /> Desde: $$$ | Incluye impuestos </div>
+                <div class="button">Ver habitaciones </div>
+            </div>
+        </div>        
+        </div>
+        
+        
+    </body>
+
+    </html>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            height: auto;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .filter {
+            float: right;
+            margin-top: -50px;
+        }
+
+        .filter select {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .hotel {
+            display: flex;
+            background-color: #fff;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hotel img {
+            width: 300px;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .hotel-info {
+            padding: 20px;
+            flex: 1;
+            position: relative;
+        }
+
+        .hotel-info h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        .hotel-info a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .hotel-info a:hover {
+            text-decoration: underline;
+        }
+
+        .hotel-info .icons {
+            margin: 10px 0;
+        }
+
+        .hotel-info .icons i {
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .hotel-info .availability {
+            background-color: #BDD5EA;
+            color: #0c5460;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .hotel-info .offer {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .hotel-info .price {
+            font-size: 18px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .hotel-info .old-price {
+            text-decoration: line-through;
+            color: #e74c3c;
+            font-size: 14px;
+        }
+
+        .hotel-info .button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .hotel-info .button:hover {
+            background-color: #2980b9;
+        }
+
+        .discount {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #a0522d;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
