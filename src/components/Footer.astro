@@ -1,85 +1,48 @@
 ---
-// Footer.astro
-// Aquí puedes incluir cualquier lógica de Astro si es necesario.
+const logoPath = '/path/to/ghsuites-logo.png'; // Cambia esta ruta al logo de GH Suites
+const whatsappIconPath = '/path/to/whatsapp-icon.png'; // Cambia esta ruta al ícono de WhatsApp
+const facebookIconPath = '/path/to/facebook-icon.png'; // Cambia esta ruta al ícono de Facebook
+const instagramIconPath = '/path/to/instagram-icon.png'; // Cambia esta ruta al ícono de Instagram
 ---
 
-<footer class="footer">
-  <div class="footer-container">
-      <div class="footer-logo">
-          <img src="/path/to/logo.png" alt="Geh Suites Logo" />
-      </div>
-      <div class="footer-links">
-          <a href="/about">Sobre Nosotros</a>
-          <a href="/rooms">Habitaciones</a>
-          <a href="/services">Servicios</a>
-          <a href="/contact">Contacto</a>
-      </div>
-      <div class="footer-social">
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-              <img src="/path/to/facebook-icon.png" alt="Facebook" />
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-              <img src="/path/to/twitter-icon.png" alt="Twitter" />
-          </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-              <img src="/path/to/instagram-icon.png" alt="Instagram" />
-          </a>
-      </div>
-      <div class="footer-info">
-          <p>&copy; 2024 Geh Suites. Todos los derechos reservados.</p>
-          <p><a href="/privacy-policy">Política de Privacidad</a> | <a href="/terms">Términos y Condiciones</a></p>
-      </div>
-  </div>
-</footer>
-
 <style>
-  .footer {
-      background-color: #333;
-      color: #fff;
-      padding: 20px 0;
-      text-align: center;
-  }
-
-  .footer-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  }
-
-  .footer-logo img {
-      width: 150px;
-      margin-bottom: 20px;
-  }
-
-  .footer-links {
-      margin-bottom: 20px;
-  }
-
-  .footer-links a {
-      color: #fff;
-      margin: 0 15px;
-      text-decoration: none;
-  }
-
-  .footer-social a {
-      margin: 0 10px;
-  }
-
-  .footer-social img {
-      width: 24px;
-      height: 24px;
-  }
-
-  .footer-info {
-      font-size: 0.9em;
-  }
-
-  .footer-info a {
-      color: #fff;
-      text-decoration: none;
-      margin: 0 5px;
-  }
+    @import '/public/styles/Footer.css'; /* Importa el archivo CSS para estilos */
 </style>
+
+<footer class="footer">
+    <div class="footer-content">
+        <!-- Logo de GH Suites -->
+        <div class="footer-section logo-section">
+            <img src="/public/images/gehwhitelogo.png" alt="GH Suites Logo" />
+            
+        </div>
+        <div class="divider"></div>
+        <!-- Sección de contacto con íconos de redes sociales -->
+        <div class="footer-section contact-section">
+            <h4>Contáctanos</h4>
+            <div class="social-icons">
+                <a href="https://wa.me/123456789" target="_blank" rel="noopener noreferrer">
+                    <img src="/public/images/whatsapp_icon.png" alt="WhatsApp Icon" />
+                </a>
+                <a href="https://www.facebook.com/gehsuiteshotels" target="_blank" rel="noopener noreferrer">
+                    <img src="/public/images/facebook_icon.png" alt="Facebook Icon" />
+                </a>
+                <a href="https://www.instagram.com/gehsuiteshotels/" target="_blank" rel="noopener noreferrer">
+                    <img src="/public/images/instagram_icon.png" alt="Instagram Icon" />
+                </a>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+        <!-- Sección de enlaces legales -->
+        <div class="footer-section legal-section">
+            <h4>PQRSD</h4>
+            <a href="/politica-de-tratamiento-de-datos-personales">Política de privacidad</a>
+            <a href="/politica-de-tratamiento-de-datos-personales">Política de tratamiento de datos personales</a>
+        </div>
+    </div>
+    <!-- Sección de derechos reservados -->
+    
+        © 2014 Todos los Derechos Reservados para GEH Suites
+    </div>
+</footer>

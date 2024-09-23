@@ -1,0 +1,185 @@
+/* src/components/DropdownSearch.module.css */
+
+/* Estilo general del contenedor */
+.dropdownSearchContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+border-radius: 8px;
+  }
+  
+  /* Estilo de los selectores y campos */
+  .dropdown select,
+  .datePicker input,
+  .dropdownToggle {
+    width: max-content;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 16px;
+    color: #1C3D5A;
+  }
+  
+  /* Ancho específico para los elementos */
+  .dropdown select {
+    width: 200px;
+  }
+  
+  /* Ajuste del ancho del date picker */
+  .datePicker input {
+    width: 200px;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .datePicker {
+    position: relative;
+  }
+  
+  .dateRangePicker {
+    position:absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000px;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
+    border-radius: 8px;
+    padding: 50px;
+  }
+  
+  /* Estilo del botón */
+  button {
+   color: white; 
+   padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    align-self: flex-start;
+    transition: background-color 0.3s ease; 
+    background-color: #26547B;
+  }
+  
+  button:hover {
+    background-color: #1C3D5A;
+  }
+  
+  /* Ajuste del dropdown de personas */
+  .dropdownToggle {
+    width: 250px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    z-index: 10;
+    width: 250px;
+  }
+  
+  .peopleCounter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .childAgeWarning {
+    color: rgb(39, 64, 117);
+    font-size: 14px;
+    background-color: #5996cb93;
+    padding: 12px;
+    border-radius:3px ;
+    
+  }
+  
+  .childAgeSelector {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Modificaciones para el estilo del dropdown del selector de ciudad */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+    width: 300px; /* Ajusta el ancho del dropdown */
+  }
+  
+  .dropdown select {
+    width: 100%;
+    padding: 0.6rem 1.5rem 0.6rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    font-size: 1rem;
+    color: #6C757D;
+    position: relative;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%236C757D" d="M2 0L0 2h4z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 0.75rem top 50%;
+    background-size: 0.65rem auto;
+  }
+  
+  .dropdown select:focus {
+    outline: none;
+    color: #1C3D5A;
+    border-color: #2A9D8F;
+    box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
+  }
+  
+  /* Otros estilos del dropdown */
+  .dropdown-text {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    color: #8c8c8c;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .dropdown-icon {
+    margin-left: auto;
+    color: #2c3e50;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 100%;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  
+  
