@@ -1,6 +1,9 @@
 --- 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import DropdownSearch from '../components/DropdownSearch';
+
 --- 
+<title>Resultados Santa Marta </title>
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
@@ -12,6 +15,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </head>
 
     <body>
+        <div class="search-form-wrapper">
+            <DropdownSearch client:visible />
+            </div>
         <div class="container">
             <div class="breadcrumb"><a href="src/pages/index.astro">Inicio </a>/ <a href="#">Resultados de búsqueda </a></div>
             <div class="title">Resultados Santa Marta </div>
@@ -196,4 +202,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             border-radius: 5px;
             font-size: 16px;
         }
+        .search-form-wrapper {
+    background-color: #F29C38;
+    padding: 20px;
+    border-radius: 8px;
+    display:flexbox
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .search-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .dropdown select, .people-counter input, .date-picker input {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  .date-picker {
+    position: absolute;
+  }
+
+  .date-range-picker {
+    margin-top: 10px;
+    position: absolute; /* Posiciona el calendario sobre los demás elementos */
+    top: 1000%; /* Alinea el calendario debajo del input */
+    left: 0;
+    z-index: 1000; /* Asegura que el calendario esté por encima de otros elementos */
+    background-color: white; /* Asegura que el fondo del calendario sea blanco */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Añade una sombra para destacar el calendario */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 1rem;
+  }
+
+  .child-age-warning {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  .child-age-selector {
+    margin-top: 10px;
+  }
+  
+
     </style>

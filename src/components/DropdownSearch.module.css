@@ -25,12 +25,15 @@ border-radius: 8px;
   
   /* Ancho específico para los elementos */
   .dropdown select {
-    width: 200px;
+    width: 260px;
+    height: 40px;
   }
   
   /* Ajuste del ancho del date picker */
   .datePicker input {
-    width: 200px;
+    width: 260px;
+    height:40px;
+    border:none;
     display: inline-flex;
     align-items: center;
   }
@@ -49,12 +52,16 @@ border-radius: 8px;
     border-radius: 8px;
     padding: 50px;
   }
+  .dateRangePicker input{
+    width: 100px;
+  }
   
   /* Estilo del botón */
   button {
    color: white; 
    padding: 10px 20px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     align-self: flex-start;
@@ -68,7 +75,7 @@ border-radius: 8px;
   
   /* Ajuste del dropdown de personas */
   .dropdownToggle {
-    width: 250px;
+    width: 240px;
     display: flex;
     justify-content: space-between;
     position: relative;
