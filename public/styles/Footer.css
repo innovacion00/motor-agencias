@@ -4,6 +4,7 @@
     padding: 20px 0;
     text-align: center;
     font-family: Arial, sans-serif;
+    font-size: 14px;
 }
 
 .footer-content {
@@ -11,7 +12,6 @@
     justify-content: space-around;
     align-items: center;
     margin-bottom: 10px;
-    
     padding-top: 20px;
 }
 
@@ -29,7 +29,7 @@
 .contact-section h4,
 .legal-section h4 {
     margin-bottom: 10px;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 .social-icons {
@@ -57,13 +57,13 @@
 .footer-bottom {
     border-top: 1px solid #fff;
     padding-top: 10px;
-    font-size: 14px;
+    font-size: 11px;
 }
 
 /* Estilos para los divisores */
 .divider {
     width: 1px;
-    height: 90px; /* Altura de la línea divisora */
+    height: 130px; /* Altura de la línea divisora */
     background-color: white;
     margin: 0 20px; /* Espacio alrededor de la línea */
 }
