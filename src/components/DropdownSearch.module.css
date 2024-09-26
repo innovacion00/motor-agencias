@@ -71,6 +71,7 @@ border-radius: 8px;
   
   button:hover {
     background-color: #1C3D5A;
+    border-radius: 5px;
   }
   
   /* Ajuste del dropdown de personas */
