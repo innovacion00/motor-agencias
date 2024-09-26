@@ -5,18 +5,21 @@ import DropdownSearch from '../components/DropdownSearch.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 ---
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
-
+  <html>
+<head>
+  <link rel="stylesheet" href="public/styles/Swipper.css"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+  
 
-  <html>
-
+  
   <body>
-    <SwiperSlider client:load  />
-    
+    <SwiperSlider client:load />
+
     <div class="search-form-wrapper">
-       <DropdownSearch client:load />
-       
+      <DropdownSearch client:load />
+
 
     </div>
     <div class="container">
@@ -26,7 +29,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
       </div>
       <div class="nav">
         <button class="active">Cartagena de Indias</button>
-        <button >Monteria</button>
+        <button>Monteria</button>
         <button>Bogota</button>
         <button>Santa Marta</button>
         <button>Cartago valle del cauca</button>
@@ -36,10 +39,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
       <!-- Sección Cartagena de Indias -->
       <div id="cartagenadeindias" class="content active">
         <h2>Cartagena de Indias</h2>
-        <p>Si deseas conocer a Cartagena y disfrutar de su máximo esplendor, no dejes de visitar nuestros hoteles y la calidez de sus colaboradores.</p>
+        <p>Si deseas conocer a Cartagena y disfrutar de su máximo esplendor, no dejes de visitar nuestros hoteles y la
+          calidez de sus colaboradores.</p>
         <div class="hotels">
           <div class="hotel">
-            <img alt="Hotel Avexi Suites" height="200" src="https://www.gehsuites.com/images/fachada_avexi.jpg" width="300" />
+            <img alt="Hotel Avexi Suites" height="200" src="https://www.gehsuites.com/images/fachada_avexi.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Avexi Suites</h3>
               <div class="icons">
@@ -47,16 +52,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconcoffee.png" alt="icon_coffee" width="24" height="24">
                 <img src="public/images/iconparking.png" alt="icon_parking" width="24" height="24">
                 <img src="public/images/iconvan.png" alt="icon_van" width="24" height="24">
-  
+
               </div>
               <div class="button">
                 <a href="http://localhost:4321/infoavexi">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
           <div class="hotel">
-            <img alt="Hotel Azuán Suites" height="200" src="https://www.gehsuites.com/images/fachada-azuan.jpg" width="300" />
+            <img alt="Hotel Azuán Suites" height="200" src="https://www.gehsuites.com/images/fachada-azuan.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Azuán Suites</h3>
               <div class="icons">
@@ -73,7 +79,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
             </div>
           </div>
           <div class="hotel">
-            <img alt="Hotel Abi Inn" height="200" src="https://www.gehsuites.com/images/fachada_hotel_abi.jpg" width="300" />
+            <img alt="Hotel Abi Inn" height="200" src="https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Abi Inn</h3>
               <div class="icons">
@@ -90,7 +97,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
             </div>
           </div>
           <div class="hotel">
-            <img alt="Hotel Marina Suites" height="200" src="https://www.gehsuites.com/images/portada_marian_suites.jpg" width="300" />
+            <img alt="Hotel Marina Suites" height="200" src="https://www.gehsuites.com/images/portada_marian_suites.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Marina Suites</h3>
               <div class="icons">
@@ -110,7 +118,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
             </div>
           </div>
           <div class="hotel">
-            <img alt="Hotel Aixo Suites" height="200" src="https://www.gehsuites.com/images/galeria_11_aixo.jpg" width="300" />
+            <img alt="Hotel Aixo Suites" height="200" src="https://www.gehsuites.com/images/galeria_11_aixo.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Aixo Suites</h3>
               <div class="icons">
@@ -130,7 +139,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
             </div>
           </div>
           <div class="hotel">
-            <img alt="Hotel Bocagrande Suites" height="200" src="https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg" width="300" />
+            <img alt="Hotel Bocagrande Suites" height="200"
+              src="https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg" width="300" />
             <div class="info">
               <h3>Hotel Bocagrande Suites</h3>
               <div class="icons">
@@ -159,7 +169,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
         <p>Conocida como la perla del Sinú ya que se encuentra en las orillas del río Sinú.</p>
         <div class="hotels">
           <div class="hotel">
-            <img alt="Hotel Sabana del Sinú" height="200" src="https://www.gehsuites.com/images/fachada_sabana_sinu.jpg" width="300" />
+            <img alt="Hotel Sabana del Sinú" height="200" src="https://www.gehsuites.com/images/fachada_sabana_sinu.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Sabana del Sinú</h3>
               <div class="icons">
@@ -167,9 +178,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconparking.png" alt="icon_wind" width="24" height="24">
                 <img src="public/images/iconvan.png" alt="icon_wind" width="24" height="24">
               </div>
-              
+
               <div class="button"><a href="http://localhost:4321/infosabana">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
@@ -180,10 +191,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
       <!-- Sección Bogotá -->
       <div id="bogota" class="content active">
         <h2>Bogotá</h2>
-        <p>Un destino ideal para todo tipo de actividades turísticas, corporativas e históricas.                             </p>
+        <p>Un destino ideal para todo tipo de actividades turísticas, corporativas e históricas. </p>
         <div class="hotels">
           <div class="hotel">
-            <img alt="Madisson Inn" height="200" src="https://www.gehsuites.com/images/fachada-madison.jpg" width="300" />
+            <img alt="Madisson Inn" height="200" src="https://www.gehsuites.com/images/fachada-madison.jpg"
+              width="300" />
             <div class="info">
               <h3>Madisson Inn</h3>
               <div class="icons">
@@ -195,12 +207,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconvan.png" alt="icon_wind" width="24" height="24">
               </div>
               <div class="button"><a href="http://localhost:4321/infomadisson">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
           <div class="hotel">
-            <img alt="Hotel Windsor House" height="200" src="https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill" width="300" />
+            <img alt="Hotel Windsor House" height="200"
+              src="https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill"
+              width="300" />
             <div class="info">
               <h3>Hotel Windsor House</h3>
               <div class="icons">
@@ -210,7 +224,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconvan.png" alt="icon_wind" width="24" height="24">
               </div>
               <div class="button"><a href="http://localhost:4321/infowindsor">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
@@ -224,7 +238,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
         <p>Destino ideal para los amantes de la cultura, la aventura y el ecoturismo.</p>
         <div class="hotels">
           <div class="hotel">
-            <img alt="Hotel Rodadero Inn" height="200" src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg" width="300" />
+            <img alt="Hotel Rodadero Inn" height="200" src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Rodadero Inn</h3>
               <div class="icons">
@@ -234,7 +249,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconvan.png" alt="icon_wind" width="24" height="24">
               </div>
               <div class="button"><a href="http://localhost:4321/inforodadero">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
@@ -250,7 +265,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconwind.png" alt="icon_wind" width="24" height="24">
               </div>
               <div class="button"><a href="http://localhost:4321/info1525">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
@@ -275,7 +290,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconvan.png" alt="icon_wind" width="24" height="24">
               </div>
               <div class="button"><a href="http://localhost:4321/infodanubio">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
@@ -289,7 +304,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
         <p>Ubicada en el departamento de Bolívar, es considerada una magna Isla rodeada por el Rio Magdalena.</p>
         <div class="hotels">
           <div class="hotel">
-            <img alt="Hotel Jardines Evans" height="200" src="https://www.gehsuites.com/images/fachada_jardines_eva.jpg" width="300" />
+            <img alt="Hotel Jardines Evans" height="200" src="https://www.gehsuites.com/images/fachada_jardines_eva.jpg"
+              width="300" />
             <div class="info">
               <h3>Hotel Danubio</h3>
               <div class="icons">
@@ -298,7 +314,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
                 <img src="public/images/iconvan.png" alt="icon_wind" width="24" height="24">
               </div>
               <div class="button"><a href="http://localhost:4321/infojardines">
-                <button>Ver hotel</button></a>
+                  <button>Ver hotel</button></a>
               </div>
             </div>
           </div>
@@ -311,40 +327,38 @@ import 'bootstrap/dist/css/bootstrap.min.css';
     <!-- Script para manejar la visibilidad de las secciones -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.nav button');
-  const hideAllSections = () => {
-    const sections = document.querySelectorAll('.content');
-    
-    sections.forEach(section => {
-      (section as HTMLElement).style.display = 'none';
-    });
-  };
+        const buttons = document.querySelectorAll('.nav button');
+        const hideAllSections = () => {
+          const sections = document.querySelectorAll('.content');
 
-  const showSection = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      (section as HTMLElement).style.display = 'block';
-    }
-  };
+          sections.forEach(section => {
+            (section as HTMLElement).style.display = 'none';
+          });
+        };
 
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      hideAllSections();
+        const showSection = (sectionId) => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            (section as HTMLElement).style.display = 'block';
+          }
+        };
 
-      buttons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
+        buttons.forEach(button => {
+          button.addEventListener('click', () => {
+            hideAllSections();
 
-      const sectionId = button.textContent.trim().toLowerCase().replace(/\s+/g, '');
-      showSection(sectionId);
-    });
-  });
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
 
-  // Inicializar mostrando la primera sección
-  hideAllSections();
-  showSection('cartagenadeindias');
-});
+            const sectionId = button.textContent.trim().toLowerCase().replace(/\s+/g, '');
+            showSection(sectionId);
+          });
+        });
 
-      
+        // Inicializar mostrando la primera sección
+        hideAllSections();
+        showSection('cartagenadeindias');
+      });
     </script>
   </body>
 
@@ -355,7 +369,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
       font-family: 'Roboto', sans-serif;
       background-color: #f5f5f5;
       margin: 0;
-      padding: 0;
+      
     }
 
 
@@ -393,14 +407,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
     }
 
     .nav button {
-      color:#1C3D5A;
+      color: #1C3D5A;
       background-color: #ffffff;
-      border:#26537b;
-      border-bottom:#924f23 ;
+      border: #26537b;
+      border-bottom: #924f23;
       margin-right: 10px;
       padding: 10px 20px;
       cursor: pointer;
-      position:static;
+      position: static;
       font-size: 14px;
       transition: background-color 0.3s, border-color 0.3s;
       color: #1C3D5A;
@@ -410,17 +424,19 @@ import 'bootstrap/dist/css/bootstrap.min.css';
     .nav button.active {
       color: #7b4526f6;
       position: static;
-      
-      
-      
+
+
+
     }
 
     .content {
-      display: none; /* Oculta todas las secciones por defecto */
+      display: none;
+      /* Oculta todas las secciones por defecto */
     }
 
     .content.active {
-      display: block; /* Muestra la sección activa */
+      display: block;
+      /* Muestra la sección activa */
       background-color: #F4F4F4;
       padding-top: 50px;
       padding-bottom: 50px;
@@ -439,12 +455,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
     .content p {
       text-align: center;
       margin: 0px 29px 20px;
-      
+
       font-size: 16px;
       color: #1C3D5A;
-      padding:20px ;
+      padding: 20px;
       background-color: #ffffff;
-      
+
     }
 
     .hotels {
@@ -475,7 +491,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
     }
 
     .hotel .info {
-      
+
       padding: 10px;
     }
 
@@ -502,15 +518,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
       font-family: 'Roboto';
       text-align: center;
       margin-top: 10px;
-      
-      
+
+
     }
 
     .hotel .info .button button {
       background-color: #ffffff;
-      border-style:solid ;
+      border-style: solid;
       border-width: 3px;
-      color: #26547B  ;
+      color: #26547B;
       padding: 10px 20px;
       cursor: pointer;
       font-size: 14px;
@@ -519,14 +535,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
       transition: background-color 0.3s;
       border-color: #1C3D5A;
       width: 280px
-      
-      
     }
 
     .hotel .info .button button:hover {
       background-color: #26537b46;
-      
-      
+
+
     }
 
     .discount {
@@ -561,79 +575,84 @@ import 'bootstrap/dist/css/bootstrap.min.css';
     }
 
     .search-form-wrapper {
-    background-color: #F29C38;
-    padding: 20px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-  }
+      background-color: #F29C38;
+      padding: 20px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
 
-  .search-form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: flex-start;
-  }
+    .search-form-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: flex-start;
+    }
 
-  .dropdown select, .people-counter input, .date-picker input {
-    padding: 10px;
-    font-size: 16px;
-  }
+    .dropdown select,
+    .people-counter input,
+    .date-picker input {
+      padding: 10px;
+      font-size: 16px;
+    }
 
-  .date-picker {
-    position: relative;
-  }
+    .date-picker {
+      position: relative;
+    }
 
-  .date-range-picker {
-    margin-top: 10px;
-    position: absolute; /* Posiciona el calendario sobre los demás elementos */
-    top: 1000%; /* Alinea el calendario debajo del input */
-    left: 0;
-    z-index: 1000; /* Asegura que el calendario esté por encima de otros elementos */
-    background-color: white; /* Asegura que el fondo del calendario sea blanco */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Añade una sombra para destacar el calendario */
-    border-radius: 8px; /* Bordes redondeados */
-    padding: 1rem;
-  }
+    .date-range-picker {
+      margin-top: 10px;
+      position: absolute;
+      /* Posiciona el calendario sobre los demás elementos */
+      top: 1000%;
+      /* Alinea el calendario debajo del input */
+      left: 0;
+      z-index: 1000;
+      /* Asegura que el calendario esté por encima de otros elementos */
+      background-color: white;
+      /* Asegura que el fondo del calendario sea blanco */
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      /* Añade una sombra para destacar el calendario */
+      border-radius: 8px;
+      /* Bordes redondeados */
+      padding: 1rem;
+    }
 
-  .child-age-warning {
-    color: #ff0000;
-    font-size: 14px;
-    margin-top: 10px;
-  }
+    .child-age-warning {
+      color: #ff0000;
+      font-size: 14px;
+      margin-top: 10px;
+    }
 
-  .child-age-selector {
-    margin-top: 10px;
-  }
+    .child-age-selector {
+      margin-top: 10px;
+    }
 
-  button {
-    
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    align-self: flex-start;
-    border-radius: 3px;
-    background-color: #26547B;
-  }
+    button {
 
-  button:hover {
-  background-color:#1C3D5A
-  }
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      align-self: flex-start;
+      border-radius: 3px;
+      background-color: #26547B;
+    }
 
-  .icons img {
-  width: 26px;
-  height: 26px;
-  margin-right: 10px;
-}
+    button:hover {
+      background-color: #1C3D5A
+    }
 
-  
-
+    .icons img {
+      width: 26px;
+      height: 26px;
+      margin-right: 10px;
+    }
   </style>
 
-  
+
 
 </BaseLayout>
