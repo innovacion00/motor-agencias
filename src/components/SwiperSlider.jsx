@@ -16,7 +16,7 @@ const SwiperSlider = () => {
       slidesPerView= {1}
       navigation
       pagination={{ clickable: true }}
-      autoplay={{ delay: 2000, disableOnInteraction: true }} // Configuración de autoplay
+      autoplay={{ delay: 5000, disableOnInteraction: true }} // Configuración de autoplay
       loop={true} // Habilitar bucle
       
     >
