@@ -1,8 +1,8 @@
---- 
+---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DropdownSearch from '../components/DropdownSearch';
 
---- 
+---
 <title>Resultados Santa Marta </title>
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
@@ -17,71 +17,96 @@ import DropdownSearch from '../components/DropdownSearch';
     <body>
         <div class="search-form-wrapper">
             <DropdownSearch client:visible />
-            </div>
+        </div>
         <div class="container">
-            <div class="breadcrumb"><a href="src/pages/index.astro">Inicio</a>/ <a href="#">Resultados de búsqueda </a></div>
+            <div class="breadcrumb"><a href="http://localhost:4321/">Inicio</a>/ <a href="http://localhost:4321/">Resultados de búsqueda </a>
+            </div>
             <div class="title">Resultados Santa Marta </div>
             <div class="filter"><select>
                     <option>Menor precio </option>
                 </select></div>
-                <div class="hotel"><img alt="Hotel Axis Inn" height="200"
+            <div class="hotel"><img alt="Hotel Axis Inn" height="200"
                     src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/17956156.jpg?k=b40519dd7e9cd35475532c31575cacee506e1f2d0e3bc0f1c3210bfbc86a0302&o=&hp=1"
                     width="300" />
-                    <div class="hotel-info">
-                    <h3>Hotel Axis Inn<a href="http://localhost:4321/info1525"> Ver detalle de hotel </a></h3>
-                    <div class="icons"><i class="fas fa-wifi"></i><i class="fas fa-swimming-pool"></i><i
-                            class="fas fa-concierge-bell"></i><i class="fas fa-utensils"></i><i
-                            class="fas fa-dumbbell"></i></div>
-                    <div class="availability"># Habitaciones disponibles </div>
-                    <div class="offer">Oferta </div>
-                    <div class="price"># Noches # Adultos # Niños  <br /> Desde: $$$ | Incluye impuestos </div>
-                    <div class="button">Ver habitaciones </div>
-                </div>
-                </div>
-            <div class="hotel"><img alt="Hotel Rodadero Inn" height="200"
-                    src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg"
-                    width="300" />
                 <div class="hotel-info">
-                    <h3>Hotel Rodadero Inn <a href="http://localhost:4321/inforodadero"> Ver detalle de hotel </a></h3>
-                    <div class="icons"><i class="fas fa-wifi"></i><i class="fas fa-swimming-pool"></i><i
-                            class="fas fa-concierge-bell"></i><i class="fas fa-utensils"></i><i
-                            class="fas fa-dumbbell"></i></div>
+                    <h3>Hotel Axis Inn<a href="http://localhost:4321/infoaxis"> Ver detalle de hotel </a></h3>
+                    <div class="icons"><img src="public/images/iconplaya.png" alt="icon_playa" width="24" height="24">
+                        <img src="public/images/iconcoffee.png" alt="icon_coffee" width="24" height="24">
+                        <img src="public/images/iconbuffet.png" alt="icon_buffet" width="24" height="24">
+                        <img src="public/images/iconpool.png" alt="icon_pool" width="24" height="24">
+                        <img src="public/images/iconparking.png" alt="icon_parking" width="24" height="24">
+                        <img src="public/images/iconwind.png" alt="icon_wind" width="24" height="24">
+                        <img src="public/images/iconvan.png" alt="icon_van" width="24" height="24"></div>
                     <div class="availability"># Habitaciones disponibles </div>
                     <div class="offer">Oferta </div>
                     <div class="price"># Noches # Adultos # Niños <br /> Desde: $$$ | Incluye impuestos </div>
                     <div class="button">Ver habitaciones </div>
                 </div>
             </div>
-            <div class="hotel"><img alt="Hotel 1525" height="200"
-                src="https://www.gehsuites.com/images/fachada_1525.jpg"
-                width="300" />
+            <div class="hotel"><img alt="Hotel Rodadero Inn" height="200"
+                    src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg" width="300" />
                 <div class="hotel-info">
-                <h3>Hotel 1525<a href="http://localhost:4321/info1525"> Ver detalle de hotel </a></h3>
-                <div class="icons"><i class="fas fa-wifi"></i><i class="fas fa-swimming-pool"></i><i
-                        class="fas fa-concierge-bell"></i><i class="fas fa-utensils"></i><i
-                        class="fas fa-dumbbell"></i></div>
+                    <h3>Hotel Rodadero Inn <a href="http://localhost:4321/inforodadero"> Ver detalle de hotel </a></h3>
+                    <div class="icons"><img src="public/images/iconplaya.png" alt="icon_playa" width="24" height="24">
+                        <img src="public/images/iconcoffee.png" alt="icon_coffee" width="24" height="24">
+                        <img src="public/images/iconparking.png" alt="icon_parking" width="24" height="24">
+                        <img src="public/images/iconvan.png" alt="icon_van" width="24" height="24"></div>
+                    <div class="availability"># Habitaciones disponibles </div>
+                    <div class="offer">Oferta </div>
+                    <div class="price"># Noches # Adultos # Niños <br /> Desde: $$$ | Incluye impuestos </div>
+                    <div class="button">Ver habitaciones </div>
+                </div>
+            </div>
+            <div class="hotel"><img alt="Hotel Sansiraka" height="200"
+                src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990855.jpg?k=1cc62deccf5f439404d4052306abf6a2713533998240af5790fdf4983d86d812&o=&hp=1" width="300" />
+            <div class="hotel-info">
+                <h3>Hotel Sansiraka <a href="http://localhost:4321/infosansiraka"> Ver detalle de hotel </a></h3>
+                <div class="icons"><img src="public/images/iconplaya.png" alt="icon_playa" width="24" height="24">
+                    <img src="public/images/iconcoffee.png" alt="icon_coffee" width="24" height="24">
+                    <img src="public/images/iconbuffet.png" alt="icon_buffet" width="24" height="24">
+                    <img src="public/images/iconpool.png" alt="icon_pool" width="24" height="24">
+                    <img src="public/images/iconparking.png" alt="icon_parking" width="24" height="24">
+                    <img src="public/images/iconwind.png" alt="icon_wind" width="24" height="24">
+                    <img src="public/images/iconvan.png" alt="icon_van" width="24" height="24"></div>
                 <div class="availability"># Habitaciones disponibles </div>
                 <div class="offer">Oferta </div>
-                <div class="price"># Noches # Adultos # Niños  <br /> Desde: $$$ | Incluye impuestos </div>
+                <div class="price"># Noches # Adultos # Niños <br /> Desde: $$$ | Incluye impuestos </div>
                 <div class="button">Ver habitaciones </div>
             </div>
-            
-        </div>        
-       
         </div>
-        
-        
+            <div class="hotel"><img alt="Hotel 1525" height="200"
+                    src="https://www.gehsuites.com/images/fachada_1525.jpg" width="300" />
+                <div class="hotel-info">
+                    <h3>Hotel 1525<a href="http://localhost:4321/info1525"> Ver detalle de hotel </a></h3>
+                    <div class="icons"><img src="public/images/iconplaya.png" alt="icon_playa" width="24" height="24">
+                        <img src="public/images/iconcoffee.png" alt="icon_coffee" width="24" height="24">
+                        <img src="public/images/iconbuffet.png" alt="icon_buffet" width="24" height="24">
+                        <img src="public/images/iconpool.png" alt="icon_pool" width="24" height="24">
+                        <img src="public/images/iconparking.png" alt="icon_parking" width="24" height="24">
+                        <img src="public/images/iconwind.png" alt="icon_wind" width="24" height="24">
+                        <img src="public/images/iconvan.png" alt="icon_van" width="24" height="24"></div>
+                    <div class="availability"># Habitaciones disponibles </div>
+                    <div class="offer">Oferta </div>
+                    <div class="price"># Noches # Adultos # Niños <br /> Desde: $$$ | Incluye impuestos </div>
+                    <div class="button">Ver habitaciones </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
     </body>
 
     </html>
     <style>
-        body  {
+        body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             background-color: #291a1a;
             margin: 0;
             padding: 0;
         }
-       
+
 
 
         .container {
@@ -110,7 +135,7 @@ import DropdownSearch from '../components/DropdownSearch';
             font-size: 32px;
             color: #1C3D5A;
             margin-bottom: 20px;
-            font-weight:700;
+            font-weight: 700;
         }
 
         .filter {
@@ -139,13 +164,13 @@ import DropdownSearch from '../components/DropdownSearch';
         }
 
         .hotel-info {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-    flex: 1;
-    position:static;
-}
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            flex: 1;
+            position: static;
+        }
 
 
         .hotel-info h3 {
@@ -177,14 +202,16 @@ import DropdownSearch from '../components/DropdownSearch';
         }
 
         .hotel-info .availability {
-    background-color: #BDD5EA;
-    color: #0c5460;
-    padding: 5px 10px;
-    border-radius: 5px;
-    display: inline-block; /* Mantiene el ancho ajustado al contenido */
-    margin-bottom: 10px;
-    max-width: fit-content; /* Ajusta el tamaño al contenido sin expandirse */
-}
+            background-color: #BDD5EA;
+            color: #0c5460;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            /* Mantiene el ancho ajustado al contenido */
+            margin-bottom: 10px;
+            max-width: fit-content;
+            /* Ajusta el tamaño al contenido sin expandirse */
+        }
 
         .hotel-info .offer {
             color: #e74c3c;
@@ -197,29 +224,31 @@ import DropdownSearch from '../components/DropdownSearch';
             color: #1C3D5A;
             margin-bottom: 10px;
         }
+
         .hotel-info .specs {
             font-size: 15px;
         }
 
         .hotel-info .button {
-    background-color: #26547B;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    width: 159px;
-    font-size: 14px;    
-    align-self: flex-end; /* Esto alinea el botón a la derecha */
-}
+            background-color: #26547B;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 159px;
+            font-size: 14px;
+            align-self: flex-end;
+            /* Esto alinea el botón a la derecha */
+        }
 
 
-.hotel-info .button:hover {
-    background-color: #2a669b;
-}
+        .hotel-info .button:hover {
+            background-color: #2a669b;
+        }
 
-        
+
 
         .discount {
             position: relative;
@@ -231,54 +260,66 @@ import DropdownSearch from '../components/DropdownSearch';
             border-radius: 5px;
             font-size: 16px;
         }
+
         .search-form-wrapper {
-    background-color: #F29C38;
-    padding: 20px;
-    border-radius: 8px;
-    display:flexbox
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-  }
+            background-color: #F29C38;
+            padding: 20px;
+            border-radius: 8px;
+            display: flexbox justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
 
-  .search-form-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: flex-start;
-  }
+        .search-form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
 
-  .dropdown select, .people-counter input, .date-picker input {
-    padding: 10px;
-    font-size: 16px;
-  }
+        .dropdown select,
+        .people-counter input,
+        .date-picker input {
+            padding: 10px;
+            font-size: 16px;
+        }
 
-  .date-picker {
-    position: absolute;
-  }
+        .date-picker {
+            position: absolute;
+        }
 
-  .date-range-picker {
-    margin-top: 10px;
-    position: absolute; /* Posiciona el calendario sobre los demás elementos */
-    top: 1000%; /* Alinea el calendario debajo del input */
-    left: 0;
-    z-index: 1000; /* Asegura que el calendario esté por encima de otros elementos */
-    background-color: white; /* Asegura que el fondo del calendario sea blanco */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Añade una sombra para destacar el calendario */
-    border-radius: 8px; /* Bordes redondeados */
-    padding: 1rem;
-  }
+        .date-range-picker {
+            margin-top: 10px;
+            position: absolute;
+            /* Posiciona el calendario sobre los demás elementos */
+            top: 1000%;
+            /* Alinea el calendario debajo del input */
+            left: 0;
+            z-index: 1000;
+            /* Asegura que el calendario esté por encima de otros elementos */
+            background-color: white;
+            /* Asegura que el fondo del calendario sea blanco */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            /* Añade una sombra para destacar el calendario */
+            border-radius: 8px;
+            /* Bordes redondeados */
+            padding: 1rem;
+        }
 
-  .child-age-warning {
-    color: #ff0000;
-    font-size: 14px;
-    margin-top: 10px;
-  }
+        .child-age-warning {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+        }
 
-  .child-age-selector {
-    margin-top: 10px;
-  }
-  
-
+        .child-age-selector {
+            margin-top: 10px;
+        }
+        
+        .icons img {
+      width: 26px;
+      height: 26px;
+      margin-right: 10px;
+    }
 
     </style>
