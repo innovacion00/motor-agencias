@@ -1,71 +1,61 @@
 import React, { useState } from 'react';
+import { useStore } from 'nanostores/react';  // Importa el hook para usar la store
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import styles from './DropdownSearch.module.css'; // Archivo CSS para el estilo
 
-const DropdownSearch = () => {
-  const [destination, setDestination] = useState('');
-  const [showDateRange, setShowDateRange] = useState(false);
-  const [dateRange, setDateRange] = useState([{
-    startDate: new Date(),
-    endDate: new Date(),
-    key: 'selection'
-  }]);
+import {
+  searchState,
+  setDestination,
+  setDateRange,
+  setAdults,
+  setChildren,
+  setRooms,
+  setChildrenAges
+} from 'src/stores/searchStore';  // Importa la store y las funciones para modificarla
 
-  const [showDropdown, setShowDropdown] = useState(false); 
-  const [people, setPeople] = useState({
-    adults: 1,
-    children: 0,
-    rooms: 1,
-    childrenAges: []
-  });
+const DropdownSearch = () => {
+  const searchData = useStore(searchState);  // Obtiene los valores globales de la store
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const destinations = {
     'Cartagena de Indias': '/busquedacartagena',
     'Bogotá': '/busquedabogota',
     'Santa Marta': '/busquedasantamarta'
-  }
-    
+  };
+
   const handleSearch = () => {
-    if (destination) {
-      const selectedDestinationURL = destinations[destination];
+    if (searchData.destination) {
+      const selectedDestinationURL = destinations[searchData.destination];
       window.location.href = selectedDestinationURL;
     } else {
       alert('Por favor selecciona un destino');
     }
   };
 
-  // Maneja los cambios en el número de niños
   const handleChildrenChange = (e) => {
     const newChildrenCount = parseInt(e.target.value);
-    setPeople({
-      ...people,
-      children: newChildrenCount,
-      childrenAges: Array(newChildrenCount).fill(0)
-    });
+    setChildren(newChildrenCount, Array(newChildrenCount).fill(0));
   };
 
-  // Maneja los cambios en la edad de los niños
   const handleChildAgeChange = (index, value) => {
-    const updatedAges = [...people.childrenAges];
+    const updatedAges = [...searchData.childrenAges];
     updatedAges[index] = parseInt(value);
-    setPeople({
-      ...people,
-      childrenAges: updatedAges
-    });
+    setChildrenAges(updatedAges);
   };
 
   return (
     <div className={styles.dropdownSearchContainer}>
       {/* Dropdown para seleccionar destino */}
       <div className={styles.dropdown}>
-        <select 
-        value={destination} // Estado para la ciudad seleccionada
-        onChange={(e) => setDestination(e.target.value)}>
-
+        <select
+          value={searchData.destination}
+          onChange={(e) => setDestination(e.target.value)}
+        >
           <option value="">Selecciona un destino</option>
-          {Object.keys (destinations).map((city, index) => (
+          {Object.keys(destinations).map((city, index) => (
             <option key={index} value={city}>
               {city}
             </option>
@@ -77,15 +67,15 @@ const DropdownSearch = () => {
       <div className={styles.datePicker}>
         <input
           type="text"
-          value={`${dateRange[0].startDate.toISOString().split('T')[0]} - ${dateRange[0].endDate.toISOString().split('T')[0]}`}
+          value={`${searchData.dateRange.startDate.toISOString().split('T')[0]} - ${searchData.dateRange.endDate.toISOString().split('T')[0]}`}
           onFocus={() => setShowDateRange(!showDateRange)}
           readOnly
         />
         {showDateRange && (
           <div className={styles.dateRangePicker}>
             <DateRange
-              ranges={dateRange}
-              onChange={(ranges) => setDateRange([ranges.selection])}
+              ranges={[searchData.dateRange]}
+              onChange={(ranges) => setDateRange(ranges.selection.startDate, ranges.selection.endDate)}
             />
           </div>
         )}
@@ -97,7 +87,7 @@ const DropdownSearch = () => {
           className={styles.dropdownToggle}
           onClick={() => setShowDropdown(!showDropdown)}
         >
-          {people.adults} adulto{people.adults > 1 ? 's' : ''}, {people.children} niño{people.children !== 1 ? 's' : ''}, {people.rooms} habitación{people.rooms > 1 ? 'es' : ''}
+          {searchData.adults} adulto{searchData.adults > 1 ? 's' : ''}, {searchData.children} niño{searchData.children !== 1 ? 's' : ''}, {searchData.rooms} habitación{searchData.rooms > 1 ? 'es' : ''}
         </div>
 
         {showDropdown && (
@@ -107,22 +97,22 @@ const DropdownSearch = () => {
               <input
                 type="number"
                 min="1"
-                value={people.adults}
-                onChange={(e) => setPeople({ ...people, adults: parseInt(e.target.value) })}
+                value={searchData.adults}
+                onChange={(e) => setAdults(parseInt(e.target.value))}
               />
               <label>Niños</label>
               <input
                 type="number"
                 min="0"
-                value={people.children}
+                value={searchData.children}
                 onChange={handleChildrenChange}
               />
-              {people.children > 0 && (
+              {searchData.children > 0 && (
                 <>
                   <p className={styles.childAgeWarning}>
                     Para mostrarte los precios correctos y asegurar espacio para todos, necesitamos saber la edad de los niños al momento del check-out.
                   </p>
-                  {people.childrenAges.map((age, index) => (
+                  {searchData.childrenAges.map((age, index) => (
                     <div key={index} className={styles.childAgeSelector}>
                       <label>Edad del niño {index + 1}</label>
                       <input
@@ -140,20 +130,21 @@ const DropdownSearch = () => {
               <input
                 type="number"
                 min="1"
-                value={people.rooms}
-                onChange={(e) => setPeople({ ...people, rooms: parseInt(e.target.value) })}
+                value={searchData.rooms}
+                onChange={(e) => setRooms(parseInt(e.target.value))}
               />
             </div>
           </div>
         )}
       </div>
-{/* Botón de búsqueda que llama a la función handleSearch */}
-<button onClick={handleSearch} className={styles.searchButton}>
+
+      {/* Botón de búsqueda que llama a la función handleSearch */}
+      <button onClick={handleSearch} className={styles.searchButton}>
         Consultar
       </button>
-      
     </div>
   );
 };
 
 export default DropdownSearch;
+  
