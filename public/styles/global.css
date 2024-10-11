@@ -146,12 +146,7 @@ main {
   
 }
 
-/* Estilo para los botones de la navegación */
-.nav button.active {
-  background-color: #1C3D5A; /* Color de fondo para el botón activo */
-  color: #fff; /* Color del texto del botón activo */
-  
-}
+
 
 
 /* Puedes añadir tus propios estilos para personalizar Swiper más allá de lo que se incluye por defecto. */

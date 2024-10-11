@@ -13,9 +13,6 @@ export const searchStore = atom({
 });
 
 // Funciones para actualizar la store global
-export const updateSearchStore = (newState) => {
-  searchStore.set({
-    ...searchStore.get(),
-    ...newState,
-  });
+export const updateSearchStore = (newValues) => {
+  searchStore.set({ ...searchStore.get(), ...newValues   });
 };

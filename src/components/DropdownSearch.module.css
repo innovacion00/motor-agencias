@@ -56,22 +56,18 @@ border-radius: 8px;
     width: 100px;
   }
   
-  /* Estilo del botón */
-  button {
-   color: white; 
-   padding: 10px 20px;
+  
+  .confirmDateButton {
+    background-color: #9b5a2fdc; /* Ejemplo de fondo verde */
+    color: white;
+    padding: 8px 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
-    align-self: flex-start;
-    transition: background-color 0.3s ease; 
-    background-color: #26547B;
   }
   
-  button:hover {
-    background-color: #1C3D5A;
-    border-radius: 5px;
+  .confirmDateButton:hover {
+    background-color: #924f23c4; /* Color al pasar el ratón */
   }
   
   /* Ajuste del dropdown de personas */
@@ -188,6 +184,39 @@ border-radius: 8px;
   .dropdown:hover .dropdown-content {
     display: block;
   }
+  
 
-  
-  
+
+/* Estilo para el botón de búsqueda */
+.searchButton {
+  background-color: #26547B; /* Fondo azul */
+  color: white; /* Texto blanco */
+  padding: 10px 20px; /* Espaciado interno */
+  border: none; /* Sin bordes */
+  border-radius: 5px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor de mano al pasar sobre el botón */
+  font-size: 16px; /* Tamaño del texto */
+  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+}
+
+/* Cambio de color al pasar el cursor sobre el botón */
+.searchButton:hover {
+  background-color: #000000; /* Cambia a un tono más oscuro de azul */
+}
+ 
+/* Cambia el color de fondo al seleccionar una fecha */
+.rdr-Day--selected {
+  background-color: #000000 !important; /* Cambia el color de fondo */
+  color: white !important; /* Cambia el color del texto */
+}
+
+/* Cambia el color de fondo al pasar el ratón sobre una fecha */
+.rdr-Day--hovered {
+  background-color: #000000 !important; /* Cambia el color de fondo */
+  color: white !important; /* Cambia el color del texto */
+}
+
+/* Estilo para los días fuera del rango */
+.rdr-Day--outside {
+  color: #d1d1d1; /* Cambia el color de texto de los días fuera del rango */
+}

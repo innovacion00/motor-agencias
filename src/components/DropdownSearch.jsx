@@ -3,106 +3,98 @@ import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import styles from './DropdownSearch.module.css';
- 
+
+
+// Importa la store global
+import { searchStore, updateSearchStore } from '../stores/searchStores';
+import { useStore } from '@nanostores/react';
 
 const DropdownSearch = () => {
+  const searchData = useStore(searchStore);
+
+  // Define los estados locales para control de UI
+  const [showDateRange, setShowDateRange] = useState(false); // Controla el selector de fechas
+  const [showDropdown, setShowDropdown] = useState(false); // Controla el dropdown de personas
   const [destination, setDestination] = useState('');
-  const [showDateRange, setShowDateRange] = useState(false);
-  const [dateRange, setDateRange] = useState([{
-    startDate: new Date(),
-    endDate: new Date(),
-    key: 'selection',
-  }]);
 
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [people, setPeople] = useState({
-    adults: 1,
-    children: 0,
-    rooms: 1,
-    childrenAges: [],
-  });
+  // Función para manejar el cambio de rango de fechas
+  const handleDateRangeChange = (ranges) => {
+    const startDate = ranges?.selection?.startDate || new Date(); // Valor predeterminado si está undefined
+    const endDate = ranges?.selection?.endDate || new Date(); // Valor predeterminado si está undefined
 
-  const destinations = {
-    'Cartagena de Indias': '/busquedacartagena',
-    'Bogotá': '/busquedabogota',
-    'Santa Marta': '/busquedasantamarta',
+    const newRange = {
+      startDate: startDate,
+      endDate: endDate,
+    };
+
+    console.log('Rango de fechas seleccionado:', newRange);
+
+    // Actualiza el estado global de fechas
+    updateSearchStore({ dateRange: newRange });
   };
 
-  
+  // Manejo de la redirección de la búsqueda
   const handleSearch = () => {
     if (destination) {
-      const selectedDestinationURL = destinations[destination];
-      window.location.href = selectedDestinationURL;
+      const destinations = {
+        'Cartagena de Indias': '/busquedacartagena',
+        'Bogotá': '/busquedabogota',
+        'Santa Marta': '/busquedasantamarta',
+      };
+      window.location.href = destinations[destination];
     } else {
       alert('Por favor selecciona un destino');
     }
   };
 
-  // Maneja los cambios en el número de niños
-  const handleChildrenChange = (e) => {
-    const newChildrenCount = parseInt(e.target.value);
-    const updatedPeople = {
-      ...people,
-      children: newChildrenCount,
-      childrenAges: Array(newChildrenCount).fill(0),
-    };
-    setPeople(updatedPeople);
-    updateGlobalState(updatedPeople); // Actualiza la store global
-  };
-
-  // Maneja los cambios en la edad de los niños
-  const handleChildAgeChange = (index, value) => {
-    const updatedAges = [...people.childrenAges];
-    updatedAges[index] = parseInt(value);
-    const updatedPeople = {
-      ...people,
-      childrenAges: updatedAges,
-    };
-    setPeople(updatedPeople);
-    updateGlobalState(updatedPeople); // Actualiza la store global
-  };
-
   return (
     <div className={styles.dropdownSearchContainer}>
-      {/* Dropdown para seleccionar destino */}
+      {/* Dropdown de destino */}
       <div className={styles.dropdown}>
         <select 
           value={destination}
           onChange={(e) => setDestination(e.target.value)}>
           <option value="">Selecciona un destino</option>
-          {Object.keys(destinations).map((city, index) => (
-            <option key={index} value={city}>
-              {city}
-            </option>
-          ))}
+          <option value="Cartagena de Indias">Cartagena de Indias</option>
+          <option value="Bogotá">Bogotá</option>
+          <option value="Santa Marta">Santa Marta</option>
         </select>
       </div>
 
-      {/* Date picker */}
+      {/* Date picker con el estado global */}
       <div className={styles.datePicker}>
         <input
           type="text"
-          value={`${dateRange[0].startDate.toISOString().split('T')[0]} - ${dateRange[0].endDate.toISOString().split('T')[0]}`}
-          onFocus={() => setShowDateRange(!showDateRange)}
+          value={`${searchData?.dateRange?.startDate?.toISOString().split('T')[0] || ''} - ${searchData?.dateRange?.endDate?.toISOString().split('T')[0] || ''}`}
+          onFocus={() => setShowDateRange(true)} // Abre el selector de fechas cuando el campo recibe foco
           readOnly
         />
         {showDateRange && (
           <div className={styles.dateRangePicker}>
             <DateRange
-              ranges={dateRange}
-              onChange={(ranges) => setDateRange([ranges.selection])}
+              ranges={[{
+                startDate: searchData?.dateRange?.startDate || new Date(),
+                endDate: searchData?.dateRange?.endDate || new Date(),
+                key: 'selection'
+              }]}
+              onChange={(ranges) => handleDateRangeChange(ranges)}
+              moveRangeOnFirstSelection={false} // Evita que el rango se mueva accidentalmente
             />
+            {/* Botón para confirmar y cerrar el selector de fechas */}
+            <button onClick={() => setShowDateRange(false)} className={styles.confirmDateButton}>
+              Confirmar selección
+            </button>
           </div>
         )}
       </div>
 
-      {/* Dropdown para los contadores */}
+      {/* Dropdown para seleccionar adultos, niños y habitaciones */}
       <div className={styles.dropdownPeople}>
         <div
           className={styles.dropdownToggle}
-          onClick={() => setShowDropdown(!showDropdown)}
+          onClick={() => setShowDropdown(!showDropdown)} // Alterna la visualización del dropdown
         >
-          {people.adults} adulto{people.adults > 1 ? 's' : ''}, {people.children} niño{people.children !== 1 ? 's' : ''}, {people.rooms} habitación{people.rooms > 1 ? 'es' : ''}
+          {searchData.adults} adulto{searchData.adults > 1 ? 's' : ''}, {searchData.children} niño{searchData.children !== 1 ? 's' : ''}, {searchData.rooms} habitación{searchData.rooms > 1 ? 'es' : ''}
         </div>
 
         {showDropdown && (
@@ -112,58 +104,32 @@ const DropdownSearch = () => {
               <input
                 type="number"
                 min="1"
-                value={people.adults}
-                onChange={(e) => {
-                  const updatedPeople = { ...people, adults: parseInt(e.target.value) };
-                  setPeople(updatedPeople);
-                  updateGlobalState(updatedPeople); // Actualiza la store global
-                }}
+                value={searchData.adults}
+                onChange={(e) => updateSearchStore({ adults: parseInt(e.target.value) })}
               />
               <label>Niños</label>
               <input
                 type="number"
                 min="0"
-                value={people.children}
-                onChange={handleChildrenChange}
+                value={searchData.children}
+                onChange={(e) => updateSearchStore({ children: parseInt(e.target.value) })}
               />
-              {people.children > 0 && (
-                <>
-                  <p className={styles.childAgeWarning}>
-                    Para mostrarte los precios correctos y asegurar espacio para todos, necesitamos saber la edad de los niños al momento del check-out.
-                  </p>
-                  {people.childrenAges.map((age, index) => (
-                    <div key={index} className={styles.childAgeSelector}>
-                      <label>Edad del niño {index + 1}</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="15"
-                        value={age}
-                        onChange={(e) => handleChildAgeChange(index, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                </>
-              )}
               <label>Habitaciones</label>
               <input
                 type="number"
                 min="1"
-                value={people.rooms}
-                onChange={(e) => {
-                  const updatedPeople = { ...people, rooms: parseInt(e.target.value) };
-                  setPeople(updatedPeople);
-                  updateGlobalState(updatedPeople); // Actualiza la store global
-                }}
+                value={searchData.rooms}
+                onChange={(e) => updateSearchStore({ rooms: parseInt(e.target.value) })}
               />
             </div>
           </div>
         )}
       </div>
 
-      <button onClick={handleSearch} className={styles.searchButton}>
-        Consultar
-      </button>
+      {/* Botón de búsqueda */}
+      <button onClick={handleSearch} className={`${styles.searchButton} search-button`}>
+  Consultar
+</button>
     </div>
   );
 };
