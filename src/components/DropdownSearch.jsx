@@ -4,7 +4,6 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import styles from './DropdownSearch.module.css';
 
-
 // Importa la store global
 import { searchStore, updateSearchStore } from '../stores/searchStores';
 import { useStore } from '@nanostores/react';
@@ -114,6 +113,16 @@ const DropdownSearch = () => {
                 value={searchData.children}
                 onChange={(e) => updateSearchStore({ children: parseInt(e.target.value) })}
               />
+
+              {/* Mensaje de advertencia si hay niños */}
+              {searchData.children > 0 && (
+                <>
+                  <p className={styles.childAgeWarning}>
+                    Para mostrarte los precios correctos y asegurar espacio para todos, necesitamos saber la edad de los niños al momento del check-out.
+                  </p>
+                </>
+              )}
+
               <label>Habitaciones</label>
               <input
                 type="number"
@@ -128,8 +137,8 @@ const DropdownSearch = () => {
 
       {/* Botón de búsqueda */}
       <button onClick={handleSearch} className={`${styles.searchButton} search-button`}>
-  Consultar
-</button>
+        Consultar
+      </button>
     </div>
   );
 };

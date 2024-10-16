@@ -1,9 +1,4 @@
 
-@import 'bootstrap/dist/css/bootstrap.min.css';  
-/* src/styles/global.css */
-@import 'swiper/swiper-bundle.css';
-
-/* Reset básico */
 * {
   margin: 0;
   padding: 0;
