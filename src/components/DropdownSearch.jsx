@@ -28,7 +28,7 @@ const DropdownSearch = () => {
 
     console.log('Rango de fechas seleccionado:', newRange);
 
-    // Actualiza el estado global de fechas
+     // Actualiza el estado global de fechas
     updateSearchStore({ dateRange: newRange });
   };
 
