@@ -1,0 +1,292 @@
+<html>
+<head>
+  <title>Registro - Portal Agencias</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+</head>
+<body>
+  <div class="container">
+    <div class="image-section"></div>
+    <div class="form-section">
+      <div class="form-wrapper">
+        <div class="form-container">
+          <div class="logo">
+            <a href="http://localhost:4321/">
+              <img src="/public/images/logogeh.png" alt="Logo" width="150" height="50" />
+            </a>
+          </div>
+          <div class="form-title">Registro de agencias</div>
+          <div class="form-subtitle">Por favor completa la información para registrar tu agencia.</div>
+          <hr>
+
+          <!-- Campo: Nombre de la agencia -->
+          <div class="form-group">
+            <label for="agencyName">Nombre de la Agencia</label>
+            <input type="text" id="agencyName" placeholder="Escribe el nombre de la agencia" />
+          </div>
+
+          <!-- Campo: Teléfono -->
+          <div class="form-group">
+            <label for="phone">Teléfono</label>
+            <input type="tel" id="phone" placeholder="Escribe el teléfono" />
+          </div>
+
+          <!-- Campo: Correo electrónico -->
+          <div class="form-group">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" placeholder="Escribe el correo electrónico" />
+          </div>
+
+          <!-- Campo: Contraseña -->
+          <div class="form-group password-input">
+            <label for="password">Contraseña</label>
+            <div class="input-wrapper">
+              <input type="password" id="password" placeholder="Escribe la contraseña" />
+              <i class="fas fa-eye toggle-password"></i>
+            </div>
+          </div>
+
+          <!-- Campo: Confirmar contraseña -->
+          <div class="form-group password-input">
+            <label for="confirmPassword">Confirmar Contraseña</label>
+            <div class="input-wrapper">
+              <input type="password" id="confirmPassword" placeholder="Confirma la contraseña" />
+              <i class="fas fa-eye toggle-password"></i>
+            </div>
+          </div>
+
+          <!-- Términos y condiciones -->
+          <div class="form-group terms">
+            <input type="checkbox" id="terms" />
+            <label for="terms">
+              Acepto <a href="/public/documents/Terminos.pdf" target="_blank" rel="noopener noreferrer"> términos y condiciones</a>
+            </label>
+          </div>
+
+          <!-- Botón de registro -->
+          <div class="form-group">
+            <button class="submit-btn" id="submit-btn" disabled>Registrarse</button>
+          </div>
+
+          <!-- Volver a inicio de sesión -->
+          <div class="login-link">
+            <p>¿Ya tienes una cuenta? <a href="/login">Inicia sesión aquí</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Función para alternar la visibilidad de las contraseñas
+    document.querySelectorAll('.toggle-password').forEach(item => {
+      item.addEventListener('click', function () {
+        const passwordInput = this.previousElementSibling;
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye-slash');
+      });
+    });
+
+    // Función para verificar si todos los campos están llenos y las contraseñas coinciden
+    function validateForm() {
+      const agencyName =( document.getElementById('agencyName') as HTMLInputElement).value.trim();
+      const phone = (document.getElementById('phone') as HTMLInputElement).value.trim();
+      const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+      const password = (document.getElementById('password') as HTMLInputElement).value.trim();
+      const confirmPassword =( document.getElementById('confirmPassword')as HTMLInputElement).value.trim();
+      const termsAccepted = (document.getElementById('terms')as HTMLInputElement).checked;
+      const submitBtn = document.getElementById('submit-btn')as HTMLButtonElement;
+
+      // Verificar si todos los campos están llenos y las contraseñas coinciden
+      if (agencyName && phone && email && password && confirmPassword && termsAccepted && password === confirmPassword) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+      }
+    }
+
+    // Asignar validación a cada input para que se ejecute cuando el usuario escriba
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', validateForm);
+    });
+    document.getElementById('terms').addEventListener('change', validateForm); // Validación cuando se cambia el checkbox
+  </script>
+</body>
+</html>
+
+<style>
+  body,
+  html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+  }
+
+  .container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .image-section {
+    width: 50%;
+    background: url('/public/images/Cartagena.png') no-repeat center center;
+    background-size: cover;
+  }
+
+
+
+  .form-container {
+    max-width: 400px;
+    width: 100%;
+    height: 100%;
+    padding-left: 100px;
+  }
+
+  .form-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .logo {
+    padding-top: 15%;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .logo img {
+    width: 170px;
+    padding-bottom: 10px;
+  }
+
+  .form-title {
+    padding-top: 20px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1C3D5A;
+    margin-bottom: 10px;
+    text-align: left;
+
+  }
+
+  .form-subtitle {
+    font-size: 16px;
+    color: #1C3D5A;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  .form-group {
+    padding-top: 5px;
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  .form-group label {
+    padding-top: 10px;
+    display: block;
+    font-size: 14px;
+    color: #1C3D5A;
+    margin-bottom: 5px;
+    padding-top: 5px;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+  }
+
+  .form-group .input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .form-group .input-wrapper input {
+    width: 100%;
+    padding: 10px;
+    padding-right: 9px;
+    /* Espacio para el ícono */
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+
+
+
+  .form-group .input-wrapper .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 55%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+
+  .form-group .forgot-password a {
+    align-content: right;
+  }
+
+  .form-container .forgot-password:hover {
+    text-decoration: underline;
+  }
+
+  .form-container .terms {
+    display: flex;
+    align-items: center;
+    /* Alinea verticalmente el checkbox y el texto */
+  }
+
+  .form-container .terms a {
+    color: #1C3D5A;
+    text-decoration: underline;
+  }
+
+  .form-container .terms a :hover {
+    text-decoration: underline;
+  }
+
+  .form-container .terms input {
+    margin-right: 1px;
+    /* Espacio entre el checkbox y el texto */
+    width: 10px;
+
+  }
+
+
+  .form-group .submit-btn {
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    color: white;
+    background-color: #1C3D5A;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .form-group .submit-btn:hover {
+    background-color: #004494;
+  }
+
+  hr {
+    width: 100%;
+    color: #CFCECE;
+    opacity: 0.4;
+  }
+
+  .register h4 {
+    color: #1C3D5A;
+    text-size-adjust: 14px;
+    font-family: 'Roboto', sans-serif;
+
+  }
+</style>
