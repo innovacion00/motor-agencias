@@ -6,10 +6,16 @@
 </head>
 <body>
   <div class="container">
-    <div class="image-section"></div>
+    <div class="video-section">
+      <video autoplay muted loop>
+        <source src="/public/documents/videologin.mp4" type="video/mp4">
+        Tu navegador no soporta la reproducción de videos.
+      </video>
+    </div>
     <div class="form-section">
       <div class="form-wrapper">
-        <div class="form-container">
+        <div class="form-container" id="login-form">
+          <!-- Formulario de inicio de sesión -->
           <div class="logo">
             <a href="http://localhost:4321/">
               <img src="/public/images/logogeh.png" alt="Logo" width="150" height="50" />
@@ -37,10 +43,19 @@
             </label>
           </div>
           <div class="form-group">
-            <button class="submit-btn" id="submit-btn" disabled>Iniciar sesión</button>
+            <button class="submit-btn" id="submit-btn" disabled> Iniciar sesión</button>
           </div>
-          <div class="register">
-            <h4>¿Tu agencia no está registrada? <a href="https://www.google.com/" target="_blank" rel="noopener noreferrer">Regístrate aquí</a> y forma parte de GEH Suites Hotels.</h4>
+        </div>
+
+        <!-- Formulario de verificación de código -->
+        <div class="form-container" id="verification-form" style="display: none;">
+          <div class="form-title">Verificación de Código</div>
+          <div class="form-group">
+            <label for="verification-code">Código de verificación</label>
+            <input type="text" id="verification-code" placeholder="Ingrese el código recibido" />
+          </div>
+          <div class="form-group">
+            <button id="verify-btn">Verificar</button>
           </div>
         </div>
       </div>
@@ -49,36 +64,83 @@
 
   <script>
     // Función para verificar si los campos están llenos y el checkbox está marcado
-    function validateForm() {2
-  // Castear los elementos al tipo correcto (HTMLInputElement)
-  const email = (document.getElementById('email') as HTMLInputElement).value.trim();
-  const password = (document.getElementById('password') as HTMLInputElement).value.trim();
-  const termsAccepted = (document.getElementById('terms') as HTMLInputElement).checked;
-  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement
+    function validateForm() {
+      const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+      const password = (document.getElementById('password') as HTMLInputElement).value.trim();
+      const termsAccepted = (document.getElementById('terms') as HTMLInputElement).checked;
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
 
-  // Habilitar o deshabilitar el botón según las condiciones
-  if (email && password && termsAccepted) {
-    submitBtn.disabled = false;
-  } else {
-    submitBtn.disabled = true;
-  }
-}
-  
+      submitBtn.disabled = !(email && password && termsAccepted);
+    }
 
-    // Agregar eventos para detectar cambios en los campos
     document.getElementById('email').addEventListener('input', validateForm);
     document.getElementById('password').addEventListener('input', validateForm);
     document.getElementById('terms').addEventListener('change', validateForm);
 
-    // Mostrar y ocultar contraseña
     document.querySelector('.toggle-password').addEventListener('click', function () {
-      const passwordInput = document.getElementById('password');
+      const passwordInput = document.getElementById('password') as HTMLInputElement;
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);
       this.classList.toggle('fa-eye-slash');
     });
-  </script>
+
+    async function handleLogin() {
+      const email = (document.getElementById('email') as HTMLInputElement).value;
+      const password = (document.getElementById('password') as HTMLInputElement).value;
+
+      try {
+        const response = await fetch("http://206.189.199.124:3000/agencias/v1/auth/sign-in", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (response.ok) {
+          document.getElementById('login-form').style.display = 'none';
+          document.getElementById('verification-form').style.display = 'block';
+        } else {
+          alert("Correo o contraseña incorrectos. Intente nuevamente.");
+        }
+      } catch (error) {
+        console.error("Error en el inicio de sesión:", error);
+        alert("Ocurrió un error al iniciar sesión. Por favor, intente más tarde.");
+      }
+    }
+
+    async function verifyCode() {
+    const otp = (document.getElementById('verification-code') as HTMLInputElement).value;
+    const email = (document.getElementById('email') as HTMLInputElement).value; // Usamos el mismo email
+
+    try {
+      const response = await fetch("http://206.189.199.124:3000/agencias/v1/auth/validate-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ otp, email })
+      });
+
+      if (response.ok) {
+        // Redirigir al usuario a la página de inicio
+        window.location.href = "http://localhost:4321/Inicio";
+      } else {
+        alert("Código OTP incorrecto. Intente nuevamente.");
+      }
+    } catch (error) {
+      console.error("Error en la verificación del código OTP:", error);
+      alert("Ocurrió un error al verificar el código. Por favor, intente más tarde.");
+    }
+  }
+
+  // Añadir el evento de click al botón de iniciar sesión
+  document.getElementById('submit-btn').addEventListener('click', handleLogin);
+  // Añadir el evento de click al botón de verificación de código OTP
+  document.getElementById('verify-btn').addEventListener('click', verifyCode);
+</script>
 </body>
+
 </html>
 
 
@@ -95,13 +157,11 @@
     height: 100vh;
   }
 
-  .image-section {
-    width: 50%;
-    background: url('/public/images/Cartagena.png') no-repeat center center;
-    background-size: cover;
+  .video-section video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
   }
-
-  
 
   .form-container {
     max-width: 400px;
