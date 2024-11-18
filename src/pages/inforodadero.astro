@@ -1,4 +1,10 @@
 ---
+import { fetchWithAuth } from '../utils/fetchWithAuth';
+
+async function fetchProtectedData() {
+  const data = await fetchWithAuth("URL_PROTEGIDA");
+  console.log(data);
+}
 import BaseLayout from "../layouts/BaseLayout.astro"
 import DropdownSearch from "../components/DropdownSearch"
 ---
@@ -339,6 +345,12 @@ import DropdownSearch from "../components/DropdownSearch"
     </div>
 
     <script>
+      import { fetchWithAuth } from '../utils/fetchWithAuth';
+
+async function fetchProtectedData() {
+  const data = await fetchWithAuth("URL_PROTEGIDA");
+  console.log(data);
+}
       // Seleccionamos los botones y las secciones
       const generalBtn = document.getElementById('generalBtn');
       const roomsBtn = document.getElementById('roomsBtn');

@@ -1,9 +1,11 @@
 <html>
+
 <head>
   <title>Portal Agencias</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet" />
 </head>
+
 <body>
   <div class="container">
     <div class="video-section">
@@ -39,7 +41,8 @@
           <div class="form-group terms">
             <input type="checkbox" id="terms" />
             <label for="terms">
-              Acepto <a href="/public/documents/Terminos.pdf" target="_blank" rel="noopener noreferrer"> términos y condiciones</a>
+              Acepto <a href="/public/documents/Terminos.pdf" target="_blank" rel="noopener noreferrer"> términos y
+                condiciones</a>
             </label>
           </div>
           <div class="form-group">
@@ -64,6 +67,7 @@
 
   <script>
     // Función para verificar si los campos están llenos y el checkbox está marcado
+    
     function validateForm() {
       const email = (document.getElementById('email') as HTMLInputElement).value.trim();
       const password = (document.getElementById('password') as HTMLInputElement).value.trim();
@@ -83,69 +87,82 @@
       passwordInput.setAttribute('type', type);
       this.classList.toggle('fa-eye-slash');
     });
-
+    
     async function handleLogin() {
-      const email = (document.getElementById('email') as HTMLInputElement).value;
-      const password = (document.getElementById('password') as HTMLInputElement).value;
+  const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+  const password = (document.getElementById('password')as HTMLInputElement).value.trim();
+
+  try {
+    const response = await fetch("http://206.189.199.124:3000/agencias/v1/auth/sign-in", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const token = data.token; // El servidor debe enviar el token en esta respuesta
+
+      // Guardamos el token en localStorage para futuras solicitudes
+      localStorage.setItem("authToken", token);
+
+      // Cambiamos a la vista de verificación de OTP
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('verification-form').style.display = 'block';
+    } else {
+      alert("Correo o contraseña incorrectos. Intente nuevamente.");
+    }
+  } catch (error) {
+    console.error("Error en el inicio de sesión:", error);
+    alert("Ocurrió un error al iniciar sesión. Por favor, intente más tarde.");
+  }
+}
+
+
+
+    async function verifyCode() {
+      const otp = (document.getElementById('verification-code') as HTMLInputElement).value;
+      const email = (document.getElementById('email') as HTMLInputElement).value; // Usamos el mismo email
 
       try {
-        const response = await fetch("http://206.189.199.124:3000/agencias/v1/auth/sign-in", {
+        const response = await fetch("http://206.189.199.124:3000/agencias/v1/auth/validate-otp",   {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ email, password })
+          body: JSON.stringify({
+            otp,
+            email
+          })
         });
 
         if (response.ok) {
-          document.getElementById('login-form').style.display = 'none';
-          document.getElementById('verification-form').style.display = 'block';
+          // Redirigir al usuario a la página de inicio
+          window.location.href = "http://localhost:4321/Inicio";
         } else {
-          alert("Correo o contraseña incorrectos. Intente nuevamente.");
+          alert("Código OTP incorrecto. Intente nuevamente.");
         }
       } catch (error) {
-        console.error("Error en el inicio de sesión:", error);
-        alert("Ocurrió un error al iniciar sesión. Por favor, intente más tarde.");
+        console.error("Error en la verificación del código OTP:", error);
+        alert("Ocurrió un error al verificar el código. Por favor, intente más tarde.");
       }
     }
 
-    async function verifyCode() {
-    const otp = (document.getElementById('verification-code') as HTMLInputElement).value;
-    const email = (document.getElementById('email') as HTMLInputElement).value; // Usamos el mismo email
-
-    try {
-      const response = await fetch("http://206.189.199.124:3000/agencias/v1/auth/validate-otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ otp, email })
-      });
-
-      if (response.ok) {
-        // Redirigir al usuario a la página de inicio
-        window.location.href = "http://localhost:4321/Inicio";
-      } else {
-        alert("Código OTP incorrecto. Intente nuevamente.");
-      }
-    } catch (error) {
-      console.error("Error en la verificación del código OTP:", error);
-      alert("Ocurrió un error al verificar el código. Por favor, intente más tarde.");
-    }
-  }
-
-  // Añadir el evento de click al botón de iniciar sesión
-  document.getElementById('submit-btn').addEventListener('click', handleLogin);
-  // Añadir el evento de click al botón de verificación de código OTP
-  document.getElementById('verify-btn').addEventListener('click', verifyCode);
-</script>
+    // Añadir el evento de click al botón de iniciar sesión
+    document.getElementById('submit-btn').addEventListener('click', handleLogin);
+    // Añadir el evento de click al botón de verificación de código OTP
+    document.getElementById('verify-btn').addEventListener('click', verifyCode);
+  </script>
 </body>
 
 </html>
 
 
 <style>
-  body, html {
+  body,
+  html {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', sans-serif;
@@ -158,9 +175,9 @@
   }
 
   .video-section video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .form-container {
@@ -196,7 +213,7 @@
     color: #1C3D5A;
     margin-bottom: 10px;
     text-align: left;
-    
+
   }
 
   .form-subtitle {
@@ -227,7 +244,7 @@
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    
+
   }
 
   .form-group .input-wrapper {
@@ -238,14 +255,15 @@
   .form-group .input-wrapper input {
     width: 100%;
     padding: 10px;
-    padding-right: 9px; /* Espacio para el ícono */
+    padding-right: 9px;
+    /* Espacio para el ícono */
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 4px;
   }
 
-  
-  
+
+
 
   .form-group .input-wrapper .toggle-password {
     position: absolute;
@@ -255,7 +273,7 @@
     cursor: pointer;
   }
 
-  
+
   .form-group .forgot-password a {
     align-content: right;
   }
@@ -265,24 +283,27 @@
   }
 
   .form-container .terms {
-    display:flex;
-    align-items: center; /* Alinea verticalmente el checkbox y el texto */
-}
+    display: flex;
+    align-items: center;
+    /* Alinea verticalmente el checkbox y el texto */
+  }
 
   .form-container .terms a {
     color: #1C3D5A;
     text-decoration: underline;
   }
-  .form-container .terms a :hover{
-    text-decoration: underline  ;
+
+  .form-container .terms a :hover {
+    text-decoration: underline;
   }
 
   .form-container .terms input {
-    margin-right: 1px; /* Espacio entre el checkbox y el texto */
+    margin-right: 1px;
+    /* Espacio entre el checkbox y el texto */
     width: 10px;
-    
-}
- 
+
+  }
+
 
   .form-group .submit-btn {
     width: 100%;
@@ -305,11 +326,10 @@
     opacity: 0.4;
   }
 
-  .register h4{
- color: #1C3D5A;
- text-size-adjust: 14px;
- font-family: 'Roboto', sans-serif;
- 
-}
-  
+  .register h4 {
+    color: #1C3D5A;
+    text-size-adjust: 14px;
+    font-family: 'Roboto', sans-serif;
+
+  }
 </style>

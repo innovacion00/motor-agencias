@@ -12,7 +12,7 @@ const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ru
 <header class="header">
     <div class="logo"><a href="http://localhost:4321/Inicio">
         <img src="/public/images/gehlogo.png" alt="GH Suites Logo" />
-    </a>
+        </a>
     </div>
     <nav class="nav">
         <a href="http://localhost:4321/misreservas" class="reservations-link">Consultar mis reservas</a>
@@ -22,9 +22,38 @@ const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ru
                 
                  <!-- Aquí podrías usar un icono SVG en lugar del emoji -->
             </div>
-            <div class="user-icon">
-                <img src="/public/images/genericavatar_icon.jpg" alt="User Icon" />
+                <div class="profile-menu">
+                    <img src="/public/images/genericavatar_icon.jpg" alt="User Icon" id="profile-img"  />
+                    <div id="dropdown-menu" class="dropdown-content" style="display: none;">
+                        <button id="logout-btn">Cerrar sesión</button>
+                      </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 </header>
+
+<script>
+    document.getElementById('profile-img').addEventListener('click', function () {
+  const dropdownMenu = document.getElementById('dropdown-menu');
+  dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
+});
+
+// Función de cierre de sesión
+document.getElementById('logout-btn').addEventListener('click', function () {
+  // Remover el token de localStorage o sessionStorage
+  localStorage.removeItem('authToken'); // O usa sessionStorage si lo guardaste allí
+  
+  // Redirigir al usuario a la página de login
+  window.location.href = 'http://localhost:4321';
+});
+
+// Opción para cerrar el menú si se hace clic fuera
+window.addEventListener('click', function(event) {
+  const dropdownMenu = document.getElementById('dropdown-menu');
+  if (!(event.target instanceof Element) || !event.target.matches('#profile-img')) {
+    dropdownMenu.style.display = 'none';
+  }
+});
+</script>

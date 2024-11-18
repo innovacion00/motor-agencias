@@ -1,12 +1,11 @@
 /* src/styles/swiperSlider.css */
 .swiper-slide img {
-    
-        width: 95%;
+        width: 90%;
         height: 70vh;
-      
-      
+         
   }
-  
+
+ 
 /* Cambiar el color de las flechas */
 .swiper-button-next, .swiper-button-prev {
     color: #ff8533; /* Color personalizado para las flechas */
@@ -14,7 +13,7 @@
   
   /* Cambiar el tamaño de las flechas, si lo necesitas */
   .swiper-button-next::after, .swiper-button-prev::after {
-    font-size: 20px; /* Ajustar el tamaño de las flechas */
+    font-size: 35px; /* Ajustar el tamaño de las flechas */
   }
   
   /* Opcional: Cambiar el color cuando se hace hover en las flechas */
