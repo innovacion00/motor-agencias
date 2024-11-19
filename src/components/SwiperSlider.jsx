@@ -23,10 +23,10 @@ const SwiperSlider = () => {
     >
       
       <SwiperSlide>
-        <img src="/public/images/slide1.jpeg" alt="Banner 1" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide1.jpeg" alt="Banner 1" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="/public/images/slide2.jpeg" alt="Banner 2" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner 2" />
       </SwiperSlide>
     </Swiper>
   );
