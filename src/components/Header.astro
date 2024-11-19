@@ -10,12 +10,12 @@ const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ru
 </style>
 
 <header class="header">
-    <div class="logo"><a href="http://localhost:4321/Inicio">
+    <div class="logo"><a href="/Inicio">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/gehlogo.png" alt="GH Suites Logo" />
         </a>
     </div>
     <nav class="nav">
-        <a href="http://localhost:4321/misreservas" class="reservations-link">Consultar mis reservas</a>
+        <a href="/misreservas" class="reservations-link">Consultar mis reservas</a>
         <div class="icons">
             <div class="notification-icon">
               <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Notification_icon.png" alt="Notification Icon" />
@@ -46,7 +46,7 @@ document.getElementById('logout-btn').addEventListener('click', function () {
   localStorage.removeItem('authToken'); // O usa sessionStorage si lo guardaste allí
   
   // Redirigir al usuario a la página de login
-  window.location.href = '/';
+  window.location.href = '/index';
 });
 
 // Opción para cerrar el menú si se hace clic fuera
