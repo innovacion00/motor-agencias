@@ -302,7 +302,7 @@ import DropdownSearch from "../components/DropdownSearch"
       function checkAuth() {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      window.location.href = "http://localhost:4321"; // Redirige al login si no hay token
+      window.location.href = "/"; // Redirige al login si no hay token
     }
   }
       checkAuth();

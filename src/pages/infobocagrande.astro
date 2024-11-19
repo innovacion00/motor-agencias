@@ -409,7 +409,7 @@ import DropdownSearch from "../components/DropdownSearch"
       function checkAuth(){
         const token = localStorage.getItem("authToken");
         if(!token){
-          window.location.href="http://localhost:4321";
+          window.location.href="/";
         }
       }
 checkAuth();

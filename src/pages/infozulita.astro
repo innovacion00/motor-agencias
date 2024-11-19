@@ -209,7 +209,7 @@ import DropdownSearch from "../components/DropdownSearch"
               <div class="room-small-images-container">
                 <img src="https://cf2.bstatic.com/xdata/images/hotel/max1024x768/600110939.jpg?k=2f74f083e962a4ccc06ac96117ca8feaf0efabb2f0c22500e28415929b363808&o=&hp=1" alt="Imagen pequeña 1"
                   class="room-small-image" />
-                <img src="public/images/bañoregadera.jpg" alt="Imagen pequeña 2"
+                <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ba%C3%B1oregadera.jpg" alt="Imagen pequeña 2"
                   class="room-small-image" />
               </div>
             </div>
@@ -305,7 +305,7 @@ import DropdownSearch from "../components/DropdownSearch"
       function checkAuth() {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      window.location.href = "http://localhost:4321"; // Redirige al login si no hay token
+      window.location.href = "/"; // Redirige al login si no hay token
     }
   }
 

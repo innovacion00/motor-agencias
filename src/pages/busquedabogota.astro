@@ -24,7 +24,7 @@ import DropdownSearch from '../components/DropdownSearch';
             <DropdownSearch client:visible />
              </div>
         <div class="container">
-            <div class="breadcrumb"><a href="http://localhost:4321/">Inicio </a>/ <a href="#">Resultados de búsqueda </a></div>
+            <div class="breadcrumb"><a href="/">Inicio </a>/ <a href="#">Resultados de búsqueda </a></div>
             <div class="title">Resultados Bogotá </div>
             <div class="filter"><select>
                     <option>Menor precio </option>
@@ -33,7 +33,7 @@ import DropdownSearch from '../components/DropdownSearch';
                     src="https://www.gehsuites.com/images/fachada-madison.jpg"
                     width="300" />
                 <div class="hotel-info">
-                    <h3>Hotel Madisson Inn <a href="http://localhost:4321/infomadisson"> Ver detalles de hotel </a></h3>
+                    <h3>Hotel Madisson Inn <a href="/infomadisson"> Ver detalles de hotel </a></h3>
                     <div class="icons"><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png" alt="icon_coffee" width="24" height="24">
                         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png" alt="icon_buffet" width="24" height="24">
                         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png" alt="icon_parking" width="24" height="24">
@@ -68,7 +68,7 @@ import DropdownSearch from '../components/DropdownSearch';
             </div>
             <div class = "hotel"><img alt="Hotel Zulita Inn" height="200" src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg"  width ="300" />
                 <div class=" hotel-info">
-                    <h3>Hotel Zulita Inn <a href="http://localhost:4321/infozulita">Ver detalles del hotel</a></h3>
+                    <h3>Hotel Zulita Inn <a href="/infozulita">Ver detalles del hotel</a></h3>
                     <div class="icons"><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png" alt="icon_coffee" width="24" height="24">
                         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png" alt="icon_buffet" width="24" height="24">
                         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png" alt="icon_parking" width="24" height="24">
@@ -88,7 +88,7 @@ import DropdownSearch from '../components/DropdownSearch';
             function checkAuth() {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      window.location.href = "http://localhost:4321"; // Redirige al login si no hay token
+      window.location.href = "/"; // Redirige al login si no hay token
     }
   }
 

@@ -159,10 +159,8 @@ import DropdownSearch from "../components/DropdownSearch"
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon"> 
-                                                                       
+              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">                                                             
                 Restaurante
-              
               </span>
             </div>
           </div>
@@ -345,12 +343,14 @@ import DropdownSearch from "../components/DropdownSearch"
     </div>
 
     <script>
-      import { fetchWithAuth } from '../utils/fetchWithAuth';
+      function checkAuth() {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      window.location.href = "/"; // Redirige al login si no hay token
+    }
+  }
 
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
+  checkAuth(); // Llamamos a esta función al cargar la página
       // Seleccionamos los botones y las secciones
       const generalBtn = document.getElementById('generalBtn');
       const roomsBtn = document.getElementById('roomsBtn');
