@@ -185,8 +185,6 @@ border-radius: 8px;
     display: block;
   }
   
-
-
 /* Estilo para el botón de búsqueda */
 .searchButton {
   background-color: #26547B; /* Fondo azul */
@@ -219,4 +217,93 @@ border-radius: 8px;
 /* Estilo para los días fuera del rango */
 .rdr-Day--outside {
   color: #d1d1d1; /* Cambia el color de texto de los días fuera del rango */
+}
+
+.toggleGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.toggleButton {
+  background-color: #ccc;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.toggleButton.active {
+  background-color: #28a745;
+}
+
+.counterGroup {
+  margin-bottom: 15px;
+}
+
+.counter {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.counter button {
+  background-color: #1C3D5A;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.counter span {
+  font-size: 16px;
+  text-align: center;
+}
+
+.sliderToggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 25px;
+}
+
+.sliderToggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 25px;
+}
+
+.slider::before {
+  position: absolute;
+  content: '';
+  height: 19px;
+  width: 19px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #1C3D5A;
+}
+
+input:checked + .slider::before {
+  transform: translateX(25px);
 }

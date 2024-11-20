@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { DateRange } from 'react-date-range';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
-import styles from './DropdownSearch.module.css';
-
+import React, { useState } from "react";
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
+import styles from "./DropdownSearch.module.css";
+import Swal from "sweetalert2";
 // Importa la store global
-import { searchStore, updateSearchStore } from '../stores/searchStores';
-import { useStore } from '@nanostores/react';
+import { searchStore, updateSearchStore } from "../stores/searchStores";
+import { useStore } from "@nanostores/react";
 
 const DropdownSearch = () => {
   const searchData = useStore(searchStore);
@@ -14,7 +14,10 @@ const DropdownSearch = () => {
   // Define los estados locales para control de UI
   const [showDateRange, setShowDateRange] = useState(false); // Controla el selector de fechas
   const [showDropdown, setShowDropdown] = useState(false); // Controla el dropdown de personas
-  const [destination, setDestination] = useState('');
+  const [destination, setDestination] = useState("");
+  const [rooms, setRooms] = useState([
+    { adults: 1, children0to4: 0, children5to17: 0 },
+  ]);
 
   // Función para manejar el cambio de rango de fechas
   const handleDateRangeChange = (ranges) => {
@@ -26,23 +29,36 @@ const DropdownSearch = () => {
       endDate: endDate,
     };
 
-    console.log('Rango de fechas seleccionado:', newRange);
+    console.log("Rango de fechas seleccionado:", newRange);
 
-     // Actualiza el estado global de fechas
+    // Actualiza el estado global de fechas
     updateSearchStore({ dateRange: newRange });
+  };
+
+  const handleAddRoom = () => {
+    setRooms([...rooms, { adults: 1, children0to4: 0, children5to17: 0 }]);
+  };
+
+  const handleRemoveRoom = (index) => {
+    const updatedRooms = rooms.filter((_, i) => i !== index);
+    setRooms(updatedRooms);
   };
 
   // Manejo de la redirección de la búsqueda
   const handleSearch = () => {
     if (destination) {
       const destinations = {
-        'Cartagena de Indias': '/busquedacartagena',
-        'Bogotá': '/busquedabogota',
-        'Santa Marta': '/busquedasantamarta',
+        "Cartagena de Indias": "/busquedacartagena",
+        Bogotá: "/busquedabogota",
+        "Santa Marta": "/busquedasantamarta",
       };
       window.location.href = destinations[destination];
     } else {
-      alert('Por favor selecciona un destino');
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Por favor selecciona una ciudad",
+      });
     }
   };
 
@@ -50,9 +66,10 @@ const DropdownSearch = () => {
     <div className={styles.dropdownSearchContainer}>
       {/* Dropdown de destino */}
       <div className={styles.dropdown}>
-        <select 
+        <select
           value={destination}
-          onChange={(e) => setDestination(e.target.value)}>
+          onChange={(e) => setDestination(e.target.value)}
+        >
           <option value="">Selecciona un destino</option>
           <option value="Cartagena de Indias">Cartagena de Indias</option>
           <option value="Bogotá">Bogotá</option>
@@ -64,79 +81,158 @@ const DropdownSearch = () => {
       <div className={styles.datePicker}>
         <input
           type="text"
-          value={`${searchData?.dateRange?.startDate?.toISOString().split('T')[0] || ''} - ${searchData?.dateRange?.endDate?.toISOString().split('T')[0] || ''}`}
+          value={`${searchData?.dateRange?.startDate?.toISOString().split(
+            "T"
+          )[0] || ""} - ${
+            searchData?.dateRange?.endDate?.toISOString().split("T")[0] || ""
+          }`}
           onFocus={() => setShowDateRange(true)} // Abre el selector de fechas cuando el campo recibe foco
           readOnly
         />
         {showDateRange && (
           <div className={styles.dateRangePicker}>
             <DateRange
-              ranges={[{
-                startDate: searchData?.dateRange?.startDate || new Date(),
-                endDate: searchData?.dateRange?.endDate || new Date(),
-                key: 'selection'
-              }]}
+              ranges={[
+                {
+                  startDate: searchData?.dateRange?.startDate || new Date(),
+                  endDate: searchData?.dateRange?.endDate || new Date(),
+                  key: "selection",
+                },
+              ]}
               onChange={(ranges) => handleDateRangeChange(ranges)}
               moveRangeOnFirstSelection={false} // Evita que el rango se mueva accidentalmente
             />
-            {/* Botón para confirmar y cerrar el selector de fechas */}
-            <button onClick={() => setShowDateRange(false)} className={styles.confirmDateButton}>
+            <button
+              onClick={() => setShowDateRange(false)}
+              className={styles.confirmDateButton}
+            >
               Confirmar selección
             </button>
           </div>
         )}
       </div>
 
-      {/* Dropdown para seleccionar adultos, niños y habitaciones */}
+      {/* Dropdown para seleccionar habitaciones */}
       <div className={styles.dropdownPeople}>
         <div
           className={styles.dropdownToggle}
-          onClick={() => setShowDropdown(!showDropdown)} // Alterna la visualización del dropdown
+          onClick={() => setShowDropdown(!showDropdown)}
         >
-          {searchData.adults} adulto{searchData.adults > 1 ? 's' : ''}, {searchData.children} niño{searchData.children !== 1 ? 's' : ''}, {searchData.rooms} habitación{searchData.rooms > 1 ? 'es' : ''}
+          {rooms.length} habitación{rooms.length > 1 ? "es" : ""}
         </div>
 
         {showDropdown && (
           <div className={styles.dropdownMenu}>
-            <div className={styles.peopleCounter}>
-              <label>Adultos</label>
-              <input
-                type="number"
-                min="1"
-                value={searchData.adults}
-                onChange={(e) => updateSearchStore({ adults: parseInt(e.target.value) })}
-              />
-              <label>Niños</label>
-              <input
-                type="number"
-                min="0"
-                value={searchData.children}
-                onChange={(e) => updateSearchStore({ children: parseInt(e.target.value) })}
-              />
+            {rooms.map((room, index) => (
+              <div key={index} className={styles.roomSection}>
+                <h4>Habitación {index + 1}</h4>
+                {/* Adultos */}
+                <div className={styles.counterGroup}>
+                  <label>Adultos</label>
+                  <div className={styles.counter}>
+                    <button
+                      onClick={() => {
+                        if (room.adults > 1) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].adults -= 1;
+                          setRooms(updatedRooms);
+                        }
+                      }}
+                    >
+                      -
+                    </button>
+                    <span>{room.adults}</span>
+                    <button
+                      onClick={() => {
+                        const updatedRooms = [...rooms];
+                        updatedRooms[index].adults += 1;
+                        setRooms(updatedRooms);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-              {/* Mensaje de advertencia si hay niños */}
-              {searchData.children > 0 && (
-                <>
-                  <p className={styles.childAgeWarning}>
-                    Para mostrarte los precios correctos y asegurar espacio para todos, necesitamos saber la edad de los niños al momento del check-out.
-                  </p>
-                </>
-              )}
+                {/* Niños 0-4 años */}
+                <div className={styles.counterGroup}>
+                  <label>Niños (0-4 años)</label>
+                  <div className={styles.counter}>
+                    <button
+                      onClick={() => {
+                        if (room.children0to4 > 0) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].children0to4 -= 1;
+                          setRooms(updatedRooms);
+                        }
+                      }}
+                    >
+                      -
+                    </button>
+                    <span>{room.children0to4}</span>
+                    <button
+                      onClick={() => {
+                        const updatedRooms = [...rooms];
+                        updatedRooms[index].children0to4 += 1;
+                        setRooms(updatedRooms);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-              <label>Habitaciones</label>
-              <input
-                type="number"
-                min="1"
-                value={searchData.rooms}
-                onChange={(e) => updateSearchStore({ rooms: parseInt(e.target.value) })}
-              />
-            </div>
+                {/* Niños 5-17 años */}
+                <div className={styles.counterGroup}>
+                  <label>Niños (5-17 años)</label>
+                  <div className={styles.counter}>
+                    <button
+                      onClick={() => {
+                        if (room.children5to17 > 0) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].children5to17 -= 1;
+                          setRooms(updatedRooms);
+                        }
+                      }}
+                    >
+                      -
+                    </button>
+                    <span>{room.children5to17}</span>
+                    <button
+                      onClick={() => {
+                        const updatedRooms = [...rooms];
+                        updatedRooms[index].children5to17 += 1;
+                        setRooms(updatedRooms);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                {rooms.length > 1 && (
+                  <button
+                    className={styles.removeRoomButton}
+                    onClick={() => handleRemoveRoom(index)}
+                  >
+                    Eliminar habitación
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <button className={styles.addRoomButton} onClick={handleAddRoom}>
+              + Añadir habitación
+            </button>
           </div>
         )}
       </div>
 
       {/* Botón de búsqueda */}
-      <button onClick={handleSearch} className={`${styles.searchButton} search-button`}>
+      <button
+        onClick={handleSearch}
+        className={`${styles.searchButton} search-button`}
+      >
         Consultar
       </button>
     </div>

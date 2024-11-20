@@ -2,14 +2,16 @@ import { atom } from 'nanostores';
 
 // Definimos los estados globales para la búsqueda
 export const searchStore = atom({
+  adults: 1,
+  children: 0,
+  childrenToggle: false,
+  children0to4: 0,
+  children5to17: 0,
+  rooms: 1,
   dateRange: {
     startDate: new Date(),
     endDate: new Date(),
   },
-  adults: 1,
-  children: 0,
-  rooms: 1,
-  childrenAges: [],
 });
 
 // Función para actualizar la store global de búsqueda
