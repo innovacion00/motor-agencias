@@ -38,7 +38,7 @@
               <i class="fas fa-eye toggle-password"></i>
             </div>
           </div>
-          <a class="forgot-password" href="#">Olvidé la contraseña</a>
+          <a class="forgot-password" href="/recuperarcontrasena">Olvidé la contraseña</a>
           <div class="form-group terms">
             <input type="checkbox" id="terms" />
             <label for="terms">
@@ -75,6 +75,7 @@
             Verificando...
           </div>
         </div>
+        
       </div>
     </div>
   </div>
@@ -84,7 +85,6 @@
 <script>
   // Función para verificar si los campos están llenos y el checkbox está marcado
   import Swal from 'sweetalert2'
-
   function validateForm() {
     const email = (document.getElementById('email') as HTMLInputElement).value.trim();
     const password = (document.getElementById('password') as HTMLInputElement).value.trim();
@@ -208,7 +208,6 @@
   // Añadir el evento de click al botón de verificación de código OTP
   document.getElementById('verify-btn').addEventListener('click', verifyCode);
 </script>
-
 
 
 <style>

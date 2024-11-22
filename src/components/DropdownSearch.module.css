@@ -185,6 +185,8 @@ border-radius: 8px;
     display: block;
   }
   
+
+
 /* Estilo para el botón de búsqueda */
 .searchButton {
   background-color: #26547B; /* Fondo azul */
@@ -250,7 +252,7 @@ border-radius: 8px;
 }
 
 .counter button {
-  background-color: #1C3D5A;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -301,7 +303,7 @@ border-radius: 8px;
 }
 
 input:checked + .slider {
-  background-color: #1C3D5A;
+  background-color: #28a745;
 }
 
 input:checked + .slider::before {
