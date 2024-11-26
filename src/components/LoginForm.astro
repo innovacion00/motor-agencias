@@ -163,7 +163,25 @@
       loadingIndicator.style.display = 'none';
     }
   }
+  
+  function checkSession() {
+  const token = localStorage.getItem("authToken");
+  const currentPath = window.location.pathname;
 
+  if (!token && currentPath !== "/") {
+    window.location.href = "/"; // Redirigir al login si no hay token y no estamos en la página de login
+  }
+}
+
+// Función para cerrar sesión
+document.getElementById("logout-btn")?.addEventListener("click", () => {
+  localStorage.removeItem("authToken");
+  window.location.href = "/"; // Redirigir al login al cerrar sesión
+});
+
+// Añadir eventos
+document.addEventListener("DOMContentLoaded", checkSession);
+  
 
 
   async function verifyCode() {
