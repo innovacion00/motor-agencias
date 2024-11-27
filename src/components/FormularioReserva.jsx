@@ -15,7 +15,7 @@ const FormularioReserva = () => {
     console.log("Datos enviados:", data);
     Swal.fire({                 //Alerta de datos de incio de sesion incorrectos
       icon: "success",
-      text: "Datos de inicio de sesion incorrectos",
+      text: "Se ha realizado la reserva con exito",
       showConfirmButton: false,
       timer: 4000
       
