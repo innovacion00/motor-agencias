@@ -309,3 +309,95 @@ input:checked + .slider {
 input:checked + .slider::before {
   transform: translateX(25px);
 }
+
+/* Botones del contador (+/-) */
+.counter button {
+  background-color: #007bff; /* Azul */
+  color: #fff;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 16px;
+}
+
+.counter button:hover {
+  background-color: #0056b3; /* Azul más oscuro */
+  transform: scale(1.1);
+}
+
+.counter button:active {
+  background-color: #003f7f;
+  transform: scale(1.05);
+}
+
+/* Botón de añadir habitación */
+.addRoomButton {
+  background-color: #9b5a2fdc; /* Verde */
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.addRoomButton:hover {
+  background-color: #915025f8; /* Verde más oscuro */
+  transform: scale(1.05);
+}
+
+.addRoomButton:active {
+  background-color: #1e7e34;
+}
+
+/* Botón de eliminar habitación */
+.removeRoomButton {
+  background-color: #dc3545; /* Rojo */
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.removeRoomButton:hover {
+  background-color: #c82333; /* Rojo más oscuro */
+  transform: scale(1.05);
+}
+
+.removeRoomButton:active {
+  background-color: #bd2130;
+}
+
+/* Espaciado para las secciones de la habitación */
+.roomSection {
+  padding: 10px;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 15px;
+}
+
+.roomSection h4 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.dropdownMenu {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-height: 600px;
+  overflow-x: auto;
+  
+
+} 

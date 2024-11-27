@@ -2,8 +2,8 @@
 import { fetchWithAuth } from '../utils/fetchWithAuth';
 
 async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
+const data = await fetchWithAuth("URL_PROTEGIDA");
+console.log(data);
 }
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DropdownSearch from "../components/DropdownSearch";
@@ -45,7 +45,7 @@ import DropdownSearch from "../components/DropdownSearch";
                     src="https://www.gehsuites.com/images/fachada_avexi.jpg" width="300" />
                 <div class="hotel-details">
                     <div class="description">
-                        <h2>    
+                        <h2>
                             Hotel Avexi Suites
                         </h2>
                         <br>
@@ -69,10 +69,14 @@ import DropdownSearch from "../components/DropdownSearch";
                             <br>
                         </p>
                         <div class="icons">
-                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png" alt="Wi-Fi" class="icon-image" />
-                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png" alt="Piscina" class="icon-image" />
-                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png" alt="Conserjería" class="icon-image" />
-                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png" alt="Gimnasio" class="icon-image" />
+                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png" alt="Wi-Fi"
+                                class="icon-image" />
+                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                                alt="Piscina" class="icon-image" />
+                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                                alt="Conserjería" class="icon-image" />
+                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png" alt="Gimnasio"
+                                class="icon-image" />
                         </div>
                     </div>
                     <div class="more-info">
@@ -159,43 +163,60 @@ import DropdownSearch from "../components/DropdownSearch";
                             #Valor
                         </p>
 
-                        <button>
+                        <button class="select-room" data-room="Doble Estándar" data-price="#Valor">
                             Seleccionar
                         </button>
                     </div>
                 </div>
                 <div class="reservation">
-                    <h3>
-                        Reserva
-                    </h3>
-                    <p>
-                        Hotel Avexi Suites
-                    </p>
-                    <p>
-                        #fechacheckin
-                        <i class="fas fa-arrow-right">
-                        </i>
-                        #fechacheckout (#numeronoches)
-                    </p>
-                    <p>
-                        Selecciona las habitaciones de la lista al costado para reservar
-                    </p>
-                    <button>
-                        Reservar ahora
-                    </button>
+                    <h3>Reserva</h3>
+                    <p>Hotel Avexi Suites</p>
+                   <!-- <p>#fechacheckin <i class="fas fa-arrow-right"></i> #fechacheckout (#numeronoches)</p>-->
+                    
+                    <ul id="selected-rooms">
+                        <!-- Aquí se añadirán las habitaciones seleccionadas -->
+                    </ul>
+                    <p>Selecciona las habitaciones de la lista al costado para reservar</p>
+                    <br>
+                    <a href="/reservas"><button>Reservar ahora</button></a>
                 </div>
             </div>
         </div>
 
         <script>
             function checkAuth() {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      window.location.href = "/"; // Redirige al login si no hay token
-    }
-  }
+                const token = localStorage.getItem("authToken");
+                if (!token) {
+                    window.location.href = "/"; // Redirige al login si no hay token
+                }
+            }
 
-  checkAuth(); // Llamamos a esta función al cargar la página
+            checkAuth(); // Llamamos a esta función al cargar la página
+
+            document.addEventListener('DOMContentLoaded', () => {
+        const selectButtons = document.querySelectorAll('.select-room');
+        const selectedRoomsList = document.getElementById('selected-rooms');
+
+        selectButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Obtener información de la habitación
+                const roomName = button.getAttribute('data-room');
+                const roomPrice = button.getAttribute('data-price');
+                const roomimg = button.getAttribute('data-img')
+
+                // Crear un nuevo elemento en la lista
+                const roomItem = document.createElement('li');
+                roomItem.textContent = `${roomName} - ${roomPrice} `  ;
+                
+                // Evitar duplicados
+                if (![...selectedRoomsList.children].some(item => item.textContent === roomItem.textContent)) {
+                    selectedRoomsList.appendChild(roomItem);
+                } else {
+                    alert("Esta habitación ya fue seleccionada.");
+                }
+            });
+        });
+    });
         </script>
     </body>
 
@@ -525,4 +546,13 @@ import DropdownSearch from "../components/DropdownSearch";
             height: 26px;
             margin-right: 10px;
         }
+        #selected-rooms {
+    list-style-type: none;
+    padding: 0;
+}
+
+#selected-rooms li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
     </style>

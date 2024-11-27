@@ -1,23 +1,23 @@
 ---
 import { fetchWithAuth } from '../utils/fetchWithAuth';
-
+import FormularioReserva from '../components/FormularioReserva';
 async function fetchProtectedData() {
   const data = await fetchWithAuth("URL_PROTEGIDA");
   console.log(data);
 }
 import BaseLayout from '../layouts/BaseLayout.astro';
-// import ReservationForm from '../components/ReservationForm.jsx';
+
 ---
+<html>
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+<FormularioReserva client:load>  
   
-  <html>
-  <!-- <head>
+   <head>
     
-    <link rel="stylesheet" href="/public/styles/ReservationForm.css" />
   </head>
   
   <body>
-    <ReservationForm client:load />
+    
 
 
     <script>
@@ -30,8 +30,341 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
   checkAuth(); // Llamamos a esta función al cargar la página
     </script>
-  </body> -->
+  </body> 
 </html>
 
-  
-  
+<style>
+  body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #d8d8d8;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .hotel-title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .hotel-info {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .hotel-info img {
+            width: 350px;
+            height: 300px;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .hotel-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hotel-details .description {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .hotel-details .description p {
+            margin: 0;
+            color: #666;
+        }
+
+        .hotel-details .description a {
+            color: #1C3D5A;
+            text-decoration: none;
+        }
+
+        .hotel-details .description a:hover {
+            text-decoration: underline;
+        }
+
+        .hotel-details .services {
+            display: flex;
+            align-items: center;
+        }
+
+        .hotel-details .services i {
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .hotel-details .more-info {
+            text-align: right;
+        }
+
+        .hotel-details .more-info button {
+            background-color: #fff;
+            border-style: solid;
+            border-width: 2px;
+            border-color: #1C3D5A;
+            color: #1C3D5A;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .hotel-details .more-info button:hover {
+            background-color: #c8cdd370;
+
+        }
+
+        .available-rooms {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .search-criteria {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-criteria div {
+            text-align: center;
+        }
+
+        .search-criteria div p {
+            margin: 0;
+            color: #666;
+        }
+
+        .search-criteria div strong {
+            display: block;
+            color: #2c3e50;
+            margin-top: 5px;
+        }
+
+        .search-criteria button {
+            background-color: #fff;
+            border-style: solid;
+            border-width: 2px;
+            border-color: #1C3D5A;
+            color: #1C3D5A;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .search-criteria button:hover {
+            background-color: #c8cdd370;
+        }
+
+        .room-section {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .room-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex: 3;
+        }
+
+        .room-card img {
+            width: 250px;
+            border-radius: 8px;
+        }
+
+        .room-details {
+            flex: 1;
+            margin-left: 20px;
+            position: relative;
+        }
+
+        .room-details h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .room-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .room-details .price {
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .room-details .price del {
+            color: #999;
+            margin-left: 10px;
+        }
+
+        .room-details .discount {
+            background-color: #ff6f61;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .room-details button {
+            background-color: #26547B;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .room-details button:hover {
+            background-color: #0056b3;
+        }
+
+        .reservation {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 250px;
+            margin-left: 20px;
+            flex-shrink: 0;
+        }
+
+        .reservation h3 {
+            margin: 0;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .reservation p {
+            margin: 0;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .reservation button {
+            width: 200px;
+            background-color: #CFCECE;
+            border: none;
+            color: #1C3D5A;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .search-form-wrapper {
+            background-color: #F29C38;
+            padding: 20px;
+            border-radius: 8px;
+            display: flexbox justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .dropdown select,
+        .people-counter input,
+        .date-picker input {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .date-picker {
+            position: absolute;
+        }
+
+        .date-range-picker {
+            margin-top: 10px;
+            position: absolute;
+            /* Posiciona el calendario sobre los demás elementos */
+            top: 1000%;
+            /* Alinea el calendario debajo del input */
+            left: 0;
+            z-index: 1000;
+            /* Asegura que el calendario esté por encima de otros elementos */
+            background-color: white;
+            /* Asegura que el fondo del calendario sea blanco */
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            /* Añade una sombra para destacar el calendario */
+            border-radius: 8px;
+            /* Bordes redondeados */
+            padding: 1rem;
+        }
+
+        .child-age-warning {
+            color: #ff0000;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .child-age-selector {
+            margin-top: 10px;
+        }
+
+        .icons img {
+
+            width: 26px;
+            height: 26px;
+            margin-right: 10px;
+        }
+        #selected-rooms {
+    list-style-type: none;
+    padding: 0;
+}
+
+#selected-rooms li {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+</style>
