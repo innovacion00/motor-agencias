@@ -81,7 +81,7 @@
 
   <script>
     import Swal from 'sweetalert2'
-
+    import {tokenglobal} from "../stores/authtoken"
     const sendCodeBtn = document.getElementById('send-code-btn') as HTMLButtonElement;
     const verifyBtn = document.getElementById('verify-btn') as HTMLButtonElement;
     const setPasswordBtn = document.getElementById('set-password-btn') as HTMLButtonElement;
@@ -101,7 +101,8 @@
 
       if (!email) {
         Swal.fire({
-          icon: "error",
+          icon:
+           "error",
           title: "Oops...",
           text: "Porfavor ingresa tu correo electronico",
           showConfirmButton: false,
@@ -118,7 +119,13 @@
         });
 
         if (response.ok) {
-          alert('Código enviado a tu correo electrónico.');
+          Swal.fire({
+          icon: "info",
+          title: "Oops...",
+          text: "Codigo enviado a su correo electronico.",
+          showConfirmButton: false,
+          timer: 3600
+        });
           requestCodeForm.style.display = 'none';
           verifyCodeForm.style.display = 'block';
         } else {
@@ -153,18 +160,30 @@
       }
 
       try {
-        const response = await fetch('https://gehsuitesapps.com/agencias/v1/auth/request-password-change', {
+        const response = await fetch('https://gehsuitesapps.com/agencias/v1/auth/validate-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({email}),
+          body: JSON.stringify({email , otp}),
         });
 
         if (response.ok) {
+          const data = await response.json();
+        const token = data.token;
+          tokenglobal.set(token)
+        
+
           alert('Código verificado correctamente.');
           verifyCodeForm.style.display = 'none';
           setPasswordForm.style.display = 'block';
+          return token 
         } else {
-          alert('El código ingresado es incorrecto.');
+          Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "El codigo ingresado es incorrecto.",
+          showConfirmButton: false,
+          timer: 3600
+        });
         }
       } catch (error) {
         console.error('Error:', error);
@@ -174,37 +193,44 @@
 
     // Guardar nueva contraseña
     setPasswordBtn.addEventListener('click', async () => {
-      const newPassword = newPasswordInput.value.trim();
+
+      const token = tokenglobal.get();
+      const password = newPasswordInput.value.trim();
       const confirmPassword = confirmPasswordInput.value.trim();
 
-      if (!newPassword || !confirmPassword) {
+      if (!password || !confirmPassword) {
         alert('Por favor, completa todos los campos.');
         return;
       }
 
-      if (newPassword !== confirmPassword) {
+      if (password !== confirmPassword) {
         alert('Las contraseñas no coinciden.');
         return;
       }
 
       try {
-        const response = await fetch('https://gehsuitesapps.com/agencias/v1/auth/request-password-change', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({newPassword}),
+        const response = await fetch('https://gehsuitesapps.com/agencias/v1/auth/new-credentials', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json',
+             Authorization: `Bearer ${token}`
+           },
+          body: JSON.stringify({password}),
         });
 
         if (response.ok) {
           alert('Contraseña actualizada correctamente.');
-          window.location.href = '/login'; // Redirige al inicio de sesión
+          window.location.href = '/'; // Redirige al inicio de sesión
         } else {
+            console.error('Hubo un error en la solicitud.');
+            console.error('Código de estado:', response.status);
+            const errorMessage = await response.text();
+            console.error('Respuesta:', errorMessage);
           alert('Error al actualizar la contraseña.');
         }
       } catch (error) {
         console.error('Error:', error);
         alert('Hubo un error al actualizar tu contraseña.');
-      }
-    });
+}    });
   </script>
 </body>
 </html>

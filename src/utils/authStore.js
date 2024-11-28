@@ -12,7 +12,7 @@ export const setAuthToken = (token) => {
     // Si no hay token, redirigir al login
     localStorage.removeItem('authToken'); // Limpiamos el token en localStorage
     authTokenStore.set(null); // Limpiamos el token en la Nano Store
-    window.location.href = 'http://localhost:4321/'; // Redirigimos al login
+    window.location.href = '/'; // Redirigimos al login
   }
 };
 
@@ -20,7 +20,7 @@ export const setAuthToken = (token) => {
 export const getAuthToken = () => {
   const token = authTokenStore.get();
   if (!token) {
-    window.location.href = 'http://localhost:4321'; // Redirigir al login si no hay token
+    window.location.href = '/'; // Redirigir al login si no hay token
   }
   return token;
 };
