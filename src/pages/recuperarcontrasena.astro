@@ -103,7 +103,7 @@
         Swal.fire({
           icon:
            "error",
-          title: "Oops...",
+          title: "Algo salió mal...",
           text: "Porfavor ingresa tu correo electronico",
           showConfirmButton: false,
           timer: 2500
@@ -121,7 +121,7 @@
         if (response.ok) {
           Swal.fire({
           icon: "info",
-          title: "Oops...",
+          title: "Atencion",
           text: "Codigo enviado a su correo electronico.",
           showConfirmButton: false,
           timer: 3600
@@ -131,17 +131,17 @@
         } else {
           Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "El correo electronico no está asociado",
           text: "Error al enviar el código. Por favor, verifica tu correo.",
           showConfirmButton: false,
-          timer: 3200
+          timer: 5000
         });
         }
       } catch (error) {
         console.error('Error:', error);
         Swal.fire({
           icon: "error",
-          title: "Oops...",
+          title: "Algo salió mal...",
           text: "Hubo un error al procesar tu solicitud.",
           showConfirmButton: false,
           timer: 3600
@@ -155,7 +155,13 @@
       const email = emailInput.value.trim();
 
       if (!otp) {
-        alert('Por favor, ingresa el código de verificación.');
+        Swal.fire({
+          icon: "info",
+          title: "Algo salió mal...",
+          text: "Porfavor, ingresa el codigo de verificacion",
+          showConfirmButton: false,
+          timer: 3600
+        });
         return;
       }
 
@@ -172,7 +178,13 @@
           tokenglobal.set(token)
         
 
-          alert('Código verificado correctamente.');
+          Swal.fire({
+          icon: "success",
+          title: "Aprobado",
+          text: "Codigo verificado correctamente",
+          showConfirmButton: false,
+          timer: 3600
+        });
           verifyCodeForm.style.display = 'none';
           setPasswordForm.style.display = 'block';
           return token 
@@ -199,12 +211,24 @@
       const confirmPassword = confirmPasswordInput.value.trim();
 
       if (!password || !confirmPassword) {
-        alert('Por favor, completa todos los campos.');
+        Swal.fire({
+          icon: "error",
+          title: "Algo salió mal...",
+          text: "Porfavor,completa todos los campos",
+          showConfirmButton: false,
+          timer: 3600
+        });
         return;
       }
 
       if (password !== confirmPassword) {
-        alert('Las contraseñas no coinciden.');
+        Swal.fire({
+          icon: "error",
+          title: "Algo salió mal...",
+          text: "Las contraseñas no coinciden.",
+          showConfirmButton: false,
+          timer: 3600
+        });
         return;
       }
 
@@ -218,7 +242,13 @@
         });
 
         if (response.ok) {
-          alert('Contraseña actualizada correctamente.');
+          Swal.fire({
+          icon: "success",
+          title: "Aprobado",
+          text: "Contraseña actualizada correctamente.",
+          showConfirmButton: false,
+          timer: 3600
+        });
           window.location.href = '/'; // Redirige al inicio de sesión
         } else {
             console.error('Hubo un error en la solicitud.');
