@@ -67,9 +67,14 @@ border-radius: 8px;
   }
   
   .confirmDateButton:hover {
-    background-color: #924f23c4; /* Color al pasar el ratón */
+    background-color: #9e5728c4; /* Color al pasar el ratón */
+    transform: scale(1.05);
   }
   
+  .confirmDateButton:active {
+    background-color: #743e1ac4; 
+    transform: scale(1.05);
+  }
   /* Ajuste del dropdown de personas */
   .dropdownToggle {
     width: 240px;
@@ -189,7 +194,7 @@ border-radius: 8px;
 
 /* Estilo para el botón de búsqueda */
 .searchButton {
-  background-color: #26547B; /* Fondo azul */
+  background-color:#173b5a ; /* Fondo azul */
   color: white; /* Texto blanco */
   padding: 10px 20px; /* Espaciado interno */
   border: none; /* Sin bordes */
@@ -201,9 +206,14 @@ border-radius: 8px;
 
 /* Cambio de color al pasar el cursor sobre el botón */
 .searchButton:hover {
-  background-color: #000000; /* Cambia a un tono más oscuro de azul */
+  background-color: #27557e; /* Cambia a un tono más oscuro de azul */
+  transform: scale(1.06);
 }
  
+.searchButton:active {
+  background-color: #112c44; /* Cambia a un tono más oscuro de azul */
+  transform: scale(1.05)
+}
 /* Cambia el color de fondo al seleccionar una fecha */
 .rdr-Day--selected {
   background-color: #000000 !important; /* Cambia el color de fondo */
@@ -252,7 +262,7 @@ border-radius: 8px;
 }
 
 .counter button {
-  background-color: #007bff;
+  background-color: #1C3D5A;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -312,7 +322,7 @@ input:checked + .slider::before {
 
 /* Botones del contador (+/-) */
 .counter button {
-  background-color: #007bff; /* Azul */
+  background-color: #1C3D5A; /* Azul */
   color: #fff;
   border: none;
   padding: 5px 12px;
@@ -352,7 +362,7 @@ input:checked + .slider::before {
 }
 
 .addRoomButton:active {
-  background-color: #1e7e34;
+  background-color: #a35724f8;
 }
 
 /* Botón de eliminar habitación */

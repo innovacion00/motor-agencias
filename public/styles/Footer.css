@@ -68,3 +68,19 @@
     background-color: white;
     margin: 0 20px; /* Espacio alrededor de la línea */
 }
+
+.video-button {
+    background-color: #FFD700; /* Color dorado para resaltar */
+    color: #1C3D5A; /* Color del texto */
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 14px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.video-button:hover {
+    background-color: #FFC107; /* Cambia ligeramente el color al pasar el mouse */
+}
