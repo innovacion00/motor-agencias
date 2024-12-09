@@ -4,7 +4,6 @@ import { atom } from 'nanostores';
 export const searchStore = atom({
   adults: 1,
   children: 0,
-  childrenToggle: false,
   children0to4: 0,
   children5to17: 0,
   rooms: 1,
@@ -17,6 +16,7 @@ export const searchStore = atom({
 // Función para actualizar la store global de búsqueda
 export const updateSearchStore = (newValues) => {
   // Validamos que newValues sea un objeto válido
+  
   if (typeof newValues === 'object' && newValues !== null) {
     // Actualizamos la store con los nuevos valores
     searchStore.set({ 

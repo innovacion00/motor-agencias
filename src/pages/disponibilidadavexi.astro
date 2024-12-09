@@ -1,5 +1,11 @@
 ---
 import { fetchWithAuth } from '../utils/fetchWithAuth';
+import { getdisponibility,disponibilidad} from "../stores/disponibilidad";
+
+await getdisponibility()
+
+
+
 
 async function fetchProtectedData() {
 const data = await fetchWithAuth("URL_PROTEGIDA");
@@ -137,42 +143,50 @@ import DropdownSearch from "../components/DropdownSearch";
                     Modificar búsqueda
                 </button>
             </div>
-            <div class="room-section">
-                <div class="room-card">
-                    <img alt="Standard double room with a double bed, TV, and modern decor" height="200"
-                        src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1"
-                        width="250" />
-                    <div class="room-details">
-                        <h3>
-                            Doble Estándar
-                            <a href="#">
-                                Ver habitación
-                            </a>
-                        </h3>
-                        <p>
-                            <i class="fas fa-check-circle">
-                            </i>
-                            Pago de inmediato
-                        </p>
-                        <p>
-                            <i class="fas fa-bed">
-                            </i>
-                            1 cama doble
-                        </p>
-                        <p class="price">
-                            #Valor
-                        </p>
 
-                        <button class="select-room" data-room="Doble Estándar" data-price="#Valor">
-                            Seleccionar
-                        </button>
-                    </div>
+            <div class="room-section">
+                <div class="cards">
+
+
+                    {
+                    disponibilidad.get().map((tipo)=>(<div class="room-card">
+                        <img alt="Standard double room with a double bed, TV, and modern decor" height="200"
+                            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1"
+                            width="250" />
+                        <div class="room-details">
+                            <h3>
+                                Doble Estándar
+                                <a href="#">
+                                    Ver habitación
+                                </a>
+                            </h3>
+                            <p>
+                                <i class="fas fa-check-circle">
+                                </i>
+                                Pago de inmediato
+                            </p>
+                            <p>
+                                <i class="fas fa-bed">
+                                </i>
+                                1 cama doble
+                            </p>
+                            <p class="price">
+                                {tipo.availability[0].available_rooms.map((roomData)=>{
+                                return roomData.products.map((product)=>(<p>{product.baseRate.amountAfterTax}</p>))
+                                })}
+                            </p>
+
+                            <button class="select-room" data-room="Doble Estándar" data-price="#Valor">
+                                Seleccionar
+                            </button>
+                        </div>
+                    </div>))}
                 </div>
                 <div class="reservation">
                     <h3>Reserva</h3>
                     <p>Hotel Avexi Suites</p>
-                   <!-- <p>#fechacheckin <i class="fas fa-arrow-right"></i> #fechacheckout (#numeronoches)</p>-->
-                    
+                    <!-- <p>#fechacheckin <i class="fas fa-arrow-right"></i> #fechacheckout (#numeronoches)</p>-->
+
                     <ul id="selected-rooms">
                         <!-- Aquí se añadirán las habitaciones seleccionadas -->
                     </ul>
@@ -194,29 +208,30 @@ import DropdownSearch from "../components/DropdownSearch";
             checkAuth(); // Llamamos a esta función al cargar la página
 
             document.addEventListener('DOMContentLoaded', () => {
-        const selectButtons = document.querySelectorAll('.select-room');
-        const selectedRoomsList = document.getElementById('selected-rooms');
+                const selectButtons = document.querySelectorAll('.select-room');
+                const selectedRoomsList = document.getElementById('selected-rooms');
 
-        selectButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Obtener información de la habitación
-                const roomName = button.getAttribute('data-room');
-                const roomPrice = button.getAttribute('data-price');
-                const roomimg = button.getAttribute('data-img')
+                selectButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // Obtener información de la habitación
+                        const roomName = button.getAttribute('data-room');
+                        const roomPrice = button.getAttribute('data-price');
+                        const roomimg = button.getAttribute('data-img')
 
-                // Crear un nuevo elemento en la lista
-                const roomItem = document.createElement('li');
-                roomItem.textContent = `${roomName} - ${roomPrice} `  ;
-                
-                // Evitar duplicados
-                if (![...selectedRoomsList.children].some(item => item.textContent === roomItem.textContent)) {
-                    selectedRoomsList.appendChild(roomItem);
-                } else {
-                    alert("Esta habitación ya fue seleccionada.");
-                }
+                        // Crear un nuevo elemento en la lista
+                        const roomItem = document.createElement('li');
+                        roomItem.textContent = `${roomName} - ${roomPrice} `;
+
+                        // Evitar duplicados
+                        if (![...selectedRoomsList.children].some(item => item.textContent ===
+                                roomItem.textContent)) {
+                            selectedRoomsList.appendChild(roomItem);
+                        } else {
+                            alert("Esta habitación ya fue seleccionada.");
+                        }
+                    });
+                });
             });
-        });
-    });
         </script>
     </body>
 
@@ -375,6 +390,13 @@ import DropdownSearch from "../components/DropdownSearch";
 
         .search-criteria button:hover {
             background-color: #c8cdd370;
+        }
+
+        .cards {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
         }
 
         .room-section {
@@ -546,13 +568,14 @@ import DropdownSearch from "../components/DropdownSearch";
             height: 26px;
             margin-right: 10px;
         }
-        #selected-rooms {
-    list-style-type: none;
-    padding: 0;
-}
 
-#selected-rooms li {
-    margin-bottom: 5px;
-    font-size: 14px;
-}
+        #selected-rooms {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #selected-rooms li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
     </style>

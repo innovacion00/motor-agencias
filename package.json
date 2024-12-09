@@ -15,7 +15,7 @@
     "@emotion/styled": "^11.13.5",
     "@mui/material": "^6.1.9",
     "@mui/styled-engine-sc": "^6.1.1",
-    "@nanostores/react": "^0.8.0",
+    "@nanostores/react": "^0.8.2",
     "@vitejs/plugin-react": "^4.3.1",
     "astro": "^4.16.7",
     "bootstrap": "^5.3.3",
