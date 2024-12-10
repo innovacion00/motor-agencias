@@ -112,8 +112,8 @@ const BusquedaCartagena = () => {
                 <div className={styles.price}>
                   Desde: $$$ | Incluye impuestos
                 </div>
-                <a href={`/hoteles/${tipo.hotel.id}`}>  
-                  <button>Ver disponibilidad</button>
+                <a href={`/hoteles/${tipo.hotel.id}`}>   
+                  <button>Ver disponibilidad</button> 
                 </a>
               </div>
             </div>

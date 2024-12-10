@@ -2,7 +2,6 @@
 const logoPath = '/path/to/ghsuites-logo.png'; // Cambia esta ruta al logo que has mencionado
 const userIconPath = '/path/to/user-icon.png'; // Cambia esta ruta al icono de usuario
 const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ruta al icono de notificación
-
 ---
 
 <style>
@@ -10,7 +9,7 @@ const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ru
 </style>
 
 <header class="header">
-    <div class="logo"><a href="/Bookingconnect">
+    <div class="logo"><a href="/">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/gehlogo.png" alt="GH Suites Logo" />
         </a>
     </div>
@@ -46,7 +45,7 @@ document.getElementById('logout-btn').addEventListener('click', function () {
   localStorage.removeItem('authToken'); // O usa sessionStorage si lo guardaste allí
   
   // Redirigir al usuario a la página de login
-  window.location.href = '/';
+  window.location.href = '/login';
 });
 
 // Opción para cerrar el menú si se hace clic fuera
