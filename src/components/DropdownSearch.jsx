@@ -114,7 +114,8 @@ const DropdownSearch = () => {
 
     const nochesyedades = {
       layout,
-      nights
+      nights,
+      dateRange
     }
     
   localStorage.setItem("nochesyedades",JSON.stringify(nochesyedades))

@@ -70,6 +70,8 @@
     .hotel_details .description a {
       color: #1C3D5A;
       text-decoration: none;
+      align-self: flex-end;
+    
     }
 
     .hotel_details .description a:hover {
@@ -182,6 +184,14 @@
     .room_card img {
       width: 250px;
       border-radius: 8px;
+    }
+    .room_card a {
+      text-decoration: none;
+      
+    }
+    .room_card a:hover {
+      text-decoration: underline;
+      
     }
 
     .room_details {

@@ -157,8 +157,20 @@ button {
     text-align: center;
     width: 159px;
     font-size: 14px;
-    align-self: flex-start;
+    transition: background-color 0.4s ease;
     /* Esto alinea el botón a la derecha */
+}
+
+button:hover{
+    background-color:#173b5a ;
+    transform: scale(1.06);
+    
+}
+
+button:active{
+    background-color: #112c44;
+    transform: scale(1.06);
+    
 }
 
 
