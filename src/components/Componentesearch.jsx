@@ -157,9 +157,7 @@ const findMinBaseRate = (data) => {
 const cantAdultos = (data) =>{
   
   const adult = data.reduce(
-    (acumulador, tAdults) => acumulador + tAdults.adults,
-    0
-  ) || 0
+    (acumulador, tAdults) => acumulador + tAdults.adults,0 ) || 0
   
   localStorage.setItem("cantAdultos", adult) //cantidad de adultos
   return adult;

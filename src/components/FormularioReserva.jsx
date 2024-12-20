@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
@@ -25,11 +25,14 @@ const FormularioReserva = () => {
 
   const checkin = format(fechasreserva?.dateRange?.startDate  , "YYYY-MM-DD", "es")
   const checkout = format(fechasreserva?.dateRange?.endDate  , "YYYY-MM-DD", "es")
-  
   const edadesninos = fechasreserva?.layout.map((dato)=>(
     dato.children_ages.join(",")
   ))
-  console.log(edadesninos)
+  const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
+  const tasaIVA = 0.19; // Tasa del IVA
+  const valorIVA = totalPrecio * tasaIVA;  //Calcular valor del IVA
+  const totalConIVA = totalPrecio + valorIVA;  //Calcular valor total + IVA
+  
 
   //  console.log(checkin);
   const {
@@ -41,6 +44,8 @@ const FormularioReserva = () => {
     celular,
   } = formData;
 
+
+  
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({
@@ -71,7 +76,7 @@ const FormularioReserva = () => {
 
     const enviardatos = async () => {
       const informacionD = {
-        total: 7000000,
+        total: totalConIVA,
         reservaInfo: {
           agency: {
             is_agency: true,
@@ -83,15 +88,15 @@ const FormularioReserva = () => {
             checkin: checkin ,
             checkout: checkout,
             children: cantninos,
-            children_ages: "", //
+            children_ages: edadesninos, //
             city: reserva[0].ciudad,
             country: "COL",
             currency: "COP",
-            email: "rous@gmail.com",
+            email: "rous@gmail.com", //
             firstName: "El Rous",
             lastName: "Overestaing",
             nights: reserva[0].nights,
-            notes: `Reserva de ${reserva[0].nights}`,
+            notes: `Reserva de ${reserva[0].nights} noches `,
             rooms: reserva.length,
             roomsData: reserva.map((dato)=>({
               
@@ -211,9 +216,9 @@ const FormularioReserva = () => {
       </div>
 
       <h3>Datos de la reserva</h3>
+      
       {reserva?.map((data) => (
-        <div
-          style={{
+        <div style={{
             border: "1px solid #ddd",
             borderRadius: "5px",
             padding: "15px",
@@ -243,6 +248,19 @@ const FormularioReserva = () => {
           </p>
         </div>
       ))}
+
+      <div style={{
+            border: "1px solid #ddd",
+            borderRadius: "5px",
+            padding: "15px",
+            marginBottom: "20px",
+          }}>
+            <h3>Valor total</h3>
+      <p>Precio total: <strong>{formatCurrency(totalPrecio)}</strong></p>
+      <p>Valor IVA:  <strong> {formatCurrency((valorIVA))} </strong></p>
+      <p>Precio total con IVA:  <strong> {formatCurrency((totalConIVA))} </strong></p>
+      </div>
+
       <h3>Información de los huéspedes</h3>
 
       <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
@@ -254,7 +272,10 @@ const FormularioReserva = () => {
             marginBottom: "20px",
           }}
         >
-          <legend>Habitación 1: Doble estándar</legend>
+          
+          <legend>Informacion del titular</legend>
+
+          
 
           <div>
             <label htmlFor="tipoDocumento">
@@ -381,6 +402,20 @@ const FormularioReserva = () => {
           </div>
         </fieldset>
 
+        <button
+          type="submit"
+          style={{
+            backgroundColor: "#007BFF",
+            color: "white",
+            padding: "10px 20px ",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Confirmar Reserva
+        </button>
+        
         <button
           type="submit"
           style={{
