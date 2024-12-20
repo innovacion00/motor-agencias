@@ -10,6 +10,18 @@ const hotelesData = {
     description:
       "Situado en el centro turístico y comercial de la ciudad de Cartagena de indias, el Hotel Marina Suites es una hermosa propiedad con 42 habitaciones diseñadas para el descanso y relax, con las comodidades necesarias para el disfrute de tus vacaciones en pareja, amigos, familia o para tus actividades de negocios o eventos en la ciudad.",
     image: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
+    habitaciones: [
+      {
+        nombre: "Doble Estándar",
+        imagen:
+          "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687850.jpg?k=9778545d180eb45a8c1efc9be1dcc6096307cbc29f54c3d085a91c5d5ac25509&o=&hp=1",
+      },
+      {
+        nombre: "Cuadruple Estándar",
+        imagen:
+          "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687880.jpg?k=372da40f421cb18e3158e3cee258a55df68da3916f5ca7b345f4e62b84cd943d&o=&hp=1",
+      },
+    ],
   },
   6: {
     name: "Hotel Avexi Suites",
@@ -99,52 +111,271 @@ const hotelesData = {
   },
 };
 
-const hotelIcons ={
-  9:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  1:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  6:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  7:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png" ],
-  4:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  5:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  3:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  10:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"],
-  8:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",],
-  2:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",],
-  100:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",],
-  101:["https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png","https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",]
-}
+const hotelIcons = {
+  9: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  1: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  6: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  7: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  4: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  5: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  3: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  10: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  8: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+  ],
+  2: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+  ],
+  100: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  101: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+};
+
+const idRooms = {
+  9: {
+    83528:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687909.jpg?k=588a0945ee3388cd5a731509f2159507ddc6909d57cf82705c8459bda40af93e&o=&hp=1",
+    83527:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687926.jpg?k=145b19423036fee51796d9fc3cf6faeb5d6781a48d68172524d4860e74cce1e7&o=&hp=1",
+  },
+  1: {
+    83534:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244639436.jpg?k=6053b3890a7824a3f1a2e30cf862520be80de97644162b30a3e0097d920efafd&o=&hp=1",
+    83533:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/100688038.jpg?k=54490e2560d63e691c5d1cf6b009af33d7931f19ef58f69cfbadcc1d7d7b9e2e&o=&hp=1",
+  },
+  6: {
+    83532:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1", //
+    83529:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543715.jpg?k=7a47cd6af5f8971556ec91581b60c011e0544430470ef73311dd1663eb7dae96&o=&hp=1", //
+  },
+  4: {
+    83422:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243606366.jpg?k=56a1826f8a1cc73a276daa1fca9939e8ded4bd93d437ce8b5cdf108f5182ee9d&o=&hp=1", //Doble vista al mar
+    83421:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822181.jpg?k=4fe61a142fd7b7db782f34e6ea7840c69a1410144320158a8735ff12fc130149&o=&hp=1", // Cuadruple vista a la ciudad
+    83420:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243604358.jpg?k=204560397c2a8805509a69aa6b658e302d5ac75e6bf0796006feac48e1cb1287&o=&hp=1", //Doble vista a la ciudad
+    83419:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822212.jpg?k=a952a8491f9d7ef59dde500bb8f4a3848ff65bf59947885a8c865ab120cb99c8&o=&hp=1", //Cuadruple vista al mar
+  },
+  5: {
+    125839:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103679.jpg?k=3f562015f90b32aef1908717d3d9c829ca84205b75c2dea10f23a24086cb6c33&o=", //quintuple
+    125838:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103653.jpg?k=5d5ac95d4cfffcbb34279c6bfceff8f9e83d7ff91667ef35e8b18a2e66b3b810&o=&hp=1", //Cuadruple
+    125837:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103563.jpg?k=c576cf614094adb97aac6fb5efaf9824d0e82cc4475335da439307f9b988c998&o=&hp=1", //Triple
+    125836:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103716.jpg?k=72751312367e83c523a272fa6b3a003b39e4fddec303f9b4ccf90d4fe617f0e6&o=&hp=1", //Doble
+  },
+  7: {
+    90130:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270762.jpg?k=cfe9e10545681c6490650e349d45ab6c7dea125d24801658e92055501b28e1e1&o=&hp=1", //Doble
+    90132:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/278271044.jpg?k=a355c5879bfeb9e27598302ed92b706d247b75751f5b6913e3646dba034a4c89&o=&hp=1", //Triple
+    90131:
+      "https://bocagrande-cartagena-de-indias-hotel.hotelmix.es/data/Photos/1920x1080/7442/744293/744293593/Hotel-Bocagrande-By-Geh-Suites-Cartagena-Exterior.JPEG", //Cuadruple
+    90133:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270629.webp?k=5ff367659e2bf52e7d12d2be46a8097d2f841da5412af77427e4b2871298668e&o=", //Quintuple
+  },
+  3: {
+    109452:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334226.webp?k=a004d558a7caac5707bdc849283abfeb2ecd6d58cf26240134d7f05eb8dec747&o=", //Doble estandar
+    109509:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334155.jpg?k=ba1ec414837795ab1103b686854e44de7bed29be732ebe15e4939f48caed974b&o=&hp=1", //Familiar
+    109508:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334230.webp?k=d17106ce148a62065276e27a754e9dc18114ffcb5216053d27fbd729bb3de33d&o=", //Ejecutiva twin
+    109507:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334103.webp?k=2ab38772d7efc02a82af9ecdbb30fe80e426884ba1921673816001a052fcef5f&o=", //Suite business
+    116068:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334236.webp?k=45c0d1d467b2948766f9498bd96ad31c23d6d07bd4bc56c868c1c350867191d2&o=", //Familiar 3pax
+    109505:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334105.webp?k=a47582ec901b5eb62ceb7f54c35513f4be2dcb643c1afb614de836d9d4e13d58&o=", //Superior con terraza
+  },
+  10: {
+    129037:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544106.webp?k=3e08d57aed1444ddddc842f3f448788f730887c0ef56c4457b118413a8269ec1&o=", //Suite matrimonial
+    129036:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471543564.webp?k=2ea2ba03ec7ff46492ce5998c37f4fd3b6e20b6ae787057ed6b947374833516c&o=", //Doble junior twin
+    129034:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471545508.webp?k=e3a2a7fa0b4b33817d0cb70798664e99632dfbafa1eb14082e8b175e36dc399d&o=", //Triple estandar altillo con escaleras
+    129033:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544109.webp?k=cfe9b729c64f0c0daf9a4e12b2e73a37969464218d18c8aefe75ac8372a69184&o=", //Doble estandar twin
+    128299:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/16238061.webp?k=2577bcb3f4193b4541dc7622f2c8fa6575719bc10d81b33a0346d4fba1be476e&o=", //Doble Superior
+    129035:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544107.webp?k=becf339774cf1f30d6cf0b0deaf4968c14e1f7ef81a860a96ea54ebf2f66fd5d&o=", // Doble Junior Suite
+  },
+  8: {
+    125833:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439311.webp?k=54a110e3e17479e02e7a68081ef190742c897c7880a2d1ac5adfdb7c651395fc&o=", //Cuadruple estandar
+    121966:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439332.webp?k=be9946ab62f0398843255b2a33a1145d955860e341f24ab15e3ce246d3ebbc40&o=", //Doble estandar
+    125832:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439311.webp?k=54a110e3e17479e02e7a68081ef190742c897c7880a2d1ac5adfdb7c651395fc&o=", //Triple estandar
+  },
+  2: {
+    104423:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/277587915.webp?k=be35499f5579b4a7e3023c6f36ea998be04c2e9c436744d6668a29b4ac779e24&o=", //
+    104422:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804078.webp?k=c39084688f6346321275d1563e107f25fb3ff606b136083830a9f1fcd869d0fc&o=",
+    104145:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804089.webp?k=e98318f7fe089ef70520a3b984f5c08bcf5507fb0d92a1ab56c243473912d928&o=",
+  },
+  100: {
+    145577:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Familiar-axis.jpeg", //quintuple
+    145576:
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/109098049.jpg?k=d28963d3d5f71aa4e6fcc2e3864341d453c8d5bd2aeb8875caaf92d9e9b6c63a&o=", //cuadurple
+    145573:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-axis2.jpeg", //triple
+    145571:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Doble-axis.jpeg", //doble
+  },
+
+  /*Pendiente*/
+  101: {},
+};
+// UseState
 
 export const Cid = ({ id }) => {
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
-  const[rangosfechas,setfechas] = useState({})
+  const [rangosfechas, setfechas] = useState({});
+  const [ninos, setninos] = useState(0);
+  const [adultos, setadultos] = useState(0);
+  const [datohabitacion, setDatohabitacion] = useState([]);
+  console.log("Datos de habitaciones", datohabitacion);
+
+  //funcion para formatear el los valores de dinero
+
+  const formatCurrency = (value) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return "Sin Disponibilidad";
+    }
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+    }).format(value);
+  };
+
+  //Enviar datos de reserva
+  const enviardatos = () => {
+    localStorage.setItem("datosreserva", JSON.stringify(datohabitacion));
+  };
+
+  // UseEffect
+
   useEffect(() => {
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
     // console.log(disponibilidad)
     const resultado = disponibilidad.find((vaina) => vaina.hotel.id == id);
-
+    const adultos = Number(localStorage.getItem("cantNinos"));
+    const ninos = Number(localStorage.getItem("cantAdultos"));
+    setninos(ninos);
+    setadultos(adultos);
     setfechas(rangosdefechas);
-    // console.log("Habitaciones encontradas:", resultado);
     setHabitaciones(resultado);
   }, [id]);
-  console.log("este", habitaciones);
+  //console.log("Disponibilidad total", habitaciones);
 
-    const checkin = (new Date(rangosfechas?.dateRange?.startDate)).toLocaleDateString()
-    const checkout = (new Date(rangosfechas?.dateRange?.endDate)).toLocaleDateString()
-    
-    const renderIcons = () => {
-      const icons = hotelIcons[id] || []; // Obtiene los íconos del hotel actual o un arreglo vacío
-      return icons.map((iconUrl, index) => (
-        <img
-          key={index}
-          src={iconUrl}
-          alt={`Ícono ${index + 1}`}
-          className={styles.icon}
-        />
-      ));
-    };
-    // console.log(checkout) 
+  const checkin = new Date(
+    rangosfechas?.dateRange?.startDate
+  ).toLocaleDateString();
+  const checkout = new Date(
+    rangosfechas?.dateRange?.endDate
+  ).toLocaleDateString();
+  // Expresión regular para validar que el `roomName` contenga "Booking connect Mayorista"
+  // const regex = /\[.*?Booking connect Mayorista.*?\]/;
+
+  const renderIcons = () => {
+    const icons = hotelIcons[id] || []; // Obtiene los íconos del hotel actual o un arreglo vacío
+    return icons.map((iconUrl, index) => (
+      <img
+        key={index}
+        src={iconUrl}
+        alt={`Ícono ${index + 1}`}
+        className={styles.icon}
+      />
+    ));
+  };
+
   return (
     <>
       <div className={styles.search_form_wrapper}>
@@ -180,9 +411,7 @@ export const Cid = ({ id }) => {
                 {hotel.description}
                 <a href="/infoavexi">Leer más</a>
               </p>
-              <div className={styles.icons}>
-              {renderIcons()}
-              </div>
+              <div className={styles.icons}>{renderIcons()}</div>
             </div>
             <div className={styles.more_info}>
               <a href="/infoavexi">
@@ -206,14 +435,16 @@ export const Cid = ({ id }) => {
             <strong>{rangosfechas.nights}</strong>
           </div>
           <div>
-            <p>Húspedes</p>
-            <strong>1</strong>
+            <p>Húespedes</p>
+            <strong>{ninos + adultos}</strong>
           </div>
           <div>
-            <p>Habitaciones</p>
-            <strong>{habitaciones?.availability?.map((tipo)=>
-            tipo.available_rooms?.length
-            )}</strong>
+            <p>Habitaciones disponibles</p>
+            <strong>
+              {habitaciones?.availability?.map(
+                (tipo) => tipo.available_rooms?.length
+              )}
+            </strong>
           </div>
           <button>Modificar búsqueda</button>
         </div>
@@ -226,33 +457,70 @@ export const Cid = ({ id }) => {
                   <img
                     alt="Standard double room with a double bed, TV, and modern decor"
                     height="200"
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1"
+                    src={idRooms[habitaciones.hotel.id][dato.roomId]}
                     width="250"
                   />
                   <div className={styles.room_details}>
-                    <h3>
-                      {dato.roomName}
-                     
-                    </h3>
+                    <h3>{dato.roomName}</h3>
                     <a href="">Ver habitación</a>
                     <p>
                       <i className="fas fa-check-circle"></i>
-                      Pago de inmediato
+                      Para pagos antes del check-in
                     </p>
                     <p>
                       <i className="fas fa-bed"></i> {dato.beds} cama doble
                     </p>
-                    {/* <p className="price">
-                 {dato.availability[0]?.available_rooms?.map((roomData)=>{
-                return roomData?.products?.map((product)=>(<p>{product?.baseRate?.amountAfterTax}</p>))
-                })} 
-              </p> */}
-                  <br />  
-                    
+                    <p className="price"></p>
+                    <p className="price">
+                      {dato.products?.map((product, idx) => {
+                        const regex = /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
+                        if (regex.test(product.roomName)) {
+                          return (
+                            <span key={idx}>
+                              {formatCurrency(
+                                product?.baseRate?.amountBeforeTax ||
+                                  "Sin precio disponible"
+                              )}
+                              <span> COP</span>
+                            </span>
+                          );
+                        }
+                        return null; // No renderiza nada si no cumple la condición
+                      })}
+                    </p>
+                    <br />
+
                     <button
                       className={styles.select_room}
                       data-room="Doble Estándar"
                       data-price="#Valor"
+                      onClick={() =>
+                        setDatohabitacion((prevState) => [
+                          ...prevState,
+                          {
+                            roomId: dato.roomId,
+                            checkin: checkin, // O el valor correcto del check-in
+                            checkout: checkout, // O el valor correcto del check-out
+                            nights: rangosfechas.nights, // Calcula las noches
+                            imgH: idRooms[habitaciones.hotel.id][dato.roomId],
+                            huespedes: adultos + ninos, // Número total de huéspedes
+                            precio:
+                              dato.products?.find((product) =>
+                                /\[Booking connect Mayorista\]/i.test(
+                                  product.roomName
+                                )
+                              )?.baseRate?.amountBeforeTax ||
+                              "Sin precio disponible",
+                            NombreH: dato.roomName,
+                            beds: dato.beds,
+                            hotelid: habitaciones?.hotel?.roomcloud_id,
+                            ciudad: habitaciones?.hotel?.city,
+                            rateId: dato.products?.map(
+                              (product) => product.rateId
+                            ),
+                          },
+                        ])
+                      }
                     >
                       Seleccionar
                     </button>
@@ -263,19 +531,35 @@ export const Cid = ({ id }) => {
           </div>
           <div className={styles.reservation}>
             <h3>Reserva</h3>
-            <p>Hotel Avexi Suites</p>
+
+            <br />
+            <hr />
+            <br />
+            <p>{habitaciones?.hotel?.name}</p>
             <p>
-              #fechacheckin <i className={"fas fa-arrow-right"}></i>{" "}
-              #fechacheckout (#numeronoches)
+              {checkin} <i className={"fas fa-arrow-right"}></i> {checkout} (
+              {rangosfechas.nights} noches )
             </p>
-            <ul id="selected-rooms">
-              Aquí se añadirán las habitaciones seleccionadas
-            </ul>
-            <p>
-              Selecciona las habitaciones de la lista al costado para reservar
-            </p>
+            <br />
+            <hr />
+
+            {datohabitacion.map((dato, index) => (
+              <ul id="selected-rooms" key={index}>
+                <p>{dato.NombreH}</p>
+                <p>
+                  {checkin} - {checkout}
+                </p>
+                <p>
+                  {rangosfechas.nights} noches, {ninos + adultos} huespedes
+                </p>
+
+                <h2>{formatCurrency(dato.precio)} </h2>
+                <hr />
+              </ul>
+            ))}
+
             <a href="/reservas">
-              <button>Reservar ahora</button>
+              <button onClick={enviardatos}>Reservar ahora</button>
             </a>
           </div>
         </div>

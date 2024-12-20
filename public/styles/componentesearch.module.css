@@ -85,6 +85,7 @@ body {
     font-size: 14px;
     text-align: left;
     text-decoration: underline;
+    
 }
 
 .hotel_info a:hover {
@@ -125,6 +126,7 @@ body {
 }
 
 .hotel_info .specs {
+    font-weight: bold;
     font-size: 16px;
 }
 

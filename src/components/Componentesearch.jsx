@@ -5,9 +5,11 @@ import styles from "../../public/styles/componentesearch.module.css";
 import DropdownSearch from "./DropdownSearch";
 import { nightsStore } from "../stores/disponibilidad";
 
+//UseState
 const BusquedaCartagena = () => {
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
   const [nochesyedades1, setnochesyedades] = useState({});
+  
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
 
   //Objeto de imagenes  para las fachadas
@@ -27,7 +29,6 @@ const BusquedaCartagena = () => {
   };
 
   //Objeto con los arreglos de los iconos
-
   const hotelIcons = {
     9: [
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -121,63 +122,66 @@ const BusquedaCartagena = () => {
     ],
   };
 
-  function getMinAmountAfterTaxPerRoom(data) {
-    if (!data || !data.availability || !Array.isArray(data.availability)) {
-      console.error("La estructura de datos no es válida");
-      return [];
-    }
+
   
-    const rooms = data.availability[0]?.available_rooms;
-    if (!rooms || !Array.isArray(rooms)) {
-      console.error("No hay habitaciones disponibles");
-      return [];
-    }
-  
-    return rooms.map((room) => {
-      const products = room?.products || [];
-      const minAmountAfterTax = Math.min(
-        ...products.map((product) => product?.baseRate?.amountAfterTax || Infinity)
-      );
-  
-      return {
-        roomId: room.roomId,
-        minAmountAfterTax: minAmountAfterTax === Infinity ? null : minAmountAfterTax,
-      };
+
+// Función para formatear valores como moneda colombiana
+const formatToCurrency = (amount) => {
+  if (typeof amount !== "number") return "N/A";
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0,
+  }).format(amount);
+};
+
+// Función existente modificada
+const findMinBaseRate = (data) => {
+  let minAmount = Infinity;
+
+  data.forEach((entry) => {
+    entry.available_rooms.forEach((room) => {
+      room.products.forEach((product) => {
+        const amount = product.baseRate.amountBeforeTax; // Antes de impuestos
+        if (amount < minAmount) {
+          minAmount = amount;
+        }
+      });
     });
-  }
-  const minRates = getMinAmountAfterTaxPerRoom(hotelesDisponibles);
+  });
 
-  // Asociar `minAmountAfterTax` con `roomId` para rápido acceso
-  const minRatesMap = Object.fromEntries(
-    minRates.map((rate) => [rate.roomId, rate.minAmountAfterTax])
-  );
+  return minAmount === Infinity ? "*Sin Disponibilidad*" : formatToCurrency(minAmount); // Formatear como moneda colombiana
+};
 
+//Funcion para almacenar la cantidad de adultos
+const cantAdultos = (data) =>{
+  
+  const adult = data.reduce(
+    (acumulador, tAdults) => acumulador + tAdults.adults,
+    0
+  ) || 0
+  
+  localStorage.setItem("cantAdultos", adult) //cantidad de adultos
+  return adult;
+}
 
-  // Extraemos la disponibilidad
-  // const extractAmounts = (data) => {
-  //   const amounts = [];
-
-  //   data[0]?.availability?.forEach((item) => {
-  //     item.available_rooms.forEach((room) => {
-  //       room.products.forEach((product) => {
-  //         // Tomamos los amountAfterTax dentro de baseRate
-  //         const amountAfterTax = product.baseRate?.amountAfterTax || 0;
-
-  //         // Agregamos el amountAfterTax y la información del producto.
-  //         amounts.push({
-  //           roomId: product.roomId,
-  //           roomName: product.roomName,
-  //           amountAfterTax,
-  //         });
-  //       });
-  //     });
-  //   });
-
-  //   return amounts;
-
-  // };
-
-  // const amounts = extractAmounts(hotelesDisponibles);
+//Funcion para almacenar la cantidad de Niños
+const cantNinos = (data) =>{
+const ninos =  data.reduce(
+    (acumulador, tChildren) => {
+      // Validar si children_ages existe y no está vacío
+      if (tChildren.children_ages) {
+        return acumulador + tChildren.children_ages.split(",").length;
+      }
+      return acumulador ; // Si no existe, no suma nada
+    },
+    0
+  ) || 0 
+  
+  localStorage.setItem("cantNinos", ninos  ) //cantidad de niños 
+  
+  return ninos;
+}
 
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
@@ -250,16 +254,20 @@ const BusquedaCartagena = () => {
                 <div className={styles.specs}>
                   {" "}
                   {nochesyedades1.nights} Noches{" "}
-                  {tipo.availability.reduce(
-                    (acumulador, tAdults) => acumulador + tAdults.adults,
-                    0
-                  ) || 0}{" "}
-                  Adultos {tipo.children_ages || 0} Niños
+                  {cantAdultos(tipo.availability)}{" "}
+                  Adultos {cantNinos(tipo.availability) || 0 } Niños
                 </div>
                 <div className={styles.price}>
-                  Desde:{" "}
-                  {minRatesMap[room.roomId]}{" "}
-                  | Incluye impuestos
+                  Desde:{" "} 
+                  
+                  {
+                    findMinBaseRate(tipo.availability)  !== Infinity ? findMinBaseRate(tipo.availability): "Sin Disponibilidad"
+                  } 
+                  
+                    
+                    
+                                   {" "}
+                  | Incluye desayuno y seguro
                 </div>
                 <a href={`/hoteles/${tipo.hotel.id}`}>
                   <button>Ver disponibilidad</button>

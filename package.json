@@ -13,6 +13,7 @@
     "@astrojs/react": "^3.6.3",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@formkit/tempo": "^0.1.2",
     "@mui/material": "^6.1.9",
     "@mui/styled-engine-sc": "^6.1.1",
     "@nanostores/react": "^0.8.2",

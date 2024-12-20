@@ -10,22 +10,23 @@ export const disponibilidad = atom([]);
 export const nightsStore = atom(0);
 
 export const getdisponibility = async (objetohotel) => {
-const objetoprueba = JSON.stringify({
-    checkingDate: objetohotel.checkin,
-    ciudad: objetohotel.city,
-    nights: objetohotel.nights,
-    layout: objetohotel.layout,
-})    
-console.log(objetoprueba)
-    
-try {
+    const objetoprueba = JSON.stringify({
+        checkingDate: objetohotel.checkin,
+        ciudad: objetohotel.city,
+        nights: objetohotel.nights,
+        layout: objetohotel.layout,
+    })
+    console.log(objetoprueba)
+
+    try {
         const url =
             "http://206.189.199.124:3000/agencias/v1/reservas/disponibilidad/671169878217aafa29ec2388";
 
         const response = await fetch(url, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json", },
+                "Content-Type": "application/json",
+            },
             body: objetoprueba,
         });
         console.log(response)
@@ -35,7 +36,7 @@ try {
             // Guardar los datos en la store
             disponibilidad.set(data);
 
-            localStorage.setItem("data",JSON.stringify(data))
+            localStorage.setItem("data", JSON.stringify(data))
 
 
 
