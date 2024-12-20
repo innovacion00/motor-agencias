@@ -8,7 +8,8 @@ export const disponibilidad = atom([]);
 
 // Store para almacenar las noches
 export const nightsStore = atom(0);
-
+const URL = 'https://gehsuitesapps.com/'
+// const URL = 'https://gehsuitesapps.com/agencias/v1/reservas/671fbd6125d14fb460f617c2'
 export const getdisponibility = async (objetohotel) => {
     const objetoprueba = JSON.stringify({
         checkingDate: objetohotel.checkin,
@@ -20,7 +21,7 @@ export const getdisponibility = async (objetohotel) => {
 
     try {
         const url =
-            "http://206.189.199.124:3000/agencias/v1/reservas/disponibilidad/671169878217aafa29ec2388";
+            `${URL}agencias/v1/reservas/disponibilidad/671169878217aafa29ec2388`;
 
         const response = await fetch(url, {
             method: "POST",
@@ -61,3 +62,33 @@ export const getdisponibility = async (objetohotel) => {
         console.error("Error al obtener disponibilidad:", error);
     }
 };
+
+export const reservasNano = atom([])
+export const getReservas = async (token) => {
+
+
+    try {
+        const myHeaders = new Headers();
+        myHeaders.append("Authorization", `Bearer ${token}`);
+
+        const requestOptions = {
+            method: "GET",
+            headers: myHeaders,
+        };
+
+        const response = await fetch(`${URL}agencias/v1/reservas/reservas-by-user`, requestOptions)
+
+        if (response.ok) {
+            const data = await response.json()
+            reservasNano.set(data.reservas)
+            return data.reservas
+            // console.log(data.reservas)
+        } else {
+            console.log('error al obtener los datos de la reserva')
+        }
+
+    } catch (error) {
+        console.log('erro en la peticion:', error)
+    }
+
+}

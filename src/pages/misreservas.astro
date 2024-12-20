@@ -6,6 +6,7 @@ async function fetchProtectedData() {
   console.log(data);
 }
 import BaseLayout from "../layouts/BaseLayout.astro"
+import Tabla from '../components/GestionarReservas/Tabla';
 ---
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
 
@@ -17,45 +18,7 @@ import BaseLayout from "../layouts/BaseLayout.astro"
 
 </head>
 <body>
-    <div class="container">
-        <br>
-        <h1>Consultar mis reservas</h1>
-        <div class="filters">
-            <button><i class="fas fa-filter"></i> Filtros</button>
-        </div>
-        <div class="tabs">
-            <div class="active">Próximos pagos <span class="badge">1</span></div>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Hotel</th>
-                    <th>Fecha reservada</th>
-                    <th>Huesped</th>
-                    <th>Plazo para pagar</th>
-                    <th>Valor a pagar</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>#NOMBRE_HOTEL</td>
-                    <td>FECHA_RESERVA</td>
-                    <td>#NOMBRE_HUESPED</td>
-                    <td>#PLAZO</td>
-                    <td>$0,00</td>
-                    <td><span class="status pending">#ESTADOPAGO</span></td>
-                    <td><a href="#">Consultar y gestionar</a></td>
-                </tr>
-            </tbody>
-        </table>
-        <div class="pagination">
-            <span>Anterior</span>
-            <a href="#" class="active">1</a>
-            <span>Siguiente</span>
-        </div>
-    </div>
+    <Tabla client:load/>
     <script>
         function checkAuth() {
     const token = localStorage.getItem("authToken");
@@ -76,88 +39,5 @@ import BaseLayout from "../layouts/BaseLayout.astro"
         margin: 0;
         padding: 0;
     }
-    .container {
-        width: 90%;
-        margin: 20px auto;
-    }
-    h1 {
-        font-size: 2em;
-        color: #2c3e50;
-    }
-    .filters {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    .filters button {
-        background-color: #2c3e50;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .tabs {
-        display: flex;
-        border-bottom: 2px solid #e0e0e0;
-        margin-bottom: 20px;
-    }
-    .tabs div {
-        padding: 10px 20px;
-        cursor: pointer;
-    }
-    .tabs .active {
-        border-bottom: 2px solid #f39c12;
-        font-weight: bold;
-    }
-    .badge {
-        background-color: #f39c12;
-        color: white;
-        border-radius: 50%;
-        padding: 5px 10px;
-        margin-left: 5px;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background-color: white;
-        border-radius: 5px;
-        overflow: hidden;
-    }
-    th, td {
-        padding: 15px;
-        text-align: left;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    th {
-        background-color: #f5f5f5;
-        font-weight: normal;
-        color: #2c3e50;
-    }
-    .status {
-        padding: 5px 10px;
-        border-radius: 5px;
-        font-size: 0.9em;
-    }
-    .pending {
-        background-color: #f39c12;
-        color: white;
-    }
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 20px;
-    }
-    .pagination span, .pagination a {
-        margin: 0 5px;
-        padding: 10px 15px;
-        border-radius: 5px;
-        text-decoration: none;
-        color: #2c3e50;
-    }
-    .pagination .active {
-        background-color: #f39c12;
-        color: white;
-    }
+    
 </style>
