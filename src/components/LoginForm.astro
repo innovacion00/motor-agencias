@@ -74,7 +74,7 @@
               </label>
             </div>
             <div class="form-group">
-              <button type="submit"   class="submit-btn" id="submit-btn" disabled>
+              <button type="submit" class="submit-btn" id="submit-btn" disabled>
                 Iniciar sesión</button
               >
             </div>
@@ -193,9 +193,7 @@
       if (response.ok) {
         const data = await response.json();
         const token = data; // El servidor debe enviar el token en esta respuesta
-        console.log(token)
-        
-       
+        console.log(token);
 
         // Cambiamos a la vista de verificación de OTP
         document.getElementById("login-form")!.style.display = "none";
@@ -257,13 +255,16 @@
       );
 
       if (response.ok) {
-        // Redirigir al usuario a la página de inicio
-         window.location.href = "/";
-        const dataT = await response.json()
-        console.log(dataT.token)
+        const dataT = await response.json();
+        console.log(dataT.token);
+        console.log(dataT);
 
         // Guardamos el token en localStorage para futuras solicitudes
         localStorage.setItem("authToken", dataT.token);
+        localStorage.setItem("datosUsuario", JSON.stringify(dataT));
+
+        // Redirigir al usuario a la página de inicio
+        window.location.href = "/";
       } else {
         Swal.fire({
           icon: "error",
