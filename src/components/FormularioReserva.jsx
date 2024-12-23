@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
@@ -7,32 +6,48 @@ import { format } from "@formkit/tempo";
 //UseState
 const FormularioReserva = () => {
   const [reserva, setReserva] = useState([]);
+  const [agencia, setagencia] = useState();
+  const [mostrarTexto, setMostrarTexto] = useState(false); // Estado para controlar la visibilidad del texto //false para mas de 72h
   const [fechasreserva, setfechasreserva] = useState();
   const [cantadultos, setcantadultos] = useState();
   const [cantninos, setcantninos] = useState();
+  const [botondesactivado, setbotondesactivado] = useState(false) //controlar el boton de reserva
   const [formData, setFormData] = useState({
+    
     tipoDocumento: "",
     numeroDocumento: "",
     nombreCompleto: "",
+    apellidos: "",
     fechaNacimiento: "",
     email: "",
     celular: "",
   });
 
-  // console.log(fechasreserva)
+  // Parsea numeros de body a string
+  const adults = JSON.stringify(cantadultos);
+  const ninos = JSON.stringify(cantninos);
+  const ninos1 = cantninos === 0 ? "" : JSON.stringify(cantninos);
+  console.log(ninos);
+  const noches = JSON.stringify(reserva[0]?.nights);
+  const habitaciones = JSON.stringify(reserva.length);
 
-  // const transformarfechacheckin = new Date(reserva[0]?.checkin)
-
-  const checkin = format(fechasreserva?.dateRange?.startDate  , "YYYY-MM-DD", "es")
-  const checkout = format(fechasreserva?.dateRange?.endDate  , "YYYY-MM-DD", "es")
-  const edadesninos = fechasreserva?.layout.map((dato)=>(
+  const checkin = format(
+    fechasreserva?.dateRange?.startDate,
+    "YYYY-MM-DD",
+    "es"
+  );
+  const checkout = format(
+    fechasreserva?.dateRange?.endDate,
+    "YYYY-MM-DD",
+    "es"
+  );
+  const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
-  ))
+  );
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA = totalPrecio * tasaIVA;  //Calcular valor del IVA
-  const totalConIVA = totalPrecio + valorIVA;  //Calcular valor total + IVA
-  
+  const valorIVA = totalPrecio * tasaIVA; //Calcular valor del IVA
+  const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
 
   //  console.log(checkin);
   const {
@@ -40,12 +55,11 @@ const FormularioReserva = () => {
     numeroDocumento,
     fechaNacimiento,
     nombreCompleto,
+    apellidos,
     email,
     celular,
   } = formData;
 
-
-  
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData({
@@ -61,47 +75,48 @@ const FormularioReserva = () => {
       numeroDocumento.trim() == "" ||
       fechaNacimiento.trim() == "" ||
       nombreCompleto.trim() == "" ||
+      apellidos.trim() == "" ||
       email.trim() == "" ||
       celular.trim() == ""
     ) {
       Swal.fire({
         //Alerta de datos de incio de sesion incorrectos
         icon: "error",
+        title: "Complete la información",
         text: "Todos los campos del titular son obligatorios",
         showConfirmButton: false,
-        timer: 2800,
+        timer: 3500,
       });
       return;
     }
 
     const enviardatos = async () => {
-      const informacionD = {
+      const informacionD = JSON.stringify({
         total: totalConIVA,
         reservaInfo: {
           agency: {
             is_agency: true,
-            agency_type: 1, //token
+            agency_type: agencia.agencia.category, //token
             external_ref_id: "666222",
           },
           reservation: {
-            adults: cantadultos,
-            checkin: checkin ,
+            adults: adults,
+            checkin: checkin,
             checkout: checkout,
-            children: cantninos,
-            children_ages: edadesninos, //
+            children: ninos,
+            children_ages: "", //
             city: reserva[0].ciudad,
             country: "COL",
             currency: "COP",
-            email: "rous@gmail.com", //
-            firstName: "El Rous",
-            lastName: "Overestaing",
-            nights: reserva[0].nights,
-            notes: `Reserva de ${reserva[0].nights} noches `,
-            rooms: reserva.length,
-            roomsData: reserva.map((dato)=>({
-              
-              adults: cantadultos,
-              children: cantninos,
+            email: formData.email, //
+            firstName: formData.nombreCompleto,
+            lastName: formData.apellidos,
+            nights: noches,
+            notes: `Reserva de ${noches} noches `,
+            rooms: habitaciones,
+            roomsData: reserva.map((dato) => ({
+              adults: adults,
+              children: ninos1,
               checkin: checkin,
               checkout: checkout,
               currency: "COP",
@@ -109,41 +124,40 @@ const FormularioReserva = () => {
               quantity: "1",
               rateId: dato.rateId[0],
               unitaryPrice: dato.precio,
-            })) 
-              
-            ,
-            telephone: "+573002226417",
+            })),
+
+            telephone: `+57${formData.celular}`,
           },
         },
-      };
+      }); //JSON.STRINGIFY
 
       try {
-        const url = `http://206.189.199.124:3000/agencias/v1/reservas/reservar?hotelId=${reserva.hotelid}`;
+        setbotondesactivado(true)
+        const url = `https://gehsuitesapps.com/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
 
         const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${agencia.token}`,
           },
-          body: objetoprueba,
+          body: informacionD,
         });
+
         console.log(response);
         if (response.ok) {
           const data = await response.json();
 
-          // Guardar los datos en la store
-          disponibilidad.set(data);
-
-          localStorage.setItem("data", JSON.stringify(data));
-
           // Notificación de éxito
-          // Swal.fire({
-          //     icon: "success",
-          //     title: "Búsqueda exitosa",
-          //     text: "Los datos de disponibilidad se han obtenido correctamente.",
-          // });
-
-          console.log("Disponibilidad obtenida:", disponibilidad.get());
+          console.log(data);
+          Swal.fire({
+            icon: "success",
+            title: "Reserva realizada",
+            text: "Se ha confirmado su reserva con exito.",
+          });
+          setTimeout(() => {
+            window.location.href = "/reservapagada"; //Redireccion hacia la pagina de reserva pagada
+          }, 1500);
         } else {
           throw new Error("Error al consultar la API");
         }
@@ -151,14 +165,16 @@ const FormularioReserva = () => {
         // Manejo de errores con SweetAlert
         Swal.fire({
           icon: "error",
-          title: "Error en la búsqueda",
-          text: "No se pudo obtener la disponibilidad. Por favor, verifica los datos ingresados o intenta nuevamente más tarde.",
+          title: "Error al realizar la reserva",
+          text: "No se pudo realizar la reserva. Por favor, verifica los datos ingresados o intenta nuevamente más tarde.",
         });
         console.error("Error al obtener disponibilidad:", error);
+      }finally{
+        botondesactivado(false);
       }
-      console.log(informacionD)
+      console.log(informacionD); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
     };
-    enviardatos()
+    enviardatos(); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
   };
 
   // const [datosreserva, setdatosreserva] = useState([]);
@@ -176,14 +192,29 @@ const FormularioReserva = () => {
 
   //UseEffect
   useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("nochesyedades"));
+    if (data && data.dateRange?.startDate) {
+      const startDate = new Date(data.dateRange.startDate); // Convertir a objeto Date
+      const now = new Date(); // Fecha actual
+
+      // Calcular la diferencia en horas
+      const diffInHours = (startDate - now) / (1000 * 60 * 60);
+
+      // Actualizar el estado según la diferencia
+      if (diffInHours < 72) {
+        setMostrarTexto(true);
+      }
+    }
     const informacion = JSON.parse(localStorage.getItem("datosreserva"));
     const adultos = JSON.parse(localStorage.getItem("cantAdultos"));
     const ninos = JSON.parse(localStorage.getItem("cantNinos"));
     const fechas = JSON.parse(localStorage.getItem("nochesyedades"));
-    setfechasreserva(fechas);
+    const token = JSON.parse(localStorage.getItem("datosUsuario"));
     setReserva(informacion);
-    setcantninos(ninos);
     setcantadultos(adultos);
+    setcantninos(ninos);
+    setfechasreserva(fechas);
+    setagencia(token);
   }, []);
 
   const onSubmit = (data) => {
@@ -206,19 +237,22 @@ const FormularioReserva = () => {
       <div
         style={{ background: "#FFE4B5", padding: "10px", marginBottom: "20px" }}
       >
-        <p style={{ color: "#C65D21" }}>
+        <p style={{ color: "#1C3D5A", fontWeight:"500" }}>
           <strong>Completa la información obligatoria</strong>
         </p>
-        <p>
+        {mostrarTexto && (
+        <p style={{ color: "#1C3D5A", fontWeight:"500" }}>
           Para reservas con menos de 72 horas de anticipación, requerimos el
           pago inmediato.
         </p>
+      )}
       </div>
 
       <h3>Datos de la reserva</h3>
-      
+
       {reserva?.map((data) => (
-        <div style={{
+        <div
+          style={{
             border: "1px solid #ddd",
             borderRadius: "5px",
             padding: "15px",
@@ -249,16 +283,24 @@ const FormularioReserva = () => {
         </div>
       ))}
 
-      <div style={{
-            border: "1px solid #ddd",
-            borderRadius: "5px",
-            padding: "15px",
-            marginBottom: "20px",
-          }}>
-            <h3>Valor total</h3>
-      <p>Precio total: <strong>{formatCurrency(totalPrecio)}</strong></p>
-      <p>Valor IVA:  <strong> {formatCurrency((valorIVA))} </strong></p>
-      <p>Precio total con IVA:  <strong> {formatCurrency((totalConIVA))} </strong></p>
+      <div
+        style={{
+          border: "1px solid #ddd",
+          borderRadius: "5px",
+          padding: "15px",
+          marginBottom: "20px",
+        }}
+      >
+        <h3>Valor total</h3>
+        <p>
+          Precio total: <strong>{formatCurrency(totalPrecio)}</strong>
+        </p>
+        <p>
+          Valor IVA: <strong> {formatCurrency(valorIVA)} </strong>
+        </p>
+        <p>
+          Precio total con IVA: <strong> {formatCurrency(totalConIVA)} </strong>
+        </p>
       </div>
 
       <h3>Información de los huéspedes</h3>
@@ -272,10 +314,7 @@ const FormularioReserva = () => {
             marginBottom: "20px",
           }}
         >
-          
           <legend>Informacion del titular</legend>
-
-          
 
           <div>
             <label htmlFor="tipoDocumento">
@@ -323,12 +362,32 @@ const FormularioReserva = () => {
 
           <div>
             <label htmlFor="nombreCompleto">
-              Nombre completo <span style={{ color: "red" }}>*</span>
+              Nombre del titular <span style={{ color: "red" }}>*</span>
             </label>
             <input
               id="nombreCompleto"
               type="text"
               value={formData.nombreCompleto}
+              onChange={handleChange}
+              style={{
+                display: "block",
+                width: "100%",
+                padding: "8px",
+                marginBottom: "10px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+              }}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="apellidos">
+              Apellidos del titular <span style={{ color: "red" }}>*</span>
+            </label>
+            <input
+              id="apellidos"
+              type="text"
+              value={formData.apellidos}
               onChange={handleChange}
               style={{
                 display: "block",
@@ -402,24 +461,29 @@ const FormularioReserva = () => {
           </div>
         </fieldset>
 
-        <button
+        <button 
+        disabled={botondesactivado}
           type="submit"
           style={{
-            backgroundColor: "#007BFF",
+            fontWeight: "500",
+            backgroundColor: "#26547B",
             color: "white",
             padding: "10px 20px ",
             border: "none",
             borderRadius: "5px",
             cursor: "pointer",
+            alignSelf: "flex-end",
+            marginRight: "20px",
           }}
         >
-          Confirmar Reserva
+          {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
         </button>
-        
+
         <button
-          type="submit"
+          //type="submit"
           style={{
-            backgroundColor: "#007BFF",
+            fontWeight: "500",
+            backgroundColor: "#26547B",
             color: "white",
             padding: "10px 20px",
             border: "none",
@@ -427,7 +491,7 @@ const FormularioReserva = () => {
             cursor: "pointer",
           }}
         >
-          Confirmar Reserva
+          Pagar reserva
         </button>
       </form>
     </div>
