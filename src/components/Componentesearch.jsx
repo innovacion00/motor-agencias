@@ -122,7 +122,11 @@ const BusquedaCartagena = () => {
     ],
   };
 
-
+  const cityMap = {
+    CARTAGENA: "Cartagena de Indias",
+    BOGOTA: "Bogotá",
+    SANTA_MARTA: "Santa Marta",
+  };
   
 
 // Función para formatear valores como moneda colombiana
@@ -187,7 +191,8 @@ const ninos =  data.reduce(
 
     const storedCity = localStorage.getItem("selectedCity");
     if (storedCity) {
-      setCiudad(storedCity);
+      const transformedCity = cityMap[storedCity] || "Ciudad desconocida"; // Transforma o asigna un fallback
+      setCiudad(transformedCity);
     }
     if (typeof window !== "undefined") {
       const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));

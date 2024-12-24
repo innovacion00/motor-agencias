@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import DropdownSearch from "./DropdownSearch";
+
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
@@ -11,7 +13,7 @@ const FormularioReserva = () => {
   const [fechasreserva, setfechasreserva] = useState();
   const [cantadultos, setcantadultos] = useState();
   const [cantninos, setcantninos] = useState();
-  const [botondesactivado, setbotondesactivado] = useState(false) //controlar el boton de reserva
+  const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
   const [formData, setFormData] = useState({
     
     tipoDocumento: "",
@@ -93,6 +95,13 @@ const FormularioReserva = () => {
     const enviardatos = async () => {
       const informacionD = JSON.stringify({
         total: totalConIVA,
+        titularInfo: {
+          firstName: formData.nombreCompleto,
+          lastName: formData.apellidos,
+          tipoDocumento: formData.tipoDocumento,
+          documento: formData.numeroDocumento,
+          fechaNacimiento: formData.fechaNacimiento,
+        },
         reservaInfo: {
           agency: {
             is_agency: true,
@@ -115,6 +124,7 @@ const FormularioReserva = () => {
             notes: `Reserva de ${noches} noches `,
             rooms: habitaciones,
             roomsData: reserva.map((dato) => ({
+              nombreHabitacion: dato.NombreH,
               adults: adults,
               children: ninos1,
               checkin: checkin,
@@ -132,7 +142,8 @@ const FormularioReserva = () => {
       }); //JSON.STRINGIFY
 
       try {
-        setbotondesactivado(true)
+        // error409
+        setbotondesactivado(true);
         const url = `https://gehsuitesapps.com/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
 
         const response = await fetch(url, {
@@ -145,6 +156,7 @@ const FormularioReserva = () => {
         });
 
         console.log(response);
+
         if (response.ok) {
           const data = await response.json();
 
@@ -156,8 +168,15 @@ const FormularioReserva = () => {
             text: "Se ha confirmado su reserva con exito.",
           });
           setTimeout(() => {
-            window.location.href = "/reservapagada"; //Redireccion hacia la pagina de reserva pagada
-          }, 1500);
+            window.location.href = "/misreservas"; //Redireccion hacia la pagina de reserva pagada
+          }, 2000);
+        } else if (response.status === 409) {
+          // Manejo del error 409
+          Swal.fire({
+            icon: "error",
+            title: "Sin disponibilidad",
+            text: "No se encontró disponibilidad para estas habitaciones.",
+          });
         } else {
           throw new Error("Error al consultar la API");
         }
@@ -166,10 +185,10 @@ const FormularioReserva = () => {
         Swal.fire({
           icon: "error",
           title: "Error al realizar la reserva",
-          text: "No se pudo realizar la reserva. Por favor, verifica los datos ingresados o intenta nuevamente más tarde.",
+          text: "No se pudo realizar la reserva. Por favor, intenta nuevamente más tarde.",
         });
         console.error("Error al obtener disponibilidad:", error);
-      }finally{
+      } finally {
         botondesactivado(false);
       }
       console.log(informacionD); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
@@ -232,25 +251,75 @@ const FormularioReserva = () => {
   };
 
   return (
-    <div style={{ fontFamily: "Roboto, sans-serif", padding: "20px" }}>
-      <h2>¡Falta poco! Termina de completar la información</h2>
+    <>
       <div
-        style={{ background: "#FFE4B5", padding: "10px", marginBottom: "20px" }}
+        style={{
+          backgroundColor: "#F29C38",
+          padding: "20px",
+          borderRadius: "8px",
+          display: "flexbox justify-content center",
+          alignItems: "center",
+          gap: "15px",
+        }}
       >
-        <p style={{ color: "#1C3D5A", fontWeight:"500" }}>
-          <strong>Completa la información obligatoria</strong>
-        </p>
-        {mostrarTexto && (
-        <p style={{ color: "#1C3D5A", fontWeight:"500" }}>
-          Para reservas con menos de 72 horas de anticipación, requerimos el
-          pago inmediato.
-        </p>
-      )}
+        <DropdownSearch client:load />
       </div>
 
-      <h3>Datos de la reserva</h3>
+      <div style={{ fontFamily: "Roboto, sans-serif", padding: "20px" }}>
+        <h2>¡Falta poco! Termina de completar la información</h2>
+        <div
+          style={{
+            background: "#FFE4B5",
+            padding: "10px",
+            marginBottom: "20px",
+          }}
+        >
+          <p style={{ color: "#1C3D5A", fontWeight: "500" }}>
+            <strong>Completa la información obligatoria</strong>
+          </p>
+          {mostrarTexto && (
+            <p style={{ color: "#1C3D5A", fontWeight: "500" }}>
+              Para reservas con menos de 72 horas de anticipación, requerimos el
+              pago inmediato.
+            </p>
+          )}
+        </div>
 
-      {reserva?.map((data) => (
+        <h3>Datos de la reserva</h3>
+
+        {reserva?.map((data) => (
+          <div
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              padding: "15px",
+              marginBottom: "20px",
+            }}
+          >
+            <img
+              src={data.imgH}
+              style={{
+                width: "200px",
+              }}
+            />
+            <h4>{data.NombreH}</h4>
+            <p>
+              <strong>Check-in:</strong> {data.checkin}{" "}
+              <strong>Check-out:</strong> {data.checkout}
+            </p>
+            <p>
+              <strong>Noches: </strong> {data.nights}{" "}
+              <strong>Huéspedes:</strong> {data.huespedes}
+            </p>
+            <p>
+              <strong>Numero de camas:</strong> {data.beds}
+            </p>
+            <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
+              <strong>Total a pagar:</strong> {formatCurrency(data.precio)}
+            </p>
+          </div>
+        ))}
+
         <div
           style={{
             border: "1px solid #ddd",
@@ -259,242 +328,212 @@ const FormularioReserva = () => {
             marginBottom: "20px",
           }}
         >
-          <img
-            src={data.imgH}
-            style={{
-              width: "200px",
-            }}
-          />
-          <h4>{data.NombreH}</h4>
+          <h3>Valor total</h3>
           <p>
-            <strong>Check-in:</strong> {data.checkin}{" "}
-            <strong>Check-out:</strong> {data.checkout}
+            Precio total: <strong>{formatCurrency(totalPrecio)}</strong>
           </p>
           <p>
-            <strong>Noches: </strong> {data.nights} <strong>Huéspedes:</strong>{" "}
-            {data.huespedes}
+            Valor IVA: <strong> {formatCurrency(valorIVA)} </strong>
           </p>
           <p>
-            <strong>Numero de camas:</strong> {data.beds}
-          </p>
-          <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
-            <strong>Total a pagar:</strong> {formatCurrency(data.precio)}
+            Precio total con IVA:{" "}
+            <strong> {formatCurrency(totalConIVA)} </strong>
           </p>
         </div>
-      ))}
 
-      <div
-        style={{
-          border: "1px solid #ddd",
-          borderRadius: "5px",
-          padding: "15px",
-          marginBottom: "20px",
-        }}
-      >
-        <h3>Valor total</h3>
-        <p>
-          Precio total: <strong>{formatCurrency(totalPrecio)}</strong>
-        </p>
-        <p>
-          Valor IVA: <strong> {formatCurrency(valorIVA)} </strong>
-        </p>
-        <p>
-          Precio total con IVA: <strong> {formatCurrency(totalConIVA)} </strong>
-        </p>
+        <h3>Información de los huéspedes</h3>
+
+        <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
+          <fieldset
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              padding: "15px",
+              marginBottom: "20px",
+            }}
+          >
+            <legend>Informacion del titular</legend>
+
+            <div>
+              <label htmlFor="tipoDocumento">
+                Tipo de documento <span style={{ color: "red" }}>*</span>
+              </label>
+              <select
+                id="tipoDocumento"
+                value={formData.tipoDocumento}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              >
+                <option value="">Selecciona una opción</option>
+                <option value="cedula">Cédula de ciudadanía</option>
+                <option value="pasaporte">Pasaporte</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="numeroDocumento">
+                Número de documento <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                id="numeroDocumento"
+                type="text"
+                value={formData.numeroDocumento}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="nombreCompleto">
+                Nombre del titular <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                id="nombreCompleto"
+                type="text"
+                value={formData.nombreCompleto}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="apellidos">
+                Apellidos del titular <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                id="apellidos"
+                type="text"
+                value={formData.apellidos}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="fechaNacimiento">
+                Fecha de nacimiento <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                id="fechaNacimiento"
+                type="date"
+                value={formData.fechaNacimiento}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email">
+                Correo electrónico <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="celular">
+                Celular <span style={{ color: "red" }}>*</span>
+              </label>
+              <input
+                id="celular"
+                type="tel"
+                value={formData.celular}
+                onChange={handleChange}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  padding: "8px",
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                }}
+              />
+            </div>
+          </fieldset>
+
+          <button
+            disabled={botondesactivado}
+            type="submit"
+            style={{
+              fontWeight: "500",
+              backgroundColor: "#26547B",
+              color: "white",
+              padding: "10px 20px ",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+              alignSelf: "flex-end",
+              marginRight: "20px",
+            }}
+          >
+            {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
+          </button>
+
+          <button
+            //type="submit"
+            style={{
+              fontWeight: "500",
+              backgroundColor: "#26547B",
+              color: "white",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Pagar reserva
+          </button>
+        </form>
       </div>
-
-      <h3>Información de los huéspedes</h3>
-
-      <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-        <fieldset
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: "5px",
-            padding: "15px",
-            marginBottom: "20px",
-          }}
-        >
-          <legend>Informacion del titular</legend>
-
-          <div>
-            <label htmlFor="tipoDocumento">
-              Tipo de documento <span style={{ color: "red" }}>*</span>
-            </label>
-            <select
-              id="tipoDocumento"
-              value={formData.tipoDocumento}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            >
-              <option value="">Selecciona una opción</option>
-              <option value="cedula">Cédula de ciudadanía</option>
-              <option value="pasaporte">Pasaporte</option>
-              <option value="otro">Otro</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="numeroDocumento">
-              Número de documento <span style={{ color: "red" }}>*</span>
-            </label>
-            <input
-              id="numeroDocumento"
-              type="text"
-              value={formData.numeroDocumento}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="nombreCompleto">
-              Nombre del titular <span style={{ color: "red" }}>*</span>
-            </label>
-            <input
-              id="nombreCompleto"
-              type="text"
-              value={formData.nombreCompleto}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="apellidos">
-              Apellidos del titular <span style={{ color: "red" }}>*</span>
-            </label>
-            <input
-              id="apellidos"
-              type="text"
-              value={formData.apellidos}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="fechaNacimiento">
-              Fecha de nacimiento <span style={{ color: "red" }}>*</span>
-            </label>
-            <input
-              id="fechaNacimiento"
-              type="date"
-              value={formData.fechaNacimiento}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="email">
-              Correo electrónico <span style={{ color: "red" }}>*</span>
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="celular">
-              Celular <span style={{ color: "red" }}>*</span>
-            </label>
-            <input
-              id="celular"
-              type="tel"
-              value={formData.celular}
-              onChange={handleChange}
-              style={{
-                display: "block",
-                width: "100%",
-                padding: "8px",
-                marginBottom: "10px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-              }}
-            />
-          </div>
-        </fieldset>
-
-        <button 
-        disabled={botondesactivado}
-          type="submit"
-          style={{
-            fontWeight: "500",
-            backgroundColor: "#26547B",
-            color: "white",
-            padding: "10px 20px ",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            alignSelf: "flex-end",
-            marginRight: "20px",
-          }}
-        >
-          {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-        </button>
-
-        <button
-          //type="submit"
-          style={{
-            fontWeight: "500",
-            backgroundColor: "#26547B",
-            color: "white",
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Pagar reserva
-        </button>
-      </form>
-    </div>
+    </>
   );
 };
 
