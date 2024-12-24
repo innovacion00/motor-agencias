@@ -125,7 +125,7 @@ const BusquedaCartagena = () => {
   const cityMap = {
     CARTAGENA: "Cartagena de Indias",
     BOGOTA: "Bogotá",
-    SANTA_MARTA: "Santa Marta",
+    SANTA_MARTA: "Santa marta",
   };
   
 
