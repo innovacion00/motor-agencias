@@ -297,6 +297,9 @@ const idRooms = {
     104145:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804089.webp?k=e98318f7fe089ef70520a3b984f5c08bcf5507fb0d92a1ab56c243473912d928&o=",
   },
+
+  //Axis
+
   100: {
     145577:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Familiar-axis.jpeg", //quintuple
@@ -308,8 +311,16 @@ const idRooms = {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Doble-axis.jpeg", //doble
   },
 
-  /*Pendiente*/
-  101: {},
+  //Sansiraka
+  101: {
+    104184:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-quintuple-sansiraka.jpeg", //Quintuple
+    104183:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-cuadruple-sansiraka.jpeg", //Cuadruple
+    104182:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-sansiraka1.jpeg", //Triple
+    104181:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-junior-sansiraka.jpeg", //Junior
+    104179:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-doble-sansiraka1.jpeg", //Doble
+    104979:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
+
+  },
 };
 // UseState
 

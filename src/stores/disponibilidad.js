@@ -27,6 +27,7 @@ export const getdisponibility = async (objetohotel) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                
             },
             body: objetoprueba,
         });
