@@ -1,0 +1,31 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Gestionar from "../../components/GestionarReservas/Gestionar";
+import { getReservas, reservasNano } from "../../stores/disponibilidad";
+import Cookies from "js-cookie";
+import { parse } from "cookie";
+export const prerender = false;
+
+const cook =  Astro.cookies.get('token')
+const reservas = await getReservas(JSON.parse(cook.value))
+const { id } = Astro.params;
+
+const reserva = reservas.find((dato)=>(
+  dato.reservaChatbotId == id
+))
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestionar</title>
+  </head>
+  <body>
+    <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+      <Gestionar reservas={reserva} client:load />
+      <!-- <p>Hola {token}</p> -->
+    </BaseLayout>
+  </body>
+</html>
