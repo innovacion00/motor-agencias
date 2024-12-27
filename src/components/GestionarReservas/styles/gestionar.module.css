@@ -1,0 +1,304 @@
+.containerGestionar{
+    padding: 2rem 5rem;
+}
+
+.title{
+    font-size: 28px;
+    font-weight: 600;
+}
+
+.estadoPago{
+    font-weight: 600;
+    background-color: #FFCF88;
+    width: 328px;
+    height: 44px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.pending {
+    background-color: #f39c12;
+    color: white;
+}
+.clomplete {
+    background-color: #28912d;
+    color: white;
+}
+.cancel {
+    background-color: #bd1f1f;
+    color: white;
+}
+
+.proces{
+    background-color: #36a3c4;
+    color: white;
+}
+
+.card{
+    min-height: 518px;
+    width: 100%;
+    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3); 
+    padding: 1rem;
+    display: flex;
+    border-radius: 4px;
+}
+
+.hotelInfo{
+    width: 340px;
+}
+
+.hotelInfo p{
+    font-size: 24px;
+    margin-bottom: .6rem;
+}
+
+.hotelInfo .img{
+    width: 329px;
+    height: 255px;
+}
+
+.hotelInfo .img img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.infoHabitaciones{
+    width: 100%;
+
+}
+
+.infoHabitaciones .idReserva{
+    text-align: right;
+    font-size: 24px;
+}
+
+.infoHabitaciones .idReserva span{
+    font-weight: 600;
+}
+
+.infoHotelHabitaciones{
+    padding: 0 .6rem;
+}
+
+.NombreHotel{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.infoHotelHabitaciones p span {
+    color: #7A7474;
+}
+
+.infoFechas{
+    display: flex;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.flex{
+    display: flex;
+    margin-right: 1rem;
+}
+
+.infoFechas hr {
+    margin-right: 1rem;
+}
+
+.flexCol{
+    margin-right: .5rem;
+}
+
+.habitaciones{
+    border-top: solid 1px #CFCECE;
+    border-bottom: solid 1px #CFCECE;
+    padding: .5rem 0;
+}
+
+.habitaciones .cardHabi{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.imgHabi{
+    width: 92px;
+    height: 61px;
+    /* background-color: aqua; */
+}
+
+.imgHabi img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.contenHabi{
+    display: flex;
+}
+
+.infoHabitaciones{
+    padding: 0 .6rem;
+}
+
+.infoHabitaciones .titleHabi{
+    font-weight: 600;
+}
+
+.cardHabi .totalCard{
+    font-weight: 600;
+}
+
+.infoTotal{
+    display: flex;
+    justify-content: space-between;
+}
+
+.infoTotal .total{
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.plazoPago{
+    color: #357B38;
+    font-weight: bolder;
+    margin-top: 1rem;
+}
+
+.containerHuesped{
+    width: 843px;
+    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    /* padding: 1rem; */
+}
+
+.containerHuesped .titleHuespe{
+    font-size: 24px;
+    border-bottom: solid 1px #CFCECE;
+    padding: .5rem;
+}
+
+.habitacionesForm{
+    padding: 1rem;
+}
+
+.habitacionesForm .titleForm{
+    font-weight: 600;
+}
+
+.checkin{
+    margin-bottom: 1rem;
+}
+
+.cardHuesped{
+    width: 779px;
+    /* height: 400px; */
+    border: solid 1px #CFCECE;
+    border-radius: 4px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.cardHuesped .titleTitular{
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.flexHuespe{
+    display: flex;
+    gap: 2rem;
+}
+
+.infoH{
+    font-weight: 600;
+}
+
+.titlePagar{
+    padding-top: 1rem;
+    padding-left: 1rem;
+}
+
+.contentHusped_pago{
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: space-between;
+}
+
+.pagar{
+    /* padding: 2rem 0; */
+    min-width: 264px;
+    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.hotelR{
+    margin-top: 1rem;
+    border-top: solid 1px #CFCECE;
+    border-bottom: solid 1px #CFCECE;
+    padding: 0 1rem;
+}
+
+.cardHabitacionesPago{
+    padding: 1rem;
+    border-bottom: solid 1px #CFCECE;
+}
+
+.pagos {
+    /* width: 264px; */
+    height: 154px;
+    background-color: #DEEAF5;
+    padding: 1rem 1rem;
+}
+
+.totalPago{
+    display: flex;
+    justify-content: space-between;
+}
+
+.totalPago .totalP{
+    font-weight: 600;
+}
+
+.pagos button{
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    background-color: #26547B;
+    color: #ffffff;
+    margin-top: .5rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gestionarReserv{
+    /* width: 264px; */
+    height: 140px;
+    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    margin-top: 1.2rem;
+}
+
+.gestionarReserv p{
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.acciones{
+    display: flex;
+    flex-direction: column;
+    border-top: solid 1px #CFCECE;
+    padding-top: .5rem;
+}
+
+.acciones a{
+    margin-left: 1rem;
+}
+
+

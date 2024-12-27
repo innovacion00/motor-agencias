@@ -124,6 +124,7 @@
 <script>
   // Función para verificar si los campos están llenos y el checkbox está marcado
   import Swal from "sweetalert2";
+  import Cookies from 'js-cookie'
   function validateForm() {
     const email = (
       document.getElementById("email") as HTMLInputElement
@@ -262,6 +263,7 @@
         // Guardamos el token en localStorage para futuras solicitudes
         localStorage.setItem("authToken", dataT.token);
         localStorage.setItem("datosUsuario", JSON.stringify(dataT));
+        Cookies.set('token', JSON.stringify(dataT.token), { expires: 7, path: "/"});
 
         // Redirigir al usuario a la página de inicio
         window.location.href = "/";

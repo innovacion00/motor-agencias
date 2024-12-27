@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import styles from './tabla.module.css'
+import styles from './styles/tabla.module.css'
 import { getReservas, reservasNano } from '../../stores/disponibilidad'
 const Tabla = () => {
     const [reservas, setreservas] = useState([])
+    const [tokenUrl, setTokenUrl] = useState('')
 
     useEffect(() => {
         const datosUsuario = JSON.parse(localStorage.getItem('datosUsuario'))
         console.log(datosUsuario)
         ObtenerReservas(datosUsuario.token)
+        setTokenUrl(datosUsuario.token)
     }, [])
     const ObtenerReservas = async (token) => {
         await getReservas(token)
@@ -51,13 +53,17 @@ const Tabla = () => {
                                     <td>{dato.reservation.checkout}</td>
                                     <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
                                     <td>#PLAZO</td>
-                                    <td>{dato.total}</td>
-                                    {dato.status == 'pendiente'? (<td><span className={`${styles.status} ${styles.pending}`}>{dato.status}</span></td>) : (
-                                        dato.status == 'aprobado'? (<td><span className={`${styles.status} ${styles.clomplete}`}>{dato.status}</span></td>) : (
-                                            dato.status == 'rechazado'? (<td><span className={`${styles.status} ${styles.pending}`}>{dato.status}</span></td>) : (<td>Estado no valido</td>)
+                                    <td>${dato.total}</td>
+                                    <td>{dato.status == '0'? (<span className={`${styles.status} ${styles.pending}`}>Pendiente de pago</span>) : (
+                                        dato.status == '1'? (<span className={`${styles.status} ${styles.proces}`}>En proceso de pago</span>) : (
+                                            dato.status == '2'? (<span className={`${styles.status} ${styles.cancel}`}>Pago Rechazado</span>) : (
+                                                dato.status == '3'? (<span className={`${styles.status} ${styles.clomplete}`}>Pago Aprobado</span>) : (
+                                                    dato.status == '4'? (<span className={`${styles.status} ${styles.cancel}`}>Cancelado</span>) : (<p>Estado no vlido</p>)
+                                                )
+                                            )
                                         ) 
-                                    )}
-                                    <td><a href="#">Consultar y gestionar</a></td>
+                                    )}</td>
+                                    <td><a href={`/gestionar/${dato.reservaChatbotId}?token=${tokenUrl}`}>Consultar y gestionar</a></td>
                                 </tr>
                             ))
                         }

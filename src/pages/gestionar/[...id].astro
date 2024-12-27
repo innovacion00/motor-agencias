@@ -1,0 +1,51 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Gestionar from "../../components/GestionarReservas/Gestionar";
+import { getReservas, reservasNano } from "../../stores/disponibilidad";
+import Cookies from "js-cookie";
+import { parse } from "cookie";
+
+// console.log(parsedUser);
+export async function getStaticPaths({url}) {
+const token = url?.searchParams.get('token')
+  await getReservas('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzZhZmVhNDE4MmY2ODI4YmVmNWZmN2IiLCJpYXQiOjE3MzUyMzQ5MzYsImV4cCI6MTc2Njc3MDkzNn0.hMcofpBD93uN78fC4n591FeERZqK2mWE1cE70reKkDU');
+  // console.log(reservasNano.get());
+
+  return reservasNano
+    .get()
+    .map((dato) => ({ params: { id: dato.reservaChatbotId } }));
+}
+
+export async function get({ params, request }) {
+  const url = new URL(request.url);
+
+  // Obtén el token desde los parámetros de la URL.
+  const token = url.searchParams.get("token");
+  console.log(token)
+
+  if (!token) {
+    return {
+      status: 400,
+      body: "Token no encontrado.",
+    };
+  }
+
+}
+const { id } = Astro.params;
+const reserva = reservasNano.get().find((dato) => dato.reservaChatbotId == id);
+// console.log(reserva);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestionar</title>
+  </head>
+  <body>
+    <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+      <Gestionar reservas={reserva} client:load />
+    </BaseLayout>
+  </body>
+</html>

@@ -57,7 +57,7 @@ table {
 
 th,
 td {
-    padding: 15px;
+    padding: 15px 7px;
     text-align: left;
     border-bottom: 1px solid #e0e0e0;
 }
@@ -79,11 +79,16 @@ th {
     color: white;
 }
 .clomplete {
-    background-color: #12f31d;
+    background-color: #28912d;
     color: white;
 }
 .cancel {
-    background-color: #ff2727;
+    background-color: #bd1f1f;
+    color: white;
+}
+
+.proces{
+    background-color: #36a3c4;
     color: white;
 }
 
