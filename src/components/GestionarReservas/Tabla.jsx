@@ -63,7 +63,7 @@ const Tabla = () => {
                                             )
                                         ) 
                                     )}</td>
-                                    <td><a href={`/gestionar/${dato.reservaChatbotId}?token=${tokenUrl}`}>Consultar y gestionar</a></td>
+                                    <td><a href={`/gestionar/${dato.reservaChatbotId}`}>Consultar y gestionar</a></td>
                                 </tr>
                             ))
                         }

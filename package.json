@@ -10,6 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^9.0.0",
     "@astrojs/react": "^3.6.3",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
@@ -18,7 +19,7 @@
     "@mui/styled-engine-sc": "^6.1.1",
     "@nanostores/react": "^0.8.2",
     "@vitejs/plugin-react": "^4.3.1",
-    "astro": "^4.16.7",
+    "astro": "^5.1.1",
     "bootstrap": "^5.3.3",
     "cookie": "^1.0.2",
     "cookies": "^0.9.1",
