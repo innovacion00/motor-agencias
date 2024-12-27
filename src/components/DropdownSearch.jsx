@@ -18,19 +18,16 @@ const DropdownSearch = () => {
     startDate: new Date(),
     endDate: new Date(),
   });
- 
+
   const [isLoading, setIsLoading] = useState(false); // Estado para controlar el botón
- 
+
   const dropdownRef = useRef(null); // Referencia para el dropdown
   const dateRangeRef = useRef(null); // Referencia para el DateRange
 
   useEffect(() => {
     // Detecta clics fuera del dropdown
     const handleOutsideClick = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false); // Cierra el dropdown si el clic ocurre fuera
       }
       if (
@@ -67,7 +64,7 @@ const DropdownSearch = () => {
 
     // Calcula las noches y actualiza el estado si es necesario
     const nights = calculateNights(startDate, endDate);
-    
+
     console.log("Número de noches:", nights);
   };
 
@@ -109,17 +106,17 @@ const DropdownSearch = () => {
     }));
 
     localStorage.setItem("selectedCity", destination);
-        // Deshabilitar el botón mientras se realiza la consulta
-        setIsLoading(true);
+    // Deshabilitar el botón mientras se realiza la consulta
+    setIsLoading(true);
 
     const nochesyedades = {
       layout,
       nights,
-      dateRange
-    }
-    
-  localStorage.setItem("nochesyedades",JSON.stringify(nochesyedades))
-   
+      dateRange,
+    };
+
+    localStorage.setItem("nochesyedades", JSON.stringify(nochesyedades));
+
     try {
       const objetohotel = {
         checkin: dateRange.startDate.toISOString().split("T")[0],
@@ -128,8 +125,10 @@ const DropdownSearch = () => {
         layout,
       };
 
+      // Realiza la consulta a la API
       await getdisponibility(objetohotel);
 
+      // Si todo es exitoso, redirige según la ciudad seleccionada
       const destinations = {
         CARTAGENA: "/busquedacartagena",
         BOGOTA: "/busquedabogota",
@@ -143,7 +142,7 @@ const DropdownSearch = () => {
         title: "Error en la búsqueda",
         text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente.",
       });
-    } finally{
+    } finally {
       // Rehabilitar el botón después de que la consulta termine
       setIsLoading(false);
     }
@@ -168,11 +167,9 @@ const DropdownSearch = () => {
       <div className={styles.datePicker} ref={dateRangeRef}>
         <input
           type="text"
-          value={`${dateRange.startDate
-            .toISOString()
-            .split("T")[0]} - ${dateRange.endDate
-            .toISOString()
-            .split("T")[0]}`}
+          value={`${dateRange.startDate.toISOString().split("T")[0]} - ${
+            dateRange.endDate.toISOString().split("T")[0]
+          }`}
           onFocus={() => setShowDateRange(true)}
           readOnly
         />
@@ -308,14 +305,17 @@ const DropdownSearch = () => {
       </div>
 
       {/* Botón de búsqueda */}
-      <button onClick={handleSearch} 
-      className={styles.searchButton} 
-      disabled={isLoading} /*Deshabilitar boton cuando se presiona y realiza la consulta */ > 
-      {isLoading?"Cargando..." : "Consultar"} {/* Indicador de carga */}
+      <button
+        onClick={handleSearch}
+        className={styles.searchButton}
+        disabled={
+          isLoading
+        } /*Deshabilitar boton cuando se presiona y realiza la consulta */
+      >
+        {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
       </button>
     </div>
   );
 };
- 
+
 export default DropdownSearch;
- 

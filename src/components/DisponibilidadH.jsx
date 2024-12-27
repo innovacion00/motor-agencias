@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../public/styles/DisponibilidadH.module.css";
 import DropdownSearch from "./DropdownSearch";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 const hotelesData = {
   9: {
     name: "Hotel Marina Suites",
@@ -313,13 +314,18 @@ const idRooms = {
 
   //Sansiraka
   101: {
-    104184:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-quintuple-sansiraka.jpeg", //Quintuple
-    104183:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-cuadruple-sansiraka.jpeg", //Cuadruple
-    104182:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-sansiraka1.jpeg", //Triple
-    104181:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-junior-sansiraka.jpeg", //Junior
-    104179:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-doble-sansiraka1.jpeg", //Doble
-    104979:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
-
+    104184:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-quintuple-sansiraka.jpeg", //Quintuple
+    104183:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-cuadruple-sansiraka.jpeg", //Cuadruple
+    104182:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-sansiraka1.jpeg", //Triple
+    104181:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-junior-sansiraka.jpeg", //Junior
+    104179:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-doble-sansiraka1.jpeg", //Doble
+    104979:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
 };
 // UseState
@@ -353,6 +359,8 @@ export const Cid = ({ id }) => {
   // UseEffect
 
   useEffect(() => {
+
+    
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
     // console.log(disponibilidad)
@@ -385,6 +393,14 @@ export const Cid = ({ id }) => {
         className={styles.icon}
       />
     ));
+  };
+
+  const handleDelete = (index) => {
+    setDatohabitacion((prevHabitaciones) => {
+      const nuevasHabitaciones = [...prevHabitaciones];
+      nuevasHabitaciones.splice(index, 1); //Elimina el elemento en el índice dado
+      return nuevasHabitaciones;
+    });
   };
 
   return (
@@ -457,7 +473,7 @@ export const Cid = ({ id }) => {
               )}
             </strong>
           </div>
-          <button>Modificar búsqueda</button>
+          {/* <button>Modificar búsqueda</button> */}
         </div>
 
         <div className={styles.room_section}>
@@ -472,7 +488,7 @@ export const Cid = ({ id }) => {
                     width="250"
                   />
                   <div className={styles.room_details}>
-                    <h3>{dato.roomName}</h3>
+                    <h2>{dato.roomName}</h2>
                     <a href="">Ver habitación</a>
                     <p>
                       <i className="fas fa-check-circle"></i>
@@ -543,36 +559,55 @@ export const Cid = ({ id }) => {
           <div className={styles.reservation}>
             <h3>Reserva</h3>
 
-            <br />
+            
             <hr />
             <br />
-            <p>{habitaciones?.hotel?.name}</p>
-            <p>
-              {checkin} <i className={"fas fa-arrow-right"}></i> {checkout} (
-              {rangosfechas.nights} noches )
-            </p>
-            <br />
-            <hr />
-
-            {datohabitacion.map((dato, index) => (
-              <ul id="selected-rooms" key={index}>
-                <p>{dato.NombreH}</p>
+            <h3>{habitaciones?.hotel?.name}</h3>
                 <p>
-                  {checkin} - {checkout}
+                    {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
                 </p>
-                <p>
-                  {rangosfechas.nights} noches, {ninos + adultos} huespedes
-                </p>
-
-                <h2>{formatCurrency(dato.precio)} </h2>
+                <h4> ({rangosfechas.nights} noches )</h4>
+                <br />
                 <hr />
-              </ul>
-            ))}
 
-            <a href="/reservas">
-              <button onClick={enviardatos}>Reservar ahora</button>
-            </a>
-          </div>
+                {datohabitacion.map((dato, index) => (
+                    <div key={index} style={{ position: 'relative' }}> {/* Contenedor relativo para posicionar el botón */}
+                        <ul id="selected-rooms">
+                          <br />
+                            <p>{dato.NombreH}</p>
+                            
+                            <h5>
+                                {checkin} - {checkout}
+                            </h5>
+                            <h5>
+                                {rangosfechas.nights} noches, {ninos + adultos} huespedes
+                            </h5>
+                            <h2>{formatCurrency(dato.precio)} COP</h2>
+                            <button
+                            style={{
+                                position: 'absolute',
+                                bottom: '80px', // Ajusta la posición vertical
+                                left: '145px', // Ajusta la posición horizontal
+                                background: 'transparent',
+                                border: 'none',
+                                cursor: 'pointer',
+                            }}
+                            onClick={() => handleDelete(index)}
+                        >
+                            <FontAwesomeIcon icon={faTrash} style={{ color: '#26547B' }} /> {/* Icono de la caneca */}
+                        </button>
+                            
+                            <hr />
+                            
+                        </ul>
+                        
+                    </div>
+                ))}
+
+                <a href="/reservas">
+                    <button onClick={enviardatos}>Reservar ahora</button>
+                </a>
+            </div>
         </div>
       </div>
     </>

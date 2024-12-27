@@ -527,6 +527,7 @@ const FormularioReserva = () => {
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
+              
             }}
           >
             Pagar reserva

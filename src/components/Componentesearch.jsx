@@ -9,7 +9,7 @@ import { nightsStore } from "../stores/disponibilidad";
 const BusquedaCartagena = () => {
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
   const [nochesyedades1, setnochesyedades] = useState({});
-  
+
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
 
   //Objeto de imagenes  para las fachadas
@@ -127,63 +127,61 @@ const BusquedaCartagena = () => {
     BOGOTA: "Bogotá",
     SANTA_MARTA: "Santa marta",
   };
-  
 
-// Función para formatear valores como moneda colombiana
-const formatToCurrency = (amount) => {
-  if (typeof amount !== "number") return "N/A";
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-    minimumFractionDigits: 0,
-  }).format(amount);
-};
+  // Función para formatear valores como moneda colombiana
+  const formatToCurrency = (amount) => {
+    if (typeof amount !== "number") return "N/A";
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
 
-// Función existente modificada
-const findMinBaseRate = (data) => {
-  let minAmount = Infinity;
+  // Función existente modificada
+  const findMinBaseRate = (data) => {
+    let minAmount = Infinity;
 
-  data.forEach((entry) => {
-    entry.available_rooms.forEach((room) => {
-      room.products.forEach((product) => {
-        const amount = product.baseRate.amountBeforeTax; // Antes de impuestos
-        if (amount < minAmount) {
-          minAmount = amount;
-        }
+    data.forEach((entry) => {
+      entry.available_rooms.forEach((room) => {
+        room.products.forEach((product) => {
+          const amount = product.baseRate.amountBeforeTax; // Antes de impuestos
+          if (amount < minAmount) {
+            minAmount = amount;
+          }
+        });
       });
     });
-  });
 
-  return minAmount === Infinity ? "*Sin Disponibilidad*" : formatToCurrency(minAmount); // Formatear como moneda colombiana
-};
+    return minAmount === Infinity
+      ? "*Sin Disponibilidad*"
+      : formatToCurrency(minAmount); // Formatear como moneda colombiana
+  };
 
-//Funcion para almacenar la cantidad de adultos
-const cantAdultos = (data) =>{
-  
-  const adult = data.reduce(
-    (acumulador, tAdults) => acumulador + tAdults.adults,0 ) || 0
-  
-  localStorage.setItem("cantAdultos", adult) //cantidad de adultos
-  return adult;
-}
+  //Funcion para almacenar la cantidad de adultos
+  const cantAdultos = (data) => {
+    const adult =
+      data.reduce((acumulador, tAdults) => acumulador + tAdults.adults, 0) || 0;
 
-//Funcion para almacenar la cantidad de Niños
-const cantNinos = (data) =>{
-const ninos =  data.reduce(
-    (acumulador, tChildren) => {
-      // Validar si children_ages existe y no está vacío
-      if (tChildren.children_ages) {
-        return acumulador + tChildren.children_ages.split(",").length;
-      }
-      return acumulador ; // Si no existe, no suma nada
-    },
-    0
-  ) || 0 
-  
-  localStorage.setItem("cantNinos", ninos  ) //cantidad de niños 
-  
-  return ninos;
-}
+    localStorage.setItem("cantAdultos", adult); //cantidad de adultos
+    return adult;
+  };
+
+  //Funcion para almacenar la cantidad de Niños
+  const cantNinos = (data) => {
+    const ninos =
+      data.reduce((acumulador, tChildren) => {
+        // Validar si children_ages existe y no está vacío
+        if (tChildren.children_ages) {
+          return acumulador + tChildren.children_ages.split(",").length;
+        }
+        return acumulador; // Si no existe, no suma nada
+      }, 0) || 0;
+
+    localStorage.setItem("cantNinos", ninos); //cantidad de niños
+
+    return ninos;
+  };
 
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
@@ -257,19 +255,14 @@ const ninos =  data.reduce(
                 <div className={styles.specs}>
                   {" "}
                   {nochesyedades1.nights} Noches{" "}
-                  {cantAdultos(tipo.availability)}{" "}
-                  Adultos {cantNinos(tipo.availability) || 0 } Niños
+                  {cantAdultos(tipo.availability)} Adultos{" "}
+                  {cantNinos(tipo.availability) || 0} Niños
                 </div>
                 <div className={styles.price}>
-                  Desde:{" "} 
-                  
-                  {
-                    findMinBaseRate(tipo.availability)  !== Infinity ? findMinBaseRate(tipo.availability): "Sin Disponibilidad"
-                  } 
-                  
-                    
-                    
-                                   {" "}
+                  Desde:{" "}
+                  {findMinBaseRate(tipo.availability) !== Infinity
+                    ? findMinBaseRate(tipo.availability)
+                    : "Sin Disponibilidad"}{" "}
                   | Incluye desayuno y seguro
                 </div>
                 <a href={`/hoteles/${tipo.hotel.id}`}>

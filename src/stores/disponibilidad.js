@@ -21,13 +21,13 @@ export const getdisponibility = async (objetohotel) => {
 
     try {
         const url =
-            `${URL}agencias/v1/reservas/disponibilidad/671169878217aafa29ec2388`;
+            `${URL}agencias/v1/reservas/disponibilidad/676afe767b623769038dcb32`;
 
         const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                
+
             },
             body: objetoprueba,
         });

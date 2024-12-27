@@ -143,7 +143,7 @@
       margin-top: 5px;
     }
 
-    .search_criteria button {
+    /* .search_criteria button {
       background-color: #fff;
       border-style: solid;
       border-width: 2px;
@@ -156,7 +156,7 @@
 
     .search_criteria button:hover {
       background-color: #c8cdd370;
-    }
+    } */
 
     .cards {
       display: flex;
@@ -165,6 +165,8 @@
 
     }
 
+    /* Detalles y tipos de habitaciones*/
+    
     .room_section {
       display: flex;
       justify-content: space-between;
@@ -205,21 +207,28 @@
       margin: 0;
       color: #2c3e50;
     }
+    .room_details h2 {
+      margin: 0;
+      font-size: 17px;
+      color: #1C3D5A;
+    }
 
     .room_details p {
+
       margin: 5px 0;
-      color: #666666;
+      color: #1C3D5A;
     }
 
     .room_details span {
+      position: relative;
       margin: 5px 0;
-      color: #2c973e;
+      color: #2f4a66;
       font-weight:bold;
     }
 
     .room_details .price {
       font-size: 18px;
-      color: #2c3e50;
+      color: #2f4a66;
     }
 
     .room_details .price del {
@@ -227,7 +236,7 @@
       margin-left: 10px;
     }
 
-    .room_details .discount {
+    /* .room_details .discount {
       background-color: #ff6f61;
       color: #fff;
       padding: 5px 10px;
@@ -236,7 +245,9 @@
       position: absolute;
       top: 20px;
       right: 20px;
-    }
+    } */
+
+    /* Boton seleccionar las habitaciones */
 
     .room_details button {
       background-color: #26547B;
@@ -246,11 +257,22 @@
       border-radius: 4px;
       cursor: pointer;
       font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     .room_details button:hover {
-      background-color: #0056b3;
+      background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+      transform: scale(1.1);
     }
+    
+    .room_details button:active {
+      
+        background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
+        transform: scale(1.1);
+      
+    }
+
+
 
     .reservation {
       background-color: #fff;
@@ -277,7 +299,7 @@
 
     .reservation button {
       width: 200px;
-      background-color: #CFCECE;
+      
       border: none;
       color: #1C3D5A;
       padding: 10px 20px;
@@ -412,17 +434,31 @@
 
 /* Información del hotel */
 .reservation p {
-  justify-self: flex-start;
+  justify-self: center;
   margin: 4px 0;
   font-size: 15px;
   font-weight: 700;
   color: #1C3D5A;
 }
+.reservation h5 {
+  justify-self: center;
+  margin: 4px 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #1C3D5A;
+}
 
+.reservation h4 {
+  
+  
+  font-size: 14px;
+  font-weight: 400;
+  color: #585555;
+}
 /* Flecha */
 .reservation i {
   margin: 0 6px;
-  color: #23476e;
+  color: #9F6118;
   font-weight: bold;
 }
 
@@ -436,7 +472,7 @@
 
 
 
-/* Botón */
+/* Botón  de reservar*/
 .reservation a button {
   margin-top: 12px;
   padding: 8px 16px;
@@ -446,8 +482,15 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .reservation a button:hover {
   background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+  transform: scale(1.1);
+}
+
+.reservation a button:active {
+  background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
+  transform: scale(1.1);
 }
