@@ -5,7 +5,7 @@ import "react-date-range/dist/theme/default.css";
 import styles from "../../public/styles/DropdownSearch.module.css";
 import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
-import { useStore } from "@nanostores/react";
+
 
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false); // Controla el selector de fechas
