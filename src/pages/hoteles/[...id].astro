@@ -4,6 +4,8 @@ import { getdisponibility, disponibilidad } from "../../stores/disponibilidad";
 import DisponibilidadH from "../../components/DisponibilidadH.jsx";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
+export const prerender = true;
+
 // const localS =  localStorage.getItem("dato")
 export async function getStaticPaths() {
 return [
