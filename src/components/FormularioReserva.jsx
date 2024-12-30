@@ -10,12 +10,12 @@ const FormularioReserva = () => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
   const [mostrarTexto, setMostrarTexto] = useState(false); // Estado para controlar la visibilidad del texto //false para mas de 72h
+  const [mostrarBoton, setmostrarBoton] = useState(false);
   const [fechasreserva, setfechasreserva] = useState();
   const [cantadultos, setcantadultos] = useState();
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
   const [formData, setFormData] = useState({
-    
     tipoDocumento: "",
     numeroDocumento: "",
     nombreCompleto: "",
@@ -33,6 +33,7 @@ const FormularioReserva = () => {
   const noches = JSON.stringify(reserva[0]?.nights);
   const habitaciones = JSON.stringify(reserva.length);
 
+  // Formatea correctamente las fechas
   const checkin = format(
     fechasreserva?.dateRange?.startDate,
     "YYYY-MM-DD",
@@ -43,6 +44,7 @@ const FormularioReserva = () => {
     "YYYY-MM-DD",
     "es"
   );
+
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
@@ -219,7 +221,12 @@ const FormularioReserva = () => {
       // Calcular la diferencia en horas
       const diffInHours = (startDate - now) / (1000 * 60 * 60);
 
-      // Actualizar el estado según la diferencia
+      //mostrar boton
+      if (diffInHours < 72) {
+        setmostrarBoton(true);
+      }
+
+      // mostrar texto
       if (diffInHours < 72) {
         setMostrarTexto(true);
       }
@@ -289,12 +296,13 @@ const FormularioReserva = () => {
 
         {reserva?.map((data) => (
           <div
+          key={data.roomId || index}
             style={{
               border: "1px solid #ddd",
               borderRadius: "5px",
               padding: "15px",
               marginBottom: "20px",
-            }}
+            }}  
           >
             <img
               src={data.imgH}
@@ -509,7 +517,7 @@ const FormularioReserva = () => {
               padding: "10px 20px ",
               border: "none",
               borderRadius: "5px",
-              cursor: "pointer",
+              cursor: botondesactivado ? "not-allowed" : "pointer", // Cambiar el cursor según el estado
               alignSelf: "flex-end",
               marginRight: "20px",
             }}
@@ -527,7 +535,6 @@ const FormularioReserva = () => {
               border: "none",
               borderRadius: "5px",
               cursor: "pointer",
-              
             }}
           >
             Pagar reserva

@@ -30,6 +30,18 @@ const Gestionar = ({ reservas }) => {
     const onClick = async (id) => {
         await generarLink(id)
     }
+
+    //funcion para formatear el los valores de dinero
+      const formatCurrency = (value) => {
+        if (value === undefined || value === null || isNaN(value)) {
+          return "Sin Disponibilidad";
+        }
+        return new Intl.NumberFormat("es-CO", {
+          style: "currency",
+          currency: "COP",
+        }).format(value);
+      };
+      
     return (
         <div className={styles.containerGestionar}>
             <p className={styles.title}>Consultar y gestionar reservas</p>
@@ -96,7 +108,7 @@ const Gestionar = ({ reservas }) => {
                                                 <p>{reservas.reservation.nights} noches, {sumaHuespe} huéspedes, 1 habitación</p>
                                             </div>
                                         </div>
-                                        <p className={styles.totalCard}>${dato.unitaryPrice}</p>
+                                        <p className={styles.totalCard}>${dato.unitaryPrice} COP</p>
                                     </div>
                                 ))
                             }
@@ -106,7 +118,7 @@ const Gestionar = ({ reservas }) => {
                                 <p>Valor a pagar + impuestos</p>
                                 {/* <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {limiteP}</p> */}
                             </div>
-                            <p className={styles.total}>${reservas?.total}</p>
+                            <p className={styles.total}>${reservas?.total} COP</p>
                         </div>
                     </div>
                 </div>
@@ -176,7 +188,7 @@ const Gestionar = ({ reservas }) => {
                     <div className={styles.gestionarReserv}>
                         <p>Gestionar reserva</p>
                         <div className={styles.acciones}>
-                            <a>Modificar reserva</a>
+                            {/* <a>Modificar reserva</a> */}
                             <a>Cancelar reserva</a>
                         </div>
                     </div>

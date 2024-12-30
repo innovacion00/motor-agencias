@@ -17,6 +17,20 @@ const Tabla = () => {
     }
     console.log(reservas)
 
+
+
+    
+    //funcion para formatear el los valores de dinero
+      const formatCurrency = (value) => {
+        if (value === undefined || value === null || isNaN(value)) {
+          return "Sin Disponibilidad";
+        }
+        return new Intl.NumberFormat("es-CO", {
+          style: "currency",
+          currency: "COP",
+        }).format(value);
+      };
+
     // const reservas = reservasNano.get()
     return (
         <>
@@ -52,7 +66,7 @@ const Tabla = () => {
                                     <td>{dato.reservation.checkin}</td>
                                     <td>{dato.reservation.checkout}</td>
                                     <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
-                                    <td>#PLAZO</td>
+                                    <td>{dato.fechaLimitePago}</td>
                                     <td>${dato.total}</td>
                                     <td>{dato.status == '0'? (<span className={`${styles.status} ${styles.pending}`}>Pendiente de pago</span>) : (
                                         dato.status == '1'? (<span className={`${styles.status} ${styles.proces}`}>En proceso de pago</span>) : (

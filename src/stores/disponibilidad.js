@@ -1,6 +1,5 @@
-import {
-    atom
-} from "nanostores";
+import {atom} from "nanostores";
+import { useState } from "react";
 import Swal from "sweetalert2";
 
 // Crear una store para almacenar la disponibilidad
@@ -19,15 +18,20 @@ export const getdisponibility = async (objetohotel) => {
     })
     console.log(objetoprueba)
 
+const token = localStorage.getItem("authToken");
+
+
+
     try {
+        
         const url =
-            `${URL}agencias/v1/reservas/disponibilidad/676afe767b623769038dcb32`;
+            `${URL}agencias/v1/reservas/disponibilidad`;
 
         const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-
+                "Authorization": `Bearer ${token}`
             },
             body: objetoprueba,
         });

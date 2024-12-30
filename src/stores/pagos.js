@@ -41,8 +41,3 @@ export const generarLinkPago = async (id) => {
 
 }
 
-export const getCookie = async ()=> {
-    const userFromCookie = Cookies.get("token");
-    const parsedUser = userFromCookie ? JSON.parse(userFromCookie) : null;
-    return parsedUser
-}
