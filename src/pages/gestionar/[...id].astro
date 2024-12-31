@@ -2,17 +2,19 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Gestionar from "../../components/GestionarReservas/Gestionar";
 import { getReservas, reservasNano } from "../../stores/disponibilidad";
-import Cookies from "js-cookie";
-import { parse } from "cookie";
-export const prerender = false;
 
-const cook =  Astro.cookies.get('token')
-const reservas = await getReservas(JSON.parse(cook.value))
+export async function getStaticPaths() {
+  await getReservas(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzZhZmVhNDE4MmY2ODI4YmVmNWZmN2IiLCJpYXQiOjE3MzU2NDk5MDUsImV4cCI6MTc2NzE4NTkwNX0.R8-FVvNXstzZIWFoaDtIenUoG7-QiRYTKagMWSHM9Zw"
+  );
+  // console.log(reservasNano.get());
+  return reservasNano
+    .get()
+    .map((dato) => ({ params: { id: dato.reservaChatbotId } }));
+}
 const { id } = Astro.params;
 
-const reserva = reservas.find((dato)=>(
-  dato.reservaChatbotId == id
-))
+const reserva = reservasNano.get().find((dato) => dato.reservaChatbotId == id);
 ---
 
 <!doctype html>

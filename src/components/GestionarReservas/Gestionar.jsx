@@ -13,7 +13,7 @@ const Gestionar = ({ reservas }) => {
 
     const checkout = format(reservas?.reservation.checkout, "D MMM", "es")
     const sumaHuespe = Number(reservas?.reservation.children) + Number(reservas?.reservation.adults)
-    
+
     let contador = 1
     // // console.log(sumaHuespe)
     const infoHoteles = hoteles(reservas?.hotel)
@@ -32,16 +32,16 @@ const Gestionar = ({ reservas }) => {
     }
 
     //funcion para formatear el los valores de dinero
-      const formatCurrency = (value) => {
+    const formatCurrency = (value) => {
         if (value === undefined || value === null || isNaN(value)) {
-          return "Sin Disponibilidad";
+            return "Sin Disponibilidad";
         }
         return new Intl.NumberFormat("es-CO", {
-          style: "currency",
-          currency: "COP",
+            style: "currency",
+            currency: "COP",
         }).format(value);
-      };
-      
+    };
+
     return (
         <div className={styles.containerGestionar}>
             <p className={styles.title}>Consultar y gestionar reservas</p>
@@ -49,7 +49,9 @@ const Gestionar = ({ reservas }) => {
             {reservas?.status == '0' ? (<p className={`${styles.estadoPago} ${styles.pending}`}>Estado de la reserva: Pendiente de pago</p>) : (
                 reservas?.status == '1' ? (<p className={`${styles.estadoPago} ${styles.proces}`}>Estado de la reserva: En proceso de pago</p>) : (
                     reservas?.status == '2' ? (<p className={`${styles.estadoPago} ${styles.cancel}`}>Estado de la reserva: Pago Rechazado</p>) : (
-                        reservas?.status == '3' ? (<sppan className={`${styles.estadoPago} ${styles.clomplete}`}>Estado de la reserva: Pago Aprobado</sppan>) : (<p>Estado no valido</p>)
+                        reservas?.status == '3' ? (<sppan className={`${styles.estadoPago} ${styles.clomplete}`}>Estado de la reserva: Pago Aprobado</sppan>) : (
+                            reservas?.status == '4' ? (<span className={`${styles.estadoPago} ${styles.cancel}`}>Cancelado</span>) : (<p>Estado no vlido</p>)
+                        )
                     )
                 )
             )}
