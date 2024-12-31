@@ -525,7 +525,7 @@ const FormularioReserva = () => {
             {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
           </button>
 
-          <button
+          {/* <button
             //type="submit"
             style={{
               fontWeight: "500",
@@ -538,7 +538,7 @@ const FormularioReserva = () => {
             }}
           >
             Pagar reserva
-          </button>
+          </button> */}
         </form>
       </div>
     </>
