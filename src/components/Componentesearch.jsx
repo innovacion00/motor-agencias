@@ -200,9 +200,9 @@ const BusquedaCartagena = () => {
         disponibilidad.set(disponibilidadLocal);
         setHotelesDisponibles(disponibilidadLocal);
 
-        console.log("Datos recuperados de LocalStorage:", disponibilidadLocal);
+        //console.log("Datos recuperados de LocalStorage:", disponibilidadLocal);  //datos de disponibilidad localS
       } else {
-        console.log("No hay datos disponibles en LocalStorage.");
+       // console.log("No hay datos disponibles en LocalStorage.");
       }
     }
   }, []);

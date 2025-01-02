@@ -337,7 +337,7 @@ export const Cid = ({ id }) => {
   const [ninos, setninos] = useState(0);
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
-  console.log("Datos de habitaciones", datohabitacion);
+//  console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
 
   //funcion para formatear el los valores de dinero
 

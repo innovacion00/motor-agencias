@@ -65,7 +65,7 @@ const DropdownSearch = () => {
     // Calcula las noches y actualiza el estado si es necesario
     const nights = calculateNights(startDate, endDate);
 
-    console.log("Número de noches:", nights);
+  //  console.log("Número de noches:", nights); // Calculo de numero de noches
   };
 
   const handleAddRoom = () => {

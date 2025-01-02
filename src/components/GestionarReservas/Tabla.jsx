@@ -7,7 +7,7 @@ const Tabla = () => {
 
     useEffect(() => {
         const datosUsuario = JSON.parse(localStorage.getItem('datosUsuario'))
-        console.log(datosUsuario)
+       // console.log(datosUsuario) // Datos del usuario y reserva
         ObtenerReservas(datosUsuario.token)
         setTokenUrl(datosUsuario.token)
     }, [])
@@ -15,7 +15,8 @@ const Tabla = () => {
         await getReservas(token)
         setreservas(reservasNano.get())
     }
-    console.log(reservas)
+
+    //console.log(reservas)  
 
 
 
@@ -41,7 +42,7 @@ const Tabla = () => {
                     <button><i className="fas fa-filter"></i> Filtros</button>
                 </div>
                 <div className={styles.tabs}>
-                    <div className={styles.active}>Próximos pagos <span className={styles.badge}>1</span></div>
+                    <div className={styles.active}>Próximos pagos {/*<span className={styles.badge}>1</span>*/}</div>
                 </div>
                 <table>
                     <thead>
@@ -68,11 +69,11 @@ const Tabla = () => {
                                     <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
                                     <td>{dato.fechaLimitePago}</td>
                                     <td>${dato.total}</td>
-                                    <td>{dato.status == '0'? (<span className={`${styles.status} ${styles.pending}`}>Pendiente de pago</span>) : (
-                                        dato.status == '1'? (<span className={`${styles.status} ${styles.proces}`}>En proceso de pago</span>) : (
-                                            dato.status == '2'? (<span className={`${styles.status} ${styles.cancel}`}>Pago Rechazado</span>) : (
-                                                dato.status == '3'? (<span className={`${styles.status} ${styles.clomplete}`}>Pago Aprobado</span>) : (
-                                                    dato.status == '4'? (<span className={`${styles.status} ${styles.cancel}`}>Cancelado</span>) : (<p>Estado no vlido</p>)
+                                    <td>{dato.status == '0'? (<span className={`${styles.status} ${styles.pending}`}>Pago pendiente</span>) : (
+                                        dato.status == '1'? (<span className={`${styles.status} ${styles.proces}`}>Pago en proceso</span>) : (
+                                            dato.status == '2'? (<span className={`${styles.status} ${styles.cancel}`}>Pago rechazado</span>) : (
+                                                dato.status == '3'? (<span className={`${styles.status} ${styles.clomplete}`}>Pago aprobado</span>) : (
+                                                    dato.status == '4'? (<span className={`${styles.status} ${styles.cancel}`}>Reserva cancelada</span>) : (<p>Estado no vlido</p>)
                                                 )
                                             )
                                         ) 
