@@ -16,7 +16,7 @@ const Tabla = () => {
         setreservas(reservasNano.get())
     }
 
-    //console.log(reservas)  
+    console.log(reservas)  
 
 
 

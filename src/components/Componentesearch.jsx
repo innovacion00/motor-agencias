@@ -209,15 +209,15 @@ const BusquedaCartagena = () => {
 
   return (
     <>
-      <title>Resultados Cartagena de Indias</title>
+      <title>Resultados {Ciudad}</title>
 
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
       <div className={styles.container}>
         <div className={styles.breadcrumb}>
-          <a href="/Bookingconnect">Inicio</a> /{" "}
-          <a href="#">Resultados de búsqueda</a>
+          <a href="/">Inicio</a> /{" "}
+          <a href="/">Resultados de búsqueda</a>
         </div>
 
         <div className={styles.title}>Resultados {Ciudad}</div>
