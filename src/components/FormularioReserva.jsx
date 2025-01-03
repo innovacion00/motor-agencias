@@ -296,13 +296,13 @@ const FormularioReserva = () => {
 
         {reserva?.map((data) => (
           <div
-          key={data.roomId || index}
+            key={data.roomId || index}
             style={{
               border: "1px solid #ddd",
               borderRadius: "5px",
               padding: "15px",
               marginBottom: "20px",
-            }}  
+            }}
           >
             <img
               src={data.imgH}

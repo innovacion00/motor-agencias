@@ -144,10 +144,8 @@
   document.getElementById("email").addEventListener("input", validateForm);
   document.getElementById("password").addEventListener("input", validateForm);
   document.getElementById("terms").addEventListener("change", validateForm);
-
-  document
-    .querySelector(".toggle-password")
-    .addEventListener("click", function () {
+  document.querySelector(".toggle-password")
+  .addEventListener("click", function () {
       const passwordInput = document.getElementById(
         "password"
       ) as HTMLInputElement;
@@ -165,6 +163,7 @@
     const password = (
       document.getElementById("password") as HTMLInputElement
     ).value.trim();
+    
     const submitBtn = document.getElementById(
       "submit-btn"
     ) as HTMLButtonElement;
