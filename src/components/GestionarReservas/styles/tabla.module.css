@@ -112,3 +112,14 @@ th {
     background-color: #f39c12;
     color: white;
 }
+
+.link {
+    text-decoration: none; /* Elimina el subrayado */
+    color: inherit; /* Hereda el color del texto del contenedor */
+    font-weight: bold; /* Ejemplo: Personaliza el estilo */
+    transition: color 0.3s ease; /* Agrega un efecto suave al cambiar el color */
+  }
+  
+  .link:hover {
+    color: #007acc; /* Cambia el color al pasar el mouse */
+  }

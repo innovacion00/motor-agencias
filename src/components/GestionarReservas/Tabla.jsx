@@ -73,12 +73,14 @@ const Tabla = () => {
                                         dato.status == '1'? (<span className={`${styles.status} ${styles.proces}`}>Pago en proceso</span>) : (
                                             dato.status == '2'? (<span className={`${styles.status} ${styles.cancel}`}>Pago rechazado</span>) : (
                                                 dato.status == '3'? (<span className={`${styles.status} ${styles.clomplete}`}>Pago aprobado</span>) : (
-                                                    dato.status == '4'? (<span className={`${styles.status} ${styles.cancel}`}>Reserva cancelada</span>) : (<p>Estado no vlido</p>)
+                                                    dato.status == '4'? (<span className={`${styles.status} ${styles.cancel}`}>Reserva cancelada</span>) : (<p>Estado no valido</p>)
                                                 )
                                             )
                                         ) 
                                     )}</td>
-                                    <td><a href={`/gestionar/${dato.reservaChatbotId}`}>Consultar y gestionar</a></td>
+                                    <td><a href={`/gestionar/${dato.reservaChatbotId}`} class={styles.link}>
+    Consultar y gestionar
+  </a></td>
                                 </tr>
                             ))
                         }
