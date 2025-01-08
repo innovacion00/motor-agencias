@@ -58,7 +58,9 @@ const Gestionar = ({ reservas }) => {
       // Éxito al cancelar la reserva
       const data = await response.json();
       console.log("Reserva cancelada exitosamente:", data);
-      Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success");
+      Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success").then(()=>{
+        window.location.href = "/misreservas";
+      });
     } catch (error) {
       console.error("Error al cancelar la reserva:", error);
       Swal.fire(
