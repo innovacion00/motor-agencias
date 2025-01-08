@@ -337,7 +337,7 @@ export const Cid = ({ id }) => {
   const [ninos, setninos] = useState(0);
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
-//  console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
+  //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
 
   //funcion para formatear el los valores de dinero
 
@@ -363,7 +363,7 @@ export const Cid = ({ id }) => {
     
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
-    // console.log(disponibilidad)
+   console.log("Datos de disponibilidad" , disponibilidad)
     const resultado = disponibilidad.find((vaina) => vaina.hotel.id == id);
     const adultos = Number(localStorage.getItem("cantNinos"));
     const ninos = Number(localStorage.getItem("cantAdultos"));
