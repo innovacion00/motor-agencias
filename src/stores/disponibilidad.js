@@ -1,5 +1,4 @@
 import {atom} from "nanostores";
-import { useState } from "react";
 import Swal from "sweetalert2";
 
 // Crear una store para almacenar la disponibilidad
