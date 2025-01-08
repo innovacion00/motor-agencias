@@ -141,9 +141,10 @@ const Gestionar = ({ reservas }) => {
           <div className={styles.infoHotelHabitaciones}>
             <p className={styles.NombreHotel}>{reservas?.hotel}</p>
             <p>
-              ubi <span>{infoHoteles.ubicacion} |</span>{" "}
-              <span>tel +57 3336025021</span>
+              <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_ubicacion.png" alt="logo_ubicacion" /> <span>{infoHoteles.ubicacion} |</span>{" "}
+              <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_telefono.png" alt="logo_telefono" />{" "} <span>+57 3336025021</span>
             </p>
+            
             <div className={styles.infoFechas}>
               <div className={styles.flex}>
                 <div className={styles.flexCol}>
@@ -170,7 +171,9 @@ const Gestionar = ({ reservas }) => {
                   <p>{reservas?.cantidadHabitaciones}</p>
                 </div>
               </div>
+              
             </div>
+            <br />
             <div className={styles.habitaciones}>
               {reservas?.reservation.roomsData.map((dato, index) => (
                 <div className={styles.cardHabi} key={index}>
@@ -195,6 +198,7 @@ const Gestionar = ({ reservas }) => {
                 </div>
               ))}
             </div>
+            <br />
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
