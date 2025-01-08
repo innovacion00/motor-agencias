@@ -337,9 +337,13 @@ export const Cid = ({ id }) => {
   const [ninos, setninos] = useState(0);
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
+  const [categoria, setcategoria] = useState()
+
   //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
 
   //funcion para formatear el los valores de dinero
+
+
 
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
@@ -360,20 +364,21 @@ export const Cid = ({ id }) => {
 
   useEffect(() => {
 
-    
+    const category = JSON.parse(localStorage.getItem("datosUsuario"))
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
-   console.log("Datos de disponibilidad" , disponibilidad)
+   //console.log("Datos de disponibilidad" , disponibilidad)
     const resultado = disponibilidad.find((vaina) => vaina.hotel.id == id);
     const adultos = Number(localStorage.getItem("cantNinos"));
     const ninos = Number(localStorage.getItem("cantAdultos"));
+    setcategoria(category);
     setninos(ninos);
     setadultos(adultos);
     setfechas(rangosdefechas);
     setHabitaciones(resultado);
   }, [id]);
-  //console.log("Disponibilidad total", habitaciones);
-
+  console.log("Disponibilidad total", habitaciones);
+  const regex = categoria?.agencia?.category == 0?( /\[Booking connect Neto\]/i): (/\[Booking connect Mayorista\]/i); // Expresión regular para validar el roomName
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
@@ -500,7 +505,7 @@ export const Cid = ({ id }) => {
                     <p className="price"></p>
                     <p className="price">
                       {dato.products?.map((product, idx) => {
-                        const regex = /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
+                         // Expresión regular para validar el roomName
                         if (regex.test(product.roomName)) {
                           return (
                             <span key={idx}>
@@ -532,11 +537,11 @@ export const Cid = ({ id }) => {
                             imgH: idRooms[habitaciones.hotel.id][dato.roomId],
                             huespedes: adultos + ninos, // Número total de huéspedes
                             precio:
-                              dato.products?.find((product) =>
-                                /\[Booking connect Mayorista\]/i.test(
+                                (dato.products?.find((product) => 
+                                regex.test(
                                   product.roomName
                                 )
-                              )?.baseRate?.amountBeforeTax ||
+                              )?.baseRate?.amountBeforeTax) ||
                               "Sin precio disponible",
                             NombreH: dato.roomName,
                             beds: dato.beds,
