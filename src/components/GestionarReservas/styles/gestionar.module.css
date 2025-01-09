@@ -306,7 +306,42 @@
     cursor: pointer;
 }
 
+.cancelarButton {
+    background-color: #d33; /* Color original */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cancelarButton:hover:not(:disabled) {
+    background-color: #b22; /* Color más oscuro al pasar el mouse */
+  }
+  
+  .cancelarButton:disabled,
+  .disabledButtonc {
+    background-color: #ccc !important; /* Color gris para el estado deshabilitado */
+    color: #666 !important;
+    cursor: not-allowed !important; /* Indica que no es interactivo */
+  }
 
-
-
-
+  .pagarButton {
+    background-color: #d33; /* Color original */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pagarButton:hover:not(:disabled) {
+    background-color: #b22; /* Color más oscuro al pasar el mouse */
+  }
+  
+  .cancelarButton:disabled,
+  .disabledButtonp {
+    background-color: #ccc !important; /* Color gris para el estado deshabilitado */
+    color: #666 !important;
+    cursor: not-allowed !important; /* Indica que no es interactivo */
+  }

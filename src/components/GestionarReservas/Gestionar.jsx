@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 
 //UseState
 const Gestionar = ({ reservas }) => {
+  
   //  console.log(reservas)              // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
@@ -58,9 +59,11 @@ const Gestionar = ({ reservas }) => {
       // Éxito al cancelar la reserva
       const data = await response.json();
       console.log("Reserva cancelada exitosamente:", data);
-      Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success").then(()=>{
-        window.location.href = "/misreservas";
-      });
+      Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success").then(
+        () => {
+          window.location.href = "/misreservas";
+        }
+      );
     } catch (error) {
       console.error("Error al cancelar la reserva:", error);
       Swal.fire(
@@ -97,6 +100,9 @@ const Gestionar = ({ reservas }) => {
     }
   };
   const onClick = async (id) => {
+    if(reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"){
+      return
+    }
     await generarLink(id);
   };
 
@@ -143,10 +149,18 @@ const Gestionar = ({ reservas }) => {
           <div className={styles.infoHotelHabitaciones}>
             <p className={styles.NombreHotel}>{reservas?.hotel}</p>
             <p>
-              <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_ubicacion.png" alt="logo_ubicacion" /> <span>{infoHoteles.ubicacion} |</span>{" "}
-              <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_telefono.png" alt="logo_telefono" />{" "} <span>+57 3336025021</span>
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_ubicacion.png"
+                alt="logo_ubicacion"
+              />{" "}
+              <span>{infoHoteles.ubicacion} |</span>{" "}
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_telefono.png"
+                alt="logo_telefono"
+              />{" "}
+              <span>+57 3336025021</span>
             </p>
-            
+
             <div className={styles.infoFechas}>
               <div className={styles.flex}>
                 <div className={styles.flexCol}>
@@ -173,7 +187,6 @@ const Gestionar = ({ reservas }) => {
                   <p>{reservas?.cantidadHabitaciones}</p>
                 </div>
               </div>
-              
             </div>
             <br />
             <div className={styles.habitaciones}>
@@ -278,7 +291,13 @@ const Gestionar = ({ reservas }) => {
                 <p>Total + impuestos</p>
                 <p className={styles.totalP}>${reservas?.total}</p>
               </div>
-              <button onClick={() => onClick(reservas._id)}>Pagar ahora</button>
+              <button 
+              onClick={() => onClick(reservas._id)}
+               disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"}
+               className={`${styles.pagarButton} ${
+                reservas?.status == "1"|| reservas?.status == "3" || reservas?.status == "4" ? styles.disabledButtonp : ""}`}
+                >
+                  Pagar ahora</button>
             </div>
           </div>
 
@@ -287,7 +306,12 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.acciones}>
               {/* <a>Modificar reserva</a> */}
 
-              <button onClick={() => confirmarCancelacion(reservas._id)}>
+              <button
+                onClick={() => confirmarCancelacion(reservas._id)}
+                disabled={reservas?.status == "4"}
+                className={`${styles.cancelarButton} ${
+                  reservas?.status == "4" ? styles.disabledButtonc : ""}`}
+              >
                 Cancelar reserva
               </button>
             </div>

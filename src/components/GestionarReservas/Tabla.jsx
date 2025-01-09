@@ -4,12 +4,14 @@ import { getReservas, reservasNano } from "../../stores/disponibilidad";
 const Tabla = () => {
   const [reservas, setreservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
+  const [nombreAgencia, setnombreAgencia] = useState("");
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     // console.log(datosUsuario) // Datos del usuario y reserva
     ObtenerReservas(datosUsuario.token);
     setTokenUrl(datosUsuario.token);
+    setnombreAgencia(datosUsuario.agencia.fullName);
   }, []);
   const ObtenerReservas = async (token) => {
     await getReservas(token);
@@ -52,11 +54,13 @@ const Tabla = () => {
               <th>Hotel</th>
               <th>Check-in</th>
               <th>Check-out</th>
+              <th>Agencia</th>
               <th>Huesped</th>
               <th>Plazo para pagar</th>
               <th>Valor a pagar</th>
               <th>Estado</th>
               <th>Acciones</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -66,6 +70,7 @@ const Tabla = () => {
                 <td>{dato.hotel}</td>
                 <td>{dato.reservation.checkin}</td>
                 <td>{dato.reservation.checkout}</td>
+                <td>{nombreAgencia}</td>
                 <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
                 <td>{dato.fechaLimitePago}</td>
                 <td>${dato.total}</td>
