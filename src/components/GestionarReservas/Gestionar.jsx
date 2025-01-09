@@ -12,6 +12,7 @@ const Gestionar = ({ reservas }) => {
   //  console.log(reservas)              // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
+  const [isLoading, setisLoading] = useState(false)
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
@@ -92,11 +93,20 @@ const Gestionar = ({ reservas }) => {
   };
 
   const generarLink = async (id) => {
-    const linkP = await generarLinkPago(id);
-
-    console.log(linkP);
-    if (linkP.link) {
-      window.location.href = linkP.link;
+    setisLoading(true); // Deshabilitar el botón
+    try {
+      const linkP = await generarLinkPago(id); // Llamada a la API
+      console.log(linkP);
+      if (linkP.link) {
+        window.location.href = linkP.link; // Redireccionar al link generado
+      } else {
+        alert("No se pudo generar el link de pago.");
+      }
+    } catch (error) {
+      console.error("Error al generar el link:", error);
+      alert("Hubo un error al generar el link de pago.");
+    } finally {
+      setIsLoading(false); // Habilitar el botón nuevamente
     }
   };
   const onClick = async (id) => {
@@ -293,11 +303,10 @@ const Gestionar = ({ reservas }) => {
               </div>
               <button 
               onClick={() => onClick(reservas._id)}
-               disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"}
+               disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || (isLoading)}
                className={`${styles.pagarButton} ${
                 reservas?.status == "1"|| reservas?.status == "3" || reservas?.status == "4" ? styles.disabledButtonp : ""}`}
-                >
-                  Pagar ahora</button>
+                >{isLoading? "Generando link..." : "Pagar ahora"}</button>
             </div>
           </div>
 
