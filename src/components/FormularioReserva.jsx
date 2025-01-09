@@ -187,7 +187,7 @@ const FormularioReserva = () => {
         Swal.fire({
           icon: "error",
           title: "Error al realizar la reserva",
-          text: "No se pudo realizar la reserva. Por favor, intenta nuevamente más tarde.",
+          text: "No se pudo realizar la reserva. Por favor, intenta hacer la reserva con otra organizacion o nuevamente mas tarde.",
         });
         console.error("Error al obtener disponibilidad:", error);
       } finally {
@@ -242,7 +242,7 @@ const FormularioReserva = () => {
     setfechasreserva(fechas);
     setagencia(token);
   }, []);
-
+ 
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
     Swal.fire({
