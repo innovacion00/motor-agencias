@@ -336,7 +336,7 @@
   }
   
   .pagarButton:hover:not(:disabled) {
-    background-color: #b22; /* Color más oscuro al pasar el mouse */
+    background-color: rgb(34, 95, 187); /* Color más oscuro al pasar el mouse */
   }
   
   .cancelarButton:disabled,
