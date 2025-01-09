@@ -34,6 +34,7 @@ const Tabla = () => {
   // const reservas = reservasNano.get()
   return (
     <>
+    
       <div className={styles.container}>
         <br />
         <h1>Consultar mis reservas</h1>
@@ -102,7 +103,7 @@ const Tabla = () => {
                 <td>
                   <a
                     href={`/gestionar/${dato.reservaChatbotId}`}
-                    class={styles.link}
+                    className={styles.link}
                   >
                     Consultar y gestionar
                   </a>
