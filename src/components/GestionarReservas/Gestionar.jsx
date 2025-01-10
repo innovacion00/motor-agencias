@@ -227,7 +227,7 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
-                {/* <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {limiteP}</p> */}
+                 <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {reservas.fechaLimitePago}</p> 
               </div>
               <p className={styles.total}>${reservas?.total} COP</p>
             </div>
