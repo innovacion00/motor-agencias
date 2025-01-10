@@ -1,4 +1,6 @@
-import {atom} from "nanostores";
+import {
+    atom
+} from "nanostores";
 import Swal from "sweetalert2";
 
 // Crear una store para almacenar la disponibilidad
@@ -17,12 +19,12 @@ export const getdisponibility = async (objetohotel) => {
     })
     console.log(objetoprueba)
 
-const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
 
 
 
     try {
-        
+
         const url =
             `${URL}agencias/v1/reservas/disponibilidad`;
 
@@ -68,9 +70,12 @@ const token = localStorage.getItem("authToken");
 };
 
 export const reservasNano = atom([])
-export const getReservas = async (token) => {
-
-
+export const getReservas = async (token, datosUsuario) => {
+    console.log(datosUsuario)
+    // const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
+    // console.log(datosUsuario.role[0])
+    // const url = datosUsuario.role[0] == "super-admin" ? ("/agencias/v1/reservas") : ("agencias/v1/reservas/reservas-by-user")
+    // console.log(url)
     try {
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
@@ -79,17 +84,31 @@ export const getReservas = async (token) => {
             method: "GET",
             headers: myHeaders,
         };
+        if (datosUsuario == "super-admin") {
 
-        const response = await fetch(`${URL}agencias/v1/reservas/reservas-by-user`, requestOptions)
+            const response = await fetch(`${URL}agencias/v1/reservas`, requestOptions)
 
-        if (response.ok) {
-            const data = await response.json()
-            reservasNano.set(data.reservas)
-            return data.reservas
-            // console.log(data.reservas)
+            if (response.ok) {
+                const data = await response.json()
+                reservasNano.set(data)
+                console.log(data)
+                return data
+            } else {
+                console.log('error al obtener los datos de la reserva')
+            }
         } else {
-            console.log('error al obtener los datos de la reserva')
+            const response = await fetch(`${URL}agencias/v1/reservas/reservas-by-user`, requestOptions)
+
+            if (response.ok) {
+                const data = await response.json()
+                reservasNano.set(data.reservas)
+                return data.reservas
+                // console.log(data.reservas)
+            } else {
+                console.log('error al obtener los datos de la reserva')
+            }
         }
+
 
     } catch (error) {
         console.log('erro en la peticion:', error)

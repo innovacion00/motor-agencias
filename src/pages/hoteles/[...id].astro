@@ -58,7 +58,7 @@ vaina.hotel.id == id
       function checkAuth() {
         const token = localStorage.getItem("authToken");
         if (!token) {
-          window.location.href = "/"; // Redirige al login si no hay token
+          window.location.href = "/login"; // Redirige al login si no hay token
         }
       }
 

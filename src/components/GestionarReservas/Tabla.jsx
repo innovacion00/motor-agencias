@@ -5,31 +5,32 @@ const Tabla = () => {
   const [reservas, setreservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
   const [nombreAgencia, setnombreAgencia] = useState("");
-
+// console.log(role)
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     // console.log(datosUsuario) // Datos del usuario y reserva
-    ObtenerReservas(datosUsuario.token);
+    ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
     setTokenUrl(datosUsuario.token);
-    setnombreAgencia(datosUsuario.agencia.fullName);
+    setnombreAgencia(datosUsuario);
   }, []);
-  const ObtenerReservas = async (token) => {
-    await getReservas(token);
+  const ObtenerReservas = async (token, nombreAgencia) => {
+
+    await getReservas(token, nombreAgencia);
     setreservas(reservasNano.get());
   };
 
   console.log(reservas);
 
   //funcion para formatear el los valores de dinero
-  const formatCurrency = (value) => {
-    if (value === undefined || value === null || isNaN(value)) {
-      return "Sin Disponibilidad";
-    }
-    return new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-    }).format(value);
-  };
+  // const formatCurrency = (value) => {
+  //   if (value === undefined || value === null || isNaN(value)) {
+  //     return "Sin Disponibilidad";
+  //   }
+  //   return new Intl.NumberFormat("es-CO", {
+  //     style: "currency",
+  //     currency: "COP",
+  //   }).format(value);
+  // };
 
   // const reservas = reservasNano.get()
   return (
@@ -71,7 +72,7 @@ const Tabla = () => {
                 <td>{dato.hotel}</td>
                 <td>{dato.reservation.checkin}</td>
                 <td>{dato.reservation.checkout}</td>
-                <td>{nombreAgencia}</td>
+                <td>{dato?.agenciaId?.fullName}</td>
                 <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
                 <td>{dato.fechaLimitePago}</td>
                 <td>${dato.total}</td>
@@ -85,7 +86,7 @@ const Tabla = () => {
                       Pago en proceso
                     </span>
                   ) : dato.status == "2" ? (
-                    <span className={`${styles.status} ${styles.cancel}`}>
+                    <span className={`${styles.status} ${styles.denied}`}>
                       Pago rechazado
                     </span>
                   ) : dato.status == "3" ? (

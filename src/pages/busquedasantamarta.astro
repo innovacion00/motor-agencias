@@ -23,7 +23,7 @@ import Componentesearch from "../components/Componentesearch";
         function checkAuth() {
           const token = localStorage.getItem("authToken");
           if (!token) {
-            window.location.href = "/"; // Redirige al login si no hay token
+            window.location.href = "/login"; // Redirige al login si no hay token
           }
         }
         checkAuth(); // Llamamos a esta función al cargar la página

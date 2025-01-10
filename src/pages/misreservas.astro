@@ -23,7 +23,7 @@ import Tabla from '../components/GestionarReservas/Tabla';
         function checkAuth() {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      window.location.href = "/"; // Redirige al login si no hay token
+      window.location.href = "/login"; // Redirige al login si no hay token
     }
   }
 
@@ -34,7 +34,7 @@ import Tabla from '../components/GestionarReservas/Tabla';
 
 <style>
     body {
-        font-family: 'Arial', sans-serif;
+        font-family: 'Roboto', sans-serif;
         background-color: #f5f5f5;
         margin: 0;
         padding: 0;

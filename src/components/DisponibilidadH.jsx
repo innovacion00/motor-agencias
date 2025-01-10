@@ -470,14 +470,14 @@ export const Cid = ({ id }) => {
             <p>Húespedes</p>
             <strong>{ninos + adultos}</strong>
           </div>
-          <div>
+          {/* <div>
             <p>Habitaciones disponibles</p>
             <strong>
               {habitaciones?.availability?.map(
                 (tipo) => tipo.available_rooms?.length
               )}
             </strong>
-          </div>
+          </div> */}
           {/* <button>Modificar búsqueda</button> */}
         </div>
 

@@ -10,7 +10,6 @@ h1 {
 
 .filters {
     display: flex;
-    align-items: center;
     margin-bottom: 20px;
 }
 
@@ -84,6 +83,10 @@ th {
 }
 .cancel {
     background-color: #bd1f1f;
+    color: white;
+}
+.denied{
+    background-color: #df6482;
     color: white;
 }
 

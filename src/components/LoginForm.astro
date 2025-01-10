@@ -263,7 +263,7 @@
         localStorage.setItem("authToken", dataT.token);
         localStorage.setItem("datosUsuario", JSON.stringify(dataT));
         Cookies.set('token', JSON.stringify(dataT.token), { expires: 7, path: "/"});
-
+        Cookies.set('datosUsuario', JSON.stringify(dataT), { expires: 7, path: "/"});
         // Redirigir al usuario a la página de inicio
         window.location.href = "/";
       } else {

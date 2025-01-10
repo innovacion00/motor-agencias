@@ -9,6 +9,7 @@ import { format } from "@formkit/tempo";
 const FormularioReserva = () => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
+  const [huespedes, sethuespedes] = useState();
   const [mostrarTexto, setMostrarTexto] = useState(false); // Estado para controlar la visibilidad del texto //false para mas de 72h
   const [mostrarBoton, setmostrarBoton] = useState(false);
   const [fechasreserva, setfechasreserva] = useState();
@@ -251,6 +252,7 @@ const FormularioReserva = () => {
       text: "Se ha realizado la reserva con exito",
       showConfirmButton: false,
       timer: 4000,
+      
     });
     setTimeout(() => {
       window.location.href = "/reservapagada"; //Redireccion hacia la pagina de reserva pagada

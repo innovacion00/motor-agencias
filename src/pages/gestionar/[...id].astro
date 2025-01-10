@@ -6,13 +6,16 @@ import { getReservas, reservasNano } from "../../stores/disponibilidad";
 export const prerender = false;
 
 const cook =  Astro.cookies.get('token')
-const reservas = await getReservas(JSON.parse(cook.value))
+const rol =   Astro.cookies.get('datosUsuario')
+const roles = JSON.parse(rol.value).role.find(rol => rol === "super-admin" )
+const reservas = await getReservas(JSON.parse(cook.value), roles)
+
 const { id } = Astro.params;
 
 const reserva = reservas.find((dato)=>(
   dato.reservaChatbotId == id
 ))
-console.log(reservasNano.get())
+// console.log(reservasNano.get())
 ---
 
 <!doctype html>
