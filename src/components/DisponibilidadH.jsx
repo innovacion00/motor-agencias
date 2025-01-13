@@ -80,7 +80,7 @@ const hotelesData = {
       "Hotel 1525 By GEH Suites, está ubicado en el Centro Histórico de la Ciudad de Santa Marta, cuenta con 24 habitaciones confortables y modernas. Este hotel, ocupa un edificio con elementos decorativos de forja, se encuentra a 2 minutos caminando de las exposiciones de joyas del Museo del Oro Tairona Casa de la Aduana.",
     image: "https://www.gehsuites.com/images/fachada_1525.jpg",
   },
-  100: {
+  48: {
     name: "Hotel Axis Inn",
     direction: "Cra. 3 #10-14, El Rodadero, Gaira, Santa Marta, Magdalena",
     description:
@@ -88,7 +88,7 @@ const hotelesData = {
     image:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg",
   },
-  101: {
+  44: {
     name: "Hotel Sansiraka",
     direction: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena",
     description:
@@ -203,6 +203,24 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
   ],
+  44: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
+  48: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+  ],
 };
 
 const idRooms = {
@@ -301,7 +319,7 @@ const idRooms = {
 
   //Axis
 
-  100: {
+  48: {
     145577:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Familiar-axis.jpeg", //quintuple
     145576:
@@ -313,7 +331,7 @@ const idRooms = {
   },
 
   //Sansiraka
-  101: {
+  44: {
     104184:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-quintuple-sansiraka.jpeg", //Quintuple
     104183:
