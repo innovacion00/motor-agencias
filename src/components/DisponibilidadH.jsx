@@ -110,7 +110,17 @@ const hotelesData = {
     image:
       "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
   },
+  41: {
+    name: "Hotel Zulita",
+    direction:
+      "Cl. 48 #13-22, Bogotá,",
+    description:
+      "Bienvenido al Hotel Zulita Inn , ubicado en la Cl. 48 #13-22, Bogotá, en el moderno barrio el Campin de Bogotá. dispone de alojamiento con salón de uso común, parking privado gratis y terraza. Este hotel de 3 estrellas ofrece servicio de conserjería y mostrador de información turística. El alojamiento ofrece recepción 24 horas, traslado para ir o volver del aeropuerto, servicio de habitaciones y wifi gratis en todo el alojamiento.",
+    image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg",
+  },
 };
+
+
 
 const hotelIcons = {
   9: [
@@ -203,6 +213,12 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
   ],
+  41:[
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+  ]
 };
 
 const idRooms = {
@@ -327,6 +343,9 @@ const idRooms = {
     104979:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
+  41:{
+    
+  }
 };
 // UseState
 
