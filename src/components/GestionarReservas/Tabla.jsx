@@ -35,6 +35,8 @@ const Tabla = () => {
     }).format(value);
   };
 
+
+  //funcion para filtrar
   const handleSearch = (event) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchTerm(searchValue);
@@ -43,7 +45,8 @@ const Tabla = () => {
       reserva.hotel.toLowerCase().includes(searchValue) || // Filtrar por hotel
       reserva.reservaChatbotId.toString().includes(searchValue) || // Filtrar por código de reserva
       reserva.reservation.firstName.toLowerCase().includes(searchValue) || // Filtrar por nombre del huésped
-      reserva.reservation.lastName.toLowerCase().includes(searchValue) // Filtrar por apellido del huésped
+      reserva.reservation.lastName.toLowerCase().includes(searchValue) || // Filtrar por apellido del huésped
+      (reserva.agenciaId?.fullName || "").toLowerCase().includes(searchValue)
     );
     setFilteredReservas(filtered);
   };
@@ -57,7 +60,7 @@ const Tabla = () => {
       <div className={styles.filters}>
         <input
           type="text"
-          placeholder="Buscar por hotel, huésped o código de reserva"
+          placeholder="Buscar por agencia,hotel, huésped o código ..."
           value={searchTerm}
           onChange={handleSearch}
           className={styles.searchInput}
