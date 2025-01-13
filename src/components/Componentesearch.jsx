@@ -206,6 +206,7 @@ const BusquedaCartagena = () => {
       }
     }
   }, []);
+  console.log(hotelesDisponibles)
 
   return (
     <>

@@ -16,6 +16,7 @@ const FormularioReserva = () => {
   const [cantadultos, setcantadultos] = useState();
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
+  const [esExtranjero, setesExtranjero] = useState(false)
   const [formData, setFormData] = useState({
     tipoDocumento: "",
     numeroDocumento: "",
@@ -24,6 +25,7 @@ const FormularioReserva = () => {
     fechaNacimiento: "",
     email: "",
     celular: "",
+    esExtranjero:false
   });
 
   // Parsea numeros de body a string
@@ -63,13 +65,14 @@ const FormularioReserva = () => {
     apellidos,
     email,
     celular,
+
   } = formData;
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [id]: value,
+      [id]: type === "checkbox" ? checked :  value,
     });
   };
 
@@ -105,6 +108,7 @@ const FormularioReserva = () => {
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
+        exentoIva:esExtranjero,
         reservaInfo: {
           agency: {
             is_agency: true,
@@ -172,7 +176,7 @@ const FormularioReserva = () => {
           });
           setTimeout(() => {
             window.location.href = "/misreservas"; //Redireccion hacia la pagina de reserva pagada
-          }, 2000);
+          }, 2500);
         } else if (response.status === 409) {
           // Manejo del error 409
           Swal.fire({
@@ -199,7 +203,6 @@ const FormularioReserva = () => {
     enviardatos(); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
   };
 
-  // const [datosreserva, setdatosreserva] = useState([]);
 
   //funcion para formatear el los valores de dinero
   const formatCurrency = (value) => {
@@ -349,11 +352,15 @@ const FormularioReserva = () => {
             Precio total con IVA:{" "}
             <strong> {formatCurrency(totalConIVA)} </strong>
           </p>
+  
+          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana, se debe asumir el impuesto del iva del 19%. </strong>
         </div>
 
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
+        
+        
           <fieldset
             style={{
               border: "1px solid #ddd",
@@ -365,6 +372,31 @@ const FormularioReserva = () => {
             <legend>Informacion del titular</legend>
 
             <div>
+              {/* Checkbox De huesped o no  */}
+              <div
+  style={{
+    display: "flex",
+    alignItems: "center", // Alinea verticalmente el checkbox con el texto
+    justifyContent: "flex-start", // Alinea el contenido a la izquierda
+  }}
+>
+  <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
+    ¿El huésped es extranjero? marque la casilla para indicar si
+  </label>
+  <input
+  style={{
+    maxWidth:"250px",
+    maxHeight:"100px",
+    marginRight:"500px",
+    
+  }}
+    type="checkbox"
+    id="esExtranjero"
+    checked={esExtranjero}
+    onChange={(e) => setesExtranjero(e.target.checked)}
+  />
+</div>
+
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
               </label>
@@ -526,21 +558,6 @@ const FormularioReserva = () => {
           >
             {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
           </button>
-
-          {/* <button
-            //type="submit"
-            style={{
-              fontWeight: "500",
-              backgroundColor: "#26547B",
-              color: "white",
-              padding: "10px 20px",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
-            Pagar reserva
-          </button> */}
         </form>
       </div>
     </>
