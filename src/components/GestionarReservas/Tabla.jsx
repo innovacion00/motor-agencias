@@ -22,15 +22,15 @@ const Tabla = () => {
   console.log(reservas);
 
   //funcion para formatear el los valores de dinero
-  // const formatCurrency = (value) => {
-  //   if (value === undefined || value === null || isNaN(value)) {
-  //     return "Sin Disponibilidad";
-  //   }
-  //   return new Intl.NumberFormat("es-CO", {
-  //     style: "currency",
-  //     currency: "COP",
-  //   }).format(value);
-  // };
+  const formatCurrency = (value) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return "Sin Disponibilidad";
+    }
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+    }).format(value);
+  };
 
   // const reservas = reservasNano.get()
   return (
@@ -75,7 +75,7 @@ const Tabla = () => {
                 <td>{dato?.agenciaId?.fullName}</td>
                 <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
                 <td>{dato.fechaLimitePago}</td>
-                <td>${dato.total}</td>
+                <td>{formatCurrency(dato.total)}</td>
                 <td>
                   {dato.status == "0" ? (
                     <span className={`${styles.status} ${styles.pending}`}>

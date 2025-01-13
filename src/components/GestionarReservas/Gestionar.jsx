@@ -116,6 +116,18 @@ const Gestionar = ({ reservas }) => {
     await generarLink(id);
   };
 
+ //funcion para formatear el los valores de dinero
+ const formatCurrency = (value) => {
+  if (value === undefined || value === null || isNaN(value)) {
+    return "Sin Disponibilidad";
+  }
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+  }).format(value);
+};
+
+
   return (
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
@@ -219,7 +231,7 @@ const Gestionar = ({ reservas }) => {
                       </p>
                     </div>
                   </div>
-                  <p className={styles.totalCard}>${dato.unitaryPrice} COP</p>
+                  <p className={styles.totalCard}>{formatCurrency(dato.unitaryPrice)} COP</p>
                 </div>
               ))}
             </div>
@@ -229,7 +241,7 @@ const Gestionar = ({ reservas }) => {
                 <p>Valor a pagar + impuestos</p>
                  <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {reservas.fechaLimitePago}</p> 
               </div>
-              <p className={styles.total}>${reservas?.total} COP</p>
+              <p className={styles.total}>{formatCurrency(reservas?.total)} COP</p>
             </div>
           </div>
         </div>
@@ -293,13 +305,13 @@ const Gestionar = ({ reservas }) => {
                 <p>
                   {reservas.reservation.nights} noches, {dato.adults} huéspedes
                 </p>
-                <p>${dato.unitaryPrice}</p>
+                <p>{formatCurrency(dato.unitaryPrice)}</p>
               </div>
             ))}
             <div className={styles.pagos}>
               <div className={styles.totalPago}>
                 <p>Total + impuestos</p>
-                <p className={styles.totalP}>${reservas?.total}</p>
+                <p className={styles.totalP}>{formatCurrency(reservas?.total)}</p>
               </div>
               <button 
               onClick={() => onClick(reservas._id)}

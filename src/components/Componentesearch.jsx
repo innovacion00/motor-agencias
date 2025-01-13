@@ -26,6 +26,11 @@ const BusquedaCartagena = () => {
     2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525
     48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg", //axis
     44: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg", //sansiraka
+    41:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
+
+
+    
+
   };
 
   //Objeto con los arreglos de los iconos
@@ -102,7 +107,7 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     ],
-    100: [
+    48: [
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
@@ -111,7 +116,7 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     ],
-    101: [
+    44: [
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
@@ -120,6 +125,9 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     ],
+    41:[
+
+    ]
   };
 
   const cityMap = {
