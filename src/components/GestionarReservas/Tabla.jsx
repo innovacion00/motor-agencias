@@ -9,7 +9,6 @@ const Tabla = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Nuevo estado para el filtro
   const [filteredReservas, setFilteredReservas] = useState([]); // Estado para las reservas filtradas
 
-  // console.log(role)
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
@@ -23,8 +22,13 @@ const Tabla = () => {
     setreservas(reservasObtenidas);
     setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
   };
-  console.log(reservas);
-  //funcion para formatear el los valores de dinero
+
+  // Calcular la suma total de "Valor a pagar"
+  const totalAmount = filteredReservas.reduce(
+    (acc, reserva) => acc + (reserva.total || 0),
+    0
+  );
+
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
@@ -35,8 +39,6 @@ const Tabla = () => {
     }).format(value);
   };
 
-
-  //funcion para filtrar
   const handleSearch = (event) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchTerm(searchValue);
@@ -134,16 +136,17 @@ const Tabla = () => {
               </td>
             </tr>
           ))}
+
+          {/* Fila para el total */}
+          <tr className={styles.totalRow}>
+            <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
+              Total:
+            </td>
+            <td style={{ fontWeight: "bold" }}>{formatCurrency(totalAmount)}</td>
+            <td colSpan="2"></td>
+          </tr>
         </tbody>
       </table>
-
-      <div className={styles.pagination}>
-        <span>Anterior</span>
-        <a href="#" className={styles.active}>
-          1
-        </a>
-        <span>Siguiente</span>
-      </div>
     </div>
   );
 };

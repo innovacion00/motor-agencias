@@ -192,7 +192,7 @@ const FormularioReserva = () => {
         Swal.fire({
           icon: "error",
           title: "Error al realizar la reserva",
-          text: "No se pudo realizar la reserva. Por favor, intenta hacer la reserva con otra organizacion o nuevamente mas tarde.",
+          text: "No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva con otra organizacion ",
         });
         console.error("Error al obtener disponibilidad:", error);
       } finally {
@@ -353,7 +353,7 @@ const FormularioReserva = () => {
             <strong> {formatCurrency(totalConIVA)} </strong>
           </p>
   
-          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana y cumpla con los requisitos de migración colombia, se debe asumir el impuesto del iva del 19%. </strong>
+          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
         </div>
 
         <h3>Información de los huéspedes</h3>
@@ -385,9 +385,11 @@ const FormularioReserva = () => {
   </label>
   <input
   style={{
-    maxWidth:"250px",
-    maxHeight:"100px",
-    marginRight:"500px",
+    width: "15px", // Tamaño más claro y consistente
+    height: "15px",
+    marginLeft:"40px",
+    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
     
   }}
     type="checkbox"
@@ -529,6 +531,7 @@ const FormularioReserva = () => {
                 type="tel"
                 value={formData.celular}
                 onChange={handleChange}
+                autoComplete="off"
                 style={{
                   display: "block",
                   width: "100%",
