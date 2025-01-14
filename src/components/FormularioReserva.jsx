@@ -25,7 +25,7 @@ const FormularioReserva = () => {
     fechaNacimiento: "",
     email: "",
     celular: "",
-    esExtranjero:false
+    // esExtranjero:false
   });
 
   // Parsea numeros de body a string
@@ -53,7 +53,7 @@ const FormularioReserva = () => {
   );
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA = totalPrecio * tasaIVA; //Calcular valor del IVA
+  const valorIVA = esExtranjero == true? (totalPrecio*0) : (totalPrecio*tasaIVA)      //totalPrecio * tasaIVA; 
   const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
 
   //  console.log(checkin);
@@ -353,7 +353,7 @@ const FormularioReserva = () => {
             <strong> {formatCurrency(totalConIVA)} </strong>
           </p>
   
-          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana, se debe asumir el impuesto del iva del 19%. </strong>
+          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana y cumpla con los requisitos de migración colombia, se debe asumir el impuesto del iva del 19%. </strong>
         </div>
 
         <h3>Información de los huéspedes</h3>
