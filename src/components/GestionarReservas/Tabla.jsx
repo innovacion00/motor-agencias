@@ -24,10 +24,10 @@ const Tabla = () => {
   };
 
   // Calcular la suma total de "Valor a pagar"
-  const totalAmount = filteredReservas.reduce(
-    (acc, reserva) => acc + (reserva.total || 0),
-    0
-  );
+  const totalAmount = filteredReservas.reduce((acc, reserva) => {
+    return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
+  }, 0);
+
 
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
