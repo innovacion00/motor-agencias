@@ -630,7 +630,14 @@ export const Cid = ({ id }) => {
                 ))}
 
                 <a href="/reservas">
-                    <button onClick={enviardatos}>Reservar ahora</button>
+                    <button 
+                    onClick={enviardatos}
+                    disabled={datohabitacion.length === 0}
+                    style={{
+                      backgroundColor: datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+                      cursor: datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                    }}
+                    >Reservar ahora</button>
                 </a>
             </div>
         </div>
