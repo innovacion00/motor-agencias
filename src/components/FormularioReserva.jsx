@@ -27,12 +27,16 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
+  
+//convertir esExtranjero
+const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
+
 
   // Parsea numeros de body a string
   const adults = JSON.stringify(cantadultos);
   const ninos = JSON.stringify(cantninos);
   const ninos1 = cantninos === 0 ? "" : JSON.stringify(cantninos);
-  console.log(ninos);
+  //console.log(ninos);
   const noches = JSON.stringify(reserva[0]?.nights);
   const habitaciones = JSON.stringify(reserva.length);
 
@@ -51,6 +55,7 @@ const FormularioReserva = () => {
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
+  console.log("edades niños",edadesninos)
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA = esExtranjero == true? (totalPrecio*0) : (totalPrecio*tasaIVA)      //totalPrecio * tasaIVA; 
@@ -128,20 +133,25 @@ const FormularioReserva = () => {
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches `,
+            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped es ${valorextranjero}, en caso de si favor verificar en recepcion si cumple con los requisitos de migracion colombia`,
             rooms: habitaciones,
-            roomsData: reserva.map((dato) => ({
-              nombreHabitacion: dato.NombreH,
-              adults: adults,
-              children: ninos1,
-              checkin: checkin,
-              checkout: checkout,
-              currency: "COP",
-              id: dato.roomId,
-              quantity: "1",
-              rateId: dato.rateId[0],
-              unitaryPrice: dato.precio,
-            })),
+            roomsData: reserva.map((dato, index) => {
+              const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
+              return {
+                nombreHabitacion: dato.NombreH,
+                adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
+                children: roomConfig.children_ages
+                  ? JSON.stringify(roomConfig.children_ages.length)
+                  : "",
+                checkin: checkin,
+                checkout: checkout,
+                currency: "COP",
+                id: dato.roomId,
+                quantity: "1",
+                rateId: dato.rateId[0],
+                unitaryPrice: dato.precio,
+              };
+            }),
 
             telephone: `+57${formData.celular}`,
           },
