@@ -8,7 +8,7 @@ const Tabla = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredReservas, setFilteredReservas] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // Página actual
-  const [itemsPerPage] = useState(10); // Número de elementos por página
+  const [itemsPerPage] = useState(15); // Número de elementos por página
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -149,16 +149,47 @@ const Tabla = () => {
 
       {/* Paginación */}
       <div className={styles.pagination}>
-        {pageNumbers.map((number) => (
-          <button
-            key={number}
-            onClick={() => paginate(number)}
-            className={`${styles.pageItem} ${currentPage === number ? styles.active : ""}`}
-          >
-            {number}
-          </button>
-        ))}
-      </div>
+  <button
+    onClick={() => paginate(currentPage - 1)}
+    disabled={currentPage === 1}
+    className={styles.pageNav}
+  >
+    &laquo; {/* Símbolo para "anterior" */}
+  </button>
+
+  {pageNumbers
+    .filter(
+      (number) =>
+        number === 1 || // Siempre muestra la primera página
+        number === totalPages || // Siempre muestra la última página
+        (number >= currentPage - 2 && number <= currentPage + 2) // Muestra un rango de 5 páginas alrededor de la actual
+    )
+    .map((number, index, filtered) => (
+      <>
+        {/* Agrega "..." para indicar páginas omitidas */}
+        {index > 0 && filtered[index - 1] + 1 !== number && (
+          <span className={styles.ellipsis} key={`ellipsis-${number}`}>
+            ...
+          </span>
+        )}
+        <button
+          key={number}
+          onClick={() => paginate(number)}
+          className={`${styles.pageItem} ${currentPage === number ? styles.active : ""}`}
+        >
+          {number}
+        </button>
+      </>
+    ))}
+
+  <button
+    onClick={() => paginate(currentPage + 1)}
+    disabled={currentPage === totalPages}
+    className={styles.pageNav}
+  >
+    &raquo; {/* Símbolo para "siguiente" */}
+  </button>
+</div>
     </div>
   );
 };

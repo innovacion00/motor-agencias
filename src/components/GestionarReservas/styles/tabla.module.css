@@ -4,7 +4,7 @@
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 30PX;
     color: #2c3e50;
 }
 
@@ -120,7 +120,34 @@ th {
     color: #fff; /* Color del texto al pasar el ratón */
     border-color: #9F6118; /* Cambia el color del borde */
   }
+  .pageNav {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    background-color: #e9ecef;
+    color: #333;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  .pageNav:hover {
+    background-color: #9F6118;
+    color: #fff;
+  }
   
+  .pageNav:disabled {
+    background-color: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+  }
+  
+  .ellipsis {
+    padding: 8px;
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
   .pageItem:focus {
     outline: none; /* Elimina el borde de enfoque predeterminado */
     box-shadow: 0 0 5px #9F6118; /* Añade un efecto de enfoque */
@@ -138,6 +165,13 @@ th {
     cursor: not-allowed;
     border-color: #ced4da; /* Color del borde deshabilitado */
   }
+
+  .ellipsis {
+  padding: 8px;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: bold;
+}
   
 
 .link {
