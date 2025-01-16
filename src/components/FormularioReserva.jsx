@@ -192,7 +192,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
           Swal.fire({
             icon: "error",
             title: "Sin disponibilidad",
-            text: "No se encontró disponibilidad para estas habitaciones.",
+            text: "No se pudo completar la reserva porque una de las habitaciones ya no se encuentra disponible. Pruebe con otra acomodacion",
           });
         } else {
           throw new Error("Error al consultar la API");
