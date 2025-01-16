@@ -99,22 +99,46 @@ th {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
-}
-
-.pagination span,
-.pagination a {
-    margin: 0 5px;
+    margin: 20px 0;
+    gap: 10px; /* Espacio entre botones */
+  }
+  
+  .pageItem {
     padding: 10px 15px;
+    border: 1px solid #ccc; /* Color del borde */
+    background-color: #f9f9f9; /* Color de fondo predeterminado */
+    color: #333; /* Color del texto */
+    font-size: 14px;
+    font-weight: bold;
     border-radius: 5px;
-    text-decoration: none;
-    color: #2c3e50;
-}
-
-.pagination .active {
-    background-color: #f39c12;
-    color: white;
-}
+    cursor: pointer;
+    transition: all 0.3s ease; /* Suavizado de animaciones */
+  }
+  
+  .pageItem:hover {
+    background-color: #b98422; /* Color de fondo al pasar el ratón */
+    color: #fff; /* Color del texto al pasar el ratón */
+    border-color: #9F6118; /* Cambia el color del borde */
+  }
+  
+  .pageItem:focus {
+    outline: none; /* Elimina el borde de enfoque predeterminado */
+    box-shadow: 0 0 5px #9F6118; /* Añade un efecto de enfoque */
+  }
+  
+  .pageItem.active {
+    background-color: #9F6118; /* Color de fondo para el botón activo */
+    color: #fff; /* Color del texto del botón activo */
+    border-color: #99744a; /* Color del borde para el botón activo */
+  }
+  
+  .pageItem:disabled {
+    background-color: #e9ecef; /* Color de fondo para botones deshabilitados */
+    color: #6c757d; /* Color del texto para botones deshabilitados */
+    cursor: not-allowed;
+    border-color: #ced4da; /* Color del borde deshabilitado */
+  }
+  
 
 .link {
     text-decoration: none; /* Elimina el subrayado */

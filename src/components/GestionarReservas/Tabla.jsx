@@ -3,36 +3,32 @@ import styles from "./styles/tabla.module.css";
 import { getReservas, reservasNano } from "../../stores/disponibilidad";
 
 const Tabla = () => {
-  const [reservas, setreservas] = useState([]);
+  const [reservas, setReservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
-  const [nombreAgencia, setnombreAgencia] = useState("");
-  const [searchTerm, setSearchTerm] = useState(""); // Nuevo estado para el filtro
-  const [filteredReservas, setFilteredReservas] = useState([]); // Estado para las reservas filtradas
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredReservas, setFilteredReservas] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1); // Página actual
+  const [itemsPerPage] = useState(10); // Número de elementos por página
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
     setTokenUrl(datosUsuario.token);
-    setnombreAgencia(datosUsuario);
   }, []);
 
   const ObtenerReservas = async (token, nombreAgencia) => {
     await getReservas(token, nombreAgencia);
     const reservasObtenidas = reservasNano.get();
-    setreservas(reservasObtenidas);
+    setReservas(reservasObtenidas);
     setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
   };
-
-  // Calcular la suma total de "Valor a pagar"
+// Calcular la suma total de "Valor a pagar"
   const totalAmount = filteredReservas.reduce((acc, reserva) => {
     return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
   }, 0);
 
-
   const formatCurrency = (value) => {
-    if (value === undefined || value === null || isNaN(value)) {
-      return "Sin Disponibilidad";
-    }
+    if (!value || isNaN(value)) return "Sin Disponibilidad";
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
@@ -44,35 +40,41 @@ const Tabla = () => {
     setSearchTerm(searchValue);
 
     const filtered = reservas.filter((reserva) =>
-      reserva.hotel.toLowerCase().includes(searchValue) || // Filtrar por hotel
-      reserva.reservaChatbotId.toString().includes(searchValue) || // Filtrar por código de reserva
-      reserva.reservation.firstName.toLowerCase().includes(searchValue) || // Filtrar por nombre del huésped
+      reserva.hotel.toLowerCase().includes(searchValue) ||  // Filtrar por hotel
+      reserva.reservaChatbotId.toString().includes(searchValue) ||   // Filtrar por código de reserva
+      reserva.reservation.firstName.toLowerCase().includes(searchValue) ||   // Filtrar por nombre del huésped
       reserva.reservation.lastName.toLowerCase().includes(searchValue) || // Filtrar por apellido del huésped
       (reserva.agenciaId?.fullName || "").toLowerCase().includes(searchValue)
     );
     setFilteredReservas(filtered);
+    setCurrentPage(1); // Reiniciar a la primera página
   };
+
+  // Cálculo de los índices de elementos para la paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredReservas.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Cambio de página
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Generación de números de página
+  const totalPages = Math.ceil(filteredReservas.length / itemsPerPage);
+  const pageNumbers = [...Array(totalPages).keys()].map((i) => i + 1);
 
   return (
     <div className={styles.container}>
-      <br />
       <h1>Consultar mis reservas</h1>
 
       {/* Filtro de búsqueda */}
       <div className={styles.filters}>
         <input
           type="text"
-          placeholder="Buscar por agencia,hotel, huésped o código ..."
+          placeholder="Buscar por agencia, hotel, huésped o código..."
           value={searchTerm}
           onChange={handleSearch}
           className={styles.searchInput}
         />
-      </div>
-
-      <div className={styles.tabs}>
-        <div className={styles.active}>
-          Próximos pagos {/*<span className={styles.badge}>1</span>*/}
-        </div>
       </div>
 
       <table>
@@ -91,7 +93,7 @@ const Tabla = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredReservas.map((dato, index) => (
+          {currentItems.map((dato, index) => (
             <tr key={index}>
               <td>{dato.reservaChatbotId}</td>
               <td>{dato.hotel}</td>
@@ -105,19 +107,19 @@ const Tabla = () => {
                 {dato.status == "0" ? (
                   <span className={`${styles.status} ${styles.pending}`}>
                     Pago pendiente
-                  </span>
+                    </span>
                 ) : dato.status == "1" ? (
                   <span className={`${styles.status} ${styles.proces}`}>
                     Pago en proceso
-                  </span>
+                    </span>
                 ) : dato.status == "2" ? (
                   <span className={`${styles.status} ${styles.denied}`}>
                     Pago rechazado
-                  </span>
+                    </span>
                 ) : dato.status == "3" ? (
                   <span className={`${styles.status} ${styles.clomplete}`}>
                     Pago aprobado
-                  </span>
+                    </span>
                 ) : dato.status == "4" ? (
                   <span className={`${styles.status} ${styles.cancel}`}>
                     Reserva cancelada
@@ -127,10 +129,7 @@ const Tabla = () => {
                 )}
               </td>
               <td>
-                <a
-                  href={`/gestionar/${dato.reservaChatbotId}`}
-                  className={styles.link}
-                >
+                <a href={`/gestionar/${dato.reservaChatbotId}`} className={styles.link}>
                   Consultar y gestionar
                 </a>
               </td>
@@ -147,6 +146,19 @@ const Tabla = () => {
           </tr>
         </tbody>
       </table>
+
+      {/* Paginación */}
+      <div className={styles.pagination}>
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => paginate(number)}
+            className={`${styles.pageItem} ${currentPage === number ? styles.active : ""}`}
+          >
+            {number}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
