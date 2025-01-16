@@ -65,7 +65,7 @@ const Tabla = () => {
   return (
     <div className={styles.container}>
       <h1>Consultar mis reservas</h1>
-
+<br />
       {/* Filtro de búsqueda */}
       <div className={styles.filters}>
         <input

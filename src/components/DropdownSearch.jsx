@@ -64,13 +64,24 @@ const DropdownSearch = () => {
 
     // Calcula las noches y actualiza el estado si es necesario
     const nights = calculateNights(startDate, endDate);
-
-  //  console.log("Número de noches:", nights); // Calculo de numero de noches
+    console.log("Número de noches:", nights); // Calculo de numero de noches
   };
 
-  const handleAddRoom = () => {
-    setRooms([...rooms, { adults: 1, children0to4: 0, children5to17: 0 }]);
-  };
+// Límite máximo de habitaciones
+const MAX_ROOMS = 9;
+
+const handleAddRoom = () => {
+  if (rooms.length < MAX_ROOMS) {
+    setRooms([
+      ...rooms,
+      {
+        adults: 1, // Número inicial de adultos por habitación
+        children0to4: 0, // Número inicial de niños de 0 a 4 años
+        children5to17: 0, // Número inicial de niños de 5 a 17 años
+      },
+    ]);
+  }
+};
 
   const handleRemoveRoom = (index) => {
     const updatedRooms = rooms.filter((_, i) => i !== index);
@@ -297,11 +308,14 @@ const DropdownSearch = () => {
                 )}
               </div>
             ))}
-            <button className={styles.addRoomButton} onClick={handleAddRoom}>
-              Agregar habitación
-            </button>
-          </div>
-        )}
+            <button className={styles.addRoomButton}            //-----------------------------------------------------------------
+            onClick={handleAddRoom}
+            disabled={rooms.length >= MAX_ROOMS} // Deshabilitar cuando se alcanza el máximo
+          >
+            Agregar habitación
+          </button>
+        </div>
+      )}
       </div>
 
       {/* Botón de búsqueda */}
