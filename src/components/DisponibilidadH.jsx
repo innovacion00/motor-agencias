@@ -463,7 +463,7 @@ export const Cid = ({ id }) => {
       <div className={styles.container}>
         {/* Detalles del hotel */}
         <div className={styles.breadcrumb}>
-          <a href="/Bookingconnect">Inicio</a> /{" "}
+          <a href="/">Inicio</a> /{" "}
           <a href="#">Resultados de búsqueda</a> / {habitaciones?.hotel?.name}
         </div>
         <div className={styles.hotel_title}>
