@@ -32,6 +32,10 @@
     color: white;
 }
 
+.denied {
+    background-color: #df6482;
+    color: white;
+}
 .proces{
     background-color: #36a3c4;
     color: white;

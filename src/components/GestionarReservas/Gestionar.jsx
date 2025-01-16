@@ -141,7 +141,7 @@ const Gestionar = ({ reservas }) => {
           Estado de la reserva: Pago en proceso
         </p>
       ) : reservas?.status == "2" ? (
-        <p className={`${styles.estadoPago} ${styles.cancel}`}>
+        <p className={`${styles.estadoPago} ${styles.denied}`}>
           Estado de la reserva: Pago rechazado
         </p>
       ) : reservas?.status == "3" ? (
