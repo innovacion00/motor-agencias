@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 //UseState
 const Gestionar = ({ reservas }) => {
   
-  //  console.log(reservas)              // Datos de la reserva
+   console.log(reservas)              // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false)
@@ -226,7 +226,7 @@ const Gestionar = ({ reservas }) => {
                         Check-in: {checkin} - Check-out: {checkout}
                       </p>
                       <p>
-                        {reservas.reservation.nights} noches, {sumaHuespe}{" "}
+                        {reservas.reservation.nights} noches, {Number(dato.adults) + Number(dato.children)}{" "}
                         huéspedes, 1 habitación
                       </p>
                     </div>
@@ -267,7 +267,7 @@ const Gestionar = ({ reservas }) => {
                 </p>
               </div>
               <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Fecha de nacimiento:</p>
+                <p className={styles.infoH}>Fecha de nacimiento:</p> 
                 <p>{reservas?.titularInfo?.fechaNacimiento}</p>
               </div>
               <div className={styles.flexHuespe}>
@@ -303,7 +303,7 @@ const Gestionar = ({ reservas }) => {
                   {checkin} - {checkout}
                 </p>
                 <p>
-                  {reservas.reservation.nights} noches, {dato.adults} huéspedes
+                  {reservas.reservation.nights} noches, {Number(dato.adults) + Number(dato.children)} huéspedes
                 </p>
                 <p>{formatCurrency(dato.unitaryPrice)}</p>
               </div>
