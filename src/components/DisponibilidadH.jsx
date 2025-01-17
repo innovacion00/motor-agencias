@@ -546,7 +546,7 @@ export const Cid = ({ id }) => {
                       Para pagos antes del check-in
                     </p>
                     <p>
-                      <i className="fas fa-bed"></i> {dato.beds} cama doble
+                      <i className="fas fa-bed"></i> {dato.beds} camas
                     </p>
                     <p className="price"></p>
                     <p className="price">
