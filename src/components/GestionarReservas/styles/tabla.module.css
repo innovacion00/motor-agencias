@@ -5,7 +5,7 @@
 
 h1 {
     font-size: 30PX;
-    color: #2c3e50;
+    color: #2c4c6d;
 }
 
 .filters {
@@ -205,5 +205,59 @@ th {
   .searchInput::placeholder {
     color: #aaa;
   }
+
+  /* Contenedor de los filtros de estado */
+.statusFilter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+/* Botón base */
+.statusFilter button {
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #2c4c6d;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Botón al pasar el cursor */
+.statusFilter button:hover {
+  background-color: #e3e3e3;
+  border-color: #bbb;
+}
+
+/* Botón activo */
+.statusFilter button.activeFilter {
+  background-color: #9F6118;
+  color: #fff;
+  border-color: #be6703;
+}
+
+/* Botón deshabilitado */
+.statusFilter button:disabled {
+  cursor: not-allowed;
+  background-color: #f0f0f0;
+  color: #999;
+  border-color: #ddd;
+}
+
+/* Estilo responsivo para dispositivos pequeños */
+@media (max-width: 768px) {
+  .statusFilter {
+    justify-content: center;
+  }
+  
+  .statusFilter button {
+    width: 100%;
+    text-align: center;
+  }
+}
 
   

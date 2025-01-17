@@ -6,9 +6,10 @@ const Tabla = () => {
   const [reservas, setReservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredReservas, setFilteredReservas] = useState([]);
+  const [filteredReservas, setFilteredReservas] = useState([]); //Filtro por agencia, hotel, huésped o código
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [itemsPerPage] = useState(15); // Número de elementos por página
+  const [selectedStatus, setselectedStatus] = useState("all"); //Filtro por estado
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -28,7 +29,7 @@ const Tabla = () => {
   }, 0);
 
   const formatCurrency = (value) => {
-    if (!value || isNaN(value)) return "Sin Disponibilidad";
+    if (!value || isNaN(value)) return "$$$";
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
@@ -49,6 +50,18 @@ const Tabla = () => {
     setFilteredReservas(filtered);
     setCurrentPage(1); // Reiniciar a la primera página
   };
+
+  //Filtro por estado
+
+  const handleStatusFilter = (status  ) =>{
+    setselectedStatus(status);
+    const filtered =
+    status == "all"
+    ? reservas
+    : reservas.filter((reservas)=>reservas.status == status);
+    setFilteredReservas(filtered)
+    setCurrentPage(1); //Reiniciar a la primera página
+  }
 
   // Cálculo de los índices de elementos para la paginación
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -74,8 +87,46 @@ const Tabla = () => {
           value={searchTerm}
           onChange={handleSearch}
           className={styles.searchInput}
-        />
+            />
       </div>
+ <div className={styles.statusFilter}>
+          <button
+            onClick={() => handleStatusFilter("all")}
+            className={selectedStatus == "all" ? styles.activeFilter : ""}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => handleStatusFilter("0")}
+            className={selectedStatus == "0" ? styles.activeFilter : ""}
+          >
+            Pago pendiente
+          </button>
+          <button
+            onClick={() => handleStatusFilter("1")}
+            className={selectedStatus == "1" ? styles.activeFilter : ""}
+          >
+            Pago en proceso
+          </button>
+          <button
+            onClick={() => handleStatusFilter("2")}
+            className={selectedStatus == "2" ? styles.activeFilter : ""}
+          >
+            Pago rechazado
+          </button>
+          <button
+            onClick={() => handleStatusFilter("3")}
+            className={selectedStatus == "3" ? styles.activeFilter : ""}
+          >
+            Pago aprobado
+          </button>
+          <button
+            onClick={() => handleStatusFilter("4")}
+            className={selectedStatus == "4" ? styles.activeFilter : ""}
+          >
+            Reserva cancelada
+          </button>
+        </div>
 
       <table>
         <thead>
