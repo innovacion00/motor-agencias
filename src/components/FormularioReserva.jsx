@@ -133,7 +133,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped es ${valorextranjero}, en caso de si favor verificar en recepcion si cumple con los requisitos de migracion colombia`,
+            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped es ${valorextranjero}. en caso de si, favor verificar en recepcion si cumple con los requisitos de migracion colombia`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
