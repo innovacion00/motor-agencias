@@ -29,7 +29,7 @@ const FormularioReserva = () => {
   });
   
 //convertir esExtranjero
-const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
+const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
 
 
   // Parsea numeros de body a string
@@ -140,6 +140,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
               return {
                 nombreHabitacion: dato.NombreH,
                 adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
+                // children_ages:roomConfig.children_ages?.join(",") || "",
                 children: roomConfig.children_ages
                   ? JSON.stringify(roomConfig.children_ages.length)
                   : "",
