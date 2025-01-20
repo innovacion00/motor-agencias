@@ -55,7 +55,7 @@ const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-  console.log("edades niños",edadesninos)
+  //console.log("edades niños",edadesninos)
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA = esExtranjero == true? (totalPrecio*0) : (totalPrecio*tasaIVA)      //totalPrecio * tasaIVA; 
@@ -106,7 +106,7 @@ const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
     const enviardatos = async () => {
       const informacionD = JSON.stringify({
         total: totalConIVA,
-        titularInfo: {
+        titularInfo: {  
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
           tipoDocumento: formData.tipoDocumento,
@@ -133,7 +133,7 @@ const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped es ${valorextranjero}. en caso de si, favor verificar en recepcion si cumple con los requisitos de migracion colombia`,
+            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}.El huesped es ${valorextranjero}. ${valorextranjero == true ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
@@ -153,7 +153,7 @@ const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
                 unitaryPrice: dato.precio,
               };
             }),
-
+             
             telephone: `+57${formData.celular}`,
           },
         },
