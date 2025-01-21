@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DropdownSearch from "./DropdownSearch";
-
+import FormularioRetenciones from './FormularioRetenciones'
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
@@ -27,9 +27,9 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
-  
-//convertir esExtranjero
-const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
+
+  //convertir esExtranjero
+  const valorextranjero = esExtranjero == true ? ("Extranjero") : ("NO es extanjero")
 
 
   // Parsea numeros de body a string
@@ -55,10 +55,10 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-  console.log("edades niños",edadesninos)
+  console.log("edades niños", edadesninos)
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA = esExtranjero == true? (totalPrecio*0) : (totalPrecio*tasaIVA)      //totalPrecio * tasaIVA; 
+  const valorIVA = esExtranjero == true ? (totalPrecio * 0) : (totalPrecio * tasaIVA)      //totalPrecio * tasaIVA; 
   const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
 
   //  console.log(checkin);
@@ -77,7 +77,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
     const { id, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [id]: type === "checkbox" ? checked :  value,
+      [id]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -113,7 +113,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
-        exentoIva:esExtranjero,
+        exentoIva: esExtranjero,
         reservaInfo: {
           agency: {
             is_agency: true,
@@ -256,7 +256,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
     setfechasreserva(fechas);
     setagencia(token);
   }, []);
- 
+
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
     Swal.fire({
@@ -265,7 +265,7 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
       text: "Se ha realizado la reserva con exito",
       showConfirmButton: false,
       timer: 4000,
-      
+
     });
     setTimeout(() => {
       window.location.href = "/reservapagada"; //Redireccion hacia la pagina de reserva pagada
@@ -362,15 +362,15 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
             Precio total con IVA:{" "}
             <strong> {formatCurrency(totalConIVA)} </strong>
           </p>
-  
+
           <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
         </div>
-
+        <FormularioRetenciones precio={totalPrecio} adults={adults} ninos={ninos} fechasreserva={fechasreserva}/>
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-        
-        
+
+
           <fieldset
             style={{
               border: "1px solid #ddd",
@@ -384,30 +384,30 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
             <div>
               {/* Checkbox De huesped o no  */}
               <div
-  style={{
-    display: "flex",
-    alignItems: "center", // Alinea verticalmente el checkbox con el texto
-    justifyContent: "flex-start", // Alinea el contenido a la izquierda
-  }}
->
-  <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
-    ¿El huésped es extranjero? marque la casilla para indicar si
-  </label>
-  <input
-  style={{
-    width: "15px", // Tamaño más claro y consistente
-    height: "15px",
-    marginLeft:"40px",
-    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
-    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
-    
-  }}
-    type="checkbox"
-    id="esExtranjero"
-    checked={esExtranjero}
-    onChange={(e) => setesExtranjero(e.target.checked)}
-  />
-</div>
+                style={{
+                  display: "flex",
+                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
+                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
+                }}
+              >
+                <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
+                  ¿El huésped es extranjero? marque la casilla para indicar si
+                </label>
+                <input
+                  style={{
+                    width: "15px", // Tamaño más claro y consistente
+                    height: "15px",
+                    marginLeft: "40px",
+                    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+                    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+
+                  }}
+                  type="checkbox"
+                  id="esExtranjero"
+                  checked={esExtranjero}
+                  onChange={(e) => setesExtranjero(e.target.checked)}
+                />
+              </div>
 
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
@@ -553,7 +553,6 @@ const valorextranjero= esExtranjero == true?("Extranjero"):("NO es extanjero")
               />
             </div>
           </fieldset>
-
           <button
             disabled={botondesactivado}
             type="submit"
