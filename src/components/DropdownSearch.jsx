@@ -329,7 +329,7 @@ const handleAddRoom = () => {
       >
         {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
       </button>
-{/* Modal de carga */}
+      {/* Modal de carga */}
       <Modal
         isOpen={isLoading}
         contentLabel="Cargando..."
@@ -339,6 +339,7 @@ const handleAddRoom = () => {
         <div className={styles.modalContent}>
           <h2>Consultando disponibilidad </h2>
           <div className={styles.spinner}></div>
+          <h3>Espere un momento porfavor</h3>
         </div>
       </Modal>
 

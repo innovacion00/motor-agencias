@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import DropdownSearch from "./DropdownSearch";
-
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
@@ -51,12 +50,21 @@ const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero"
     "YYYY-MM-DD",
     "es"
   );
+  
+  
+  //Convetir edades en string y separarlos por coma
+  const childrenAgesString = fechasreserva?.layout
+  .flatMap((room) => room.children_ages || [])
+  .join(",") || "";
 
+//Arreglo con el rango de edades de los niños
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-  //console.log("edades niños",edadesninos)
-  const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
+// console.log("edades niños",edadesninos)
+  
+//Calculo del IVA
+const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA = esExtranjero == true? (totalPrecio*0) : (totalPrecio*tasaIVA)      //totalPrecio * tasaIVA; 
   const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
@@ -125,7 +133,7 @@ const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero"
             checkin: checkin,
             checkout: checkout,
             children: ninos,
-            children_ages: "", //
+            children_ages: childrenAgesString, //
             city: reserva[0].ciudad,
             country: "COL",
             currency: "COP",
@@ -140,7 +148,7 @@ const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero"
               return {
                 nombreHabitacion: dato.NombreH,
                 adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
-                // children_ages:roomConfig.children_ages?.join(",") || "",
+                children_ages:roomConfig.children_ages?.join(",") || "",
                 children: roomConfig.children_ages
                   ? JSON.stringify(roomConfig.children_ages.length)
                   : "",
@@ -571,7 +579,7 @@ const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero"
             }}
           >
             {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-          </button>
+          </button>       
         </form>
       </div>
     </>
