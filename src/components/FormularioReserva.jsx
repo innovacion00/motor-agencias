@@ -29,7 +29,7 @@ const FormularioReserva = () => {
   });
   
 //convertir esExtranjero
-const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
+const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero")
 
 
   // Parsea numeros de body a string
@@ -133,7 +133,7 @@ const valorextranjero= esExtranjero == true?("extranjero"):("NO es extanjero")
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}.El huesped es ${valorextranjero}. ${valorextranjero == true ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
+            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped ${valorextranjero}. ${valorextranjero == "es extranjero" ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
