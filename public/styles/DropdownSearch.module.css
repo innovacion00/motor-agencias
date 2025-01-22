@@ -396,6 +396,7 @@ input:checked + .slider::before {
 }
 
 .roomSection h4 {
+
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
@@ -412,7 +413,17 @@ input:checked + .slider::before {
 
 } 
 
+.modal h2{
+  font-size: 25px;
+  color: #1C3D5A;
+}
+.modal h3{
+  
+  font-size: 15px;
+  color: #1C3D5A;
+}
 .modal {
+  
   position: absolute;
   top: 50%;
   left: 50%;
