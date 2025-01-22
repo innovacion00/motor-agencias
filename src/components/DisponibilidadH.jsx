@@ -423,7 +423,7 @@ export const Cid = ({ id }) => {
     setfechas(rangosdefechas);
     setHabitaciones(resultado);
   }, [id]);
-  console.log("Disponibilidad total", habitaciones);
+   console.log("Disponibilidad total", habitaciones);
   const regex = categoria?.agencia?.category == 0?( /\[Booking connect Neto\]/i): (/\[Booking connect Mayorista\]/i); // Expresión regular para validar el roomName
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
@@ -585,17 +585,17 @@ export const Cid = ({ id }) => {
                             precio:
                                 (dato.products?.find((product) => 
                                 regex.test(
-                                  product.roomName
-                                )
+                                  product.roomName)
                               )?.baseRate?.amountBeforeTax) ||
                               "Sin precio disponible",
                             NombreH: dato.roomName,
                             beds: dato.beds,
                             hotelid: habitaciones?.hotel?.roomcloud_id,
                             ciudad: habitaciones?.hotel?.city,
-                            rateId: dato.products?.map(
-                              (product) => product.rateId
-                            ),
+                            rateId: (dato.products?.find((product) => 
+                              regex.test(
+                                product.roomName)
+                            )?.rateId),
                           },
                         ])
                       }
