@@ -157,7 +157,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
                 currency: "COP",
                 id: dato.roomId,
                 quantity: "1",
-                rateId: dato.rateId[0],
+                rateId: dato.rateId,
                 unitaryPrice: dato.precio,
               };
             }),
