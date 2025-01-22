@@ -79,7 +79,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
                 />
             </div>
             {
-                isChecked && (
+                isChecked && ( 
                     <div className='container_principal'>
                         <div className='container_retenciones'>
                             <p><strong>IMPORTANTE:</strong> Los valores deben ingresarse en formato numérico, no como porcentajes. Por ejemplo: en lugar de "2%", solo escribe "2".</p>
@@ -133,7 +133,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
                                 <p>${desayunos}</p>
                                 <p>${ivaHospedaje}</p>
                                 <p>${impoconsumo}</p>
-                                <p>$000</p>
+                                <p>${ReteFuente}</p>
                                 <p>$000</p>
                                 <p>$000</p>
                                 <p>$000</p>

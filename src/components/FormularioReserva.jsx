@@ -479,7 +479,7 @@ const FormularioReserva = () => {
               <input
                 id="apellidos"
                 type="text"
-                value={formData.apellidos}
+                value={formData.apellidos} 
                 onChange={handleChange}
                 style={{
                   display: "block",
