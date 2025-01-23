@@ -10,94 +10,9 @@ const Tabla = () => {
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [itemsPerPage] = useState(15); // Número de elementos por página
   const [selectedStatus, setselectedStatus] = useState("all"); //Filtro por estado
-  // const reservasTest = [
-  //   {
-  //     "_id": "678fbc6f749d61fe106c55c7",
-  //     "userId": "676afea4182f6828bef5ff7b",
-  //     "agenciaId": {
-  //       "_id": "676afe767b623769038dcb32",
-  //       "fullName": "geh suites"
-  //     },
-  //     "hotel": "Hotel Azuan",
-  //     "cantidadHabitaciones": 1,
-  //     "total": 100000,
-  //     "totalMitad": 50000,
-  //     "pagadoPrimeraMitad": true,
-  //     "reteFuente": {
-  //       "porcentaje": 15,
-  //       "resultado": 2850,
-  //       "_id": "678fbc6f749d61fe106c55c8"
-  //     },
-  //     "reteIva": {
-  //       "porcentaje": 15,
-  //       "resultado": 2850,
-  //       "_id": "678fbc6f749d61fe106c55c9"
-  //     },
-  //     "reteIca": {
-  //       "porcentaje": 15,
-  //       "resultado": 2850,
-  //       "_id": "678fbc6f749d61fe106c55ca"
-  //     },
-  //     "exentoIva": true,
-  //     "status": 5,
-  //     "titularInfo": {
-  //       "firstName": "Sebastián",
-  //       "lastName": "Kelcy",
-  //       "tipoDocumento": "cedula",
-  //       "documento": "300132321",
-  //       "fechaNacimiento": "2024-12-12",
-  //       "_id": "678fbc6f749d61fe106c55cb"
-  //     },
-  //     "reservation": {
-  //       "source_of_bussiness": "Agencias travesia",
-  //       "adults": "1",
-  //       "checkin": "2025-02-22",
-  //       "checkout": "2025-02-23",
-  //       "children": "0",
-  //       "children_ages": "",
-  //       "city": "CARTAGENA",
-  //       "country": "COL",
-  //       "currency": "COP",
-  //       "email": "sekelbi99@hotmail.com",
-  //       "telephone": "+573116674983",
-  //       "firstName": "Sebastián",
-  //       "lastName": "Kelcy",
-  //       "nights": "1",
-  //       "notes": "Reserva de 2 noches ",
-  //       "rooms": "1",
-  //       "roomsData": [
-  //         {
-  //           "nombreHabitacion": "Habitacion Doble Standard",
-  //           "adults": "1",
-  //           "children": "",
-  //           "checkin": "2025-01-22",
-  //           "checkout": "2025-01-23",
-  //           "currency": "COP",
-  //           "id": "83534",
-  //           "quantity": "1",
-  //           "rateId": "99100",
-  //           "unitaryPrice": 100000,
-  //           "_id": "678fbc6f749d61fe106c55cd"
-  //         }
-  //       ],
-  //       "_id": "678fbc6f749d61fe106c55cc"
-  //     },
-  //     "reservaChatbotId": "CSKJKLSJDKL",
-  //     "fechaLimitePago": "2025-02-09",
-  //     "fechaLimitePago2": "2025-02-21",
-  //     "linkInfo": {
-  //       "link": "",
-  //       "expirationDate": "",
-  //       "idLinkPago": "",
-  //       "_id": "678fbc6f749d61fe106c55c6"
-  //     },
-  //     "asistentes": [],
-  //     "createdAt": "2025-01-21T15:25:35.116Z",
-  //     "updatedAt": "2025-01-21T15:25:35.116Z",
-  //     "__v": 0
-  //   }]
+ 
 
-  // console.log(reservasTest)
+  
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
@@ -129,7 +44,7 @@ const Tabla = () => {
 
     const filtered = reservas.filter((reserva) =>
       reserva.hotel.toLowerCase().includes(searchValue) ||  // Filtrar por hotel
-      reserva.reservaChatbotId.toString().includes(searchValue) ||   // Filtrar por código de reserva
+      reserva.reservaChatbotId.toLowerCase().includes(searchValue) ||   // Filtrar por código de reserva
       reserva.reservation.firstName.toLowerCase().includes(searchValue) ||   // Filtrar por nombre del huésped
       reserva.reservation.lastName.toLowerCase().includes(searchValue) || // Filtrar por apellido del huésped
       (reserva.agenciaId?.fullName || "").toLowerCase().includes(searchValue)
@@ -170,7 +85,7 @@ const Tabla = () => {
   ? 4 Cancelado
   ? 5 Pago abonado
   */
-
+console.log(reservas)
   return (
     <div className={styles.container}>
       <h1>Consultar mis reservas</h1>
