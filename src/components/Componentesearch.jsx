@@ -9,7 +9,7 @@ import { nightsStore } from "../stores/disponibilidad";
 const BusquedaCartagena = () => {
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
   const [nochesyedades1, setnochesyedades] = useState({});
-
+  const [categoria, setcategoria] = useState()
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
 
   //Objeto de imagenes  para las fachadas
@@ -136,6 +136,7 @@ const BusquedaCartagena = () => {
     SANTA_MARTA: "Santa marta",
   };
 
+
   // Función para formatear valores como moneda colombiana
   const formatToCurrency = (amount) => {
     if (typeof amount !== "number") return "N/A";
@@ -145,6 +146,7 @@ const BusquedaCartagena = () => {
       minimumFractionDigits: 0,
     }).format(amount);
   };
+
 
   // Función existente modificada
   const findMinBaseRate = (data) => {
@@ -165,6 +167,7 @@ const BusquedaCartagena = () => {
       ? "*Sin Disponibilidad*"
       : formatToCurrency(minAmount); // Formatear como moneda colombiana
   };
+
 
   //Funcion para almacenar la cantidad de adultos
   const cantAdultos = (data) => {
@@ -194,7 +197,8 @@ const BusquedaCartagena = () => {
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
     // Recuperar la ciudad desde el localStorage
-
+    const category = JSON.parse(localStorage.getItem("datosUsuario"))
+    setcategoria(category)
     const storedCity = localStorage.getItem("selectedCity");
     if (storedCity) {
       const transformedCity = cityMap[storedCity] || "Ciudad desconocida"; // Transforma o asigna un fallback
@@ -215,6 +219,8 @@ const BusquedaCartagena = () => {
     }
   }, []);
   console.log(hotelesDisponibles)
+
+const regex = categoria?.agencia.category== 0? ( /\[Booking connect Neto\]/i): (/\[Booking connect Mayorista\]/i); // Expresión regular para validar el roomName
 
   return (
     <>
