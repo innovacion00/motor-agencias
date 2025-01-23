@@ -593,6 +593,7 @@ export const Cid = ({ id }) => {
                             beds: dato.beds,
                             hotelid: habitaciones?.hotel?.roomcloud_id,
                             ciudad: habitaciones?.hotel?.city,
+                            hotelidAutocore: habitaciones?.hotel?.id,
                             rateId: dato.products?.map(
                               (product) => product.rateId
                             ),
