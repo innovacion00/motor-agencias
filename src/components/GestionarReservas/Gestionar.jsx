@@ -319,10 +319,48 @@ const Gestionar = ({ reservas }) => {
               </div>
             ))}
             <div className={styles.pagos}>
-              <div className={styles.totalPago}>
-                <p>Pago del 50%</p>
-                <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
-              </div>
+              {reservas.status == "0" && reservas.pagadoPrimeraMitad == false ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                </div>
+              ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == false ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                </div>
+              ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == false ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                </div>
+              ) : reservas.status == "3" && reservas.pagadoPrimeraMitad == true ? (
+                <div className={styles.totalPago}>
+                  <p>Total + impuestos</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.total)}</p>
+                </div>
+              ) : reservas.status == "4" ? (
+                <div className={styles.totalPago}>
+                  <p>Total + impuestos</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.total)}</p>
+                </div>
+              ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == true ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                </div>
+              ) : reservas.status == "5" && reservas.pagadoPrimeraMitad == true ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                </div>
+              ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                </div>
+              ) : (<p>Monto no valido</p>)
+              }
               <button
                 onClick={() => onClick(reservas._id)}
                 disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || (isLoading)}
