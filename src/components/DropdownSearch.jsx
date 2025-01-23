@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import Modal from "react-modal";
 import styles from "../../public/styles/DropdownSearch.module.css";
 import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
@@ -328,6 +329,20 @@ const handleAddRoom = () => {
       >
         {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
       </button>
+      {/* Modal de carga */}
+      <Modal
+        isOpen={isLoading}
+        contentLabel="Cargando..."
+        className={styles.modal}
+        overlayClassName={styles.modalOverlay}
+      >
+        <div className={styles.modalContent}>
+          <h2>Consultando disponibilidad </h2>
+          <div className={styles.spinner}></div>
+          <h3>Espere un momento porfavor</h3>
+        </div>
+      </Modal>
+
     </div>
   );
 };

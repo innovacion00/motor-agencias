@@ -1,212 +1,243 @@
 .container {
-    width: 90%;
-    margin: 20px auto;
+  width: 90%;
+  margin: 20px auto;
 }
 
 h1 {
-    font-size: 30PX;
-    color: #2c4c6d;
+  font-size: 30PX;
+  color: #2c4c6d;
 }
 
 .filters {
-    display: flex;
-    margin-bottom: 20px;
+  display: flex;
+  margin-bottom: 20px;
 }
 
 .filters button {
-    background-color: #2c3e50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #2c3e50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .tabs {
-    display: flex;
-    border-bottom: 2px solid #e0e0e0;
-    margin-bottom: 20px;
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 20px;
 }
 
 .tabs div {
-    padding: 10px 20px;
-    cursor: pointer;
+  padding: 10px 20px;
+  cursor: pointer;
 }
 
 .tabs .active {
-    border-bottom: 2px solid #f39c12;
-    font-weight: bold;
+  border-bottom: 2px solid #f39c12;
+  font-weight: bold;
 }
 
 .badge {
-    background-color: #f39c12;
-    color: white;
-    border-radius: 50%;
-    padding: 5px 10px;
-    margin-left: 5px;
+  background-color: #f39c12;
+  color: white;
+  border-radius: 50%;
+  padding: 5px 10px;
+  margin-left: 5px;
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
-    border-radius: 5px;
-    overflow: hidden;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 th,
 td {
-    padding: 15px 7px;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
+  padding: 15px 7px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 th {
-    background-color: #f5f5f5;
-    font-weight: normal;
-    color: #2c3e50;
+  background-color: #f5f5f5;
+  font-weight: normal;
+  color: #2c3e50;
 }
 
 .status {
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.9em;
 }
 
 .pending {
-    background-color: #f39c12;
-    color: white;
-}
-.clomplete {
-    background-color: #28912d;
-    color: white;
-}
-.cancel {
-    background-color: #bd1f1f;
-    color: white;
-}
-.denied{
-    background-color: #df6482;
-    color: white;
+  background-color: #f39c12;
+  color: white;
 }
 
-.proces{
-    background-color: #36a3c4;
-    color: white;
+.clomplete {
+  background-color: #28912d;
+  color: white;
+}
+
+.cancel {
+  background-color: #bd1f1f;
+  color: white;
+}
+
+.denied {
+  background-color: #df6482;
+  color: white;
+}
+
+.proces {
+  background-color: #36a3c4;
+  color: white;
+}
+
+.abonado {
+  background-color: rgba(181, 138, 45, 1);
+  color: white;
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-    gap: 10px; /* Espacio entre botones */
-  }
-  
-  .pageItem {
-    padding: 10px 15px;
-    border: 1px solid #ccc; /* Color del borde */
-    background-color: #f9f9f9; /* Color de fondo predeterminado */
-    color: #333; /* Color del texto */
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Suavizado de animaciones */
-  }
-  
-  .pageItem:hover {
-    background-color: #b98422; /* Color de fondo al pasar el ratón */
-    color: #fff; /* Color del texto al pasar el ratón */
-    border-color: #9F6118; /* Cambia el color del borde */
-  }
-  .pageNav {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    background-color: #e9ecef;
-    color: #333;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  .pageNav:hover {
-    background-color: #9F6118;
-    color: #fff;
-  }
-  
-  .pageNav:disabled {
-    background-color: #e9ecef;
-    color: #adb5bd;
-    cursor: not-allowed;
-  }
-  
-  .ellipsis {
-    padding: 8px;
-    color: #6c757d;
-    font-size: 14px;
-    font-weight: bold;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  gap: 10px;
+  /* Espacio entre botones */
+}
 
-  .pageItem:focus {
-    outline: none; /* Elimina el borde de enfoque predeterminado */
-    box-shadow: 0 0 5px #9F6118; /* Añade un efecto de enfoque */
-  }
-  
-  .pageItem.active {
-    background-color: #9F6118; /* Color de fondo para el botón activo */
-    color: #fff; /* Color del texto del botón activo */
-    border-color: #99744a; /* Color del borde para el botón activo */
-  }
-  
-  .pageItem:disabled {
-    background-color: #e9ecef; /* Color de fondo para botones deshabilitados */
-    color: #6c757d; /* Color del texto para botones deshabilitados */
-    cursor: not-allowed;
-    border-color: #ced4da; /* Color del borde deshabilitado */
-  }
+.pageItem {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  /* Color del borde */
+  background-color: #f9f9f9;
+  /* Color de fondo predeterminado */
+  color: #333;
+  /* Color del texto */
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* Suavizado de animaciones */
+}
 
-  .ellipsis {
+.pageItem:hover {
+  background-color: #b98422;
+  /* Color de fondo al pasar el ratón */
+  color: #fff;
+  /* Color del texto al pasar el ratón */
+  border-color: #9F6118;
+  /* Cambia el color del borde */
+}
+
+.pageNav {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: #e9ecef;
+  color: #333;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pageNav:hover {
+  background-color: #9F6118;
+  color: #fff;
+}
+
+.pageNav:disabled {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.ellipsis {
   padding: 8px;
   color: #6c757d;
   font-size: 14px;
   font-weight: bold;
 }
-  
+
+.pageItem:focus {
+  outline: none;
+  /* Elimina el borde de enfoque predeterminado */
+  box-shadow: 0 0 5px #9F6118;
+  /* Añade un efecto de enfoque */
+}
+
+.pageItem.active {
+  background-color: #9F6118;
+  /* Color de fondo para el botón activo */
+  color: #fff;
+  /* Color del texto del botón activo */
+  border-color: #99744a;
+  /* Color del borde para el botón activo */
+}
+
+.pageItem:disabled {
+  background-color: #e9ecef;
+  /* Color de fondo para botones deshabilitados */
+  color: #6c757d;
+  /* Color del texto para botones deshabilitados */
+  cursor: not-allowed;
+  border-color: #ced4da;
+  /* Color del borde deshabilitado */
+}
+
+.ellipsis {
+  padding: 8px;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: bold;
+}
+
 
 .link {
-    text-decoration: none; /* Elimina el subrayado */
-    color: inherit; /* Hereda el color del texto del contenedor */
-    font-weight: bold; /* Ejemplo: Personaliza el estilo */
-    transition: color 0.3s ease; /* Agrega un efecto suave al cambiar el color */
-  }
-  
-  .link:hover {
-    color: #007acc; /* Cambia el color al pasar el mouse */
-  }
+  text-decoration: none;
+  /* Elimina el subrayado */
+  color: inherit;
+  /* Hereda el color del texto del contenedor */
+  font-weight: bold;
+  /* Ejemplo: Personaliza el estilo */
+  transition: color 0.3s ease;
+  /* Agrega un efecto suave al cambiar el color */
+}
 
-  .searchInput {
-    width: 100%;
-    max-width: 400px;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    font-size: 16px;
-    border: 2px solid #ddd;
-    border-radius: 25px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-  }
-  
-  .searchInput:focus {
-    border-color: #2c3e50;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
-  }
-  
-  .searchInput::placeholder {
-    color: #aaa;
-  }
+.link:hover {
+  color: #007acc;
+  /* Cambia el color al pasar el mouse */
+}
 
-  /* Contenedor de los filtros de estado */
+.searchInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.searchInput:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+.searchInput::placeholder {
+  color: #aaa;
+}
+
+/* Contenedor de los filtros de estado */
 .statusFilter {
   display: flex;
   flex-wrap: wrap;
@@ -253,11 +284,9 @@ th {
   .statusFilter {
     justify-content: center;
   }
-  
+
   .statusFilter button {
     width: 100%;
     text-align: center;
   }
 }
-
-  

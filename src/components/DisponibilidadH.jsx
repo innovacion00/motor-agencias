@@ -423,7 +423,7 @@ export const Cid = ({ id }) => {
     setfechas(rangosdefechas);
     setHabitaciones(resultado);
   }, [id]);
-  console.log("Disponibilidad total", habitaciones);
+   console.log("Disponibilidad total", habitaciones);
   const regex = categoria?.agencia?.category == 0?( /\[Booking connect Neto\]/i): (/\[Booking connect Mayorista\]/i); // Expresión regular para validar el roomName
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
@@ -546,7 +546,7 @@ export const Cid = ({ id }) => {
                       Para pagos antes del check-in
                     </p>
                     <p>
-                      <i className="fas fa-bed"></i> {dato.beds} cama doble
+                      <i className="fas fa-bed"></i> {dato.beds} camas
                     </p>
                     <p className="price"></p>
                     <p className="price">
@@ -585,8 +585,7 @@ export const Cid = ({ id }) => {
                             precio:
                                 (dato.products?.find((product) => 
                                 regex.test(
-                                  product.roomName
-                                )
+                                  product.roomName)
                               )?.baseRate?.amountBeforeTax) ||
                               "Sin precio disponible",
                             NombreH: dato.roomName,
@@ -597,6 +596,10 @@ export const Cid = ({ id }) => {
                             rateId: dato.products?.map(
                               (product) => product.rateId
                             ),
+                            rateId: (dato.products?.find((product) => 
+                              regex.test(
+                                product.roomName)
+                            )?.rateId),
                           },
                         ])
                       }

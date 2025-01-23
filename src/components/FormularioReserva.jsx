@@ -27,7 +27,6 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
-
   //convertir esExtranjero
   const valorextranjero = esExtranjero == true ? ("Extranjero") : ("NO es extanjero")
 
@@ -51,12 +50,21 @@ const FormularioReserva = () => {
     "YYYY-MM-DD",
     "es"
   );
+  
+  
+  //Convetir edades en string y separarlos por coma
+  const childrenAgesString = fechasreserva?.layout
+  .flatMap((room) => room.children_ages || [])
+  .join(",") || "";
 
+//Arreglo con el rango de edades de los niños
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-  console.log("edades niños", edadesninos)
-  const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
+// console.log("edades niños",edadesninos)
+  
+//Calculo del IVA
+const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA = esExtranjero == true ? (totalPrecio * 0) : (totalPrecio * tasaIVA)      //totalPrecio * tasaIVA; 
   const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
@@ -106,7 +114,7 @@ const FormularioReserva = () => {
     const enviardatos = async () => {
       const informacionD = JSON.stringify({
         total: totalConIVA,
-        titularInfo: {
+        titularInfo: {  
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
           tipoDocumento: formData.tipoDocumento,
@@ -125,7 +133,7 @@ const FormularioReserva = () => {
             checkin: checkin,
             checkout: checkout,
             children: ninos,
-            children_ages: "", //
+            children_ages: childrenAgesString, //
             city: reserva[0].ciudad,
             country: "COL",
             currency: "COP",
@@ -133,13 +141,14 @@ const FormularioReserva = () => {
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped es ${valorextranjero}. en caso de si, favor verificar en recepcion si cumple con los requisitos de migracion colombia`,
+            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped ${valorextranjero}. ${valorextranjero == "es extranjero" ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
               return {
                 nombreHabitacion: dato.NombreH,
                 adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
+                children_ages:roomConfig.children_ages?.join(",") || "",
                 children: roomConfig.children_ages
                   ? JSON.stringify(roomConfig.children_ages.length)
                   : "",
@@ -148,11 +157,11 @@ const FormularioReserva = () => {
                 currency: "COP",
                 id: dato.roomId,
                 quantity: "1",
-                rateId: dato.rateId[0],
+                rateId: dato.rateId,
                 unitaryPrice: dato.precio,
               };
             }),
-
+             
             telephone: `+57${formData.celular}`,
           },
         },
@@ -569,7 +578,7 @@ const FormularioReserva = () => {
             }}
           >
             {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-          </button>
+          </button>       
         </form>
       </div>
     </>
