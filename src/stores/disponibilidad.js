@@ -91,7 +91,7 @@ export const getReservas = async (token, datosUsuario) => {
             if (response.ok) {
                 const data = await response.json()
                 reservasNano.set(data)
-                console.log(data)
+                // console.log(data)
                 return data
             } else {
                 console.log('error al obtener los datos de la reserva')

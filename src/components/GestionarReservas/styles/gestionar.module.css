@@ -41,6 +41,12 @@
     color: white;
 }
 
+
+.abonado {
+    background-color: rgba(181, 138, 45, 1);
+    color: white;
+  }
+
 .card{
     min-height: 518px;
     width: 100%;

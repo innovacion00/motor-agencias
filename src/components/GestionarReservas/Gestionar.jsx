@@ -8,8 +8,8 @@ import Swal from "sweetalert2";
 
 //UseState
 const Gestionar = ({ reservas }) => {
-  
-   console.log(reservas)              // Datos de la reserva
+
+  console.log(reservas)              // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false)
@@ -110,51 +110,61 @@ const Gestionar = ({ reservas }) => {
     }
   };
   const onClick = async (id) => {
-    if(reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"){
+    if (reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4") {
       return
     }
     await generarLink(id);
   };
 
- //funcion para formatear el los valores de dinero
- const formatCurrency = (value) => {
-  if (value === undefined || value === null || isNaN(value)) {
-    return "Sin Disponibilidad";
-  }
-  return new Intl.NumberFormat("es-CO", {
-    style: "currency",
-    currency: "COP",
-  }).format(value);
-};
+  //funcion para formatear el los valores de dinero
+  const formatCurrency = (value) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return "Sin Disponibilidad";
+    }
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+    }).format(value);
+  };
 
 
   return (
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
 
-      {reservas?.status == "0" ? (
+      {reservas.status == "0" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.pending}`}>
-          Estado de la reserva: Pago pendiente
+          Pago pendiente 50%
         </p>
-      ) : reservas?.status == "1" ? (
+      ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
-          Estado de la reserva: Pago en proceso
+          Pago en proceso 50%
         </p>
-      ) : reservas?.status == "2" ? (
+      ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
-          Estado de la reserva: Pago rechazado
+          Pago rechazado primer abono
         </p>
-      ) : reservas?.status == "3" ? (
-        <sppan className={`${styles.estadoPago} ${styles.clomplete}`}>
-          Estado de la reserva: Pago aprobado
-        </sppan>
-      ) : reservas?.status == "4" ? (
-        <span className={`${styles.estadoPago} ${styles.cancel}`}>
-          Estado de la reserva: Reserva cancelada
-        </span>
-      ) : (
-        <p>Estado no valido</p>
-      )}
+      ) : reservas.status == "3" && reservas.pagadoPrimeraMitad == true ? (
+        <p className={`${styles.estadoPago} ${styles.clomplete}`}>
+          Pago aprobado
+        </p>
+      ) : reservas.status == "4" ? (
+        <p className={`${styles.estadoPago} ${styles.cancel}`}>
+          Reserva cancelada
+        </p>
+      ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == true ? (
+        <p className={`${styles.estadoPago} ${styles.denied}`}>
+          Pago rechazado segundo abono
+        </p>
+      ) : reservas.status == "5" && reservas.pagadoPrimeraMitad == true ? (
+        <p className={`${styles.estadoPago} ${styles.abonado}`}>
+          Abonado primera mitad
+        </p>
+      ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ?
+        (<p className={`${styles.estadoPago} ${styles.proces}`}>
+          Pago en proceso segundo abono
+        </p>) : (<p>Estado no valido</p>)
+      }
 
       <div className={styles.card}>
         <div className={styles.hotelInfo}>
@@ -239,7 +249,7 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
-                 <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {reservas.fechaLimitePago}</p> 
+                <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {reservas.fechaLimitePago}</p>
               </div>
               <p className={styles.total}>{formatCurrency(reservas?.total)} COP</p>
             </div>
@@ -267,7 +277,7 @@ const Gestionar = ({ reservas }) => {
                 </p>
               </div>
               <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Fecha de nacimiento:</p> 
+                <p className={styles.infoH}>Fecha de nacimiento:</p>
                 <p>{reservas?.titularInfo?.fechaNacimiento}</p>
               </div>
               <div className={styles.flexHuespe}>
@@ -310,15 +320,14 @@ const Gestionar = ({ reservas }) => {
             ))}
             <div className={styles.pagos}>
               <div className={styles.totalPago}>
-                <p>Total + impuestos</p>
-                <p className={styles.totalP}>{formatCurrency(reservas?.total)}</p>
+                <p>Pago del 50%</p>
+                <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
               </div>
-              <button 
-              onClick={() => onClick(reservas._id)}
-               disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || (isLoading)}
-               className={`${styles.pagarButton} ${
-                reservas?.status == "1"|| reservas?.status == "3" || reservas?.status == "4" ? styles.disabledButtonp : ""}`}
-                >{isLoading? "Generando link..." : "Pagar ahora"}</button>
+              <button
+                onClick={() => onClick(reservas._id)}
+                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || (isLoading)}
+                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" ? styles.disabledButtonp : ""}`}
+              >{isLoading ? "Generando link..." : "Pagar ahora"}</button>
             </div>
           </div>
 
@@ -330,8 +339,7 @@ const Gestionar = ({ reservas }) => {
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
                 disabled={reservas?.status == "4"}
-                className={`${styles.cancelarButton} ${
-                  reservas?.status == "4" ? styles.disabledButtonc : ""}`}
+                className={`${styles.cancelarButton} ${reservas?.status == "4" ? styles.disabledButtonc : ""}`}
               >
                 Cancelar reserva
               </button>
