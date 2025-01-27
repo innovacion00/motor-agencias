@@ -162,7 +162,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
               };
             }),
              
-            telephone: `+57${formData.celular}`,
+            telephone: `${formData.celular}`,
           },
         },
       }); //JSON.STRINGIFY
@@ -215,7 +215,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
         });
         console.error("Error al obtener disponibilidad:", error);
       } finally {
-        botondesactivado(false);
+        setbotondesactivado(false);
       }
       console.log(informacionD); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
     };
@@ -435,7 +435,8 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
                 }}
               >
                 <option value="">Selecciona una opción</option>
-                <option value="cedula">Cédula de ciudadanía</option>
+                <option value="cedulaC">Cédula de ciudadanía</option>
+                <option value="cedulaE">Cédula de extranjería</option>
                 <option value="pasaporte">Pasaporte</option>
                 <option value="otro">Otro</option>
               </select>
@@ -560,6 +561,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
                   border: "1px solid #ccc",
                 }}
               />
+              <label htmlFor="identificador" style={{fontWeight:"light", fontSize:"12px"}}>Se debe escribir el identificador(+)</label>
             </div>
           </fieldset>
 
