@@ -23,9 +23,8 @@ const hotelesData = {
           "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687880.jpg?k=372da40f421cb18e3158e3cee258a55df68da3916f5ca7b345f4e62b84cd943d&o=&hp=1",
       },
     ],
-    leermas:"/infomarina",
-    mapa:"https://www.google.com/maps/place/Hotel+Marina+Suites+By+GEH+Suites/@10.3980472,-75.5594753,20z/data=!4m9!3m8!1s0x8ef62f3dacaa4b37:0xa3c318672161c840!5m2!4m1!1i2!8m2!3d10.3980472!4d-75.5592452!16s%2Fg%2F1yh4g_t8v?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D"
-    
+    leermas: "/infomarina",
+    mapa: "https://www.google.com/maps/place/Hotel+Marina+Suites+By+GEH+Suites/@10.3980472,-75.5594753,20z/data=!4m9!3m8!1s0x8ef62f3dacaa4b37:0xa3c318672161c840!5m2!4m1!1i2!8m2!3d10.3980472!4d-75.5592452!16s%2Fg%2F1yh4g_t8v?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D",
   },
   6: {
     name: "Hotel Avexi Suites",
@@ -34,8 +33,8 @@ const hotelesData = {
     description:
       "Ubicado entre el mar Caribe y la bahía de Cartagena de Indias, en el animado distrito comercial y turístico de Bocagrande, este hotel ofrece fácil acceso a todas las atracciones y opciones de entretenimiento que la ciudad moderna y amurallada tiene para ti.",
     image: "https://www.gehsuites.com/images/fachada_avexi.jpg",
-    leermas:"/infoavexi",
-    mapa:"https://www.google.com/maps/place/Hotel+Avexi+Suites+By+GEH+Suites/@10.3982749,-75.5613593,17z/data=!4m10!3m9!1s0x8ef62f3dacf7d4b7:0xf58b384d5cb2a6ee!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.3982696!4d-75.5587844!16s%2Fg%2F11h8967kdh?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D"
+    leermas: "/infoavexi",
+    mapa: "https://www.google.com/maps/place/Hotel+Avexi+Suites+By+GEH+Suites/@10.3982749,-75.5613593,17z/data=!4m10!3m9!1s0x8ef62f3dacf7d4b7:0xf58b384d5cb2a6ee!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.3982696!4d-75.5587844!16s%2Fg%2F11h8967kdh?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   4: {
     name: "Hotel Aixo Suites",
@@ -45,8 +44,8 @@ const hotelesData = {
       "Ubicado en Cartagena de Indias – Colombia, y teniendo como vecino las hermosas playas del mar caribe, se abre paso en el moderno y reconocido barrio de Marbella nuestro Hotel Aixo Suites; a solo 5 minutos de la mágica e infranqueable Ciudad Amurallada; podrás revivir y encontrar las hazañas de nuestros héroes, lo colonial de sus calles, la belleza de sus cañones, su diversidad gastronómica y las más reconocidas tiendas y bares para tu diversión.",
     image:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg",
-      leermas:"/infoaixo",
-      mapa:"https://www.google.com/maps/place/Hotel+Aixo+Suites+By+GEH/@10.4306705,-75.5330912,15.92z/data=!4m9!3m8!1s0x8ef62f9966357c8d:0x3377f5a11170d0ac!5m2!4m1!1i2!8m2!3d10.436384!4d-75.5363788!16s%2Fg%2F11sv6wc7r6?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D"
+    leermas: "/infoaixo",
+    mapa: "https://www.google.com/maps/place/Hotel+Aixo+Suites+By+GEH/@10.4306705,-75.5330912,15.92z/data=!4m9!3m8!1s0x8ef62f9966357c8d:0x3377f5a11170d0ac!5m2!4m1!1i2!8m2!3d10.436384!4d-75.5363788!16s%2Fg%2F11sv6wc7r6?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D",
   },
   1: {
     name: "Hotel Azuan Suites",
@@ -55,8 +54,8 @@ const hotelesData = {
     description:
       "Azuán Suites By GEH Suites, en Cartagena es un hermoso hotel ubicado en el sector moderno de Bocagrande, gozando de una ubicación estratégica a tan solo 15 minutos del aeropuerto Internacional Rafael Núñez.Nuestro hotel está situado a solo 5 minutos de las preciosas playas de Castillo, Bocagrande y Laguito. A 15 minutos de Azuán Suites, encontrarás el misterio que encierra la ciudad amurallada de Cartagena de Indias, sus monumentos y edificaciones históricas: Torre del Reloj, Castillo de San Felipe y sus mágicas calles coloniales.",
     image: "https://www.gehsuites.com/images/fachada-azuan.jpg",
-    leermas:"/infoazuan",
-    mapa:"https://www.google.com/maps/place/Hotel+Azu%C3%A1n+Suites+GEH+Suites/@10.4038589,-75.5531886,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef62f3de5e1d95f:0xba9cfea6defdcf9e!5m2!4m1!1i2!8m2!3d10.4038589!4d-75.5531886!16s%2Fg%2F11b6d6nxfv?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infoazuan",
+    mapa: "https://www.google.com/maps/place/Hotel+Azu%C3%A1n+Suites+GEH+Suites/@10.4038589,-75.5531886,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef62f3de5e1d95f:0xba9cfea6defdcf9e!5m2!4m1!1i2!8m2!3d10.4038589!4d-75.5531886!16s%2Fg%2F11b6d6nxfv?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   5: {
     name: "Hotel Abi Inn",
@@ -66,8 +65,8 @@ const hotelesData = {
       "¡Ven a disfrutar de unas vacaciones inolvidables en el Hotel Abi Inn! Estamos ubicados en la primera línea del mar, frente a las playas espectaculares de Marbella. Además, estamos a pocos pasos de la ciudad amurallada de Cartagena, una de las ciudades más hermosas de Colombia, con sus callejones empedrados, sus edificios coloniales y su increíble puerto.",
     image:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg",
-      leermas:"/infoabi",
-      mapa:"https://www.google.com/maps/place/Hotel+Abi+Inn+By+GEH+Suites/@10.4325263,-75.543057,20z/data=!4m10!3m9!1s0x8ef62f906e9b6101:0x7ab9906842cc5727!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.4328251!4d-75.5425129!16s%2Fg%2F1vv2t939?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infoabi",
+    mapa: "https://www.google.com/maps/place/Hotel+Abi+Inn+By+GEH+Suites/@10.4325263,-75.543057,20z/data=!4m10!3m9!1s0x8ef62f906e9b6101:0x7ab9906842cc5727!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.4328251!4d-75.5425129!16s%2Fg%2F1vv2t939?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   7: {
     name: "Hotel Bocagrande Suites",
@@ -76,8 +75,8 @@ const hotelesData = {
     description:
       "Hotel Bocagrande Cartagena By GEH Suites, es un moderno hotel ubicado en el reconocido sector turístico de Bocagrande, gozando de una ubicación privilegiada sobre la avenida San Martín a tan solo un paso de las tradicionales playas de Bocagrande, 5 minutos de las playas de Castillo Grande y a 15 minutos del aeropuerto Internacional Rafael Núñez.",
     image: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg",
-    leermas:"/infobocagrande",
-    maps:"https://www.google.com/maps/place/Hotel+Bocagrande+By+GEH+Suites/@10.4032675,-75.5580278,17z/data=!4m10!3m9!1s0x8ef62f732fdd8f39:0xfea73be8f2bccc2!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.4032622!4d-75.5554529!16s%2Fg%2F1v76_qp6?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infobocagrande",
+    maps: "https://www.google.com/maps/place/Hotel+Bocagrande+By+GEH+Suites/@10.4032675,-75.5580278,17z/data=!4m10!3m9!1s0x8ef62f732fdd8f39:0xfea73be8f2bccc2!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.4032622!4d-75.5554529!16s%2Fg%2F1v76_qp6?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   8: {
     name: "Hotel Rodadero ",
@@ -85,7 +84,7 @@ const hotelesData = {
     description:
       "El Hotel Rodadero Inn se encuentra ubicado en la ciudad de Santa Marta, uno de los destinos turísticos más hermosos de Colombia. A orillas del mar Caribe, esta ciudad cuenta con una gran variedad de playas, parques y monumentos históricos que cautivarán a todos nuestros visitantes.",
     image: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
-    leermas:"/inforodadero"
+    leermas: "/inforodadero",
   },
   2: {
     name: "Hotel 1525",
@@ -93,8 +92,8 @@ const hotelesData = {
     description:
       "Hotel 1525 By GEH Suites, está ubicado en el Centro Histórico de la Ciudad de Santa Marta, cuenta con 24 habitaciones confortables y modernas. Este hotel, ocupa un edificio con elementos decorativos de forja, se encuentra a 2 minutos caminando de las exposiciones de joyas del Museo del Oro Tairona Casa de la Aduana.",
     image: "https://www.gehsuites.com/images/fachada_1525.jpg",
-    leermas:"/info1525",
-    mapa:"https://www.google.com/maps/place/Hotel+1525+By+GEH+Suites./@11.2466275,-74.2152749,17z/data=!4m10!3m9!1s0x8ef4f563780ed7d5:0x4f9709537618b675!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.2466222!4d-74.2127!16s%2Fg%2F11c72r3603?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/info1525",
+    mapa: "https://www.google.com/maps/place/Hotel+1525+By+GEH+Suites./@11.2466275,-74.2152749,17z/data=!4m10!3m9!1s0x8ef4f563780ed7d5:0x4f9709537618b675!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.2466222!4d-74.2127!16s%2Fg%2F11c72r3603?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   48: {
     name: "Hotel Axis Inn",
@@ -103,8 +102,8 @@ const hotelesData = {
       "El Hotel Axis Inn by GEH Suites está ubicado estratégicamente a unos pasos de las hermosas playas de El Rodadero, en la ciudad de Santa Marta. Ofrecemos una experiencia inolvidable en un ambiente moderno y confortable, ideal para disfrutar en cualquier época del año.",
     image:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg",
-      leermas:"/infoaxis",
-      mapa:"https://www.google.com/maps/place/Hotel+Axis+Rodadero+(Antes+Yuldama+Rodadero+Inn)/@11.2021456,-74.2307486,17z/data=!4m10!3m9!1s0x8ef45f5a5cc60ae5:0xf686bc21855778fd!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.2021404!4d-74.2258777!16s%2Fg%2F1wbryvj8?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infoaxis",
+    mapa: "https://www.google.com/maps/place/Hotel+Axis+Rodadero+(Antes+Yuldama+Rodadero+Inn)/@11.2021456,-74.2307486,17z/data=!4m10!3m9!1s0x8ef45f5a5cc60ae5:0xf686bc21855778fd!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.2021404!4d-74.2258777!16s%2Fg%2F1wbryvj8?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   44: {
     name: "Hotel Sansiraka",
@@ -112,8 +111,8 @@ const hotelesData = {
     description:
       "En el Hotel Sansiraka, ubicado en la turística zona de El Rodadero, a 13 km de Santa Marta, podrás disfrutar de alojamiento con balcón, Wi-Fi gratuito y una piscina al aire libre. Algunas de nuestras habitaciones cuentan con una acogedora área de estar con TV por cable y balcones privados.",
     image: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
-    leermas:"/infosansiraka",
-    mapa:"https://www.google.com/maps/place/Hotel+Sansiraka+By+GEH+Suites./@11.1968691,-74.2284548,17z/data=!4m10!3m9!1s0x8ef4f5613a63c691:0x50eabd7eb9ea10ac!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.1968638!4d-74.2258799!16s%2Fg%2F1tkf20ns?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infosansiraka",
+    mapa: "https://www.google.com/maps/place/Hotel+Sansiraka+By+GEH+Suites./@11.1968691,-74.2284548,17z/data=!4m10!3m9!1s0x8ef4f5613a63c691:0x50eabd7eb9ea10ac!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.1968638!4d-74.2258799!16s%2Fg%2F1tkf20ns?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   3: {
     name: "Hotel Madisson ",
@@ -121,8 +120,8 @@ const hotelesData = {
     description:
       "Madisson Inn Hotel Luxury By GEH Suites, nos encontramos ubicados en la Carrera 18 No. 93 – 97, barrio El Chicó, Bogotá, Colombia. Con una excelente ubicación en el norte de la Ciudad, a solo 5 minutos del parque de la 93, muy cerca de la zona T donde están localizados los más destacados restaurantes de la ciudad, cerca de las entidades financieras, centros de negocios, zonas de entretenimiento y casinos.",
     image: "https://www.gehsuites.com/images/fachada-madison.jpg",
-    leermas:"/infomadisson",
-    mapa:"https://www.google.com/maps/place/Madisson+Inn+Hotel+%26+Luxury+Suites/@4.6790103,-74.0566063,17z/data=!4m10!3m9!1s0x8e3f98db9c7c66cb:0x6890aeeef651eb89!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.679005!4d-74.0540314!16s%2Fg%2F11b6j76yfq?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infomadisson",
+    mapa: "https://www.google.com/maps/place/Madisson+Inn+Hotel+%26+Luxury+Suites/@4.6790103,-74.0566063,17z/data=!4m10!3m9!1s0x8e3f98db9c7c66cb:0x6890aeeef651eb89!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.679005!4d-74.0540314!16s%2Fg%2F11b6j76yfq?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   10: {
     name: "Hotel Windsor House ",
@@ -131,36 +130,47 @@ const hotelesData = {
       "Bienvenido al Hotel Windsor House Inn By GEH Suites, ubicado en la calle 95 #9-97, en el moderno barrio Chapinero de Bogotá. Nuestro hotel está estratégicamente situado cerca de los principales atractivos turísticos del norte de Bogotá, lo que lo convierte en el lugar ideal para disfrutar de una estancia inolvidable en la capital colombiana.",
     image:
       "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
-      leermas:"/infowindsor",
-      maps:"https://www.google.com/maps/place/Windsor+House+By+GEH+Suites/@4.6777866,-74.0467485,17z/data=!4m10!3m9!1s0x8e3f9aeb34e59325:0xfc23b6652dbfa1f3!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.6777813!4d-74.0441736!16s%2Fg%2F11c67x1q_q?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    leermas: "/infowindsor",
+    maps: "https://www.google.com/maps/place/Windsor+House+By+GEH+Suites/@4.6777866,-74.0467485,17z/data=!4m10!3m9!1s0x8e3f9aeb34e59325:0xfc23b6652dbfa1f3!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.6777813!4d-74.0441736!16s%2Fg%2F11c67x1q_q?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
   41: {
     name: "Hotel Zulita",
-    direction:
-      "Cl. 48 #13-22, Bogotá,",
+    direction: "Cl. 48 #13-22, Bogotá,",
     description:
       "Bienvenido al Hotel Zulita Inn , ubicado en la Cl. 48 #13-22, Bogotá, en el moderno barrio el Campin de Bogotá. dispone de alojamiento con salón de uso común, parking privado gratis y terraza. Este hotel de 3 estrellas ofrece servicio de conserjería y mostrador de información turística. El alojamiento ofrece recepción 24 horas, traslado para ir o volver del aeropuerto, servicio de habitaciones y wifi gratis en todo el alojamiento.",
-    image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg",
-    leermas:"/infozulita",
-    maps:"https://www.google.com/maps/place/Hotel+Zulita+Inn/@4.6879147,-74.0899281,13z/data=!4m17!1m5!2m4!1szulita!5m2!5m1!1s2025-01-17!3m10!1s0x8e3f9a2f9334f003:0x655c701d3cd16a0f!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.635357!4d-74.0662546!15sCgZ6dWxpdGGSAQVob3RlbOABAA!16s%2Fg%2F1ptx2ctdm?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+    image:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg",
+    leermas: "/infozulita",
+    maps: "https://www.google.com/maps/place/Hotel+Zulita+Inn/@4.6879147,-74.0899281,13z/data=!4m17!1m5!2m4!1szulita!5m2!5m1!1s2025-01-17!3m10!1s0x8e3f9a2f9334f003:0x655c701d3cd16a0f!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.635357!4d-74.0662546!15sCgZ6dWxpdGGSAQVob3RlbOABAA!16s%2Fg%2F1ptx2ctdm?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
+  },
+  56: {
+    name: "Hotel Boquilla Suites",
+    direction: "Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar",
+    description:
+      "Hotel Boquilla Suites By Gh Suites, es un acogedor hotel, ubicado en la zona norte y turística de Cartagena a pocos pasos de las reconocidas playas de la Boquilla, las cuales representa la cultura y gastronomía típica de la región por la gran variedad de restaurantes típicos en la zona balnearia.",
+    image:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
+    leermas: "/infoboquilla",
+    mapa: "google.com/maps/place/Hotel+Boquilla+Suites/@10.4704047,-75.501179,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef63ac94ada9efd:0xf15682aa17f6c6b6!5m2!4m1!1i2!8m2!3d10.4703994!4d-75.4986041!16s%2Fg%2F1yh9tpqwj?hl=es&entry=ttu&g_ep=EgoyMDI1MDEyMS4wIKXMDSoASAFQAw%3D%3D",
   },
 };
 
-
-
 const hotelIcons = {
+  //Marina
   9: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
   ],
+  //Azuan
   1: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
   ],
+  //Avexi
   6: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
@@ -239,34 +249,46 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
   ],
-  41:[
+  41: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-  ]
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+  ],
 
+  56: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+  ],
 };
 
 const idRooms = {
+  //Marina
   9: {
     83528:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687909.jpg?k=588a0945ee3388cd5a731509f2159507ddc6909d57cf82705c8459bda40af93e&o=&hp=1",
     83527:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687926.jpg?k=145b19423036fee51796d9fc3cf6faeb5d6781a48d68172524d4860e74cce1e7&o=&hp=1",
   },
+  //Azuan
   1: {
     83534:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244639436.jpg?k=6053b3890a7824a3f1a2e30cf862520be80de97644162b30a3e0097d920efafd&o=&hp=1",
     83533:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/100688038.jpg?k=54490e2560d63e691c5d1cf6b009af33d7931f19ef58f69cfbadcc1d7d7b9e2e&o=&hp=1",
   },
+  // Avexi
   6: {
     83532:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1", //
     83529:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543715.jpg?k=7a47cd6af5f8971556ec91581b60c011e0544430470ef73311dd1663eb7dae96&o=&hp=1", //
   },
+  //Aixo
   4: {
     83422:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243606366.jpg?k=56a1826f8a1cc73a276daa1fca9939e8ded4bd93d437ce8b5cdf108f5182ee9d&o=&hp=1", //Doble vista al mar
@@ -277,6 +299,7 @@ const idRooms = {
     83419:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822212.jpg?k=a952a8491f9d7ef59dde500bb8f4a3848ff65bf59947885a8c865ab120cb99c8&o=&hp=1", //Cuadruple vista al mar
   },
+  //Abi
   5: {
     125839:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103679.jpg?k=3f562015f90b32aef1908717d3d9c829ca84205b75c2dea10f23a24086cb6c33&o=", //quintuple
@@ -287,6 +310,7 @@ const idRooms = {
     125836:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103716.jpg?k=72751312367e83c523a272fa6b3a003b39e4fddec303f9b4ccf90d4fe617f0e6&o=&hp=1", //Doble
   },
+  //Bocagrande
   7: {
     90130:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270762.jpg?k=cfe9e10545681c6490650e349d45ab6c7dea125d24801658e92055501b28e1e1&o=&hp=1", //Doble
@@ -297,6 +321,7 @@ const idRooms = {
     90133:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270629.webp?k=5ff367659e2bf52e7d12d2be46a8097d2f841da5412af77427e4b2871298668e&o=", //Quintuple
   },
+  //Madisson
   3: {
     109452:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334226.webp?k=a004d558a7caac5707bdc849283abfeb2ecd6d58cf26240134d7f05eb8dec747&o=", //Doble estandar
@@ -311,6 +336,7 @@ const idRooms = {
     109505:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334105.webp?k=a47582ec901b5eb62ceb7f54c35513f4be2dcb643c1afb614de836d9d4e13d58&o=", //Superior con terraza
   },
+  //Windsor
   10: {
     129037:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544106.webp?k=3e08d57aed1444ddddc842f3f448788f730887c0ef56c4457b118413a8269ec1&o=", //Suite matrimonial
@@ -325,6 +351,7 @@ const idRooms = {
     129035:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544107.webp?k=becf339774cf1f30d6cf0b0deaf4968c14e1f7ef81a860a96ea54ebf2f66fd5d&o=", // Doble Junior Suite
   },
+  //Rodadero
   8: {
     125833:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439311.webp?k=54a110e3e17479e02e7a68081ef190742c897c7880a2d1ac5adfdb7c651395fc&o=", //Cuadruple estandar
@@ -333,13 +360,15 @@ const idRooms = {
     125832:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439311.webp?k=54a110e3e17479e02e7a68081ef190742c897c7880a2d1ac5adfdb7c651395fc&o=", //Triple estandar
   },
+
+  //Boquilla
   2: {
     104423:
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/277587915.webp?k=be35499f5579b4a7e3023c6f36ea998be04c2e9c436744d6668a29b4ac779e24&o=", //
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/277587915.webp?k=be35499f5579b4a7e3023c6f36ea998be04c2e9c436744d6668a29b4ac779e24&o=", // Cuadruple
     104422:
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804078.webp?k=c39084688f6346321275d1563e107f25fb3ff606b136083830a9f1fcd869d0fc&o=",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804078.webp?k=c39084688f6346321275d1563e107f25fb3ff606b136083830a9f1fcd869d0fc&o=", //Triple
     104145:
-      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804089.webp?k=e98318f7fe089ef70520a3b984f5c08bcf5507fb0d92a1ab56c243473912d928&o=",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/276804089.webp?k=e98318f7fe089ef70520a3b984f5c08bcf5507fb0d92a1ab56c243473912d928&o=", //Doble
   },
 
   //Axis
@@ -370,9 +399,9 @@ const idRooms = {
     104979:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
-  41:{
-    
-  }
+  41: {},
+
+  56: {},
 };
 // UseState
 
@@ -383,13 +412,11 @@ export const Cid = ({ id }) => {
   const [ninos, setninos] = useState(0);
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
-  const [categoria, setcategoria] = useState()
+  const [categoria, setcategoria] = useState();
 
   //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
 
   //funcion para formatear el los valores de dinero
-
-
 
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
@@ -409,11 +436,10 @@ export const Cid = ({ id }) => {
   // UseEffect
 
   useEffect(() => {
-
-    const category = JSON.parse(localStorage.getItem("datosUsuario"))
+    const category = JSON.parse(localStorage.getItem("datosUsuario"));
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
-   //console.log("Datos de disponibilidad" , disponibilidad)
+    //console.log("Datos de disponibilidad" , disponibilidad)
     const resultado = disponibilidad.find((vaina) => vaina.hotel.id == id);
     const adultos = Number(localStorage.getItem("cantNinos"));
     const ninos = Number(localStorage.getItem("cantAdultos"));
@@ -423,8 +449,11 @@ export const Cid = ({ id }) => {
     setfechas(rangosdefechas);
     setHabitaciones(resultado);
   }, [id]);
-   console.log("Disponibilidad total", habitaciones);
-  const regex = categoria?.agencia?.category == 0?( /\[Booking connect Neto\]/i): (/\[Booking connect Mayorista\]/i); // Expresión regular para validar el roomName
+  console.log("Disponibilidad total", habitaciones);
+  const regex =
+    categoria?.agencia?.category == 0
+      ? /\[Booking connect Neto\]/i
+      : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
@@ -463,8 +492,8 @@ export const Cid = ({ id }) => {
       <div className={styles.container}>
         {/* Detalles del hotel */}
         <div className={styles.breadcrumb}>
-          <a href="/">Inicio</a> /{" "}
-          <a href="#">Resultados de búsqueda</a> / {habitaciones?.hotel?.name}
+          <a href="/">Inicio</a> / <a href="#">Resultados de búsqueda</a> /{" "}
+          {habitaciones?.hotel?.name}
         </div>
         <div className={styles.hotel_title}>
           {habitaciones?.hotel?.name || "Hotel no encontrado"}
@@ -487,7 +516,13 @@ export const Cid = ({ id }) => {
               </p>
               <p>
                 {hotel.description}
-                <a href={hotel.leermas} target="_blank" rel="noopener noreferrer">Leer más</a>
+                <a
+                  href={hotel.leermas}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Leer más
+                </a>
               </p>
               <div className={styles.icons}>{renderIcons()}</div>
             </div>
@@ -540,7 +575,13 @@ export const Cid = ({ id }) => {
                   />
                   <div className={styles.room_details}>
                     <h2>{dato.roomName}</h2>
-                    <a href={hotel.leermas} target="_blank" rel="noopener noreferrer">Ver habitación</a>
+                    <a
+                      href={hotel.leermas}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Ver habitación
+                    </a>
                     <p>
                       <i className="fas fa-check-circle"></i>
                       Para pagos antes del check-in
@@ -551,7 +592,7 @@ export const Cid = ({ id }) => {
                     <p className="price"></p>
                     <p className="price">
                       {dato.products?.map((product, idx) => {
-                         // Expresión regular para validar el roomName
+                        // Expresión regular para validar el roomName
                         if (regex.test(product.roomName)) {
                           return (
                             <span key={idx}>
@@ -583,19 +624,17 @@ export const Cid = ({ id }) => {
                             imgH: idRooms[habitaciones.hotel.id][dato.roomId],
                             huespedes: adultos + ninos, // Número total de huéspedes
                             precio:
-                                (dato.products?.find((product) => 
-                                regex.test(
-                                  product.roomName)
-                              )?.baseRate?.amountBeforeTax) ||
+                              dato.products?.find((product) =>
+                                regex.test(product.roomName)
+                              )?.baseRate?.amountBeforeTax ||
                               "Sin precio disponible",
                             NombreH: dato.roomName,
                             beds: dato.beds,
                             hotelid: habitaciones?.hotel?.roomcloud_id,
                             ciudad: habitaciones?.hotel?.city,
-                            rateId: (dato.products?.find((product) => 
-                              regex.test(
-                                product.roomName)
-                            )?.rateId),
+                            rateId: dato.products?.find((product) =>
+                              regex.test(product.roomName)
+                            )?.rateId,
                           },
                         ])
                       }
@@ -610,62 +649,69 @@ export const Cid = ({ id }) => {
           <div className={styles.reservation}>
             <h3>Reserva</h3>
 
-            
             <hr />
             <br />
             <h3>{habitaciones?.hotel?.name}</h3>
-                <p>
-                    {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
-                </p>
-                <h4> ({rangosfechas.nights} noches )</h4>
-                <br />
-                <hr />
+            <p>
+              {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
+            </p>
+            <h4> ({rangosfechas.nights} noches )</h4>
+            <br />
+            <hr />
 
-                {datohabitacion.map((dato, index) => (
-                    <div key={index} style={{ position: 'relative' }}> {/* Contenedor relativo para posicionar el botón */}
-                        <ul id="selected-rooms">
-                          <br />
-                            <p>{dato.NombreH}</p>
-                            
-                            <h5>
-                                {checkin} - {checkout}
-                            </h5>
-                            <h5>
-                                {rangosfechas.nights} noches, {ninos + adultos} huespedes
-                            </h5>
-                            <h2>{formatCurrency(dato.precio)} COP</h2>
-                            <button
-                            style={{
-                                position: 'absolute',
-                                bottom: '80px', // Ajusta la posición vertical
-                                left: '145px', // Ajusta la posición horizontal
-                                background: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                            }}
-                            onClick={() => handleDelete(index)}
-                        >
-                            <FontAwesomeIcon icon={faTrash} style={{ color: '#26547B' }} /> {/* Icono de la caneca */}
-                        </button>
-                            
-                            <hr />
-                            
-                        </ul>
-                        
-                    </div>
-                ))}
+            {datohabitacion.map((dato, index) => (
+              <div key={index} style={{ position: "relative" }}>
+                {" "}
+                {/* Contenedor relativo para posicionar el botón */}
+                <ul id="selected-rooms">
+                  <br />
+                  <p>{dato.NombreH}</p>
 
-                <a href="/reservas">
-                    <button 
-                    onClick={enviardatos}
-                    disabled={datohabitacion.length === 0}
+                  <h5>
+                    {checkin} - {checkout}
+                  </h5>
+                  <h5>
+                    {rangosfechas.nights} noches, {ninos + adultos} huespedes
+                  </h5>
+                  <h2>{formatCurrency(dato.precio)} COP</h2>
+                  <button
                     style={{
-                      backgroundColor: datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
-                      cursor: datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                      position: "absolute",
+                      bottom: "80px", // Ajusta la posición vertical
+                      left: "145px", // Ajusta la posición horizontal
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
                     }}
-                    >Reservar ahora</button>
-                </a>
-            </div>
+                    onClick={() => handleDelete(index)}
+                  >
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      style={{ color: "#26547B" }}
+                    />{" "}
+                    {/* Icono de la caneca */}
+                  </button>
+
+                  <hr />
+                </ul>
+              </div>
+            ))}
+
+            <a href="/reservas">
+              <button
+                onClick={enviardatos}
+                disabled={datohabitacion.length === 0}
+                style={{
+                  backgroundColor:
+                    datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+                  cursor:
+                    datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                }}
+              >
+                Reservar ahora
+              </button>
+            </a>
+          </div>
         </div>
       </div>
     </>

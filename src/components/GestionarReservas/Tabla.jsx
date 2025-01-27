@@ -16,7 +16,7 @@ const Tabla = () => {
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
-    setTokenUrl(datosUsuario.token);
+    setTokenUrl(datosUsuario.token); 
   }, []);
 
   const ObtenerReservas = async (token, nombreAgencia) => {
@@ -25,6 +25,7 @@ const Tabla = () => {
     setReservas(reservasObtenidas);
     setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
   };
+  console.log(filteredReservas)
   // Calcular la suma total de "Valor a pagar"
   const totalAmount = filteredReservas.reduce((acc, reserva) => {
     return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
@@ -85,7 +86,7 @@ const Tabla = () => {
   ? 4 Cancelado
   ? 5 Pago abonado
   */
-console.log(reservas)
+// console.log(reservas)
   return (
     <div className={styles.container}>
       <h1>Consultar mis reservas</h1>

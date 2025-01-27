@@ -71,11 +71,26 @@ export const getdisponibility = async (objetohotel) => {
 
 export const reservasNano = atom([])
 export const getReservas = async (token, datosUsuario) => {
-    console.log(datosUsuario)
+    // console.log(datosUsuario)
     // const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     // console.log(datosUsuario.role[0])
-    // const url = datosUsuario.role[0] == "super-admin" ? ("/agencias/v1/reservas") : ("agencias/v1/reservas/reservas-by-user")
+    //const url = datosUsuario.role[0] == "super-admin" ? ("/agencias/v1/reservas") : ("agencias/v1/reservas/reservas-by-user")
     // console.log(url)
+    const rol = () => {
+
+        if (datosUsuario.includes("super-admin")) {
+            return `${URL}agencias/v1/reservas`
+        } else if (datosUsuario.includes("admin")) {
+            return `${URL}agencias/v1/reservas/reservas-by-agencia`
+        } else {
+            return `${URL}agencias/v1/reservas/reservas-by-user`
+        }
+    }
+    //console.log(rol())
+
+    const urlrol = rol()
+    //console.log(urlrol)
+
     try {
         const myHeaders = new Headers();
         myHeaders.append("Authorization", `Bearer ${token}`);
@@ -84,29 +99,19 @@ export const getReservas = async (token, datosUsuario) => {
             method: "GET",
             headers: myHeaders,
         };
-        if (datosUsuario == "super-admin") {
+        const response = await fetch(urlrol, requestOptions)
 
-            const response = await fetch(`${URL}agencias/v1/reservas`, requestOptions)
-
-            if (response.ok) {
-                const data = await response.json()
-                reservasNano.set(data)
-                // console.log(data)
-                return data
-            } else {
-                console.log('error al obtener los datos de la reserva')
-            }
-        } else {
-            const response = await fetch(`${URL}agencias/v1/reservas/reservas-by-user`, requestOptions)
-
-            if (response.ok) {
-                const data = await response.json()
+        if (response.ok) {
+            const data = await response.json()
+            if (data.reservas) {
                 reservasNano.set(data.reservas)
-                return data.reservas
-                // console.log(data.reservas)
             } else {
-                console.log('error al obtener los datos de la reserva')
+                reservasNano.set(data)
             }
+            // console.log(data)
+            return data
+        } else {
+            console.log('error al obtener los datos de la reserva')
         }
 
 

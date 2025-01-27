@@ -9,7 +9,7 @@ import { nightsStore } from "../stores/disponibilidad";
 const BusquedaCartagena = () => {
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
   const [nochesyedades1, setnochesyedades] = useState({});
-  const [categoria, setcategoria] = useState()
+  const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
 
   //Objeto de imagenes  para las fachadas
@@ -26,11 +26,8 @@ const BusquedaCartagena = () => {
     2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525
     48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg", //axis
     44: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg", //sansiraka
-    41:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
-
-
-    
-
+    41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
+    56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
   };
 
   //Objeto con los arreglos de los iconos
@@ -125,9 +122,20 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     ],
-    41:[
-
-    ]
+    41: [
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    ],
+    56: [
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    ],
   };
 
   const cityMap = {
@@ -135,7 +143,6 @@ const BusquedaCartagena = () => {
     BOGOTA: "Bogotá",
     SANTA_MARTA: "Santa marta",
   };
-
 
   // Función para formatear valores como moneda colombiana
   const formatToCurrency = (amount) => {
@@ -146,7 +153,6 @@ const BusquedaCartagena = () => {
       minimumFractionDigits: 0,
     }).format(amount);
   };
-
 
   // Función existente modificada
   const findMinBaseRate = (data) => {
@@ -167,7 +173,6 @@ const BusquedaCartagena = () => {
       ? "*Sin Disponibilidad*"
       : formatToCurrency(minAmount); // Formatear como moneda colombiana
   };
-
 
   //Funcion para almacenar la cantidad de adultos
   const cantAdultos = (data) => {
@@ -197,8 +202,8 @@ const BusquedaCartagena = () => {
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
     // Recuperar la ciudad desde el localStorage
-    const category = JSON.parse(localStorage.getItem("datosUsuario"))
-    setcategoria(category)
+    const category = JSON.parse(localStorage.getItem("datosUsuario"));
+    setcategoria(category);
     const storedCity = localStorage.getItem("selectedCity");
     if (storedCity) {
       const transformedCity = cityMap[storedCity] || "Ciudad desconocida"; // Transforma o asigna un fallback
@@ -214,13 +219,16 @@ const BusquedaCartagena = () => {
 
         //console.log("Datos recuperados de LocalStorage:", disponibilidadLocal);  //datos de disponibilidad localS
       } else {
-       // console.log("No hay datos disponibles en LocalStorage.");
+        // console.log("No hay datos disponibles en LocalStorage.");
       }
     }
   }, []);
-  console.log(hotelesDisponibles)
+  console.log(hotelesDisponibles);
 
-const regex = categoria?.agencia.category== 0? ( /\[Booking connect Neto\]/i): (/\[Booking connect Mayorista\]/i); // Expresión regular para validar el roomName
+  const regex =
+    categoria?.agencia.category == 0
+      ? /\[Booking connect Neto\]/i
+      : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
 
   return (
     <>
@@ -231,8 +239,7 @@ const regex = categoria?.agencia.category== 0? ( /\[Booking connect Neto\]/i): (
       </div>
       <div className={styles.container}>
         <div className={styles.breadcrumb}>
-          <a href="/">Inicio</a> /{" "}
-          <a href="/">Resultados de búsqueda</a>
+          <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
         </div>
 
         <div className={styles.title}>Resultados {Ciudad}</div>
