@@ -141,7 +141,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
+            notes: `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.

@@ -5,17 +5,15 @@ import { getReservas, reservasNano } from "../../stores/disponibilidad";
 
 export const prerender = false;
 
-const cook =  Astro.cookies.get('token')
-const rol =   Astro.cookies.get('datosUsuario')
-const roles = JSON.parse(rol.value).role.find(rol => rol === "super-admin" )
-const reservas = await getReservas(JSON.parse(cook.value), roles)
+const cook = Astro.cookies.get("token");
+const rol = Astro.cookies.get("datosUsuario");
+const roles = JSON.parse(rol.value).role;
+const reservas = await getReservas(JSON.parse(cook.value), roles);
 
-
+console.log(roles);
 const { id } = Astro.params;
 
-const reserva = reservas.find((dato)=>(
-  dato.reservaChatbotId == id
-))
+const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
 // console.log(reservasNano.get())
 ---
 
@@ -29,7 +27,6 @@ const reserva = reservas.find((dato)=>(
   <body>
     <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
       <Gestionar reservas={reserva} client:load />
-      <!-- <p>Hola {token}</p> -->
     </BaseLayout>
   </body>
 </html>
