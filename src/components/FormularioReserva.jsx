@@ -142,7 +142,7 @@ const FormularioReserva = () => {
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped ${valorextranjero}. ${valorextranjero == "es extranjero" ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`,
+            notes: `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
@@ -161,9 +161,8 @@ const FormularioReserva = () => {
                 rateId: dato.rateId,
                 unitaryPrice: dato.precio,
               };
-            }),
-
-            telephone: `+57${formData.celular}`,
+            }),  
+            telephone: `${formData.celular}`,
           },
         },
       }); //JSON.STRINGIFY
@@ -216,7 +215,7 @@ const FormularioReserva = () => {
         });
         console.error("Error al obtener disponibilidad:", error);
       } finally {
-        botondesactivado(false);
+        setbotondesactivado(false);
       }
       console.log(informacionD); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
     };
@@ -441,7 +440,8 @@ const FormularioReserva = () => {
                 }}
               >
                 <option value="">Selecciona una opción</option>
-                <option value="cedula">Cédula de ciudadanía</option>
+                <option value="cedulaC">Cédula de ciudadanía</option>
+                <option value="cedulaE">Cédula de extranjería</option>
                 <option value="pasaporte">Pasaporte</option>
                 <option value="otro">Otro</option>
               </select>
@@ -556,7 +556,6 @@ const FormularioReserva = () => {
                 type="tel"
                 value={formData.celular}
                 onChange={handleChange}
-                autoComplete="off"
                 style={{
                   display: "block",
                   width: "100%",
@@ -566,6 +565,7 @@ const FormularioReserva = () => {
                   border: "1px solid #ccc",
                 }}
               />
+              <label htmlFor="identificador" style={{fontWeight:"light", fontSize:"12px"}}>Se debe escribir el identificador(+)</label>
             </div>
           </fieldset>
           <button
