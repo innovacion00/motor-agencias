@@ -4,6 +4,7 @@ import FormularioRetenciones from './FormularioRetenciones'
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
+import TablaDesglose from "./TablaDesglose";
 
 //UseState
 const FormularioReserva = () => {
@@ -50,21 +51,21 @@ const FormularioReserva = () => {
     "YYYY-MM-DD",
     "es"
   );
-  
-  
+
+
   //Convetir edades en string y separarlos por coma
   const childrenAgesString = fechasreserva?.layout
-  .flatMap((room) => room.children_ages || [])
-  .join(",") || "";
+    .flatMap((room) => room.children_ages || [])
+    .join(",") || "";
 
-//Arreglo con el rango de edades de los niños
+  //Arreglo con el rango de edades de los niños
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-// console.log("edades niños",edadesninos)
-  
-//Calculo del IVA
-const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
+  // console.log("edades niños",edadesninos)
+
+  //Calculo del IVA
+  const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA = esExtranjero == true ? (totalPrecio * 0) : (totalPrecio * tasaIVA)      //totalPrecio * tasaIVA; 
   const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
@@ -114,7 +115,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
     const enviardatos = async () => {
       const informacionD = JSON.stringify({
         total: totalConIVA,
-        titularInfo: {  
+        titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
           tipoDocumento: formData.tipoDocumento,
@@ -141,14 +142,14 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped ${valorextranjero}. ${valorextranjero == "es extranjero" ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
+            notes: `Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. El huesped ${valorextranjero}. ${valorextranjero == "es extranjero" ? "Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
               return {
                 nombreHabitacion: dato.NombreH,
                 adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
-                children_ages:roomConfig.children_ages?.join(",") || "",
+                children_ages: roomConfig.children_ages?.join(",") || "",
                 children: roomConfig.children_ages
                   ? JSON.stringify(roomConfig.children_ages.length)
                   : "",
@@ -161,7 +162,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
                 unitaryPrice: dato.precio,
               };
             }),
-             
+
             telephone: `+57${formData.celular}`,
           },
         },
@@ -358,23 +359,28 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             borderRadius: "5px",
             padding: "15px",
             marginBottom: "20px",
+            display: 'flex',
+            gap: '1rem',
+            width:'100%',
+            justifyContent: 'space-between'
           }}
         >
-          <h3>Valor total</h3>
-          <p>
-            Precio total: <strong>{formatCurrency(totalPrecio)}</strong>
-          </p>
-          <p>
-            Valor IVA: <strong> {formatCurrency(valorIVA)} </strong>
-          </p>
-          <p>
-            Precio total con IVA:{" "}
-            <strong> {formatCurrency(totalConIVA)} </strong>
-          </p>
+          <div>
+            <h3>Valor total</h3>
 
-          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
+            <p>
+              Precio total a pagar:{" "}
+              <strong> {formatCurrency(totalConIVA)} </strong>
+            </p>
+            <p>(Hospedaje + Desayuno + Impuestos)</p>
+            <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
+          </div>
+          <div>
+            <h3>Detallado</h3>
+            <TablaDesglose precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} />
+          </div>
         </div>
-        <FormularioRetenciones precio={totalPrecio} adults={adults} ninos={ninos} fechasreserva={fechasreserva}/>
+        <FormularioRetenciones precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} />
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
@@ -488,7 +494,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
               <input
                 id="apellidos"
                 type="text"
-                value={formData.apellidos} 
+                value={formData.apellidos}
                 onChange={handleChange}
                 style={{
                   display: "block",
@@ -578,7 +584,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             }}
           >
             {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-          </button>       
+          </button>
         </form>
       </div>
     </>

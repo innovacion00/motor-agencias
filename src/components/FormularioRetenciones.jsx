@@ -117,12 +117,14 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
     const hotelId = DatosReserva[0]?.hotelidAutocore
     const valorDesayuno = precioDesyunos(hotelId)
 
-    const desayunos = ((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor
-    const hospedaje = DatosPrecio - desayunos
-    const ivaHospedaje = (hospedaje * 19) / 100
-    const impoconsumo = (desayunos * 8) / 100
+    const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
+    const desayunoBase = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor) / 1.08
+    const hospedajeBase = (DatosPrecio - desayunos) / 1.19
+    const hospedaje = (DatosPrecio - desayunos) 
+    const ivaHospedaje = (hospedajeBase * 19) / 100
+    const impoconsumo = (desayunoBase * 8) / 100
 
-    
+
     const calcularRetenciones = (rteFte, rteIca, rteIva, hospedaje, iva) => {
         const calculo_rtf_fte = (hospedaje * rteFte) / 100
         const calculo_rtf_ica = (hospedaje * rteIca) / 1000
@@ -135,15 +137,26 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
         console.log("preventDefault called");
         console.log("Datos del formulario:", formData);
 
-        const retenciones = calcularRetenciones(formData.reteFuente, formData.reteIca, formData.reteIva, hospedaje, ivaHospedaje)
+        const retenciones = calcularRetenciones(formData.reteFuente, formData.reteIca, formData.reteIva, hospedajeBase, ivaHospedaje)
         setReteFuente(retenciones.calculo_rtf_fte)
         setReteIca(retenciones.calculo_rtf_ica)
         setReteIva(retenciones.calculo_rtf_iva)
     };
 
-    const subTotal = (hospedaje + desayunos + ivaHospedaje + impoconsumo)
-    
+    const subTotal = (hospedajeBase + desayunoBase + ivaHospedaje + impoconsumo)
+    const total = subTotal - (ReteFuente + ReteIca + ReteIva)
+
     console.log(ReteFuente)
+    const formatCurrency = (value) => {
+        if (value === undefined || value === null || isNaN(value)) {
+            return "Sin Disponibilidad";
+        }
+        return new Intl.NumberFormat("es-CO", {
+            style: "currency",
+            currency: "COP",
+            minimumFractionDigits: 0
+        }).format(value);
+    };
 
     return (
         <>
@@ -204,28 +217,33 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
                             </form>
                         </div>
                         <div className='container_valor_retenciones'>
-                            <div className='info_precios'>
-                                <p>Servicios hospedaje </p>
-                                <p>Servicios desayunos </p>
-                                <p>IVA hospedaje 19% </p>
-                                <p>IMPOCONSUMO 8% </p>
-                                <p>Valor rete fuente </p>
-                                <p>Valor rete ICA </p>
-                                <p>Valor rete IVA </p>
-                                <p>SUBTOTAL A PAGAR </p>
-                                <p>Total a pagar incluyendo impuestos y retenciones</p>
-                            </div>
-                            <div className='info_totales'>
-                                <p>${hospedaje}</p>
-                                <p>${desayunos}</p>
-                                <p>${ivaHospedaje}</p>
-                                <p>${impoconsumo}</p>
-                                <p>${ReteFuente}</p>
-                                <p>${ReteIca}</p>
-                                <p>${ReteIva}</p>
-                                <p>${subTotal}</p>
-                                <p>$000</p>
-                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Rte Fuente</th>
+                                        <th>Rte Ica</th>
+                                        <th>Rte Iva</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td>{formatCurrency(ReteFuente.toFixed(0))}</td>
+                                        <td>{formatCurrency(ReteIca.toFixed(0))}</td>
+                                        <td>{formatCurrency(ReteIva.toFixed(0))}</td>
+                                        <td>{formatCurrency(total.toFixed(0))}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td><strong></strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )
