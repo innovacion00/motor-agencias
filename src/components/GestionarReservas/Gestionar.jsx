@@ -261,7 +261,7 @@ const Gestionar = ({ reservas }) => {
         <div className={styles.containerHuesped}>
           <p className={styles.titleHuespe}>Información de los huéspedes</p>
           <div className={styles.habitacionesForm}>
-            <p className={styles.titleForm}>Habitación 1: Doble estándar</p>
+            <p className={styles.titleForm}>Numero de Habitaciones: {reservas?.cantidadHabitaciones}</p>
             <p className={styles.checkin}>Check-in: {checkin}</p>
             <div className={styles.cardHuesped}>
               <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
@@ -289,6 +289,16 @@ const Gestionar = ({ reservas }) => {
                 <p>{reservas?.reservation.telephone}</p>
               </div>
             </div>
+            <br />
+            <div className={styles.acuerdos}>
+                <p>Tener en cuenta:</p>
+                    <br />
+                    <p>* La cadena hotelera Geh Suites protege a los niños, niñas y adolescentes de la explotación sexual y comercial Ley 679 de 2001.</p>
+                    <br />
+                    <p> * Recuerde: todo niño que viaje debe contar con su documento de identidad (Registro civil o tarjeta de identidad).</p>
+                    <br />
+                    <p>* Si los niños que viajan no son hijos de los adultos que los representan deben contar con un permiso de los padres, autenticado en una notaría.</p>
+                    </div>
           </div>
         </div>
         <div>
