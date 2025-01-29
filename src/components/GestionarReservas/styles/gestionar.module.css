@@ -355,3 +355,8 @@
     color: #666 !important;
     cursor: not-allowed !important; /* Indica que no es interactivo */
   }
+
+  .acuerdos p{
+    font-size: 15px;
+    text-align: justify;
+  }
