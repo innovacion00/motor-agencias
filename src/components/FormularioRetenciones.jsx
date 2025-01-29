@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
+const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDatos }) => {
     const [isChecked, setIsChecked] = useState(false);
     const [formData, setFormData] = useState({
         reteFuente: "",
@@ -31,7 +31,24 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
     };
 
     const handleCheckboxChange = (event) => {
-        setIsChecked(event.target.checked);
+        const checked = event.target.checked;
+        setIsChecked(checked);
+
+
+        if (!checked) { // Usa el valor actualizado en lugar de isChecked
+            setReteFuente(0);
+            setReteIca(0);
+            setReteIva(0)
+            manejarDatos(null);
+            setFormData((prevData) => ({
+                ...prevData,
+                reteFuente: 0,
+                reteIca: 0,
+                reteIva: 0
+            }));
+            localStorage.removeItem('Retenciones%')
+        }
+
     };
 
     const setiarRetenciones = async () => {
@@ -113,6 +130,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
         }
     }
 
+
     // console.log(DatosReserva[0]?.hotelidAutocore)
     const hotelId = DatosReserva[0]?.hotelidAutocore
     const valorDesayuno = precioDesyunos(hotelId)
@@ -120,33 +138,37 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
     const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
     const desayunoBase = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor) / 1.08
     const hospedajeBase = (DatosPrecio - desayunos) / 1.19
-    const hospedaje = (DatosPrecio - desayunos) 
+    const hospedaje = (DatosPrecio - desayunos)
     const ivaHospedaje = (hospedajeBase * 19) / 100
     const impoconsumo = (desayunoBase * 8) / 100
 
 
-    const calcularRetenciones = (rteFte, rteIca, rteIva, hospedaje, iva) => {
-        const calculo_rtf_fte = (hospedaje * rteFte) / 100
-        const calculo_rtf_ica = (hospedaje * rteIca) / 1000
+    const calcularRetenciones = (rteFte, rteIca, rteIva, hospedaje, desayunoBase, iva) => {
+        const calculo_rtf_fte = ((hospedaje + desayunoBase) * rteFte) / 100
+        const calculo_rtf_ica = ((hospedaje + desayunoBase) * rteIca) / 1000
         const calculo_rtf_iva = (iva * rteIva) / 100
         return { calculo_rtf_fte, calculo_rtf_ica, calculo_rtf_iva }
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("preventDefault called");
-        console.log("Datos del formulario:", formData);
+        // console.log("Datos del formulario:", formData);
 
-        const retenciones = calcularRetenciones(formData.reteFuente, formData.reteIca, formData.reteIva, hospedajeBase, ivaHospedaje)
+        const retenciones = calcularRetenciones(formData.reteFuente, formData.reteIca, formData.reteIva, hospedajeBase, desayunoBase, ivaHospedaje)
         setReteFuente(retenciones.calculo_rtf_fte)
         setReteIca(retenciones.calculo_rtf_ica)
         setReteIva(retenciones.calculo_rtf_iva)
+        manejarDatos(retenciones, formData)
+
+        localStorage.setItem('Retenciones%', JSON.stringify(formData))
     };
+
+    // console.log(isChecked)
 
     const subTotal = (hospedajeBase + desayunoBase + ivaHospedaje + impoconsumo)
     const total = subTotal - (ReteFuente + ReteIca + ReteIva)
 
-    console.log(ReteFuente)
+    // console.log(ReteFuente)
     const formatCurrency = (value) => {
         if (value === undefined || value === null || isNaN(value)) {
             return "Sin Disponibilidad";
@@ -217,6 +239,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
                             </form>
                         </div>
                         <div className='container_valor_retenciones'>
+
                             <table>
                                 <thead>
                                     <tr>
@@ -224,7 +247,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva }) => {
                                         <th>Rte Fuente</th>
                                         <th>Rte Ica</th>
                                         <th>Rte Iva</th>
-                                        <th>Total</th>
+                                        <th>Total a Pagar</th>
                                     </tr>
                                 </thead>
                                 <tbody>

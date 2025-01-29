@@ -28,8 +28,10 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
+  const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null)
+  const [DatosRetenciones, setDatosRetenciones] = useState(null)
   //convertir esExtranjero
-  const valorextranjero = esExtranjero == true ? ("Extranjero") : ("NO es extanjero")
+  const valorextranjero = esExtranjero == true ? ("es extranjero") : ("NO es extanjero")
 
 
   // Parsea numeros de body a string
@@ -64,12 +66,30 @@ const FormularioReserva = () => {
   );
   // console.log("edades niños",edadesninos)
 
+
+  const manejarDatos = (datosHijo, rtePorcentajes) => {
+    console.log("Datos recibidos del hijo:", datosHijo);
+    setDatosRetenciones(datosHijo);
+    setRetencionesPorcentaje(rtePorcentajes)
+  };
+
   //Calculo del IVA
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA = esExtranjero == true ? (totalPrecio * 0) : (totalPrecio * tasaIVA)      //totalPrecio * tasaIVA; 
-  const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
+  const totalConIVA = (totalPrecio + valorIVA); //Calcular valor total + IVA
 
+  // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
+
+  const totalRetencionesF = () => {
+    if (DatosRetenciones == null) {
+      return totalConIVA
+    } else {
+      return (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
+    }
+  }
+  const totalRetenciones = totalRetencionesF()
+  console.log(totalRetenciones)
   //  console.log(checkin);
   const {
     tipoDocumento,
@@ -113,8 +133,16 @@ const FormularioReserva = () => {
     }
 
     const enviardatos = async () => {
+
+      const filtrarRetenciones = (retenciones) => {
+        return Object.fromEntries(
+          Object.entries(retenciones).filter(([_, value]) => {
+            return value.resultado !== 0 || value.porcentaje !== 0;
+          })
+        );
+      };
       const informacionD = JSON.stringify({
-        total: totalConIVA,
+        total:  Math.round(totalRetenciones),
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
@@ -122,6 +150,20 @@ const FormularioReserva = () => {
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
+        ...filtrarRetenciones({
+          reteFuente: {
+            resultado:  Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
+            porcentaje: Number((RetencionesPorcentaje?.reteFuente)) || 0
+          },
+          reteIca: {
+            resultado:  Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0
+          },
+          reteIva: {
+            resultado:  Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIva)
+          },
+        }),
         exentoIva: esExtranjero,
         reservaInfo: {
           agency: {
@@ -142,7 +184,11 @@ const FormularioReserva = () => {
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
+            notes: DatosRetenciones == null ? (
+              `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`
+            ) : (
+              `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marco que aplica retenciones, verificar en la plataforma Booking connect porcentajes y valores. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`
+            ),
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
@@ -161,7 +207,7 @@ const FormularioReserva = () => {
                 rateId: dato.rateId,
                 unitaryPrice: dato.precio,
               };
-            }),  
+            }),
             telephone: `${formData.celular}`,
           },
         },
@@ -360,7 +406,7 @@ const FormularioReserva = () => {
             marginBottom: "20px",
             display: 'flex',
             gap: '1rem',
-            width:'100%',
+            width: '100%',
             justifyContent: 'space-between'
           }}
         >
@@ -369,9 +415,9 @@ const FormularioReserva = () => {
 
             <p>
               Precio total a pagar:{" "}
-              <strong> {formatCurrency(totalConIVA)} </strong>
+              <strong> {formatCurrency(totalRetenciones)} </strong>
             </p>
-            <p>(Hospedaje + Desayuno + Impuestos)</p>
+            <p>(Hospedaje + A&B + Impuestos incluidos)</p>
             <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
           </div>
           <div>
@@ -379,7 +425,7 @@ const FormularioReserva = () => {
             <TablaDesglose precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} />
           </div>
         </div>
-        <FormularioRetenciones precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} />
+        <FormularioRetenciones precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} manejarDatos={manejarDatos} />
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
@@ -565,7 +611,7 @@ const FormularioReserva = () => {
                   border: "1px solid #ccc",
                 }}
               />
-              <label htmlFor="identificador" style={{fontWeight:"light", fontSize:"12px"}}>Se debe escribir el identificador(+)</label>
+              <label htmlFor="identificador" style={{ fontWeight: "light", fontSize: "12px" }}>Se debe escribir el identificador(+)</label>
             </div>
           </fieldset>
           <button

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
+    
 
     const [DatosPrecio, setDatosPrecio] = useState(0)
     const [DatosAdultos, setDatosAdultos] = useState('')
@@ -18,7 +19,7 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
     }, [precio])
 
 
-
+    
 
     const setiarRetenciones = async () => {
         setDatosPrecio(precio)
@@ -109,7 +110,7 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
     const hospedaje = (DatosPrecio - desayunos)
     const ivaHospedaje = (hospedajeBase * 19) / 100
     const impoconsumo = (desayunoBase * 8) / 100
-
+    console.log(DatosReserva)
     const formatCurrency = (value) => {
         if (value === undefined || value === null || isNaN(value)) {
             return "Sin Disponibilidad";
@@ -145,7 +146,7 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
                         <td>{formatCurrency(hospedaje.toFixed(0))}</td>
                     </tr>
                     <tr>
-                        <td><strong>Desayunos</strong></td>
+                        <td><strong>A&B</strong></td>
                         <td>{formatCurrency(desayunos.toFixed(0))}</td>
                         <td>{formatCurrency(desayunoBase.toFixed(0))}</td>
                         <td>{formatCurrency(impoconsumo.toFixed(0))}</td>

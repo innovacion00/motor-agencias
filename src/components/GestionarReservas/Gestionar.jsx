@@ -290,6 +290,33 @@ const Gestionar = ({ reservas }) => {
               </div>
             </div>
           </div>
+          <div className={styles.Retenciones}>
+            <p>Información sobre las retenciones en caso de que aplique</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Rte Fuente</th>
+                  <th>Rte Ica</th>
+                  <th>Rte Iva</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Porcentaje %</strong></td>
+                  <td>{reservas?.reteFuente?.porcentaje}%</td>
+                  <td>{reservas?.reteIca?.porcentaje}%</td>
+                  <td>{reservas?.reteIva?.porcentaje}%</td>
+                </tr>
+                <tr>
+                  <td><strong>Valor $</strong></td>
+                  <td>{formatCurrency(reservas?.reteFuente?.resultado)}</td>
+                  <td>{formatCurrency(reservas?.reteIca?.resultado)}</td>
+                  <td>{formatCurrency(reservas?.reteIva?.resultado)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <div>
           <div className={styles.pagar}>
