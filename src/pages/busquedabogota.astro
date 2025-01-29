@@ -11,33 +11,42 @@ import Componentesearch from "../components/Componentesearch";
 
 --- 
 <html>
-
-<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <html>
-
+  <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <head>
-      <title>Resultados Bogotá </title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+      <title>Resultados Bogota</title>
+
+      <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        rel="stylesheet"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet"
+      />
     </head>
 
     <body>
-
-        <Componentesearch client:load />
         
-        
-        <script>
-            function checkAuth() {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      window.location.href = "/login"; // Redirige al login si no hay token
-    }
-  }
+      <Componentesearch client:load />
 
-  checkAuth(); // Llamamos a esta función al cargar la página
-        </script>
+      
     </body>
-
-    </html>
-    
+    <script>
+      function checkAuth() {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          window.location.href = "/login"; // Redirige al login si no hay token
+        }
+      }
+      checkAuth(); // Llamamos a esta función al cargar la página
+    </script>
+  
+</html>
+<style>
+  body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      
+    }
+</style>

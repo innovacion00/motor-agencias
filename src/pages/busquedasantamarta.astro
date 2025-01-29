@@ -4,30 +4,44 @@ import Componentesearch from "../components/Componentesearch";
 
 ---
 <title>Resultados Santa Marta </title>
-<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <html>
-
+<html>
+  <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <head>
-        <title>Resultados Santa Marta </title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+      <title>Resultados Santa Marta</title>
+
+      <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        rel="stylesheet"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet"
+      />
     </head>
 
     <body>
-        <Componentesearch client:load />
         
+      <Componentesearch client:load />
 
+      
     </body>
     <script>
-        function checkAuth() {
-          const token = localStorage.getItem("authToken");
-          if (!token) {
-            window.location.href = "/login"; // Redirige al login si no hay token
-          }
+      function checkAuth() {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          window.location.href = "/login"; // Redirige al login si no hay token
         }
-        checkAuth(); // Llamamos a esta función al cargar la página
-      </script>
+      }
+      checkAuth(); // Llamamos a esta función al cargar la página
+    </script>
+  
+</html>
     
-    </html>
-    
+<style>
+  body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      
+    }
+</style>

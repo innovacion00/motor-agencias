@@ -481,8 +481,7 @@ export const Cid = ({ id }) => {
       nuevasHabitaciones.splice(index, 1); //Elimina el elemento en el índice dado
       return nuevasHabitaciones;
     });
-  };
-
+  }; 
   return (
     <>
       <div className={styles.search_form_wrapper}>
