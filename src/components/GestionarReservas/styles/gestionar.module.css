@@ -360,3 +360,44 @@
     font-size: 15px;
     text-align: justify;
   }
+  /* Retenciones */
+  .Retenciones{
+    padding: 1rem;
+  }
+
+  table {
+    width: 60%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  th,
+  td {
+    padding: 12px 15px;
+    text-align: center;
+  }
+  
+  thead {
+    background-color: #343a40;
+    color: #ffffff;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  tbody tr:hover {
+    background-color: #e9ecef;
+  }
+  
+  th {
+    font-size: 1rem;
+  }
+  
+  td {
+    font-size: 0.95rem;
+  }
