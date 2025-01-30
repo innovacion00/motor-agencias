@@ -110,7 +110,7 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
     const hospedaje = (DatosPrecio - desayunos)
     const ivaHospedaje = (hospedajeBase * 19) / 100
     const impoconsumo = (desayunoBase * 8) / 100
-    console.log(DatosReserva)
+    //console.log(DatosReserva)
     const formatCurrency = (value) => {
         if (value === undefined || value === null || isNaN(value)) {
             return "Sin Disponibilidad";

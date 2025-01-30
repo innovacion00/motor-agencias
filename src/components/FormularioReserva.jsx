@@ -68,7 +68,7 @@ const FormularioReserva = () => {
 
 
   const manejarDatos = (datosHijo, rtePorcentajes) => {
-    console.log("Datos recibidos del hijo:", datosHijo);
+  //  console.log("Datos recibidos del hijo:", datosHijo);
     setDatosRetenciones(datosHijo);
     setRetencionesPorcentaje(rtePorcentajes)
   };
@@ -89,7 +89,7 @@ const FormularioReserva = () => {
     }
   }
   const totalRetenciones = totalRetencionesF()
-  console.log(totalRetenciones)
+ // console.log(totalRetenciones)
   //  console.log(checkin);
   const {
     tipoDocumento,

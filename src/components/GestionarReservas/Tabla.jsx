@@ -256,8 +256,13 @@ const Tabla = () => {
             </tr>
           ))}
 
-          {/* Fila para el total */}
+          {/*----------------------- Fila para el total ---------------------------*/}
+
           <tr className={styles.totalRow}>
+            <td colSpan="1" style={{ textAlign: "left", fontWeight: "bold" }}>
+              Total de reservas realizadas: 
+            </td>
+            <td style={{ fontWeight: "bold" }}>{filteredReservas.length}</td>
             <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
               Total:
             </td>

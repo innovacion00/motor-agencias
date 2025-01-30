@@ -411,12 +411,12 @@ const Gestionar = ({ reservas }) => {
                 onClick={() => onClick(reservas._id, false)}
                 disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" ||  (isLoading)}
                 className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"  ? styles.disabledButtonp : ""}`}
-              >{isLoading ? "Generando link..." : "Pagar Mitad"}</button>
+              >{isLoading ? "Generando link..." : "Pagar el 50%"}</button>
               <br />
               <button
               onClick={()=>onClickTotal(reservas._id, true)}
-                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" || (isLoading)}
-                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" ? styles.disabledButtonp : ""}`}>
+                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" || reservas?.pagadoPrimeraMitad || (isLoading)}
+                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" || reservas?.pagadoPrimeraMitad ? styles.disabledButtonp : ""}`}>
                 {isLoading ? "Generando link..." : "Pagar Total"}
               </button>
 
