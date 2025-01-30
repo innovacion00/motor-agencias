@@ -4,7 +4,7 @@ import {
     atom
 } from "nanostores";
 export const linkPago = atom({})
-export const generarLinkPago = async (id) => {
+export const generarLinkPago = async (id, booleano) => {
     console.log(id)
     try {
         const userFromCookie = Cookies.get("token");
@@ -15,7 +15,8 @@ export const generarLinkPago = async (id) => {
         myHeaders.append("Authorization", `Bearer ${parsedUser}`);
 
         const raw = JSON.stringify({
-            reservaId: id
+            reservaId: id,
+            pagoTotal: booleano
         });
 
         const requestOptions = {
