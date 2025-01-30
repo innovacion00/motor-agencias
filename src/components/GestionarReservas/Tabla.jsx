@@ -127,16 +127,22 @@ const Tabla = () => {
           Pago rechazado
         </button>
         <button
+          onClick={() => handleStatusFilter("5")}
+          className={selectedStatus == "5" ? styles.activeFilter : ""}
+        >
+          Pago abonado primera mitad
+        </button>
+        <button
           onClick={() => handleStatusFilter("3")}
           className={selectedStatus == "3" ? styles.activeFilter : ""}
         >
-          Pago aprobado
+          Pago completado
         </button>
         <button
           onClick={() => handleStatusFilter("4")}
           className={selectedStatus == "4" ? styles.activeFilter : ""}
         >
-          Reserva cancelada
+          Reserva cancelada 
         </button>
       </div>
 

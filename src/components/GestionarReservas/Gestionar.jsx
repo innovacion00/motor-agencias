@@ -13,6 +13,8 @@ const Gestionar = ({ reservas }) => {
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false)
+  
+  
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
@@ -92,10 +94,10 @@ const Gestionar = ({ reservas }) => {
     });
   };
 
-  const generarLink = async (id) => {
+  const generarLink = async (id, booleano) => {
     setisLoading(true); // Deshabilitar el botón
     try {
-      const linkP = await generarLinkPago(id); // Llamada a la API
+      const linkP = await generarLinkPago(id, booleano); // Llamada a la API
       console.log(linkP);
       if (linkP.link) {
         window.location.href = linkP.link; // Redireccionar al link generado
@@ -106,14 +108,21 @@ const Gestionar = ({ reservas }) => {
       console.error("Error al generar el link:", error);
       alert("Hubo un error al generar el link de pago.");
     } finally {
-      setIsLoading(false); // Habilitar el botón nuevamente
+      setisLoading(false); // Habilitar el botón nuevamente
     }
   };
-  const onClick = async (id) => {
+  const onClick = async (id, booleano) => {
     if (reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4") {
       return
     }
-    await generarLink(id);
+    await generarLink(id, booleano);
+  };
+
+  const onClickTotal = async (id, booleano) => {
+    if (reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5") {
+      return
+    }
+    await generarLink(id, booleano);
   };
 
   //funcion para formatear el los valores de dinero
@@ -372,10 +381,18 @@ const Gestionar = ({ reservas }) => {
               ) : (<p>Monto no valido</p>)
               }
               <button
-                onClick={() => onClick(reservas._id)}
-                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || (isLoading)}
-                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" ? styles.disabledButtonp : ""}`}
-              >{isLoading ? "Generando link..." : "Pagar ahora"}</button>
+                onClick={() => onClick(reservas._id, false)}
+                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" ||  (isLoading)}
+                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"  ? styles.disabledButtonp : ""}`}
+              >{isLoading ? "Generando link..." : "Pagar Mitad"}</button>
+              <br />
+              <button
+              onClick={()=>onClickTotal(reservas._id, true)}
+                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" || (isLoading)}
+                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" ? styles.disabledButtonp : ""}`}>
+                {isLoading ? "Generando link..." : "Pagar Total"}
+              </button>
+
             </div>
           </div>
 
