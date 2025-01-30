@@ -161,7 +161,7 @@ const FormularioReserva = () => {
           },
           reteIva: {
             resultado:  Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIva)
+            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0
           },
         }),
         exentoIva: esExtranjero,
