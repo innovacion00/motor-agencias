@@ -216,11 +216,11 @@ const Tabla = () => {
               <td>
                 {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.pending}`}>
-                    Pago pendiente 50%
+                    Pago pendiente 
                   </span>
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.proces}`}>
-                    Pago en proceso 50%
+                    Pago en proceso 
                   </span>
                 ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.denied}`}>

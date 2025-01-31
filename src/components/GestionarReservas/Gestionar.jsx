@@ -143,11 +143,11 @@ const Gestionar = ({ reservas }) => {
 
       {reservas.status == "0" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.pending}`}>
-          Pago pendiente 50%
+          Pago pendiente 
         </p>
       ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
-          Pago en proceso 50%
+          Pago en proceso 
         </p>
       ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
