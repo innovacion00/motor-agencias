@@ -403,6 +403,23 @@ const idRooms = {
 
   56: {},
 };
+
+const plan_alimentacion = {
+  9: false, //marina
+  1: false, //azuan
+  6: false, //avexi
+  7: false, //bocagrande (proximamente)
+  4: true, //aixo
+  5: true, //abi
+  3: true, //madison
+  10: true, //windsor
+  8: false, //rodadero
+  2: true, //1525
+  48: true, //axis
+  44: true, //sansiraka
+  41: false, //Zulita
+  56: false, // Boquilla,
+};
 // UseState
 
 export const Cid = ({ id }) => {
@@ -413,6 +430,8 @@ export const Cid = ({ id }) => {
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
   const [categoria, setcategoria] = useState();
+  const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id])
+  const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno")
 
   //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
 
@@ -448,12 +467,37 @@ export const Cid = ({ id }) => {
     setadultos(adultos);
     setfechas(rangosdefechas);
     setHabitaciones(resultado);
+    setocultarseccion(plan_alimentacion[id]);
   }, [id]);
-  console.log("Disponibilidad total", habitaciones);
-  const regex =
-    categoria?.agencia?.category == 0
-      ? /\[Booking connect Neto\]/i
-      : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
+  
+   console.log("Disponibilidad total", habitaciones);
+
+  // const regex =categoria?.agencia?.category == 0? /\[Booking connect Neto\]/i : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
+  
+  
+  const valorDelRadio= (event) => {
+    setplanDeAlimentacion(event.target.value); //valor del radiobutton
+  }
+  
+  console.log(planDeAlimentacion)
+
+  const categoriagencia = categoria?.agencia?.category //categoria de la agencia
+  console.log("categoria de la agencia:",categoriagencia)
+  
+  const regexMayorista ={
+    solodesayuno:  /\[Booking connect Mayorista\]/i,
+    pensioncompleta: /\[Booking connect Mayorista PA\]/i,
+    mediapension: /\[Booking connect Mayorista PAM\]/i
+  }
+
+  const regexminoristas ={
+    solodesayuno:  /\[Booking connect Neto\]/i,
+    pensioncompleta: /\[Booking connect Neto PA\]/i,
+    mediapension: /\[Booking connect Neto PAM\]/i
+  }
+
+  const regexSeleccionado = categoriagencia == 0 ? regexminoristas[planDeAlimentacion] : regexMayorista[planDeAlimentacion];
+
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
@@ -481,7 +525,8 @@ export const Cid = ({ id }) => {
       nuevasHabitaciones.splice(index, 1); //Elimina el elemento en el índice dado
       return nuevasHabitaciones;
     });
-  }; 
+  };
+
   return (
     <>
       <div className={styles.search_form_wrapper}>
@@ -560,6 +605,59 @@ export const Cid = ({ id }) => {
           </div> */}
           {/* <button>Modificar búsqueda</button> */}
         </div>
+        {/* Sección de Plan de Alimentación */}
+        {mostrarseccion && (
+          <div className={styles.plan_alimentacion}>
+            <div className={styles.planes}>
+              <h3>Selecciona el plan de alimentación para tu grupo</h3>
+              <p>
+                Todas las habitaciones de la reserva tendrán el mismo plan de
+                alimentación.
+              </p>
+              <div>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="plan"
+                    value="solodesayuno"
+                    defaultChecked
+                    className={styles.radioInput}
+                    onChange={valorDelRadio}
+                  />
+                  <span>
+                    <strong>Solo desayuno</strong> (Incluye desayuno)
+                  </span>
+                </label>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="plan"
+                    value="mediapension"
+                    className={styles.radioInput}
+                    onChange={valorDelRadio}
+                  />
+                  <span>
+                    <strong>Media pensión</strong> (Incluye desayuno + almuerzo
+                    o cena)
+                  </span>
+                </label>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="plan"
+                    value="pensioncompleta"
+                    className={styles.radioInput}
+                    onChange={valorDelRadio}
+                  />
+                  <span>
+                    <strong>Pensión completa</strong> (Incluye desayuno +
+                    almuerzo + cena)
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className={styles.room_section}>
           <div className={styles.cards}>
@@ -592,7 +690,7 @@ export const Cid = ({ id }) => {
                     <p className="price">
                       {dato.products?.map((product, idx) => {
                         // Expresión regular para validar el roomName
-                        if (regex.test(product.roomName)) {
+                        if (regexSeleccionado?.test(product.roomName)) {
                           return (
                             <span key={idx}>
                               {formatCurrency(
@@ -624,7 +722,7 @@ export const Cid = ({ id }) => {
                             huespedes: adultos + ninos, // Número total de huéspedes
                             precio:
                               dato.products?.find((product) =>
-                                regex.test(product.roomName)
+                                regexSeleccionado.test(product.roomName)
                               )?.baseRate?.amountBeforeTax ||
                               "Sin precio disponible",
                             NombreH: dato.roomName,
@@ -633,7 +731,7 @@ export const Cid = ({ id }) => {
                             ciudad: habitaciones?.hotel?.city,
                             hotelidAutocore: habitaciones?.hotel?.id,
                             rateId: dato.products?.find((product) =>
-                              regex.test(product.roomName)
+                              regexSeleccionado.test(product.roomName)
                             )?.rateId,
                           },
                         ])
