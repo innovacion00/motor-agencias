@@ -430,8 +430,10 @@ export const Cid = ({ id }) => {
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
   const [categoria, setcategoria] = useState();
-  const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id])
-  const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno")
+  const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id]);
+  const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno");
+  const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
+    useState("");
 
   //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
 
@@ -455,6 +457,20 @@ export const Cid = ({ id }) => {
   // UseEffect
 
   useEffect(() => {
+    const formatearPlan = (plan) => {
+      switch (plan) {
+        case "solodesayuno":
+          return "Solo desayuno";
+        case "mediapension":
+          return "Media Pension";
+        case "pensioncompleta":
+          return "Pension completa";
+        default:
+          return plan;
+      }
+    };
+    setPlanDeAlimentacionFormateado(formatearPlan(planDeAlimentacion));
+
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
@@ -468,35 +484,37 @@ export const Cid = ({ id }) => {
     setfechas(rangosdefechas);
     setHabitaciones(resultado);
     setocultarseccion(plan_alimentacion[id]);
-  }, [id]);
-  
-   console.log("Disponibilidad total", habitaciones);
+  }, [id, planDeAlimentacion]);
+
+  console.log("Disponibilidad total", habitaciones);
 
   // const regex =categoria?.agencia?.category == 0? /\[Booking connect Neto\]/i : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
-  
-  
-  const valorDelRadio= (event) => {
+
+  const valorDelRadio = (event) => {
     setplanDeAlimentacion(event.target.value); //valor del radiobutton
-  }
-  
-  console.log(planDeAlimentacion)
+  };
+  console.log("Plan de alimentación:", planDeAlimentacionFormateado);
+  // console.log(planDeAlimentacion)
 
-  const categoriagencia = categoria?.agencia?.category //categoria de la agencia
-  console.log("categoria de la agencia:",categoriagencia)
-  
-  const regexMayorista ={
-    solodesayuno:  /\[Booking connect Mayorista\]/i,
+  const categoriagencia = categoria?.agencia?.category; //categoria de la agencia
+  console.log("categoria de la agencia:", categoriagencia);
+
+  const regexMayorista = {
+    solodesayuno: /\[Booking connect Mayorista\]/i,
     pensioncompleta: /\[Booking connect Mayorista PA\]/i,
-    mediapension: /\[Booking connect Mayorista PAM\]/i
-  }
+    mediapension: /\[Booking connect Mayorista PAM\]/i,
+  };
 
-  const regexminoristas ={
-    solodesayuno:  /\[Booking connect Neto\]/i,
+  const regexminoristas = {
+    solodesayuno: /\[Booking connect Neto\]/i,
     pensioncompleta: /\[Booking connect Neto PA\]/i,
-    mediapension: /\[Booking connect Neto PAM\]/i
-  }
+    mediapension: /\[Booking connect Neto PAM\]/i,
+  };
 
-  const regexSeleccionado = categoriagencia == 0 ? regexminoristas[planDeAlimentacion] : regexMayorista[planDeAlimentacion];
+  const regexSeleccionado =
+    categoriagencia == 0
+      ? regexminoristas[planDeAlimentacion]
+      : regexMayorista[planDeAlimentacion];
 
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
@@ -714,6 +732,7 @@ export const Cid = ({ id }) => {
                         setDatohabitacion((prevState) => [
                           ...prevState,
                           {
+                            plandealimentacion: planDeAlimentacionFormateado,
                             roomId: dato.roomId,
                             checkin: checkin, // O el valor correcto del check-in
                             checkout: checkout, // O el valor correcto del check-out
@@ -771,6 +790,9 @@ export const Cid = ({ id }) => {
                   <h5>
                     {rangosfechas.nights} noches, {ninos + adultos} huespedes
                   </h5>
+
+                  <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
+
                   <h2>{formatCurrency(dato.precio)} COP</h2>
                   <button
                     style={{

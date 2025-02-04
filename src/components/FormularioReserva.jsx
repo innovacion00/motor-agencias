@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DropdownSearch from "./DropdownSearch";
-import FormularioRetenciones from './FormularioRetenciones'
+import FormularioRetenciones from "./FormularioRetenciones";
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
@@ -17,7 +17,8 @@ const FormularioReserva = () => {
   const [cantadultos, setcantadultos] = useState();
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
-  const [esExtranjero, setesExtranjero] = useState(false)
+  const [esExtranjero, setesExtranjero] = useState(false);
+  const [planDeAlimentacion, setplanDeAlimentacion] = useState();
   const [formData, setFormData] = useState({
     tipoDocumento: "",
     numeroDocumento: "",
@@ -28,11 +29,11 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
-  const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null)
-  const [DatosRetenciones, setDatosRetenciones] = useState(null)
+  const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
+  const [DatosRetenciones, setDatosRetenciones] = useState(null);
   //convertir esExtranjero
-  const valorextranjero = esExtranjero == true ? ("es extranjero") : ("NO es extanjero")
-
+  const valorextranjero =
+    esExtranjero == true ? "es extranjero" : "NO es extanjero";
 
   // Parsea numeros de body a string
   const adults = JSON.stringify(cantadultos);
@@ -54,11 +55,11 @@ const FormularioReserva = () => {
     "es"
   );
 
-
   //Convetir edades en string y separarlos por coma
-  const childrenAgesString = fechasreserva?.layout
-    .flatMap((room) => room.children_ages || [])
-    .join(",") || "";
+  const childrenAgesString =
+    fechasreserva?.layout
+      .flatMap((room) => room.children_ages || [])
+      .join(",") || "";
 
   //Arreglo con el rango de edades de los niños
   const edadesninos = fechasreserva?.layout.map((dato) =>
@@ -66,30 +67,35 @@ const FormularioReserva = () => {
   );
   // console.log("edades niños",edadesninos)
 
-
   const manejarDatos = (datosHijo, rtePorcentajes) => {
-  //  console.log("Datos recibidos del hijo:", datosHijo);
+    //  console.log("Datos recibidos del hijo:", datosHijo);
     setDatosRetenciones(datosHijo);
-    setRetencionesPorcentaje(rtePorcentajes)
+    setRetencionesPorcentaje(rtePorcentajes);
   };
 
   //Calculo del IVA
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA = esExtranjero == true ? (totalPrecio * 0) : (totalPrecio * tasaIVA)      //totalPrecio * tasaIVA; 
-  const totalConIVA = (totalPrecio + valorIVA); //Calcular valor total + IVA
+  const valorIVA =
+    esExtranjero == true ? totalPrecio * 0 : totalPrecio * tasaIVA; //totalPrecio * tasaIVA;
+  const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
 
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
 
   const totalRetencionesF = () => {
     if (DatosRetenciones == null) {
-      return totalConIVA
+      return totalConIVA;
     } else {
-      return (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
+      return (
+        totalConIVA -
+        (DatosRetenciones.calculo_rtf_fte +
+          DatosRetenciones.calculo_rtf_ica +
+          DatosRetenciones.calculo_rtf_iva)
+      );
     }
-  }
-  const totalRetenciones = totalRetencionesF()
- // console.log(totalRetenciones)
+  };
+  const totalRetenciones = totalRetencionesF();
+  // console.log(totalRetenciones)
   //  console.log(checkin);
   const {
     tipoDocumento,
@@ -99,7 +105,6 @@ const FormularioReserva = () => {
     apellidos,
     email,
     celular,
-
   } = formData;
 
   const handleChange = (e) => {
@@ -133,7 +138,6 @@ const FormularioReserva = () => {
     }
 
     const enviardatos = async () => {
-
       const filtrarRetenciones = (retenciones) => {
         return Object.fromEntries(
           Object.entries(retenciones).filter(([_, value]) => {
@@ -142,7 +146,7 @@ const FormularioReserva = () => {
         );
       };
       const informacionD = JSON.stringify({
-        total:  Math.round(totalRetenciones),
+        total: Math.round(totalRetenciones),
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
@@ -152,16 +156,16 @@ const FormularioReserva = () => {
         },
         ...filtrarRetenciones({
           reteFuente: {
-            resultado:  Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
-            porcentaje: Number((RetencionesPorcentaje?.reteFuente)) || 0
+            resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
           },
           reteIca: {
-            resultado:  Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0
+            resultado: Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0,
           },
           reteIva: {
-            resultado:  Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0
+            resultado: Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
           },
         }),
         exentoIva: esExtranjero,
@@ -184,11 +188,28 @@ const FormularioReserva = () => {
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: DatosRetenciones == null ? (
-              `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`
-            ) : (
-              `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marco que aplica retenciones, verificar en la plataforma Booking connect porcentajes y valores. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`
-            ),
+            notes:
+              DatosRetenciones == null
+                ? `Creada por la agencia: ${
+                    agencia.agencia.fullName
+                  }. Reserva de ${noches} noches a nombre de ${
+                    formData.nombreCompleto
+                  } ${formData.apellidos}. ${
+                    valorextranjero == "es extranjero"
+                      ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia"
+                      : ""
+                  }`
+                : `Creada por la agencia: ${
+                    agencia.agencia.fullName
+                  }. Reserva de ${noches} noches a nombre de ${
+                    formData.nombreCompleto
+                  } ${
+                    formData.apellidos
+                  }, la agencia marco que aplica retenciones, verificar en la plataforma Booking connect porcentajes y valores. ${
+                    valorextranjero == "es extranjero"
+                      ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia"
+                      : ""
+                  }`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
@@ -268,7 +289,6 @@ const FormularioReserva = () => {
     enviardatos(); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
   };
 
-
   //funcion para formatear el los valores de dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
@@ -320,7 +340,6 @@ const FormularioReserva = () => {
       text: "Se ha realizado la reserva con exito",
       showConfirmButton: false,
       timer: 4000,
-
     });
     setTimeout(() => {
       window.location.href = "/reservapagada"; //Redireccion hacia la pagina de reserva pagada
@@ -392,6 +411,10 @@ const FormularioReserva = () => {
             <p>
               <strong>Numero de camas:</strong> {data.beds}
             </p>
+            <p>
+              <strong>Plan de alimentacion: </strong>
+              {data.plandealimentacion}
+            </p>
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong> {formatCurrency(data.precio)}
             </p>
@@ -404,10 +427,10 @@ const FormularioReserva = () => {
             borderRadius: "5px",
             padding: "15px",
             marginBottom: "20px",
-            display: 'flex',
-            gap: '1rem',
-            width: '100%',
-            justifyContent: 'space-between'
+            display: "flex",
+            gap: "1rem",
+            width: "100%",
+            justifyContent: "space-between",
           }}
         >
           <div>
@@ -418,19 +441,33 @@ const FormularioReserva = () => {
               <strong> {formatCurrency(totalRetenciones)} </strong>
             </p>
             <p>(Hospedaje + A&B + Impuestos incluidos)</p>
-            <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
+            <strong>
+              Nota: En caso de que el titular de la reserva sea de nacionalidad
+              colombiana{" "}
+              {/*y cumpla con los requisitos de migración colombia,*/} se debe
+              asumir el impuesto del iva del 19%.{" "}
+            </strong>
           </div>
           <div>
             <h3>Detallado</h3>
-            <TablaDesglose precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} />
+            <TablaDesglose
+              precio={totalConIVA}
+              adults={adults}
+              ninos={ninos}
+              fechasreserva={fechasreserva}
+            />
           </div>
         </div>
-        <FormularioRetenciones precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} manejarDatos={manejarDatos} />
+        <FormularioRetenciones
+          precio={totalConIVA}
+          adults={adults}
+          ninos={ninos}
+          fechasreserva={fechasreserva}
+          manejarDatos={manejarDatos}
+        />
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-
-
           <fieldset
             style={{
               border: "1px solid #ddd",
@@ -460,7 +497,6 @@ const FormularioReserva = () => {
                     marginLeft: "40px",
                     cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
                     accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
-
                   }}
                   type="checkbox"
                   id="esExtranjero"
@@ -611,7 +647,12 @@ const FormularioReserva = () => {
                   border: "1px solid #ccc",
                 }}
               />
-              <label htmlFor="identificador" style={{ fontWeight: "light", fontSize: "12px" }}>Se debe escribir el identificador(+)</label>
+              <label
+                htmlFor="identificador"
+                style={{ fontWeight: "light", fontSize: "12px" }}
+              >
+                Se debe escribir el identificador(+)
+              </label>
             </div>
           </fieldset>
           <button

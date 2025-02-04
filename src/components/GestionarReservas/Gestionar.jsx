@@ -9,10 +9,19 @@ import Swal from "sweetalert2";
 //UseState
 const Gestionar = ({ reservas }) => {
 
+const [datosusuario, setusuariodata] = useState()
+
+
   console.log(reservas)              // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false)
+  useEffect(() => {
+    const usuariodata = JSON.parse(localStorage.getItem("datosreserva"));
+    setusuariodata(usuariodata);
+  
+    
+  }, [])
   
   
   const sumaHuespe =
@@ -226,6 +235,10 @@ const Gestionar = ({ reservas }) => {
                 <div className={styles.flexCol}>
                   <p>Habitaciones</p>
                   <p>{reservas?.cantidadHabitaciones}</p>
+                </div>
+                <div className={styles.flexCol}>
+                  <p>Tipo de plan de alimentacion</p>
+                  <p>{datosusuario?.plandealimentacion}</p>
                 </div>
               </div>
             </div>
