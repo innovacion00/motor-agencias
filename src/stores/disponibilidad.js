@@ -63,7 +63,7 @@ export const getdisponibility = async (objetohotel) => {
         Swal.fire({
             icon: "error",
             title: "Error en la búsqueda",
-            text: "No se pudo obtener la disponibilidad. Por favor, verifica los datos ingresados o intenta nuevamente más tarde.",
+            text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente más tarde.",
         });
         console.error("Error al obtener disponibilidad:", error);
     }

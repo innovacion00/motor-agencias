@@ -145,14 +145,15 @@ const handleAddRoom = () => {
         CARTAGENA: "/busquedacartagena",
         BOGOTA: "/busquedabogota",
         SANTA_MARTA: "/busquedasantamarta",
+        
       };
-
-      window.location.href = destinations[destination];
+      // window.location.href = destinations[destination];
+      
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Error en la búsqueda",
-        text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente.",
+        text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente mas tarde.",
       });
     } finally {
       // Rehabilitar el botón después de que la consulta termine
