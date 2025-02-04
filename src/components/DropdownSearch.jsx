@@ -147,7 +147,7 @@ const handleAddRoom = () => {
         SANTA_MARTA: "/busquedasantamarta",
         
       };
-      // window.location.href = destinations[destination];
+       window.location.href = destinations[destination];
       
     } catch (error) {
       Swal.fire({
