@@ -411,10 +411,10 @@ const plan_alimentacion = {
   7: false, //bocagrande (proximamente)
   4: true, //aixo
   5: true, //abi
-  3: true, //madison
-  10: true, //windsor
+  3: false, //madison
+  10: false, //windsor
   8: false, //rodadero
-  2: true, //1525
+  2: false, //1525
   48: true, //axis
   44: true, //sansiraka
   41: false, //Zulita
