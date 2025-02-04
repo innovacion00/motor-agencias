@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import DropdownSearch from "./DropdownSearch";
+import FormularioRetenciones from './FormularioRetenciones'
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
+import TablaDesglose from "./TablaDesglose";
 
 //UseState
 const FormularioReserva = () => {
@@ -26,9 +28,10 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
-  
-//convertir esExtranjero
-const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero")
+  const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null)
+  const [DatosRetenciones, setDatosRetenciones] = useState(null)
+  //convertir esExtranjero
+  const valorextranjero = esExtranjero == true ? ("es extranjero") : ("NO es extanjero")
 
 
   // Parsea numeros de body a string
@@ -50,25 +53,43 @@ const valorextranjero= esExtranjero == true?("es extranjero"):("NO es extanjero"
     "YYYY-MM-DD",
     "es"
   );
-  
-  
+
+
   //Convetir edades en string y separarlos por coma
   const childrenAgesString = fechasreserva?.layout
-  .flatMap((room) => room.children_ages || [])
-  .join(",") || "";
+    .flatMap((room) => room.children_ages || [])
+    .join(",") || "";
 
-//Arreglo con el rango de edades de los niños
+  //Arreglo con el rango de edades de los niños
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-// console.log("edades niños",edadesninos)
-  
-//Calculo del IVA
-const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
-  const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA = esExtranjero == true? (totalPrecio*0) : (totalPrecio*tasaIVA)      //totalPrecio * tasaIVA; 
-  const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
+  // console.log("edades niños",edadesninos)
 
+
+  const manejarDatos = (datosHijo, rtePorcentajes) => {
+  //  console.log("Datos recibidos del hijo:", datosHijo);
+    setDatosRetenciones(datosHijo);
+    setRetencionesPorcentaje(rtePorcentajes)
+  };
+
+  //Calculo del IVA
+  const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
+  const tasaIVA = 0.19; // Tasa del IVA
+  const valorIVA = esExtranjero == true ? (totalPrecio * 0) : (totalPrecio * tasaIVA)      //totalPrecio * tasaIVA; 
+  const totalConIVA = (totalPrecio + valorIVA); //Calcular valor total + IVA
+
+  // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
+
+  const totalRetencionesF = () => {
+    if (DatosRetenciones == null) {
+      return totalConIVA
+    } else {
+      return (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
+    }
+  }
+  const totalRetenciones = totalRetencionesF()
+ // console.log(totalRetenciones)
   //  console.log(checkin);
   const {
     tipoDocumento,
@@ -85,7 +106,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
     const { id, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [id]: type === "checkbox" ? checked :  value,
+      [id]: type === "checkbox" ? checked : value,
     });
   };
 
@@ -112,16 +133,38 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
     }
 
     const enviardatos = async () => {
+
+      const filtrarRetenciones = (retenciones) => {
+        return Object.fromEntries(
+          Object.entries(retenciones).filter(([_, value]) => {
+            return value.resultado !== 0 || value.porcentaje !== 0;
+          })
+        );
+      };
       const informacionD = JSON.stringify({
-        total: totalConIVA,
-        titularInfo: {  
+        total:  Math.round(totalRetenciones),
+        titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
           tipoDocumento: formData.tipoDocumento,
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
-        exentoIva:esExtranjero,
+        ...filtrarRetenciones({
+          reteFuente: {
+            resultado:  Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
+            porcentaje: Number((RetencionesPorcentaje?.reteFuente)) || 0
+          },
+          reteIca: {
+            resultado:  Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0
+          },
+          reteIva: {
+            resultado:  Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0
+          },
+        }),
+        exentoIva: esExtranjero,
         reservaInfo: {
           agency: {
             is_agency: true,
@@ -141,14 +184,18 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
             nights: noches,
-            notes: `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : "" }`,
+            notes: DatosRetenciones == null ? (
+              `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`
+            ) : (
+              `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marco que aplica retenciones, verificar en la plataforma Booking connect porcentajes y valores. ${valorextranjero == "es extranjero" ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia" : ""}`
+            ),
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
               return {
                 nombreHabitacion: dato.NombreH,
                 adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
-                children_ages:roomConfig.children_ages?.join(",") || "",
+                children_ages: roomConfig.children_ages?.join(",") || "",
                 children: roomConfig.children_ages
                   ? JSON.stringify(roomConfig.children_ages.length)
                   : "",
@@ -161,7 +208,6 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
                 unitaryPrice: dato.precio,
               };
             }),
-             
             telephone: `${formData.celular}`,
           },
         },
@@ -265,7 +311,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
     setfechasreserva(fechas);
     setagencia(token);
   }, []);
- 
+
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
     Swal.fire({
@@ -274,7 +320,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
       text: "Se ha realizado la reserva con exito",
       showConfirmButton: false,
       timer: 4000,
-      
+
     });
     setTimeout(() => {
       window.location.href = "/reservapagada"; //Redireccion hacia la pagina de reserva pagada
@@ -358,28 +404,33 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             borderRadius: "5px",
             padding: "15px",
             marginBottom: "20px",
+            display: 'flex',
+            gap: '1rem',
+            width: '100%',
+            justifyContent: 'space-between'
           }}
         >
-          <h3>Valor total</h3>
-          <p>
-            Precio total: <strong>{formatCurrency(totalPrecio)}</strong>
-          </p>
-          <p>
-            Valor IVA: <strong> {formatCurrency(valorIVA)} </strong>
-          </p>
-          <p>
-            Precio total con IVA:{" "}
-            <strong> {formatCurrency(totalConIVA)} </strong>
-          </p>
-  
-          <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
-        </div>
+          <div>
+            <h3>Valor total</h3>
 
+            <p>
+              Precio total a pagar:{" "}
+              <strong> {formatCurrency(totalRetenciones)} </strong>
+            </p>
+            <p>(Hospedaje + A&B + Impuestos incluidos)</p>
+            <strong>Nota: En caso de que el titular de la reserva sea de nacionalidad colombiana {/*y cumpla con los requisitos de migración colombia,*/} se debe asumir el impuesto del iva del 19%. </strong>
+          </div>
+          <div>
+            <h3>Detallado</h3>
+            <TablaDesglose precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} />
+          </div>
+        </div>
+        <FormularioRetenciones precio={totalConIVA} adults={adults} ninos={ninos} fechasreserva={fechasreserva} manejarDatos={manejarDatos} />
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-        
-        
+
+
           <fieldset
             style={{
               border: "1px solid #ddd",
@@ -393,30 +444,30 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             <div>
               {/* Checkbox De huesped o no  */}
               <div
-  style={{
-    display: "flex",
-    alignItems: "center", // Alinea verticalmente el checkbox con el texto
-    justifyContent: "flex-start", // Alinea el contenido a la izquierda
-  }}
->
-  <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
-    ¿El huésped es extranjero? marque la casilla para indicar si
-  </label>
-  <input
-  style={{
-    width: "15px", // Tamaño más claro y consistente
-    height: "15px",
-    marginLeft:"40px",
-    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
-    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
-    
-  }}
-    type="checkbox"
-    id="esExtranjero"
-    checked={esExtranjero}
-    onChange={(e) => setesExtranjero(e.target.checked)}
-  />
-</div>
+                style={{
+                  display: "flex",
+                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
+                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
+                }}
+              >
+                <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
+                  ¿El huésped es extranjero? marque la casilla para indicar si
+                </label>
+                <input
+                  style={{
+                    width: "15px", // Tamaño más claro y consistente
+                    height: "15px",
+                    marginLeft: "40px",
+                    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+                    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+
+                  }}
+                  type="checkbox"
+                  id="esExtranjero"
+                  checked={esExtranjero}
+                  onChange={(e) => setesExtranjero(e.target.checked)}
+                />
+              </div>
 
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
@@ -560,10 +611,9 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
                   border: "1px solid #ccc",
                 }}
               />
-              <label htmlFor="identificador" style={{fontWeight:"light", fontSize:"12px"}}>Se debe escribir el identificador(+)</label>
+              <label htmlFor="identificador" style={{ fontWeight: "light", fontSize: "12px" }}>Se debe escribir el identificador(+)</label>
             </div>
           </fieldset>
-
           <button
             disabled={botondesactivado}
             type="submit"
@@ -580,7 +630,7 @@ const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //C
             }}
           >
             {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-          </button>       
+          </button>
         </form>
       </div>
     </>

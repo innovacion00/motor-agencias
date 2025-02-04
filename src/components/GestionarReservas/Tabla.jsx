@@ -127,16 +127,22 @@ const Tabla = () => {
           Pago rechazado
         </button>
         <button
+          onClick={() => handleStatusFilter("5")}
+          className={selectedStatus == "5" ? styles.activeFilter : ""}
+        >
+          Pago abonado primera mitad
+        </button>
+        <button
           onClick={() => handleStatusFilter("3")}
           className={selectedStatus == "3" ? styles.activeFilter : ""}
         >
-          Pago aprobado
+          Pago completado
         </button>
         <button
           onClick={() => handleStatusFilter("4")}
           className={selectedStatus == "4" ? styles.activeFilter : ""}
         >
-          Reserva cancelada
+          Reserva cancelada 
         </button>
       </div>
 
@@ -210,11 +216,11 @@ const Tabla = () => {
               <td>
                 {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.pending}`}>
-                    Pago pendiente 50%
+                    Pago pendiente 
                   </span>
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.proces}`}>
-                    Pago en proceso 50%
+                    Pago en proceso 
                   </span>
                 ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.denied}`}>
@@ -250,8 +256,13 @@ const Tabla = () => {
             </tr>
           ))}
 
-          {/* Fila para el total */}
+          {/*----------------------- Fila para el total ---------------------------*/}
+
           <tr className={styles.totalRow}>
+            <td colSpan="1" style={{ textAlign: "left", fontWeight: "bold" }}>
+              Total de reservas realizadas: 
+            </td>
+            <td style={{ fontWeight: "bold" }}>{filteredReservas.length}</td>
             <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
               Total:
             </td>
