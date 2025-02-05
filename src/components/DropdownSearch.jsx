@@ -143,7 +143,7 @@ const DropdownSearch = () => {
         ...Array(room.children5to17).fill(10),
       ],
     }));
-
+    localStorage.setItem("selectedCity", destination);
     setIsLoading(true);
 
     const nochesyedades = {
@@ -182,8 +182,8 @@ const DropdownSearch = () => {
       setIsLoading(false);
     }
   };
-
-
+  
+  
   return (
     <div className={styles.dropdownSearchContainer}>
       <div className={styles.dateButtons}>
