@@ -12,16 +12,17 @@ const Gestionar = ({ reservas }) => {
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false)
-  const datosReserva = JSON.parse(localStorage.getItem("datosreserva")) || [];
-  const primerPlan = datosReserva[0]?.plandealimentacion;
-// Verificar si hay datos y acceder al plan de alimentación
-if (Array.isArray(datosReserva) && datosReserva.length > 0) {
-  datosReserva.forEach((reserva) => {
-    console.log("Plan de alimentación:", reserva.plandealimentacion);
-  });
-} else {
-  console.log("No hay datos de reserva en el localStorage.");
-}
+  // const datosReserva = JSON.parse(localStorage.getItem("datosreserva")) || [];
+  //  const primerPlan = datosReserva[0]?.plandealimentacion;
+
+  // Verificar si hay datos y acceder al plan de alimentación
+// if (Array.isArray(datosReserva) && datosReserva.length > 0) {
+//   datosReserva.forEach((reserva) => {
+//     console.log("Plan de alimentación:", reserva.plandealimentacion);
+//   });
+// } else {
+//   console.log("No hay datos de reserva en el localStorage.");
+// }
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
@@ -236,7 +237,7 @@ if (Array.isArray(datosReserva) && datosReserva.length > 0) {
                 </div>
                 <div className={styles.flexCol}>
                   <p>Tipo de plan de alimentacion</p>
-                  <p>{primerPlan}</p>
+                  {/* <p>{primerPlan[0]}</p> */}
                 </div>
               </div>
             </div>
@@ -364,7 +365,7 @@ if (Array.isArray(datosReserva) && datosReserva.length > 0) {
             {reservas?.reservation.roomsData.map((dato, index) => (
               <div className={styles.cardHabitacionesPago} key={index}>
                 <p>Habitación {contador++}:</p>
-                <p>{primerPlan}</p>
+                {/* <p>{primerPlan}</p> */}
                 <p>{habitaciones[dato.id].name}</p>
                 {/* <p>Medía pensión</p> */}
                 <p>
