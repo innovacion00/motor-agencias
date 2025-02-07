@@ -365,6 +365,20 @@
     padding: 1rem;
   }
 
+  .noticeContainer {
+    max-width: 200px; /* Ajusta el ancho máximo para comprimir el mensaje */
+    margin: 10px auto; /* Centrar el contenedor */
+    text-align: center; /* Alinear el texto al centro */
+  }
+  
+  .notice {
+    font-weight: bolder;
+    font-size: 11.5px; /* Reducir tamaño de fuente */
+    color: gray; /* Color de texto gris */
+    font-style: italic; /* Estilo opcional para indicar un aviso */
+    
+  }
+
   table {
     width: 60%;
     border-collapse: collapse;
@@ -401,3 +415,5 @@
   td {
     font-size: 0.95rem;
   }
+
+  

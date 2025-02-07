@@ -3,6 +3,7 @@ import styles from "../../public/styles/DisponibilidadH.module.css";
 import DropdownSearch from "./DropdownSearch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { disponibilidad } from "../stores/disponibilidad";
 const hotelesData = {
   9: {
     name: "Hotel Marina Suites",
@@ -401,7 +402,11 @@ const idRooms = {
   },
   41: {},
 
-  56: {},
+  56: {
+    83803: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg",  //Doble
+    83802:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg", //Familiar
+    83801:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg"//
+  },
 };
 
 const plan_alimentacion = {
@@ -418,7 +423,7 @@ const plan_alimentacion = {
   48: true, //axis
   44: true, //sansiraka
   41: false, //Zulita
-  56: false, // Boquilla,
+  56: true, // Boquilla,
 };
 // UseState
 
@@ -439,7 +444,21 @@ export const Cid = ({ id }) => {
 
   //funcion para formatear el los valores de dinero
 
-  const formatCurrency = (value) => {
+    // const camas = JSON.parse(localStorage.getItem("data")) || [];
+    // if(camas.length>0){
+    //   camas.forEach(hotel=>{
+    //     hotel.availability.forEach(availability=>{
+    //       availability.available_rooms.forEach(room =>{
+    //         if(room.beds == 2){
+    //           room.beds = 3; 
+    //         }
+    //       })
+    //     })
+    //   })
+    // }
+  
+  //console.log("numero de camas:"camas)
+      const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
     }
@@ -481,9 +500,11 @@ export const Cid = ({ id }) => {
     setcategoria(category);
     setninos(ninos);
     setadultos(adultos);
-    setfechas(rangosdefechas);
+    setfechas(rangosdefechas);  
     setHabitaciones(resultado);
     setocultarseccion(plan_alimentacion[id]);
+    //limpiar los datos de habitaciones
+    setDatohabitacion([]);
   }, [id, planDeAlimentacion]);
 
   console.log("Disponibilidad total", habitaciones);
@@ -676,7 +697,8 @@ export const Cid = ({ id }) => {
             </div>
           </div>
         )}
-
+{/* habitaciones?.availability?.map((cam)=>
+  cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
             {habitaciones?.availability?.map((tipo) =>
@@ -747,7 +769,7 @@ export const Cid = ({ id }) => {
                             NombreH: dato.roomName,
                             beds: dato.beds,
                             hotelid: habitaciones?.hotel?.roomcloud_id,
-                            ciudad: habitaciones?.hotel?.city,
+                            ciudad:habitaciones?.hotel?.ciudad,
                             hotelidAutocore: habitaciones?.hotel?.id,
                             rateId: dato.products?.find((product) =>
                               regexSeleccionado.test(product.roomName)

@@ -230,6 +230,7 @@ const DropdownSearch = () => {
               ]}
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
+              minDate={new Date()} //Limita la seleccion a partir de hoy 
             />
             <button
               onClick={() => setShowDateRange(false)}

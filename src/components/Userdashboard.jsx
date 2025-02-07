@@ -3,29 +3,28 @@ import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este arch
 import { getReservas, reservasNano } from "../stores/disponibilidad";
 
 const UserDashboard = () => {
-    const [userData, setUserData] = useState(null);
-    const [reservas, setReservas] = useState([]);
-    const available_amount= null
-
-
+  const [userData, setUserData] = useState(null);
+  const [reservas, setReservas] = useState([]);
+  const [mostrarConfigOption, setmostrarConfigOption] = useState()
+  const available_amount = null;
 
   //-------------------User effect--------------------
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    ObtenerReservas(datosdelusuario.token, datosdelusuario.role[0])
+    ObtenerReservas(datosdelusuario.token, datosdelusuario.role[0]);
     setUserData(datosdelusuario);
     // setciudadSeleccionada(Ciudad)
     // settokenusuario(token)
   }, []);
 
-   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas (token,nombreAgencia);
+  const ObtenerReservas = async (token, nombreAgencia) => {
+    await getReservas(token, nombreAgencia);
     const reservasObtenidas = reservasNano.get();
     setReservas(reservasObtenidas);
-   }
+  };
 
-//funcion para formatear el los valores de dinero
+  //funcion para formatear el los valores de dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
@@ -33,20 +32,21 @@ const UserDashboard = () => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
+      minimumFractionDigits: 0, // Mínimo de decimales (0)
+      maximumFractionDigits: 0, // Máximo de decimales (0)
     }).format(value);
   };
-
 
   return (
     <div className="container">
       <div className="header">
         <h1>Tablero de usuario</h1>
-      </div>  
+      </div>
       <div className="nav-tabs">
         <a className="active" href="#">
           Mi perfil
         </a>
-        <a href="#">Gestionar reservas</a>
+        <a href="/misreservas">Gestionar reservas</a>
         {/* <a href="#">Análisis de datos</a> */}
         <a href="#">Configuración</a>
       </div>
@@ -57,11 +57,12 @@ const UserDashboard = () => {
           <p>Correo: {userData?.email}</p>
           <p>Celular:{userData?.telefono}</p>
           <p>Tipo de usuario: {userData?.role[0]}</p>
-          <button>Gestionar mi cuenta</button>
+          {/* <button>Gestionar mi cuenta</button> */}
         </div>
         <div className="card wallet-card">
           <h3>Mi saldo</h3>
-          <div className="balance">{available_amount|| "$0.00"}</div> {/*Balance de Mi saldo */}
+          <div className="balance">{available_amount || "$0.00"}</div>{" "}
+          {/*Balance de Mi saldo */}
           <button>Recargar</button>
           <div className="transaction-list">
             {/* <div className="transaction-item">
@@ -83,63 +84,63 @@ const UserDashboard = () => {
           </div>
         </div> */}
         <div className="card pending-payments-card">
-          <h3>Pagos pendientes</h3>
+          <h3 className="Ultimasreservas">Ultimas reservas</h3>
 
           <div className="pending-payments-list">
             <div className="pending-payment-item">
               <div>
-                {reservas.slice(0,3).map((dato,index)=> (
-                    <tr key ={index}>
-                        <br />
-                        <tr>Hotel: {dato.hotel}</tr>
-                        <tr>Fecha limite de pago: {dato.reservation.checkin}</tr>
-                        <tr>Estado de pago: {dato.status}</tr>
-                        <tr>Valor:{ formatCurrency(dato.total)}</tr>
-                        
+                {reservas.slice(0, 3).map((dato, index) => (
+                  <tr className="estadopago" key={index}>
+                    <tr>
+                      {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
+                        <span className="status pending" >
+                          Pago pendiente
+                        </span>
+                      ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
+                        <span className="status proces">
+                          Pago en Proceso
+                        </span>
+                      ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
+                        <span className="status denied">
+                          Pago rechazado primer abono
+                        </span>
+                      ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
+                        <span className="status clomplete">
+                          Pago aprobado
+                        </span>
+                      ) : dato.status == "4" ? (
+                        <span className="status cancel">
+                          Reserva cancelada
+                        </span>
+                      ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
+                        <span className="status denied">
+                          Pago rechazado segundo abono
+                        </span>
+                      ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
+                        <span className="status abonado">
+                          Abonado primera mitad
+                        </span>
+                      ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
+                        <span className="status proces">
+                          Pago en proceso segundo abono
+                        </span>
+                      ) : (
+                        <p>Estado no valido</p>
+                      )}
                     </tr>
-                )
-                
-                )}
-                {/* Pago pendiente */}
-                <br />
-                {/* <small>
-                  Tipo de reserva:
-                  <br />
-                  Hotel: #nombre-hotel
-                  <br />
-                  Plazo: #$pago-reserva
-                </small> */}
+                    <tr className="nombrehotel">Hotel: {dato.hotel}</tr>
+                    <tr className="fechalimit">
+                      Fecha limite de pago: {dato.reservation.checkin}
+                    </tr>
+
+                    <div className="pending-payment-item">
+                      <div>Total:{formatCurrency(dato.total)}</div>
+                    </div>
+                    <hr style={{marginBottom: "10px", color:"green"}} />
+                  </tr>
+                ))}
               </div>
-              
             </div>
-            {/* <div className="pending-payment-item">
-              <div>
-                Pago rechazado
-                <br />
-                <small>
-                  Tipo de reserva:
-                  <br />
-                  Hotel: #nombre-hotel
-                  <br />
-                  Plazo: #
-                </small>
-              </div>
-              <div>Valor: #$000.000</div>
-            </div>
-            <div className="pending-payment-item">
-              <div>
-                Pago pendiente
-                <br />
-                <small>
-                  Tipo de reserva:
-                  <br />
-                  Hotel: #nombre-hotel
-                  <br />
-                  Plazo: #
-                </small>
-              </div>
-              <div>Valor: #$000.000</div>
-            </div> */}
           </div>
         </div>
       </div>

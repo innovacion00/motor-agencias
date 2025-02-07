@@ -12,6 +12,7 @@ const Gestionar = ({ reservas }) => {
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false)
+  const [mostrarnota, setmostrarnota] = useState(false)
   // const datosReserva = JSON.parse(localStorage.getItem("datosreserva")) || [];
   //  const primerPlan = datosReserva[0]?.plandealimentacion;
 
@@ -433,6 +434,9 @@ const Gestionar = ({ reservas }) => {
                 {isLoading ? "Generando link..." : "Pagar Total"}
               </button>
 
+            </div>
+            <div className={styles.noticeContainer}>
+            <p className={styles.notice}  >Nota: El link puede ser generado nuevamente si el pago es rechazado</p>
             </div>
           </div>
 

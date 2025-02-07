@@ -16,17 +16,16 @@ const { id } = Astro.params;
 const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
 // console.log(reservasNano.get())
 ---
-
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gestionar</title>
   </head>
   <body>
-    <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    
       <Gestionar reservas={reserva} client:load />
-    </BaseLayout>
+    
   </body>
 </html>
