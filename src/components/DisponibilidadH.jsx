@@ -362,7 +362,7 @@ const idRooms = {
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439311.webp?k=54a110e3e17479e02e7a68081ef190742c897c7880a2d1ac5adfdb7c651395fc&o=", //Triple estandar
   },
 
-  //Boquilla
+  //1525
   2: {
     104423:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/277587915.webp?k=be35499f5579b4a7e3023c6f36ea998be04c2e9c436744d6668a29b4ac779e24&o=", // Cuadruple
@@ -400,8 +400,10 @@ const idRooms = {
     104979:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
+  //Zulita
   41: {},
 
+//Boquilla
   56: {
     83803: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg",  //Doble
     83802:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg", //Familiar
@@ -437,25 +439,9 @@ export const Cid = ({ id }) => {
   const [categoria, setcategoria] = useState();
   const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id]);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno");
-  const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
-    useState("");
+  const [contadorHabitaciones, setcontadorHabitaciones] = useState(0)
+  const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] = useState("");
 
-  //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
-
-  //funcion para formatear el los valores de dinero
-
-    // const camas = JSON.parse(localStorage.getItem("data")) || [];
-    // if(camas.length>0){
-    //   camas.forEach(hotel=>{
-    //     hotel.availability.forEach(availability=>{
-    //       availability.available_rooms.forEach(room =>{
-    //         if(room.beds == 2){
-    //           room.beds = 3; 
-    //         }
-    //       })
-    //     })
-    //   })
-    // }
   
   //console.log("numero de camas:"camas)
       const formatCurrency = (value) => {
@@ -543,8 +529,7 @@ export const Cid = ({ id }) => {
   const checkout = new Date(
     rangosfechas?.dateRange?.endDate
   ).toLocaleDateString();
-  // Expresión regular para validar que el `roomName` contenga "Booking connect Mayorista"
-  // const regex = /\[.*?Booking connect Mayorista.*?\]/;
+ 
 
   const renderIcons = () => {
     const icons = hotelIcons[id] || []; // Obtiene los íconos del hotel actual o un arreglo vacío
@@ -750,7 +735,7 @@ export const Cid = ({ id }) => {
                       className={styles.select_room}
                       data-room="Doble Estándar"
                       data-price="#Valor"
-                      onClick={() =>
+                      onClick={() =>{
                         setDatohabitacion((prevState) => [
                           ...prevState,
                           {
@@ -776,8 +761,9 @@ export const Cid = ({ id }) => {
                             )?.rateId, 
                             
                           },
-                        ])
-                      }
+                        ])  
+                        setcontadorHabitaciones((prevCount) => prevCount + 1);
+                      }}
                     >
                       Seleccionar
                     </button>
@@ -788,10 +774,10 @@ export const Cid = ({ id }) => {
           </div>
           <div className={styles.reservation}>
             <h3>Reserva</h3>
-
             <hr />
             <br />
             <h3>{habitaciones?.hotel?.name}</h3>
+            <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
             <p>
               {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
             </p>
@@ -806,7 +792,7 @@ export const Cid = ({ id }) => {
                 <ul id="selected-rooms">
                   <br />
                   <p>{dato.NombreH}</p>
-
+                  
                   <h5>
                     {checkin} - {checkout}
                   </h5>
@@ -817,7 +803,7 @@ export const Cid = ({ id }) => {
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
 
                   <h2>{formatCurrency(dato.precio)} COP</h2>
-                  <button
+                  <button 
                     style={{
                       position: "absolute",
                       bottom: "80px", // Ajusta la posición vertical
@@ -826,7 +812,10 @@ export const Cid = ({ id }) => {
                       border: "none",
                       cursor: "pointer",
                     }}
-                    onClick={() => handleDelete(index)}
+                    onClick={(index) => {handleDelete(index);setcontadorHabitaciones((prevCount) =>
+                      prevCount > 0 ? prevCount - 1 : 0
+                    );
+                  }}
                   >
                     <FontAwesomeIcon
                       icon={faTrash}

@@ -7,6 +7,12 @@ export const hoteles = (hotel) => {
                 ubicacion: 'Bocagrande Cra 3 N° 8-156, / Cartagena de Indias, Bolívar'
             };
 
+            case 'Hotel Boquilla':
+            return {
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg',
+                ubicacion: 'Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar'
+            };
+
         case 'Hotel Marina':
             return {
                 imgHotel: 'https://www.gehsuites.com/images/portada_marian_suites.jpg',
@@ -276,5 +282,19 @@ export const habitaciones = {
     '104184': {
         url: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-quintuple-sansiraka.jpeg',
         name: "Habitación Familiar",
+    },
+     //Boquilla
+    '83803':{
+        url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg', //Doble
+        name:'Habitación Doble', //Doble
+    },
+
+    '83802':{
+        url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg', //Doble
+        name:'Habitación Familiar', //Doble
+    },
+    '83801':{
+        url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg', //Doble
+        name:'Habitación Cuadruple', //Doble
     },
 }
