@@ -147,12 +147,12 @@ const Gestionar = ({ reservas }) => {
   };
 
 useEffect(() => {
-  if(reservas.status == "1"){
+  if(reservas.status == "2" || reservas.status =="0"){
     setmostrarnota1(true);
     setmostrarnota2(false);
-  }else{
-    setmostrarnota1(true);
-    setmostrarnota2(false)
+  }else if (reservas.status =="1"){
+    setmostrarnota1(false);
+    setmostrarnota2(true)
   }
 
   
@@ -535,10 +535,10 @@ useEffect(() => {
                 </p>
               )}
             {mostrarnota2 &&(
- <p className={styles.notice}disabled ={mostrarnota2== true}>
-             
- Nota: Si el pago está en proceso, podra intentar pagar nuevamente dentro de 30 min  
- </p>   
+              <p className={styles.notice}disabled ={mostrarnota2== true}>
+                          
+              Nota: Si el pago está en proceso, podra intentar pagar nuevamente dentro de 30 min  
+              </p>   
             )}
            
             </div>
