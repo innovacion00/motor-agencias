@@ -291,10 +291,10 @@ export const habitaciones = {
 
     '83802':{
         url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg', //Doble
-        name:'Habitación Familiar', //Doble
+        name:'Habitación Familiar', //Familiar
     },
     '83801':{
         url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg', //Doble
-        name:'Habitación Cuadruple', //Doble
+        name:'Habitación Cuadruple', //Cuadruple
     },
 }
