@@ -754,26 +754,27 @@ export const Cid = ({ id }) => {
                         setDatohabitacion((prevState) => [
                           ...prevState,
                           {
-                            plandealimentacion: planDeAlimentacionFormateado,
-                            roomId: dato.roomId,
-                            checkin: checkin, // O el valor correcto del check-in
-                            checkout: checkout, // O el valor correcto del check-out
-                            nights: rangosfechas.nights, // Calcula las noches
-                            imgH: idRooms[habitaciones.hotel.id][dato.roomId],
-                            huespedes: adultos + ninos, // Número total de huéspedes
+                            plandealimentacion: planDeAlimentacionFormateado, //plandealimentacion: planDeAlimentacionFormateado,
+                            roomId: dato.roomId, //roomId: dato.roomId,
+                            checkin: checkin, // checkin: checkin,
+                            checkout: checkout, // checkout: checkout,
+                            nights: rangosfechas.nights, //nights: rangosfechas.nights,
+                            imgH: idRooms[habitaciones.hotel.id][dato.roomId], //imgH: idRooms[habitaciones.hotel.id][dato.roomId],
+                            huespedes: adultos + ninos, // huespedes: adultos + ninos,
                             precio:
                               dato.products?.find((product) =>
                                 regexSeleccionado.test(product.roomName)
                               )?.baseRate?.amountBeforeTax ||
                               "Sin precio disponible",
-                            NombreH: dato.roomName,
-                            beds: dato.beds,
-                            hotelid: habitaciones?.hotel?.roomcloud_id,
-                            ciudad:habitaciones?.hotel?.ciudad,
-                            hotelidAutocore: habitaciones?.hotel?.id,
-                            rateId: dato.products?.find((product) =>
+                            NombreH: dato.roomName, //NombreH: dato.roomName,
+                            beds: dato.beds, //beds: dato.beds,
+                            hotelid: habitaciones?.hotel?.roomcloud_id, //hotelid: habitaciones?.hotel?.roomcloud_id,
+                            ciudad:habitaciones?.hotel?.city, //ciudad:habitaciones?.hotel?.city,
+                            hotelidAutocore: habitaciones?.hotel?.id, //hotelidAutocore: habitaciones?.hotel?.id,
+                            rateId: dato.products?.find((product) => 
                               regexSeleccionado.test(product.roomName)
-                            )?.rateId,
+                            )?.rateId, 
+                            
                           },
                         ])
                       }

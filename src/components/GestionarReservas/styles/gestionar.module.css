@@ -379,6 +379,13 @@
     
   }
 
+  .notice1{
+    font-weight: bolder;
+    font-size: 11.5px;
+    color: gray;
+    font-style:italic;
+  }
+
   table {
     width: 60%;
     border-collapse: collapse;
