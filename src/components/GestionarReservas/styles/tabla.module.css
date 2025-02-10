@@ -54,8 +54,16 @@ table {
   overflow: hidden;
 }
 
-th,
 td {
+  font-size: 14px;
+  padding: 15px 7px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th
+ {
+  font-size: 14px;
   padding: 15px 7px;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
@@ -248,7 +256,7 @@ th {
 /* Botón base */
 .statusFilter button {
   padding: 10px 15px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: bold;
   color: #2c4c6d;
   background-color: #f9f9f9;
