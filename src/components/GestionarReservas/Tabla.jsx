@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles/tabla.module.css";
 import { getReservas, reservasNano } from "../../stores/disponibilidad";
+import { format } from "@formkit/tempo"
 
 const Tabla = () => {
   const [reservas, setReservas] = useState([]);
@@ -39,6 +40,8 @@ const Tabla = () => {
       minimumFractionDigits: 0,
     }).format(value);
   };
+
+  
 
   const handleSearch = (event) => {
     const searchValue = event.target.value.toLowerCase();
@@ -174,21 +177,21 @@ const Tabla = () => {
               <td>
                 {
                   dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                    dato.fechaLimitePago
+                    format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                    dato.fechaLimitePago
+                    format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
                   ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                    dato.fechaLimitePago
+                    format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
                   ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                    dato.fechaLimitePago2
+                    format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : dato.status == "4" ? (
-                    dato.fechaLimitePago2
+                    format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                    dato.fechaLimitePago2
+                    format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                    dato.fechaLimitePago2
+                    format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                    dato.fechaLimitePago2
+                    format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : (<p>Monto no valido</p>)
                 }
 
