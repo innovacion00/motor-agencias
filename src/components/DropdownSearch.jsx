@@ -13,12 +13,15 @@ const DropdownSearch = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [destination, setDestination] = useState("");
   const [botonactivado, setbotonactivado] = useState("single")
+  const [tooltip, setTooltip] = useState(null);
   const [rooms, setRooms] = useState(
     Array.from({ length: 1 }, () => ({
       adults: 1,
       children0to4: 0,
       children5to17: 0,
     }))
+
+    
   ); // Estado inicial con 10 habitaciones
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
@@ -32,6 +35,13 @@ const DropdownSearch = () => {
     MAX_ROOMS: 9,
   });
 
+// Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
+const mostrarTooltip = (mensaje) => {
+  setTooltip(mensaje);
+  setTimeout(() => {
+    setTooltip(null);
+  }, 3800);
+};
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
 
@@ -101,6 +111,7 @@ const DropdownSearch = () => {
     );
     setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 25 });
     setbotonactivado("group");
+    mostrarTooltip("Reserva para grupos seleccionado");
   };
 
   const handleSingleReservation = () => {
@@ -112,7 +123,8 @@ const DropdownSearch = () => {
       }))
     );
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
-    setbotonactivado("single");  
+    setbotonactivado("single");
+    mostrarTooltip("Reserva para única fecha seleccionado");  
   };
 
   const handleSearch = async () => {
@@ -189,8 +201,12 @@ const DropdownSearch = () => {
       <div className={styles.dateButtons}>
       <button className={`${styles.button} ${botonactivado =="single"? styles.active: "" }`} onClick={handleSingleReservation}>Única fecha</button>
       <button className={`${styles.button} ${botonactivado=="group"? styles.active: "" }`}onClick={handleGroupReservation}>Reserva para grupos</button>
+      
       </div>
-
+      {tooltip && (
+        <div className={styles.tooltip}>
+          {tooltip}
+        </div>)}
 
       {/*------------------------ Dropdown de destino ------------------------*/}
       
