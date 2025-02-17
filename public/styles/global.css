@@ -63,7 +63,7 @@ header nav a:hover {
 }
 
 /* Estilos para la lista de hoteles */
-.hotel-list {
+/* .hotel-list {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -91,7 +91,7 @@ header nav a:hover {
 
 .hotel-card p {
   color: #1C3D5A;
-}
+} */
 
 /* Estilos de pie de página */
 footer {

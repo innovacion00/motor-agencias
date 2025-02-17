@@ -1,0 +1,179 @@
+---
+import { fetchWithAuth } from "../utils/fetchWithAuth";
+
+async function fetchProtectedData() {
+  const data = await fetchWithAuth("URL_PROTEGIDA");
+  console.log(data);
+}
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BusquedaeventosB from "../components/BusquedaeventosB";
+import Formularioeventos from "../components/Formularioeventos";
+---
+
+<html lang="es">
+  <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    <head>
+      <meta charset="utf-8" />
+      <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+      <title>Solicitud de Presupuesto</title>
+      <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        rel="stylesheet"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet"
+      />
+    </head>
+    <body>
+        <Formularioeventos client:load/>
+    </body>
+
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .breadcrumb {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 20px;
+      }
+      .breadcrumb a {
+        color: #6c757d;
+        text-decoration: none;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      p {
+        font-size: 16px;
+        color: #6c757d;
+        margin-bottom: 20px;
+      }
+      .section {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .section h2 {
+        font-size: 20px;
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 10px;
+      }
+      .section p {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 10px;
+      }
+      .section label {
+        font-size: 14px;
+        color: #333;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .section input[type="text"],
+      .section input[type="number"],
+      .section select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #495057;
+        margin-bottom: 10px;
+      }
+      .section input[type="radio"] {
+        margin-right: 10px;
+      }
+      .section .radio-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .section .radio-group label {
+        margin-right: 20px;
+      }
+      .section .date-time-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .section .date-time-group input[type="number"] {
+        width: 60px;
+        margin-right: 10px;
+      }
+      .section .date-time-group select {
+        width: 80px;
+      }
+      .section .accommodation-type {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+      .section .accommodation-type div {
+        text-align: center;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        width: 100px;
+        cursor: pointer;
+      }
+      .section .accommodation-type div.active {
+        background-color: #007bff;
+        color: #ffffff;
+      }
+      .section .accommodation-type div i {
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+      .section .accommodation-type div span {
+        display: block;
+        font-size: 14px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 10px 20px;
+        border-bottom: 1px solid #ced4da;
+      }
+      .header .logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+      }
+      .header .user-info {
+        display: flex;
+        align-items: center;
+      }
+      .header .user-info img {
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      .header .user-info span {
+        font-size: 14px;
+        color: #333;
+      }
+    </style>
+  </BaseLayout>
+</html>
