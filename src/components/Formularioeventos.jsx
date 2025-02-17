@@ -12,10 +12,10 @@ const SolicitudPresupuesto = () => {
       image:
         "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Auditorio.png",
     },
-    { name: "Aula o salon", icon: "fas fa-chalkboard-teacher" },
-    { name: "Cuadrada", icon: "fas fa-th-large" },
-    { name: "Mesa redonda", icon: "fas fa-th-large" },
-    { name: "U", icon: "fas fa-th-large" },
+    { name: "Aula o salon", image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/salon-azul.png" },
+    { name: "Cuadrada", image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/cudrada-azul.png" },
+    { name: "Mesa redonda", image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/mesa-redonda-azul.png" },
+    { name: "U", image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/U-azul.png" },
   ];
 
   const handleRadioChangeA = (event) => {
