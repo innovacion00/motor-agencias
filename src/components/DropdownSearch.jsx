@@ -9,33 +9,52 @@ import { getdisponibility } from "../stores/disponibilidad";
 
 
 const DropdownSearch = () => {
-  const [showDateRange, setShowDateRange] = useState(false); // Controla el selector de fechas
-  const [showDropdown, setShowDropdown] = useState(false); // Controla el dropdown de personas
+  const [showDateRange, setShowDateRange] = useState(false); 
+  const [showDropdown, setShowDropdown] = useState(false);
   const [destination, setDestination] = useState("");
-  const [rooms, setRooms] = useState([
-    { adults: 1, children0to4: 0, children5to17: 0 },
-  ]);
+  const [botonactivado, setbotonactivado] = useState("single")
+  const [tooltip, setTooltip] = useState(null);
+  const [rooms, setRooms] = useState(
+    Array.from({ length: 1 }, () => ({
+      adults: 1,
+      children0to4: 0,
+      children5to17: 0,
+    }))
+
+    
+  ); // Estado inicial con 10 habitaciones
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
     endDate: new Date(),
   });
 
-  const [isLoading, setIsLoading] = useState(false); // Estado para controlar el botón
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [limits, setLimits] = useState({
+    MIN_ROOMS: 1,
+    MAX_ROOMS: 9,
+  });
 
-  const dropdownRef = useRef(null); // Referencia para el dropdown
-  const dateRangeRef = useRef(null); // Referencia para el DateRange
+// Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
+const mostrarTooltip = (mensaje) => {
+  setTooltip(mensaje);
+  setTimeout(() => {
+    setTooltip(null);
+  }, 3800);
+};
+  const dropdownRef = useRef(null);
+  const dateRangeRef = useRef(null);
 
   useEffect(() => {
-    // Detecta clics fuera del dropdown
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false); // Cierra el dropdown si el clic ocurre fuera
+        setShowDropdown(false);
       }
       if (
         dateRangeRef.current &&
         !dateRangeRef.current.contains(event.target)
       ) {
-        setShowDateRange(false); // Cierra el DateRange si el clic ocurre fuera
+        setShowDateRange(false);
       }
     };
 
@@ -46,47 +65,66 @@ const DropdownSearch = () => {
   }, []);
 
   const calculateNights = (startDate, endDate) => {
-    const msInDay = 24 * 60 * 60 * 1000; // Milisegundos en un día
-    const nights = Math.max(
-      0, // Asegura que no haya valores negativos
+    const msInDay = 24 * 60 * 60 * 1000;
+    return Math.max(
+      0,
       Math.round((endDate.getTime() - startDate.getTime()) / msInDay)
     );
-    return nights;
   };
 
   const handleDateRangeChange = (ranges) => {
-    const startDate = ranges.selection.startDate;
-    const endDate = ranges.selection.endDate;
+    const { startDate, endDate } = ranges.selection;
 
-    setDateRange({
-      startDate,
-      endDate,
-    });
-
-    // Calcula las noches y actualiza el estado si es necesario
-    const nights = calculateNights(startDate, endDate);
-    console.log("Número de noches:", nights); // Calculo de numero de noches
+    setDateRange({ startDate, endDate });
+    console.log("Número de noches:", calculateNights(startDate, endDate));
   };
 
-// Límite máximo de habitaciones
-const MAX_ROOMS = 9;
+  // // Límites para reservas grupales
+  // const MIN_ROOMS = 10;
+ 
+ //Limite general 
+  const MAX_ROOMS = 25;
 
-const handleAddRoom = () => {
-  if (rooms.length < MAX_ROOMS) {
-    setRooms([
-      ...rooms,
-      {
-        adults: 1, // Número inicial de adultos por habitación
-        children0to4: 0, // Número inicial de niños de 0 a 4 años
-        children5to17: 0, // Número inicial de niños de 5 a 17 años
-      },
-    ]);
-  }
-};
+  const handleAddRoom = () => {
+    if (rooms.length < limits.MAX_ROOMS) {
+      setRooms([
+        ...rooms,
+        { adults: 1, children0to4: 0, children5to17: 0 },
+      ]);
+    }
+  };
 
   const handleRemoveRoom = (index) => {
-    const updatedRooms = rooms.filter((_, i) => i !== index);
-    setRooms(updatedRooms);
+    if (rooms.length > limits.MIN_ROOMS) {
+      const updatedRooms = rooms.filter((_, i) => i !== index);
+      setRooms(updatedRooms);
+    }
+  };
+
+  const handleGroupReservation = () => {
+    setRooms(
+      Array.from({ length: 10 }, () => ({
+        adults: 1,
+        children0to4: 0,
+        children5to17: 0,
+      }))
+    );
+    setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 25 });
+    setbotonactivado("group");
+    mostrarTooltip("Reserva para grupos seleccionado");
+  };
+
+  const handleSingleReservation = () => {
+    setRooms(
+      Array.from({ length: 1 }, () => ({
+        adults: 1,
+        children0to4: 0,
+        children5to17: 0,
+      }))
+    );
+    setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
+    setbotonactivado("single");
+    mostrarTooltip("Reserva para única fecha seleccionado");  
   };
 
   const handleSearch = async () => {
@@ -98,6 +136,7 @@ const handleAddRoom = () => {
       });
       return;
     }
+
     const nights = calculateNights(dateRange.startDate, dateRange.endDate);
 
     if (nights === 0) {
@@ -116,9 +155,7 @@ const handleAddRoom = () => {
         ...Array(room.children5to17).fill(10),
       ],
     }));
-
     localStorage.setItem("selectedCity", destination);
-    // Deshabilitar el botón mientras se realiza la consulta
     setIsLoading(true);
 
     const nochesyedades = {
@@ -137,32 +174,42 @@ const handleAddRoom = () => {
         layout,
       };
 
-      // Realiza la consulta a la API
       await getdisponibility(objetohotel);
-
-      // Si todo es exitoso, redirige según la ciudad seleccionada
+      
       const destinations = {
         CARTAGENA: "/busquedacartagena",
         BOGOTA: "/busquedabogota",
         SANTA_MARTA: "/busquedasantamarta",
+        
       };
-
-      window.location.href = destinations[destination];
+       window.location.href = destinations[destination];
+      
     } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Error en la búsqueda",
-        text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente.",
+        text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente mas tarde.",
       });
     } finally {
-      // Rehabilitar el botón después de que la consulta termine
       setIsLoading(false);
     }
   };
-
+  
+  
   return (
     <div className={styles.dropdownSearchContainer}>
-      {/* Dropdown de destino */}
+      <div className={styles.dateButtons}>
+      <button className={`${styles.button} ${botonactivado =="single"? styles.active: "" }`} onClick={handleSingleReservation}>Única fecha</button>
+      <button className={`${styles.button} ${botonactivado=="group"? styles.active: "" }`}onClick={handleGroupReservation}>Reserva para grupos</button>
+      
+      </div>
+      {tooltip && (
+        <div className={styles.tooltip}>
+          {tooltip}
+        </div>)}
+
+      {/*------------------------ Dropdown de destino ------------------------*/}
+      
       <div className={styles.dropdown}>
         <select
           value={destination}
@@ -175,7 +222,8 @@ const handleAddRoom = () => {
         </select>
       </div>
 
-      {/* Selector de rango de fechas */}
+      {/*------------------------ Selector de rango de fechas------------------------ */}
+      
       <div className={styles.datePicker} ref={dateRangeRef}>
         <input
           type="text"
@@ -185,6 +233,7 @@ const handleAddRoom = () => {
           onFocus={() => setShowDateRange(true)}
           readOnly
         />
+        
         {showDateRange && (
           <div className={styles.dateRangePicker}>
             <DateRange
@@ -197,6 +246,7 @@ const handleAddRoom = () => {
               ]}
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
+              minDate={new Date()} //Limita la seleccion a partir de hoy 
             />
             <button
               onClick={() => setShowDateRange(false)}
@@ -207,11 +257,10 @@ const handleAddRoom = () => {
           </div>
         )}
       </div>
-
-      {/* Dropdown para habitaciones */}
+        
+      {/*--------------- Dropdown para habitaciones ----------------*/}
       <div className={styles.dropdownPeople} ref={dropdownRef}>
-        <div
-          className={styles.dropdownToggle}
+        <div className={styles.dropdownToggle}
           onClick={() => setShowDropdown(!showDropdown)}
         >
           {rooms.length} habitación{rooms.length > 1 ? "es" : ""}

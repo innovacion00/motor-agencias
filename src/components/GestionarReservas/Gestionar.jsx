@@ -8,13 +8,14 @@ import Swal from "sweetalert2";
 
 //UseState
 const Gestionar = ({ reservas }) => {
-
-  console.log(reservas)              // Datos de la reserva
+  console.log(reservas); // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
-  const [isLoading, setisLoading] = useState(false)
-  
-  
+  const [isLoading, setisLoading] = useState(false);
+  const [mostrarnota1, setmostrarnota1] = useState(false)
+  const [mostrarnota2, setmostrarnota2] = useState(false)
+
+
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
@@ -112,15 +113,24 @@ const Gestionar = ({ reservas }) => {
     }
   };
   const onClick = async (id, booleano) => {
-    if (reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4") {
-      return
+    if (
+      reservas?.status == "1" ||
+      reservas?.status == "3" ||
+      reservas?.status == "4"
+    ) {
+      return;
     }
     await generarLink(id, booleano);
   };
 
   const onClickTotal = async (id, booleano) => {
-    if (reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5") {
-      return
+    if (
+      reservas?.status == "1" ||
+      reservas?.status == "3" ||
+      reservas?.status == "4" ||
+      reservas?.status == "5"
+    ) {
+      return;
     }
     await generarLink(id, booleano);
   };
@@ -133,8 +143,21 @@ const Gestionar = ({ reservas }) => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
+      minimumFractionDigits: 0,
     }).format(value);
   };
+
+useEffect(() => {
+  if(reservas.status == "2" || reservas.status =="0"){
+    setmostrarnota1(true);
+    setmostrarnota2(false);
+  }else if (reservas.status =="1"){
+    setmostrarnota1(false);
+    setmostrarnota2(true)
+  }
+
+  
+}, [reservas?.status])
 
 
   return (
@@ -143,11 +166,11 @@ const Gestionar = ({ reservas }) => {
 
       {reservas.status == "0" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.pending}`}>
-          Pago pendiente 50%
+          Pago pendiente
         </p>
       ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
-          Pago en proceso 50%
+          Pago en proceso
         </p>
       ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
@@ -169,11 +192,13 @@ const Gestionar = ({ reservas }) => {
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
           Abonado primera mitad
         </p>
-      ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ?
-        (<p className={`${styles.estadoPago} ${styles.proces}`}>
+      ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ? (
+        <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago en proceso segundo abono
-        </p>) : (<p>Estado no valido</p>)
-      }
+        </p>
+      ) : (
+        <p>Estado no valido</p>
+      )}
 
       <div className={styles.card}>
         <div className={styles.hotelInfo}>
@@ -227,6 +252,10 @@ const Gestionar = ({ reservas }) => {
                   <p>Habitaciones</p>
                   <p>{reservas?.cantidadHabitaciones}</p>
                 </div>
+                <div className={styles.flexCol}>
+                  <p>Tipo de plan de alimentacion</p>
+                  {/* <p>{primerPlan[0]}</p> */}
+                </div>
               </div>
             </div>
             <br />
@@ -245,12 +274,15 @@ const Gestionar = ({ reservas }) => {
                         Check-in: {checkin} - Check-out: {checkout}
                       </p>
                       <p>
-                        {reservas.reservation.nights} noches, {Number(dato.adults) + Number(dato.children)}{" "}
-                        huéspedes, 1 habitación
+                        {reservas.reservation.nights} noches,{" "}
+                        {Number(dato.adults) + Number(dato.children)} huéspedes,
+                        1 habitación
                       </p>
                     </div>
                   </div>
-                  <p className={styles.totalCard}>{formatCurrency(dato.unitaryPrice)} COP</p>
+                  <p className={styles.totalCard}>
+                    {formatCurrency(dato.unitaryPrice)} COP
+                  </p>
                 </div>
               ))}
             </div>
@@ -258,9 +290,13 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
-                <p className={styles.plazoPago}>Tienes plazo de pagar hasta el {reservas.fechaLimitePago}</p>
+                <p className={styles.plazoPago}>
+                  Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
+                </p>
               </div>
-              <p className={styles.total}>{formatCurrency(reservas?.total)} COP</p>
+              <p className={styles.total}>
+                {formatCurrency(reservas?.total)} COP
+              </p>
             </div>
           </div>
         </div>
@@ -270,7 +306,9 @@ const Gestionar = ({ reservas }) => {
         <div className={styles.containerHuesped}>
           <p className={styles.titleHuespe}>Información de los huéspedes</p>
           <div className={styles.habitacionesForm}>
-            <p className={styles.titleForm}>Numero de Habitaciones: {reservas?.cantidadHabitaciones}</p>
+            <p className={styles.titleForm}>
+              Numero de Habitaciones: {reservas?.cantidadHabitaciones}
+            </p>
             <p className={styles.checkin}>Check-in: {checkin}</p>
             <div className={styles.cardHuesped}>
               <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
@@ -300,14 +338,26 @@ const Gestionar = ({ reservas }) => {
             </div>
             <br />
             <div className={styles.acuerdos}>
-                <p>Tener en cuenta:</p>
-                    <br />
-                    <p>* La cadena hotelera Geh Suites protege a los niños, niñas y adolescentes de la explotación sexual y comercial Ley 679 de 2001.</p>
-                    <br />
-                    <p> * Recuerde: todo niño que viaje debe contar con su documento de identidad (Registro civil o tarjeta de identidad).</p>
-                    <br />
-                    <p>* Si los niños que viajan no son hijos de los adultos que los representan deben contar con un permiso de los padres, autenticado en una notaría.</p>
-                    </div>
+              <p>Tener en cuenta:</p>
+              <br />
+              <p>
+                * La cadena hotelera Geh Suites protege a los niños, niñas y
+                adolescentes de la explotación sexual y comercial Ley 679 de
+                2001.
+              </p>
+              <br />
+              <p>
+                {" "}
+                * Recuerde: todo niño que viaje debe contar con su documento de
+                identidad (Registro civil o tarjeta de identidad).
+              </p>
+              <br />
+              <p>
+                * Si los niños que viajan no son hijos de los adultos que los
+                representan deben contar con un permiso de los padres,
+                autenticado en una notaría.
+              </p>
+            </div>
           </div>
           <div className={styles.Retenciones}>
             <p>Información sobre las retenciones en caso de que aplique</p>
@@ -322,13 +372,17 @@ const Gestionar = ({ reservas }) => {
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Porcentaje %</strong></td>
+                  <td>
+                    <strong>Porcentaje %</strong>
+                  </td>
                   <td>{reservas?.reteFuente?.porcentaje}%</td>
                   <td>{reservas?.reteIca?.porcentaje}%</td>
                   <td>{reservas?.reteIva?.porcentaje}%</td>
                 </tr>
                 <tr>
-                  <td><strong>Valor $</strong></td>
+                  <td>
+                    <strong>Valor $</strong>
+                  </td>
                   <td>{formatCurrency(reservas?.reteFuente?.resultado)}</td>
                   <td>{formatCurrency(reservas?.reteIca?.resultado)}</td>
                   <td>{formatCurrency(reservas?.reteIva?.resultado)}</td>
@@ -353,73 +407,141 @@ const Gestionar = ({ reservas }) => {
             {reservas?.reservation.roomsData.map((dato, index) => (
               <div className={styles.cardHabitacionesPago} key={index}>
                 <p>Habitación {contador++}:</p>
+                {/* <p>{primerPlan}</p> */}
                 <p>{habitaciones[dato.id].name}</p>
                 {/* <p>Medía pensión</p> */}
                 <p>
                   {checkin} - {checkout}
                 </p>
                 <p>
-                  {reservas.reservation.nights} noches, {Number(dato.adults) + Number(dato.children)} huéspedes
+                  {reservas.reservation.nights} noches,{" "}
+                  {Number(dato.adults) + Number(dato.children)} huéspedes
                 </p>
                 <p>{formatCurrency(dato.unitaryPrice)}</p>
               </div>
             ))}
             <div className={styles.pagos}>
-              {reservas.status == "0" && reservas.pagadoPrimeraMitad == false ? (
+              {reservas.status == "0" &&
+              reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
                 </div>
-              ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == false ? (
+              ) : reservas.status == "1" &&
+                reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
                 </div>
-              ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == false ? (
+              ) : reservas.status == "2" &&
+                reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
                 </div>
-              ) : reservas.status == "3" && reservas.pagadoPrimeraMitad == true ? (
+              ) : reservas.status == "3" &&
+                reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Total + impuestos</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.total)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.total)}
+                  </p>
                 </div>
               ) : reservas.status == "4" ? (
                 <div className={styles.totalPago}>
                   <p>Total + impuestos</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.total)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.total)}
+                  </p>
                 </div>
-              ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == true ? (
+              ) : reservas.status == "2" &&
+                reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
                 </div>
-              ) : reservas.status == "5" && reservas.pagadoPrimeraMitad == true ? (
+              ) : reservas.status == "5" &&
+                reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
                 </div>
-              ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ? (
+              ) : reservas.status == "1" &&
+                reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
-                  <p className={styles.totalP}>{formatCurrency(reservas?.totalMitad)}</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
                 </div>
-              ) : (<p>Monto no valido</p>)
-              }
+              ) : (
+                <p>Monto no valido</p>
+              )}
               <button
                 onClick={() => onClick(reservas._id, false)}
-                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" ||  (isLoading)}
-                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4"  ? styles.disabledButtonp : ""}`}
-              >{isLoading ? "Generando link..." : "Pagar el 50%"}</button>
+                disabled={
+                  reservas?.status == "1" ||
+                  reservas?.status == "3" ||
+                  reservas?.status == "4" ||
+                  isLoading
+                }
+                className={`${styles.pagarButton} ${
+                  reservas?.status == "1" ||
+                  reservas?.status == "3" ||
+                  reservas?.status == "4"
+                    ? styles.disabledButtonp
+                    : ""
+                }`}
+              >
+                {isLoading ? "Generando link..." : "Pagar el 50%"}
+              </button>
               <br />
               <button
-              onClick={()=>onClickTotal(reservas._id, true)}
-                disabled={reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" || reservas?.pagadoPrimeraMitad || (isLoading)}
-                className={`${styles.pagarButton} ${reservas?.status == "1" || reservas?.status == "3" || reservas?.status == "4" || reservas?.status == "5" || reservas?.pagadoPrimeraMitad ? styles.disabledButtonp : ""}`}>
+                onClick={() => onClickTotal(reservas._id, true)}
+                disabled={
+                  reservas?.status == "1" ||
+                  reservas?.status == "3" ||
+                  reservas?.status == "4" ||
+                  reservas?.status == "5" ||
+                  reservas?.pagadoPrimeraMitad ||
+                  isLoading
+                }
+                className={`${styles.pagarButton} ${
+                  reservas?.status == "1" ||
+                  reservas?.status == "3" ||
+                  reservas?.status == "4" ||
+                  reservas?.status == "5" ||
+                  reservas?.pagadoPrimeraMitad
+                    ? styles.disabledButtonp
+                    : ""
+                }`}
+              >
                 {isLoading ? "Generando link..." : "Pagar Total"}
               </button>
-
+            </div>
+            <div className={styles.noticeContainer}>
+              {mostrarnota1 &&(
+                <p className={styles.notice} disabled= {mostrarnota1 == true} >
+                Nota: Si el estado es rechazado, podras intentar nuevamente en el boton de pagar
+                </p>
+              )}
+            {mostrarnota2 &&(
+              <p className={styles.notice}disabled ={mostrarnota2== true}>
+                          
+              Nota: Si el pago está en proceso, podra intentar pagar nuevamente dentro de 30 min  
+              </p>   
+            )}
+           
             </div>
           </div>
 
@@ -431,7 +553,9 @@ const Gestionar = ({ reservas }) => {
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
                 disabled={reservas?.status == "4"}
-                className={`${styles.cancelarButton} ${reservas?.status == "4" ? styles.disabledButtonc : ""}`}
+                className={`${styles.cancelarButton} ${
+                  reservas?.status == "4" ? styles.disabledButtonc : ""
+                }`}
               >
                 Cancelar reserva
               </button>

@@ -3,6 +3,7 @@ import styles from "../../public/styles/DisponibilidadH.module.css";
 import DropdownSearch from "./DropdownSearch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { disponibilidad } from "../stores/disponibilidad";
 const hotelesData = {
   9: {
     name: "Hotel Marina Suites",
@@ -361,7 +362,7 @@ const idRooms = {
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439311.webp?k=54a110e3e17479e02e7a68081ef190742c897c7880a2d1ac5adfdb7c651395fc&o=", //Triple estandar
   },
 
-  //Boquilla
+  //1525
   2: {
     104423:
       "https://cf.bstatic.com/xdata/images/hotel/max1024x768/277587915.webp?k=be35499f5579b4a7e3023c6f36ea998be04c2e9c436744d6668a29b4ac779e24&o=", // Cuadruple
@@ -399,9 +400,32 @@ const idRooms = {
     104979:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
+  //Zulita
   41: {},
 
-  56: {},
+//Boquilla
+  56: {
+    83803: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg",  //Doble
+    83802:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg", //Familiar
+    83801:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg"//
+  },
+};
+
+const plan_alimentacion = {
+  9: false, //marina
+  1: false, //azuan
+  6: false, //avexi
+  7: false, //bocagrande (proximamente)
+  4: true, //aixo
+  5: true, //abi
+  3: false, //madison
+  10: false, //windsor
+  8: false, //rodadero
+  2: false, //1525
+  48: true, //axis
+  44: true, //sansiraka
+  41: false, //Zulita
+  56: true, // Boquilla,
 };
 // UseState
 
@@ -413,18 +437,21 @@ export const Cid = ({ id }) => {
   const [adultos, setadultos] = useState(0);
   const [datohabitacion, setDatohabitacion] = useState([]);
   const [categoria, setcategoria] = useState();
+  const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id]);
+  const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno");
+  const [contadorHabitaciones, setcontadorHabitaciones] = useState(0)
+  const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] = useState("");
 
-  //console.log("Datos de habitaciones", datohabitacion);  // disponibilidad de habitaciones
-
-  //funcion para formatear el los valores de dinero
-
-  const formatCurrency = (value) => {
+  
+  //console.log("numero de camas:"camas)
+      const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
     }
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
+      minimumFractionDigits: 0,
     }).format(value);
   };
 
@@ -436,6 +463,20 @@ export const Cid = ({ id }) => {
   // UseEffect
 
   useEffect(() => {
+    const formatearPlan = (plan) => {
+      switch (plan) {
+        case "solodesayuno":
+          return "Solo desayuno";
+        case "mediapension":
+          return "Media Pension";
+        case "pensioncompleta":
+          return "Pension completa";
+        default:
+          return plan;
+      }
+    };
+    setPlanDeAlimentacionFormateado(formatearPlan(planDeAlimentacion));
+
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
@@ -446,22 +487,50 @@ export const Cid = ({ id }) => {
     setcategoria(category);
     setninos(ninos);
     setadultos(adultos);
-    setfechas(rangosdefechas);
+    setfechas(rangosdefechas);  
     setHabitaciones(resultado);
-  }, [id]);
+    setocultarseccion(plan_alimentacion[id]);
+    //limpiar los datos de habitaciones
+    setDatohabitacion([]);
+  }, [id, planDeAlimentacion]);
+
   console.log("Disponibilidad total", habitaciones);
-  const regex =
-    categoria?.agencia?.category == 0
-      ? /\[Booking connect Neto\]/i
-      : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
+
+  // const regex =categoria?.agencia?.category == 0? /\[Booking connect Neto\]/i : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
+
+  const valorDelRadio = (event) => {
+    setplanDeAlimentacion(event.target.value); //valor del radiobutton
+  };
+  console.log("Plan de alimentación:", planDeAlimentacionFormateado);
+  // console.log(planDeAlimentacion)
+
+  const categoriagencia = categoria?.agencia?.category; //categoria de la agencia
+  console.log("categoria de la agencia:", categoriagencia);
+
+  const regexMayorista = {
+    solodesayuno: /\[Booking connect Mayorista\]/i,
+    pensioncompleta: /\[Booking connect Mayorista PA\]/i,
+    mediapension: /\[Booking connect Mayorista PAM\]/i,
+  };
+
+  const regexminoristas = {
+    solodesayuno: /\[Booking connect Neto\]/i,
+    pensioncompleta: /\[Booking connect Neto PA\]/i,
+    mediapension: /\[Booking connect Neto PAM\]/i,
+  };
+
+  const regexSeleccionado =
+    categoriagencia == 0
+      ? regexminoristas[planDeAlimentacion]
+      : regexMayorista[planDeAlimentacion];
+
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
   const checkout = new Date(
     rangosfechas?.dateRange?.endDate
   ).toLocaleDateString();
-  // Expresión regular para validar que el `roomName` contenga "Booking connect Mayorista"
-  // const regex = /\[.*?Booking connect Mayorista.*?\]/;
+ 
 
   const renderIcons = () => {
     const icons = hotelIcons[id] || []; // Obtiene los íconos del hotel actual o un arreglo vacío
@@ -561,7 +630,61 @@ export const Cid = ({ id }) => {
           </div> */}
           {/* <button>Modificar búsqueda</button> */}
         </div>
-
+        {/* Sección de Plan de Alimentación */}
+        {mostrarseccion && (
+          <div className={styles.plan_alimentacion}>
+            <div className={styles.planes}>
+              <h3>Selecciona el plan de alimentación para tu grupo</h3>
+              <p>
+                Todas las habitaciones de la reserva tendrán el mismo plan de
+                alimentación.
+              </p>
+              <div>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="plan"
+                    value="solodesayuno"
+                    defaultChecked
+                    className={styles.radioInput}
+                    onChange={valorDelRadio}
+                  />
+                  <span>
+                    <strong>Solo desayuno</strong> (Incluye desayuno)
+                  </span>
+                </label>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="plan"
+                    value="mediapension"
+                    className={styles.radioInput}
+                    onChange={valorDelRadio}
+                  />
+                  <span>
+                    <strong>Media pensión</strong> (Incluye desayuno + almuerzo
+                    o cena)
+                  </span>
+                </label>
+                <label className={styles.radioLabel}>
+                  <input
+                    type="radio"
+                    name="plan"
+                    value="pensioncompleta"
+                    className={styles.radioInput}
+                    onChange={valorDelRadio}
+                  />
+                  <span>
+                    <strong>Pensión completa</strong> (Incluye desayuno +
+                    almuerzo + cena)
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
+{/* habitaciones?.availability?.map((cam)=>
+  cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
             {habitaciones?.availability?.map((tipo) =>
@@ -593,7 +716,7 @@ export const Cid = ({ id }) => {
                     <p className="price">
                       {dato.products?.map((product, idx) => {
                         // Expresión regular para validar el roomName
-                        if (regex.test(product.roomName)) {
+                        if (regexSeleccionado?.test(product.roomName)) {
                           return (
                             <span key={idx}>
                               {formatCurrency(
@@ -613,32 +736,35 @@ export const Cid = ({ id }) => {
                       className={styles.select_room}
                       data-room="Doble Estándar"
                       data-price="#Valor"
-                      onClick={() =>
+                      onClick={() =>{
                         setDatohabitacion((prevState) => [
                           ...prevState,
                           {
-                            roomId: dato.roomId,
-                            checkin: checkin, // O el valor correcto del check-in
-                            checkout: checkout, // O el valor correcto del check-out
-                            nights: rangosfechas.nights, // Calcula las noches
-                            imgH: idRooms[habitaciones.hotel.id][dato.roomId],
-                            huespedes: adultos + ninos, // Número total de huéspedes
+                            plandealimentacion: planDeAlimentacionFormateado, //plandealimentacion: planDeAlimentacionFormateado,
+                            roomId: dato.roomId, //roomId: dato.roomId,
+                            checkin: checkin, // checkin: checkin,
+                            checkout: checkout, // checkout: checkout,
+                            nights: rangosfechas.nights, //nights: rangosfechas.nights,
+                            imgH: idRooms[habitaciones.hotel.id][dato.roomId], //imgH: idRooms[habitaciones.hotel.id][dato.roomId],
+                            huespedes: adultos + ninos, // huespedes: adultos + ninos,
                             precio:
                               dato.products?.find((product) =>
-                                regex.test(product.roomName)
+                                regexSeleccionado.test(product.roomName)
                               )?.baseRate?.amountBeforeTax ||
                               "Sin precio disponible",
-                            NombreH: dato.roomName,
-                            beds: dato.beds,
-                            hotelid: habitaciones?.hotel?.roomcloud_id,
-                            ciudad: habitaciones?.hotel?.city,
-                            hotelidAutocore: habitaciones?.hotel?.id,
-                            rateId: dato.products?.find((product) =>
-                              regex.test(product.roomName)
-                            )?.rateId,
+                            NombreH: dato.roomName, //NombreH: dato.roomName,
+                            beds: dato.beds, //beds: dato.beds,
+                            hotelid: habitaciones?.hotel?.roomcloud_id, //hotelid: habitaciones?.hotel?.roomcloud_id,
+                            ciudad:habitaciones?.hotel?.city, //ciudad:habitaciones?.hotel?.city,
+                            hotelidAutocore: habitaciones?.hotel?.id, //hotelidAutocore: habitaciones?.hotel?.id,
+                            rateId: dato.products?.find((product) => 
+                              regexSeleccionado.test(product.roomName)
+                            )?.rateId, 
+                            
                           },
-                        ])
-                      }
+                        ])  
+                        setcontadorHabitaciones((prevCount) => prevCount + 1);
+                      }}
                     >
                       Seleccionar
                     </button>
@@ -649,10 +775,10 @@ export const Cid = ({ id }) => {
           </div>
           <div className={styles.reservation}>
             <h3>Reserva</h3>
-
             <hr />
             <br />
             <h3>{habitaciones?.hotel?.name}</h3>
+            <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
             <p>
               {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
             </p>
@@ -667,15 +793,18 @@ export const Cid = ({ id }) => {
                 <ul id="selected-rooms">
                   <br />
                   <p>{dato.NombreH}</p>
-
+                  
                   <h5>
                     {checkin} - {checkout}
                   </h5>
                   <h5>
                     {rangosfechas.nights} noches, {ninos + adultos} huespedes
                   </h5>
+
+                  <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
+
                   <h2>{formatCurrency(dato.precio)} COP</h2>
-                  <button
+                  <button 
                     style={{
                       position: "absolute",
                       bottom: "80px", // Ajusta la posición vertical
@@ -684,7 +813,10 @@ export const Cid = ({ id }) => {
                       border: "none",
                       cursor: "pointer",
                     }}
-                    onClick={() => handleDelete(index)}
+                    onClick={(index) => {handleDelete(index);setcontadorHabitaciones((prevCount) =>
+                      prevCount > 0 ? prevCount - 1 : 0
+                    );
+                  }}
                   >
                     <FontAwesomeIcon
                       icon={faTrash}
