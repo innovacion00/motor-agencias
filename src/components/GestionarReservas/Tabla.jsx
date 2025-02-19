@@ -37,7 +37,8 @@ const Tabla = () => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+       minimumFractionDigits: 0,
     }).format(value);
   };
 
@@ -192,7 +193,7 @@ const Tabla = () => {
                     format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                     format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
-                  ) : (<p>Monto no valido</p>)
+                  ) : (<p>En proceso</p>)
                 }
 
               </td>
@@ -213,7 +214,7 @@ const Tabla = () => {
                   formatCurrency(dato.totalMitad)
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                   formatCurrency(dato.totalMitad)
-                ) : (<p>Monto no valido</p>)
+                ) : (<p>En proceso </p>)
                 }
 
               </td>
@@ -249,7 +250,7 @@ const Tabla = () => {
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ?
                   (<span className={`${styles.status} ${styles.proces}`}>
                     Pago en proceso segundo abono
-                  </span>) : (<p>Estado no valido</p>)
+                  </span>) : (<p>Estado en proceso</p>)
                 }
               </td>
               <td>

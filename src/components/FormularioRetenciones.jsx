@@ -63,32 +63,32 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
             // azuan
             case 1:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // aixo
             case 4:
                 return {
-                    valor: 45000
+                    valor: 35000
                 }
             // Marina
             case 9:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // Abi
             case 5:
                 return {
-                    valor: 45000
+                    valor: 35000
                 }
             // Avexi
             case 6:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // Bocagrande
             case 7:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // 1525
             case 2:
@@ -98,7 +98,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
             // Sansiraka
             case 44:
                 return {
-                    valor: 45000
+                    valor: 35000
                 }
             // Axis
             case 48:
@@ -113,17 +113,22 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
             // Madisson
             case 3:
                 return {
-                    valor: 60000
+                    valor: 50000
                 }
             // Windsor
             case 10:
                 return {
-                    valor: 60000
+                    valor: 50000
                 }
             // Zulita
             case 41:
                 return {
-                    valor: 60000
+                    valor: 50000
+                }
+            // Boquilla
+            case 56:
+                return{
+                    valor: 30000
                 }
             default:
                 return 'Hotel no valido'
@@ -176,7 +181,8 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
         return new Intl.NumberFormat("es-CO", {
             style: "currency",
             currency: "COP",
-            minimumFractionDigits: 0
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
         }).format(value);
     };
 

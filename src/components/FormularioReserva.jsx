@@ -168,6 +168,7 @@ const FormularioReserva = () => {
             porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
           },
         }),
+        planAlimentario:reserva[0].plandealimentacion,
         exentoIva: esExtranjero,
         reservaInfo: {
           agency: {
@@ -298,9 +299,9 @@ const FormularioReserva = () => {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
-
   //UseEffect
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("nochesyedades"));
