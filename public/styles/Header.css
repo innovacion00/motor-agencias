@@ -85,6 +85,11 @@
   cursor: pointer;
 }
 
+.logout-btn button{
+position: absolute;
+
+}
+
 .dropdown-content a:hover, .dropdown-content button:hover {
   background-color: #ddd;
 }

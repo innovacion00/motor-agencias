@@ -260,7 +260,7 @@
 
 .pagos {
     /* width: 264px; */
-    height: 154px;
+    height: auto;
     background-color: #DEEAF5;
     padding: 1rem 1rem;
 }
@@ -422,5 +422,3 @@
   td {
     font-size: 0.95rem;
   }
-
-  

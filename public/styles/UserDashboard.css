@@ -47,6 +47,8 @@ body {
     border-color: #e0e0e0;
 }
 
+
+
 /* Main Content */
 .content {
     display: flex;
@@ -211,3 +213,66 @@ body {
   background-color: rgba(181, 138, 45, 1);
   color: white;
 }
+
+.recharge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .recharge-input {
+    width: 100%;
+    max-width: 250px;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #1C3D5A;
+    border-radius: 5px;
+    outline: none;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .recharge-input:focus {
+    border-color: #163d5f;
+    box-shadow: 0 0 5px rgba(51, 79, 158, 0.7);
+  }
+
+  .upload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  input[type="file"] {
+    display: none; /* Oculta el input original */
+  }
+  
+  .custom-file-upload {
+    background-color: #163d5f;
+    color: white;
+    padding: 5px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .custom-file-upload:hover {
+    background-color: #0056b3;
+  }
+  
+  .profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .profile-image.hover-effect {
+    opacity: 0.5; /* Reduce opacidad al pasar el mouse */
+    border: 2px solid #163d5f;
+  }

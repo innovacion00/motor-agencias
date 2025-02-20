@@ -25,10 +25,14 @@ const SwiperSlider = () => {
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-grupos.jpeg" alt="Banner 1" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner 1" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner 2" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner 2" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner 3" />
+      </SwiperSlide>
+      <SwiperSlide >
+        <a href="/tablerousuario">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="banner cashback" /></a>
       </SwiperSlide>
     </Swiper>
   );

@@ -5,6 +5,7 @@ import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
 import TablaDesglose from "./TablaDesglose";
+import { faC } from "@fortawesome/free-solid-svg-icons";
 
 //UseState
 const FormularioReserva = () => {
@@ -18,6 +19,7 @@ const FormularioReserva = () => {
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
   const [esExtranjero, setesExtranjero] = useState(false);
+  const [facturaE, setfacturaE] = useState(false);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState();
   const [formData, setFormData] = useState({
     tipoDocumento: "",
@@ -168,7 +170,7 @@ const FormularioReserva = () => {
             porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
           },
         }),
-        planAlimentario:reserva[0].plandealimentacion,
+        planAlimentario: reserva[0].plandealimentacion,
         exentoIva: esExtranjero,
         reservaInfo: {
           agency: {
@@ -467,6 +469,8 @@ const FormularioReserva = () => {
           fechasreserva={fechasreserva}
           manejarDatos={manejarDatos}
         />
+        {/*-------------- SECCION INFORMACION DEL TITULAR DE LA RESERVA -------------- */}
+
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
@@ -481,7 +485,7 @@ const FormularioReserva = () => {
             <legend>Informacion del titular</legend>
 
             <div>
-              {/* Checkbox De huesped o no  */}
+              {/*-------------- INPUT CHECKBOX HUESPED -------------- */}
               <div
                 style={{
                   display: "flex",
@@ -506,7 +510,7 @@ const FormularioReserva = () => {
                   onChange={(e) => setesExtranjero(e.target.checked)}
                 />
               </div>
-
+              {/*-------------- INPUT TIPO DE DOCUMENTO -------------- */}
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
               </label>
@@ -530,7 +534,7 @@ const FormularioReserva = () => {
                 <option value="otro">Otro</option>
               </select>
             </div>
-
+            {/*-------------- INPUT NUMERO DE DOCUMENTO -------------- */}
             <div>
               <label htmlFor="numeroDocumento">
                 Número de documento <span style={{ color: "red" }}>*</span>
@@ -538,6 +542,7 @@ const FormularioReserva = () => {
               <input
                 id="numeroDocumento"
                 type="text"
+                placeholder="Ingrese el número de documento"
                 value={formData.numeroDocumento}
                 onChange={handleChange}
                 style={{
@@ -550,7 +555,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT NOMBRE TITULAR -------------- */}
             <div>
               <label htmlFor="nombreCompleto">
                 Nombre del titular <span style={{ color: "red" }}>*</span>
@@ -558,6 +563,7 @@ const FormularioReserva = () => {
               <input
                 id="nombreCompleto"
                 type="text"
+                placeholder="Ingrese el nombre"
                 value={formData.nombreCompleto}
                 onChange={handleChange}
                 style={{
@@ -570,7 +576,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT APELLIDOS DEL TITULAR -------------- */}
             <div>
               <label htmlFor="apellidos">
                 Apellidos del titular <span style={{ color: "red" }}>*</span>
@@ -578,6 +584,7 @@ const FormularioReserva = () => {
               <input
                 id="apellidos"
                 type="text"
+                placeholder="Ingrese los apellidos"
                 value={formData.apellidos}
                 onChange={handleChange}
                 style={{
@@ -590,7 +597,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT FECHA DE NACIMIENTO -------------- */}
             <div>
               <label htmlFor="fechaNacimiento">
                 Fecha de nacimiento <span style={{ color: "red" }}>*</span>
@@ -610,7 +617,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT CORREO ELECTRONICO TITULAR -------------- */}
             <div>
               <label htmlFor="email">
                 Correo electrónico <span style={{ color: "red" }}>*</span>
@@ -618,6 +625,7 @@ const FormularioReserva = () => {
               <input
                 id="email"
                 type="email"
+                placeholder="Ingrese el correo electronico "
                 value={formData.email}
                 onChange={handleChange}
                 style={{
@@ -630,7 +638,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT NUMERO CELULAR DEL TITULAR -------------- */}
             <div>
               <label htmlFor="celular">
                 Celular <span style={{ color: "red" }}>*</span>
@@ -638,6 +646,7 @@ const FormularioReserva = () => {
               <input
                 id="celular"
                 type="tel"
+                placeholder="Ingrese el numero de celular"
                 value={formData.celular}
                 onChange={handleChange}
                 style={{
@@ -649,6 +658,8 @@ const FormularioReserva = () => {
                   border: "1px solid #ccc",
                 }}
               />
+
+              {/*-------------- LABEL IDENTIFICADOR -------------- */}
               <label
                 htmlFor="identificador"
                 style={{ fontWeight: "light", fontSize: "12px" }}
@@ -657,24 +668,156 @@ const FormularioReserva = () => {
               </label>
             </div>
           </fieldset>
-          <button
-            disabled={botondesactivado}
-            type="submit"
-            style={{
-              fontWeight: "500",
-              backgroundColor: "#26547B",
-              color: "white",
-              padding: "10px 20px ",
-              border: "none",
-              borderRadius: "5px",
-              cursor: botondesactivado ? "not-allowed" : "pointer", // Cambiar el cursor según el estado
-              alignSelf: "flex-end",
-              marginRight: "20px",
-            }}
-          >
-            {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-          </button>
         </form>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center", // Alinea verticalmente el checkbox con el texto
+            justifyContent: "flex-start", // Alinea el contenido a la izquierda
+          }}
+        >
+          {/*-------------- INPUT LABEL Y CHECKBOX FACTURA ELECTRONICA -------------- */}
+          <label htmlFor="facturaelectronica" style={{ marginLeft: "10px" }}>
+            ¿Desea factura electronica?
+          </label>
+          <input
+            style={{
+              width: "15px", // Tamaño más claro y consistente
+              height: "15px",
+              marginLeft: "40px",
+              cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+              accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+            }}
+            type="checkbox"
+            id="facturaElectronica"
+            checked={facturaE}
+            onChange={(e) => setfacturaE(e.target.checked)}
+          />
+        </div>
+        <br />
+
+        {/*-------------- SECCION DATOS DE FACTURA ELECTRONICA -------------- */}
+        {facturaE && (
+          <div>
+            <h3>Datos factura electronica</h3>
+            <form style={{ marginTop: "20px" }}>
+              <fieldset
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "5px",
+                  padding: "15px",
+                  marginBottom: "20px",
+                }}
+              >
+                <legend> Informacion de la factura electronica</legend>
+
+                {/*-------------- INPUT NOMBRE FACTURA -------------- */}
+                <div>
+                  <label htmlFor="nombreEmpresa">
+                    Nombre: <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="nombreEmpresa"
+                    type="text"
+                    placeholder="Ingrese el nombre"
+                    // value={formData.apellidos}
+                    // onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+                {/*-------------- INPUT NIT -------------- */}
+                <div>
+                  <label htmlFor="NIT">
+                    NIT: <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="NIT"
+                    type="number"
+                    placeholder="Ingrese el numero de nit"
+                    // value={formData.celular}
+                    // onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+
+                {/*-------------- INPUT EMAIL FACTURA -------------- */}
+                <div>
+                  <label htmlFor="emailEmpresa">
+                    Correo electrónico: <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Ingrese el email"
+                    // value={formData.email}
+                    // onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+                {/*-------------- INPUT TELEFONO FACTURA -------------- */}
+                <div>
+                  <label htmlFor="celular">
+                    Telefono: <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="telefonoF"
+                    type="tel"
+                    placeholder="Ingrese el telefono"
+                    // value={formData.celular}
+                    // onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        )}
+        <button
+          disabled={botondesactivado}
+          type="submit"
+          style={{
+            fontWeight: "500",
+            backgroundColor: "#26547B",
+            color: "white",
+            padding: "10px 20px ",
+            border: "none",
+            borderRadius: "5px",
+            cursor: botondesactivado ? "not-allowed" : "pointer", // Cambiar el cursor según el estado
+            alignSelf: "flex-end",
+            marginRight: "20px",
+          }}
+        >
+          {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
+        </button>
       </div>
     </>
   );

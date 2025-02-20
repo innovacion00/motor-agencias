@@ -3,7 +3,7 @@ import styles from "./styles/gestionar.module.css";
 import { format } from "@formkit/tempo";
 import { hoteles, habitaciones } from "./InfoHoteles";
 import Cookies from "js-cookie";
-import { generarLinkPago, linkPago } from "../../stores/pagos";
+import { generarLinkPago, generarLinkPagoBilletera, linkPago } from "../../stores/pagos";
 import Swal from "sweetalert2";
 
 //UseState
@@ -14,87 +14,68 @@ const Gestionar = ({ reservas }) => {
   const [isLoading, setisLoading] = useState(false);
   const [mostrarnota1, setmostrarnota1] = useState(false)
   const [mostrarnota2, setmostrarnota2] = useState(false)
-
-
+  const [AvailableAmount, setAvailableAmount] = useState(null)
+  
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
 
   let contador = 1;
-  // // console.log(sumaHuespe)
+  
   const infoHoteles = hoteles(reservas?.hotel);
-  // console.log(hoteles(reservas.hotel))
 
-  const cancelarReserva = async (reservas) => {
-    try {
-      // Obtener los datos del usuario desde localStorage
-      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
 
-      // Extraer el token
-      const token = datosUsuario.token;
 
-      // Hacer la solicitud DELETE
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/reservas/cancelar-reserva",
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Incluir el token en el encabezado
-          },
-          body: JSON.stringify({
-            reservaId: reservas, // Pasar el ID de la reserva
-          }),
-        }
-      );
-
-      // Validar la respuesta de la API
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error al cancelar la reserva:", errorData);
-        Swal.fire(
-          "Error",
-          "No se pudo cancelar la reserva. Intente nuevamente.",
-          "error"
+  //#region Obtener MI Saldo
+    const obtenerSaldo = async (token) => {
+      try {
+        const response = await fetch(
+          "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        return;
-      }
-
-      // Éxito al cancelar la reserva
-      const data = await response.json();
-      console.log("Reserva cancelada exitosamente:", data);
-      Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success").then(
-        () => {
-          window.location.href = "/misreservas";
+  
+        if (!response.ok) {
+          throw new Error("Error al obtener el saldo");
         }
-      );
-    } catch (error) {
-      console.error("Error al cancelar la reserva:", error);
-      Swal.fire(
-        "Error",
-        "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
-        "error"
-      );
-    }
-  };
+  
+        const data = await response.json();
+        setAvailableAmount(data.available_amount);
+      } catch (error) {
+        console.error("Error obteniendo saldo:", error);
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo obtener el saldo disponible.",
+          icon: "error",
+          confirmButtonColor: "#26547B",
+        });
+      }
+    };
 
-  const confirmarCancelacion = (reservaId) => {
+  //#region Noti pago mi saldo
+  const confirmarPago = (id) => {
     Swal.fire({
-      title: "¿Estás seguro?",
-      text: "¿Deseas cancelar esta reserva? Esta acción no se puede deshacer.",
+      title: "¿Está seguro?",
+      text: `Se procederá al pago con 'Mi saldo' que es ${formatCurrency(AvailableAmount)}. ¿Estas seguro que deseas realizarlo?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Sí, cancelar",
-      cancelButtonText: "No",
+      confirmButtonColor: "#26547B",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, pagar",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        cancelarReserva(reservaId); // Llama a la función de cancelación
+        onClickBilletera(id, true);
       }
     });
   };
 
+//#region Link total-mitad
   const generarLink = async (id, booleano) => {
     setisLoading(true); // Deshabilitar el botón
     try {
@@ -112,6 +93,33 @@ const Gestionar = ({ reservas }) => {
       setisLoading(false); // Habilitar el botón nuevamente
     }
   };
+
+//#region Link mi saldo
+  const generarLinkBilletera = async (id, booleano) => {
+    setisLoading(true); // Deshabilitar el botón
+    try {
+      const linkP = await generarLinkPagoBilletera(id, booleano); // Llamada a la API
+      console.log(linkP);
+      if (linkP.link) {
+        window.location.href = linkP.link; // Redireccionar al link generado
+      } else {
+        alert("No se pudo generar el link de pago.");
+      }
+    } catch (error) {
+      console.error("Error al generar el link:", error);
+      
+       Swal.fire({
+                  title:"Error",
+                  text:`No se pudo realizar el pago con Mi saldo, Verifique su saldo o intente nuevamente mas tarde`,
+                  icon:"error",
+                  confirmButtonColor: "#26547B"
+                })
+    } finally {
+      setisLoading(false); // Habilitar el botón nuevamente
+    }
+  };
+
+  //#region boton pagar mitad
   const onClick = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -122,7 +130,7 @@ const Gestionar = ({ reservas }) => {
     }
     await generarLink(id, booleano);
   };
-
+//#region boton pagar total
   const onClickTotal = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -135,7 +143,22 @@ const Gestionar = ({ reservas }) => {
     await generarLink(id, booleano);
   };
 
-  //funcion para formatear el los valores de dinero
+
+  
+//#region boton pagar billetera
+  const onClickBilletera = async (id, booleano) => {
+    if (
+      reservas?.status == "1" ||
+      reservas?.status == "3" ||
+      reservas?.status == "4" ||
+      reservas?.status == "5"
+    ) {
+      return;
+    }
+    await generarLinkBilletera(id, booleano);
+  };
+
+  //#region formatear valores de dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
@@ -148,6 +171,8 @@ const Gestionar = ({ reservas }) => {
   };
 
 useEffect(() => {
+  const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+  obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia
   if(reservas.status == "2" || reservas.status =="0"){
     setmostrarnota1(true);
     setmostrarnota2(false);
@@ -159,6 +184,78 @@ useEffect(() => {
   
 }, [reservas?.status])
 
+//#region Peticion cancelar reservas
+const cancelarReserva = async (reservas) => {
+  try {
+    // Obtener los datos del usuario desde localStorage
+    const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
+
+    // Extraer el token
+    const token = datosUsuario.token;
+
+    // Hacer la solicitud DELETE
+    const response = await fetch(
+      "https://gehsuitesapps.com/agencias/v1/reservas/cancelar-reserva",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Incluir el token en el encabezado
+        },
+        body: JSON.stringify({
+          reservaId: reservas, // Pasar el ID de la reserva
+        }),
+      }
+    );
+
+    // Validar la respuesta de la API
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error al cancelar la reserva:", errorData);
+      Swal.fire(
+        "Error",
+        "No se pudo cancelar la reserva. Intente nuevamente.",
+        "error"
+      );
+      return;
+    }
+
+    // Éxito al cancelar la reserva
+    const data = await response.json();
+    console.log("Reserva cancelada exitosamente:", data);
+    Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success").then(
+      () => {
+        window.location.href = "/misreservas";
+      }
+    );
+  } catch (error) {
+    console.error("Error al cancelar la reserva:", error);
+    Swal.fire(
+      "Error",
+      "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
+      "error"
+    );
+  }
+};
+
+
+//#region Noti cancelar reservas
+const confirmarCancelacion = (reservaId) => {
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¿Deseas cancelar esta reserva? Esta acción no se puede deshacer.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#26547B",
+    cancelButtonColor: "#b22",
+    confirmButtonText: "Sí, cancelar",
+    cancelButtonText: "No",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      cancelarReserva(reservaId); // Llama a la función de cancelación
+    }
+  });
+};
 
   return (
     <div className={styles.containerGestionar}>
@@ -186,7 +283,7 @@ useEffect(() => {
         </p>
       ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
-          Pago rechazado segundo abono
+          Pago total rechazado
         </p>
       ) : reservas.status == "5" && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
@@ -194,7 +291,7 @@ useEffect(() => {
         </p>
       ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
-          Pago en proceso segundo abono
+          Pago total en proceso
         </p>
       ) : (
         <p>Estado no valido</p>
@@ -254,7 +351,7 @@ useEffect(() => {
                 </div>
                 <div className={styles.flexCol}>
                   <p>Tipo de plan de alimentacion</p>
-                  {/* <p>{primerPlan[0]}</p> */}
+                  { <p>{reservas?.planAlimentario}</p> }
                 </div>
               </div>
             </div>
@@ -528,10 +625,32 @@ useEffect(() => {
               >
                 {isLoading ? "Generando link..." : "Pagar Total"}
               </button>
+              <button
+                onClick={() => confirmarPago(reservas._id)}
+                disabled={
+                  reservas?.status == "1" ||
+                  reservas?.status == "3" ||
+                  reservas?.status == "4" ||
+                  reservas?.status == "5" ||
+                  reservas?.pagadoPrimeraMitad ||
+                  isLoading
+                }
+                className={`${styles.pagarButton} ${
+                  reservas?.status == "1" ||
+                  reservas?.status == "3" ||
+                  reservas?.status == "4" ||
+                  reservas?.status == "5" ||
+                  reservas?.pagadoPrimeraMitad
+                    ? styles.disabledButtonp
+                    : ""
+                }`}
+              >
+                {isLoading ? "Generando link..." : "Pagar con Mi saldo"}
+              </button>
             </div>
             <div className={styles.noticeContainer}>
               {mostrarnota1 &&(
-                <p className={styles.notice} disabled= {mostrarnota1 == true} >
+                <p className={styles.notice} disabled = {mostrarnota1 == true} >
                 Nota: Si el estado es rechazado, podras intentar nuevamente en el boton de pagar
                 </p>
               )}
