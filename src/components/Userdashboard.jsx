@@ -13,9 +13,9 @@ const UserDashboard = () => {
   const [availableAmount, setAvailableAmount] = useState(null);
   const [informaciondeagencia, setinformaciondeagencia] = useState("");
   const [profileImage, setprofileImage] = useState(userData?.imageUrl || "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
-  const [pruebaimagen, setpruebaimagen] = useState("https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
   const [ref, hovering] = useHover();
   const fileInputRef = useRef(null);
+  const [displayValue, setDisplayValue] = useState(""); // Guardamos el valor formateado
   //#region Use effect
 
   useEffect(() => {
@@ -108,6 +108,30 @@ const UserDashboard = () => {
     }
   };
 
+
+  //#region formatear mienstras escribes
+  const formatCurrencyl = (value) => {
+    if (!value) return "";
+    
+    // Convertir a número entero y formatear como moneda colombiana
+    let numericValue = parseInt(value.replace(/\D/g, ""), 10) || 0;
+     // Aplicar límite de 50.000.000
+     if (numericValue > 50000000) {
+      numericValue = 50000000;
+    }
+
+    // Guardamos el número sin puntos en el estado
+    setAmount(numericValue.toString());
+
+    // Retornamos el valor con formato
+    return new Intl.NumberFormat("es-CO").format(numericValue);
+  };
+
+  const handleChangedinero = (e) => {
+     const rawValue = e.target.value;
+    const formattedValue = formatCurrencyl(rawValue);
+    setDisplayValue(formattedValue);
+  };
   //#region formatear el los valores de dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
@@ -173,7 +197,7 @@ const UserDashboard = () => {
       } else {
         Swal.fire({
           title: "Error",
-          text: "Error en la recarga.Intentalo nuevamente (Internal Back error)",
+          text: "Error en la recarga. Intentalo nuevamente (Internal Back error)",
           icon: "error",
           confirmButtonColor: "#26547B",
         });
@@ -237,14 +261,11 @@ const UserDashboard = () => {
             Ingrese un monto superior a $50.000 COP
           </h2>
           <input
-            type="number"
-            value={amount}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (/^\d*$/.test(value)) setAmount(value); // Solo números enteros
-            }}
-            placeholder="$0.000.000"
-            className="recharge-input"
+      type="text"
+      value={displayValue}
+      onChange={handleChangedinero}
+      placeholder="$0"
+      className="recharge-input"
           />
           <br />
           <br />
