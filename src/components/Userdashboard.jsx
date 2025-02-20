@@ -195,7 +195,7 @@ const UserDashboard = () => {
         </a>
         <a href="/misreservas">Gestionar reservas</a>
         {/* <a href="#">Análisis de datos</a> */}
-        <a href="#">Configuración</a>
+        {/* <a href="#">Configuración</a> */}
         
       </div>
       <div className="content">
