@@ -667,8 +667,7 @@ const FormularioReserva = () => {
                 Se debe escribir el identificador(+)
               </label>
             </div>
-          </fieldset>
-        </form>
+          
 
         <div
           style={{
@@ -818,8 +817,12 @@ const FormularioReserva = () => {
         >
           {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
         </button>
+        </fieldset>
+        </form>
       </div>
+      
     </>
+    
   );
 };
 

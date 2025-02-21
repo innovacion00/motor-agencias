@@ -17,10 +17,14 @@ const SwiperSlider = () => {
       effect="fade"
       navigation
       pagination={{ clickable: true }}
-      autoplay={{ delay: 4500, disableOnInteraction: true }} // Configuración de autoplay
+      autoplay={{ delay: 5000, disableOnInteraction: true }} // Configuración de autoplay
       loop={true} // Habilitar bucle
       
     >
+      <SwiperSlide >
+        <a href="/tablerousuario">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="banner cashback" /></a>
+      </SwiperSlide>
       <SwiperSlide>
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-grupos.jpeg" alt="Banner 1" />
       </SwiperSlide>
@@ -29,10 +33,6 @@ const SwiperSlider = () => {
       </SwiperSlide>
       <SwiperSlide>
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner 3" />
-      </SwiperSlide>
-      <SwiperSlide >
-        <a href="/tablerousuario">
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="banner cashback" /></a>
       </SwiperSlide>
     </Swiper>
   );
