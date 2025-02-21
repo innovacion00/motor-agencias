@@ -8,6 +8,7 @@ const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [reservas, setReservas] = useState([]);
   const [mostrarConfigOption, setmostrarConfigOption] = useState();
+  
   const [terminosaceptados, setterminosaceptados] = useState(false);
   const [amount, setAmount] = useState("");
   const [availableAmount, setAvailableAmount] = useState(null);
@@ -148,9 +149,19 @@ const UserDashboard = () => {
   const handleRecharge = async () => {
     const amountInt = parseInt(amount, 10);
 
+    if (!terminosaceptados) {
+      Swal.fire({
+        title: "¡Atención!",
+        text: "Debe aceptar los términos y condiciones para recargar saldo.",
+        icon: "warning",
+        confirmButtonColor: "#26547B",
+      });
+      return;
+    }
+    
     if (!amountInt || amountInt < 50000) {
       Swal.fire({
-        title: "Atención!",
+        title: "¡Atención!",
         text: "El monto debe ser un número entero mayor o igual a $50,000 COP.",
         icon: "warning",
         confirmButtonColor: "#26547B",
@@ -212,13 +223,14 @@ const UserDashboard = () => {
     <div className="container">
       <div className="header">
         <h1>Tablero de usuario</h1>
-      
+
       </div>
       <div className="nav-tabs">
         <a className="active" href="#">
           Mi perfil
         </a>
         <a href="/misreservas">Gestionar reservas</a>
+        <button></button>
         {/* <a href="#">Análisis de datos</a> */}
         {/* <a href="#">Configuración</a> */}
         
@@ -272,7 +284,7 @@ const UserDashboard = () => {
           <br />
           <button
             onClick={handleRecharge}
-            disabled={terminosaceptados == false}
+           
           >
             Recargar saldo
           </button>
@@ -283,6 +295,7 @@ const UserDashboard = () => {
               alignItems: "center",
               gap: "5px",
               fontSize: "10px",
+              
             }}
           >
             <input
