@@ -14,10 +14,14 @@ const Header = () => {
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    setUserData(datosdelusuario);
+    if(datosdelusuario){
+
+      setUserData(JSON.parse(datosdelusuario));
+    }
     
   }, [])
 
+  console.log(userData?.imageUrl)
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;

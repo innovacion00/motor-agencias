@@ -135,7 +135,7 @@ const UserDashboard = () => {
   //#region formatear el los valores de dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
-      return "Sin Disponibilidad";
+      return "$ 0";
     }
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
@@ -212,6 +212,7 @@ const UserDashboard = () => {
     <div className="container">
       <div className="header">
         <h1>Tablero de usuario</h1>
+      
       </div>
       <div className="nav-tabs">
         <a className="active" href="#">

@@ -154,6 +154,7 @@ const Tabla = () => {
       <table>
         <thead>
           <tr>
+            <th>Fecha de creacion</th>
             <th>Cod. reserva</th>
             <th>Hotel</th>
             <th>Check-in</th>
@@ -169,11 +170,12 @@ const Tabla = () => {
         <tbody>
           {currentItems.map((dato, index) => (
             <tr key={index}>
+              <td>{format(dato.createdAt,"h:mm a DD/MM/YYYY ", "es" )}</td>
               <td>{dato.reservaChatbotId}</td>
               <td>{dato.hotel}</td>
-              <td>{dato.reservation.checkin}</td>
-              <td>{dato.reservation.checkout}</td>
-              <td>{dato?.agenciaId?.fullName}</td>
+              <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td>
+              <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td>
+              <td>{dato?.agenciaId?.fullName.toUpperCase()}</td>
               <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
               <td>
                 {
@@ -249,7 +251,7 @@ const Tabla = () => {
                   </span>
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ?
                   (<span className={`${styles.status} ${styles.proces}`}>
-                    Pago en proceso segundo abono
+                    Pago total en proceso
                   </span>) : (<p>Estado en proceso</p>)
                 }
               </td>
