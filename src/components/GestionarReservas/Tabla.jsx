@@ -175,7 +175,7 @@ const Tabla = () => {
               <td>{dato.hotel}</td>
               <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td>
               <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td>
-              <td>{dato?.agenciaId?.fullName.toUpperCase()}</td>
+              <td>{dato?.agenciaId?.fullName}</td>
               <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
               <td>
                 {

@@ -7,18 +7,18 @@ import Swal from "sweetalert2";
 const UserDashboard = () => {
   const [userData, setUserData] = useState(null);
   const [reservas, setReservas] = useState([]);
-  const [mostrarConfigOption, setmostrarConfigOption] = useState();
-  
   const [terminosaceptados, setterminosaceptados] = useState(false);
   const [amount, setAmount] = useState("");
   const [availableAmount, setAvailableAmount] = useState(null);
-  const [informaciondeagencia, setinformaciondeagencia] = useState("");
-  const [profileImage, setprofileImage] = useState(userData?.imageUrl || "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
+  const [profileImage, setprofileImage] = useState(
+    userData?.imageUrl ||
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png"
+  );
   const [ref, hovering] = useHover();
   const fileInputRef = useRef(null);
   const [displayValue, setDisplayValue] = useState(""); // Guardamos el valor formateado
-  //#region Use effect
 
+  //#region Use effect
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     ObtenerReservas(datosdelusuario.token, datosdelusuario.role[0]);
@@ -28,8 +28,24 @@ const UserDashboard = () => {
     // settokenusuario(token)
   }, []);
 
-  //#region Reservas obtenidas
+  //   // Función de cierre de sesión
+  //   document.getElementById('logout-btn').addEventListener('click', function () {
+  //     // Remover el token de localStorage o sessionStorage
+  //     localStorage.removeItem('authToken'); // O usa sessionStorage si lo guardaste allí
 
+  //     // Redirigir al usuario a la página de login
+  //     window.location.href = 'https://www.gehsuites.com/es';
+  // });
+
+  const handleLogout = () => {
+    // Eliminar el token de autenticación
+    localStorage.removeItem("authToken");
+
+    // Redirigir al usuario a la página de login
+    window.location.href = "https://www.gehsuites.com/es";
+  };
+
+  //#region Reservas obtenidas
   const ObtenerReservas = async (token, nombreAgencia) => {
     await getReservas(token, nombreAgencia);
     const reservasObtenidas = reservasNano.get();
@@ -46,15 +62,18 @@ const UserDashboard = () => {
 
     const formData = new FormData();
     formData.append("file", file); // Adjunta el archivo
- //#region Envio de imagen 
+    //#region Envio de imagen
     try {
-      const response = await fetch("https://gehsuitesapps.com/agencias/v1/files/user-profile", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${userData.token}`, // Se envía el token para autenticación
-        },
-      });
+      const response = await fetch(
+        "https://gehsuitesapps.com/agencias/v1/files/user-profile",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${userData.token}`, // Se envía el token para autenticación
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error al subir la imagen");
@@ -64,19 +83,18 @@ const UserDashboard = () => {
 
       if (data.url) {
         // 1️⃣ Actualiza la imagen en el estado
-      setprofileImage(data.url);
-       // 2️⃣ Actualiza el localStorage
-       const updatedUserData = { ...userData, imageUrl: data.url };
-       localStorage.setItem("datosUsuario", JSON.stringify(updatedUserData));
- 
-       // 3️⃣ Refresca el estado global de userData si se usa con useContext o un store
-       setUserData(updatedUserData);
+        setprofileImage(data.url);
+        // 2️⃣ Actualiza el localStorage
+        const updatedUserData = { ...userData, imageUrl: data.url };
+        localStorage.setItem("datosUsuario", JSON.stringify(updatedUserData));
+
+        // 3️⃣ Refresca el estado global de userData si se usa con useContext o un store
+        setUserData(updatedUserData);
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
-
 
   //#region Obtener saldo
   const obtenerSaldo = async (token) => {
@@ -109,15 +127,14 @@ const UserDashboard = () => {
     }
   };
 
-
   //#region formatear mienstras escribes
   const formatCurrencyl = (value) => {
     if (!value) return "";
-    
+
     // Convertir a número entero y formatear como moneda colombiana
     let numericValue = parseInt(value.replace(/\D/g, ""), 10) || 0;
-     // Aplicar límite de 50.000.000
-     if (numericValue > 50000000) {
+    // Aplicar límite de 50.000.000
+    if (numericValue > 50000000) {
       numericValue = 50000000;
     }
 
@@ -129,7 +146,7 @@ const UserDashboard = () => {
   };
 
   const handleChangedinero = (e) => {
-     const rawValue = e.target.value;
+    const rawValue = e.target.value;
     const formattedValue = formatCurrencyl(rawValue);
     setDisplayValue(formattedValue);
   };
@@ -158,7 +175,7 @@ const UserDashboard = () => {
       });
       return;
     }
-    
+
     if (!amountInt || amountInt < 50000) {
       Swal.fire({
         title: "¡Atención!",
@@ -223,40 +240,50 @@ const UserDashboard = () => {
     <div className="container">
       <div className="header">
         <h1>Tablero de usuario</h1>
-
       </div>
       <div className="nav-tabs">
         <a className="active" href="#">
           Mi perfil
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-        <button></button>
+        <button
+          style={{ fontFamily: "roboto", fontSize: "17px" ,color:"white", backgroundColor:"#2c3e50"}}
+          onClick={handleLogout}
+        >
+          Cerrar sesion
+        </button>
         {/* <a href="#">Análisis de datos</a> */}
         {/* <a href="#">Configuración</a> */}
-        
       </div>
       <div className="content">
         <div className="card profile-card">
-        <img
-          ref={ref} // Se conecta el hook useHover a la imagen
-          alt="Profile picture"
-          src={userData?.imageUrl || profileImage}
-          className={`profile-image ${hovering ? "hover-effect" : ""}`}
-          onClick={handleClick} // Clic en la imagen activa el input oculto
-        />
-        <legend style={{fontSize:"10px"}}>Presione el icono para subir una foto</legend>
+          <img
+            ref={ref} // Se conecta el hook useHover a la imagen
+            alt="Profile picture"
+            src={userData?.imageUrl || profileImage}
+            className={`profile-image ${hovering ? "hover-effect" : ""}`}
+            onClick={handleClick} // Clic en la imagen activa el input oculto
+          />
+          <legend style={{ fontSize: "10px" }}>
+            Presione el icono para subir una foto
+          </legend>
           {/* Input de archivo oculto */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          style={{ display: "none" }} // Oculta el input
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            style={{ display: "none" }} // Oculta el input
+          />
           <h2>{userData?.agencia.fullName}</h2>
           <p>Correo: {userData?.email}</p>
           <p>Celular:{userData?.telefono}</p>
-          <p >Tipo de usuario: <span style={{fontWeight:"bold", color:"#1C3D5A"}}>{userData?.role[0]}</span></p>
+          <p>
+            Tipo de usuario:{" "}
+            <span style={{ fontWeight: "bold", color: "#1C3D5A" }}>
+              {userData?.role[0]}
+            </span>
+          </p>
           {/* <button>Gestionar mi cuenta</button> */}
         </div>
         {/*--------------------------- Balance de Mi saldo ---------------------------*/}
@@ -274,20 +301,15 @@ const UserDashboard = () => {
             Ingrese un monto superior a $50.000 COP
           </h2>
           <input
-      type="text"
-      value={displayValue}
-      onChange={handleChangedinero}
-      placeholder="$0"
-      className="recharge-input"
+            type="text"
+            value={displayValue}
+            onChange={handleChangedinero}
+            placeholder="$0"
+            className="recharge-input"
           />
           <br />
           <br />
-          <button
-            onClick={handleRecharge}
-           
-          >
-            Recargar saldo
-          </button>
+          <button onClick={handleRecharge}>Recargar saldo</button>
           <br />
           <label
             style={{
@@ -295,7 +317,6 @@ const UserDashboard = () => {
               alignItems: "center",
               gap: "5px",
               fontSize: "10px",
-              
             }}
           >
             <input
