@@ -160,6 +160,7 @@ const Tabla = () => {
             <th>Check-in</th>
             <th>Check-out</th>
             <th>Agencia</th>
+            <th>Agente</th>
             <th>Huésped</th>
             <th>Plazo para pagar</th>
             <th>Valor a pagar</th>
@@ -176,6 +177,7 @@ const Tabla = () => {
               <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td>
               <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td>
               <td>{dato?.agenciaId?.fullName}</td>
+              <td>{dato?.userId?.fullName}</td>
               <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
               <td>
                 {
