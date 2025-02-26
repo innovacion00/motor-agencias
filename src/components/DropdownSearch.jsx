@@ -124,7 +124,7 @@ const mostrarTooltip = (mensaje) => {
     );
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("single");
-    mostrarTooltip("Reserva para única fecha seleccionado");  
+    mostrarTooltip("Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)");  
   };
 
   const handleSearch = async () => {

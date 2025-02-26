@@ -128,7 +128,7 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
     };
 
     const desyunohospedbase = (hospedajeBase+desayunoBase)
-    console.log(desyunohospedbase)
+    // console.log(desyunohospedbase)
     const subTotal = (hospedajeBase + desayunoBase + ivaHospedaje + impoconsumo)
     return (
         <div>

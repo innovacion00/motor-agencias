@@ -213,7 +213,7 @@ const Gestionar = ({ reservas }) => {
           title: "¡Éxito!",
           text: "Nota guardada exitosamente.",
           icon: "success",
-          timer: 2000, // La alerta se cierra automáticamente en 2 segundos
+          timer: 1000, // La alerta se cierra automáticamente en 2 segundos
           showConfirmButton: false, // Ocultar botón de confirmación
         }).then(() => {
           window.location.reload(); // Recargar la página

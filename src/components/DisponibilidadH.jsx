@@ -723,7 +723,7 @@ export const Cid = ({ id }) => {
                                 product?.baseRate?.amountBeforeTax ||
                                   "Sin precio disponible"
                               )}
-                              <span> COP</span>
+                              <span>COP</span>
                             </span>
                           );
                         }
