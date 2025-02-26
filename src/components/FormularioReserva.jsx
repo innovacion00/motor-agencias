@@ -5,12 +5,41 @@ import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
 import TablaDesglose from "./TablaDesglose";
+import { faC } from "@fortawesome/free-solid-svg-icons";
 
-//UseState
-const FormularioReserva = () => {
+const plan_alimentacion = {
+  9: false, //marina
+  1: false, //azuan
+  6: false, //avexi
+  7: false, //bocagrande ( proximamente )
+  4: true, //aixo
+  5: true, //abi
+  3: false, //madison
+  10: false, //windsor
+  8: false, //rodadero
+  2: false, //1525
+  48: true, //axis
+  44: true, //sansiraka
+  41: false, //Zulita
+  56: true, // Boquilla,
+};
+
+//#region UseState
+const FormularioReserva = ({ id }) => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
-  const [huespedes, sethuespedes] = useState();
+  const [cena, setCena] = useState(false);
+  const [almuerzo, setAlmuerzo] = useState(false);
+  const hotelIdsPermitidos = [
+    "13633", //Aixo
+    "17644", //Abi
+    "13677", //Boquilla
+    // "18004", //Windsor
+    // "16255", //Madisson
+    "19629", //Axis
+    "15740", //Sansiraka
+  ];
+  const [datosreserva, setDatosreserva] = useState([]);
   const [mostrarTexto, setMostrarTexto] = useState(false); // Estado para controlar la visibilidad del texto //false para mas de 72h
   const [mostrarBoton, setmostrarBoton] = useState(false);
   const [fechasreserva, setfechasreserva] = useState();
@@ -18,6 +47,7 @@ const FormularioReserva = () => {
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
   const [esExtranjero, setesExtranjero] = useState(false);
+  const [facturaE, setfacturaE] = useState(false);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState();
   const [formData, setFormData] = useState({
     tipoDocumento: "",
@@ -29,6 +59,47 @@ const FormularioReserva = () => {
     celular: "",
     // esExtranjero:false
   });
+
+  //#region UseEffect
+  useEffect(() => {
+    const data = JSON.parse(localStorage.getItem("nochesyedades"));
+    if (data && data.dateRange?.startDate) {
+      const startDate = new Date(data.dateRange.startDate); // Convertir a objeto Date
+      const now = new Date(); // Fecha actual
+
+      // Calcular la diferencia en horas
+      const diffInHours = (startDate - now) / (1000 * 60 * 60);
+
+      //mostrar boton
+      if (diffInHours < 72) {
+        setmostrarBoton(true);
+      }
+
+      // mostrar texto
+      if (diffInHours < 72) {
+        setMostrarTexto(true);
+      }
+    }
+    const reservas = JSON.parse(localStorage.getItem("datosreserva")) || [];
+    const informacion = JSON.parse(localStorage.getItem("datosreserva"));
+    const adultos = JSON.parse(localStorage.getItem("cantAdultos"));
+    const ninos = JSON.parse(localStorage.getItem("cantNinos"));
+    const fechas = JSON.parse(localStorage.getItem("nochesyedades"));
+    const token = JSON.parse(localStorage.getItem("datosUsuario"));
+    setDatosreserva(reservas);
+    setReserva(informacion);
+    setcantadultos(adultos);
+    setcantninos(ninos);
+    setfechasreserva(fechas);
+    setagencia(token);
+  }, []);
+
+  const mostrarCheckboxes = datosreserva.some(
+    (reserva) =>
+      hotelIdsPermitidos.includes(reserva.hotelid) &&
+      reserva.plandealimentacion === "Solo desayuno"
+  );
+
   const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
   const [DatosRetenciones, setDatosRetenciones] = useState(null);
   //convertir esExtranjero
@@ -36,12 +107,13 @@ const FormularioReserva = () => {
     esExtranjero == true ? "es extranjero" : "NO es extanjero";
 
   // Parsea numeros de body a string
+  const totalHuespedes = cantadultos + cantninos;
   const adults = JSON.stringify(cantadultos);
   const ninos = JSON.stringify(cantninos);
   const ninos1 = cantninos === 0 ? "" : JSON.stringify(cantninos);
-  //console.log(ninos);
   const noches = JSON.stringify(reserva[0]?.nights);
   const habitaciones = JSON.stringify(reserva.length);
+  const cantnoches = reserva[0]?.nights;
 
   // Formatea correctamente las fechas
   const checkin = format(
@@ -74,12 +146,15 @@ const FormularioReserva = () => {
   };
 
   //Calculo del IVA
+  const marcadoAlmuerzo = almuerzo ? 30000 * totalHuespedes + cantnoches : 0;
+  const marcadoCena = cena ? 30000 * totalHuespedes + cantnoches : 0;
+  const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA =
     esExtranjero == true ? totalPrecio * 0 : totalPrecio * tasaIVA; //totalPrecio * tasaIVA;
-  const totalConIVA = totalPrecio + valorIVA; //Calcular valor total + IVA
-
+  const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
+  console.log(totalConIVA);
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
 
   const totalRetencionesF = () => {
@@ -168,6 +243,7 @@ const FormularioReserva = () => {
             porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
           },
         }),
+        planAlimentario: reserva[0].plandealimentacion,
         exentoIva: esExtranjero,
         reservaInfo: {
           agency: {
@@ -190,26 +266,16 @@ const FormularioReserva = () => {
             nights: noches,
             notes:
               DatosRetenciones == null
-                ? `Creada por la agencia: ${
-                    agencia.agencia.fullName
-                  }. Reserva de ${noches} noches a nombre de ${
-                    formData.nombreCompleto
-                  } ${formData.apellidos}. ${
-                    valorextranjero == "es extranjero"
-                      ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia"
-                      : ""
-                  }`
-                : `Creada por la agencia: ${
-                    agencia.agencia.fullName
-                  }. Reserva de ${noches} noches a nombre de ${
-                    formData.nombreCompleto
-                  } ${
-                    formData.apellidos
-                  }, la agencia marco que aplica retenciones, verificar en la plataforma Booking connect porcentajes y valores. ${
-                    valorextranjero == "es extranjero"
-                      ? "El huesped es Extranjero. Favor verificar en recepcion si cumple con los requisitos de migracion colombia"
-                      : ""
-                  }`,
+              ? `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${
+                  valorextranjero == "es extranjero"
+                    ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                    : ""
+                } ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}`
+              : `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${
+                  valorextranjero == "es extranjero"
+                    ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                    : ""
+                } ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}`,
             rooms: habitaciones,
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
@@ -298,40 +364,9 @@ const FormularioReserva = () => {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
-
-  //UseEffect
-  useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("nochesyedades"));
-    if (data && data.dateRange?.startDate) {
-      const startDate = new Date(data.dateRange.startDate); // Convertir a objeto Date
-      const now = new Date(); // Fecha actual
-
-      // Calcular la diferencia en horas
-      const diffInHours = (startDate - now) / (1000 * 60 * 60);
-
-      //mostrar boton
-      if (diffInHours < 72) {
-        setmostrarBoton(true);
-      }
-
-      // mostrar texto
-      if (diffInHours < 72) {
-        setMostrarTexto(true);
-      }
-    }
-    const informacion = JSON.parse(localStorage.getItem("datosreserva"));
-    const adultos = JSON.parse(localStorage.getItem("cantAdultos"));
-    const ninos = JSON.parse(localStorage.getItem("cantNinos"));
-    const fechas = JSON.parse(localStorage.getItem("nochesyedades"));
-    const token = JSON.parse(localStorage.getItem("datosUsuario"));
-    setReserva(informacion);
-    setcantadultos(adultos);
-    setcantninos(ninos);
-    setfechasreserva(fechas);
-    setagencia(token);
-  }, []);
 
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
@@ -410,7 +445,8 @@ const FormularioReserva = () => {
               <strong>Huéspedes:</strong> {data.huespedes}
             </p>
             <p>
-              <strong>Numero de camas:</strong> {data.beds}
+              <strong>Capacidad de habitacion :</strong> Para {data.beds}{" "}
+              personas
             </p>
             <p>
               <strong>Plan de alimentacion: </strong>
@@ -419,6 +455,53 @@ const FormularioReserva = () => {
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong> {formatCurrency(data.precio)}
             </p>
+
+            <br />
+            {mostrarCheckboxes && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
+                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
+                }}
+              >
+                <strong>¿Desea adicionar almuerzo?</strong>
+                <input
+                  type="checkbox"
+                  checked={almuerzo}
+                  onChange={(e) => setAlmuerzo(e.target.checked)}
+                  style={{
+                    width: "15px", // Tamaño más claro y consistente
+                    height: "15px",
+                    marginTop: "10px",
+                    marginLeft: "40px",
+                    // gap:"1rem",
+                    marginRight: "20px",
+                    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+                    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+                  }}
+                />
+                <br />
+                <strong style={{ marginLeft: "25px" }}>
+                  ¿Desea adicionar cena ?
+                </strong>
+                <input
+                  type="checkbox"
+                  checked={cena}
+                  onChange={(e) => setCena(e.target.checked)}
+                  style={{
+                    width: "15px", // Tamaño más claro y consistente
+                    height: "15px",
+                    marginTop: "10px",
+                    marginLeft: "40px",
+                    // gap:"1rem",
+                    marginRight: "20px",
+                    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+                    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+                  }}
+                />
+              </div>
+            )}
           </div>
         ))}
 
@@ -466,6 +549,8 @@ const FormularioReserva = () => {
           fechasreserva={fechasreserva}
           manejarDatos={manejarDatos}
         />
+        {/*-------------- SECCION INFORMACION DEL TITULAR DE LA RESERVA -------------- */}
+
         <h3>Información de los huéspedes</h3>
 
         <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
@@ -480,7 +565,7 @@ const FormularioReserva = () => {
             <legend>Informacion del titular</legend>
 
             <div>
-              {/* Checkbox De huesped o no  */}
+              {/*-------------- INPUT CHECKBOX HUESPED -------------- */}
               <div
                 style={{
                   display: "flex",
@@ -505,7 +590,7 @@ const FormularioReserva = () => {
                   onChange={(e) => setesExtranjero(e.target.checked)}
                 />
               </div>
-
+              {/*-------------- INPUT TIPO DE DOCUMENTO -------------- */}
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
               </label>
@@ -529,7 +614,7 @@ const FormularioReserva = () => {
                 <option value="otro">Otro</option>
               </select>
             </div>
-
+            {/*-------------- INPUT NUMERO DE DOCUMENTO -------------- */}
             <div>
               <label htmlFor="numeroDocumento">
                 Número de documento <span style={{ color: "red" }}>*</span>
@@ -537,6 +622,7 @@ const FormularioReserva = () => {
               <input
                 id="numeroDocumento"
                 type="text"
+                placeholder="Ingrese el número de documento"
                 value={formData.numeroDocumento}
                 onChange={handleChange}
                 style={{
@@ -549,7 +635,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT NOMBRE TITULAR -------------- */}
             <div>
               <label htmlFor="nombreCompleto">
                 Nombre del titular <span style={{ color: "red" }}>*</span>
@@ -557,6 +643,7 @@ const FormularioReserva = () => {
               <input
                 id="nombreCompleto"
                 type="text"
+                placeholder="Ingrese el nombre"
                 value={formData.nombreCompleto}
                 onChange={handleChange}
                 style={{
@@ -569,7 +656,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT APELLIDOS DEL TITULAR -------------- */}
             <div>
               <label htmlFor="apellidos">
                 Apellidos del titular <span style={{ color: "red" }}>*</span>
@@ -577,6 +664,7 @@ const FormularioReserva = () => {
               <input
                 id="apellidos"
                 type="text"
+                placeholder="Ingrese los apellidos"
                 value={formData.apellidos}
                 onChange={handleChange}
                 style={{
@@ -589,7 +677,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT FECHA DE NACIMIENTO -------------- */}
             <div>
               <label htmlFor="fechaNacimiento">
                 Fecha de nacimiento <span style={{ color: "red" }}>*</span>
@@ -609,7 +697,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT CORREO ELECTRONICO TITULAR -------------- */}
             <div>
               <label htmlFor="email">
                 Correo electrónico <span style={{ color: "red" }}>*</span>
@@ -617,6 +705,7 @@ const FormularioReserva = () => {
               <input
                 id="email"
                 type="email"
+                placeholder="Ingrese el correo electronico "
                 value={formData.email}
                 onChange={handleChange}
                 style={{
@@ -629,7 +718,7 @@ const FormularioReserva = () => {
                 }}
               />
             </div>
-
+            {/*-------------- INPUT NUMERO CELULAR DEL TITULAR -------------- */}
             <div>
               <label htmlFor="celular">
                 Celular <span style={{ color: "red" }}>*</span>
@@ -637,6 +726,7 @@ const FormularioReserva = () => {
               <input
                 id="celular"
                 type="tel"
+                placeholder="Ingrese el numero de celular"
                 value={formData.celular}
                 onChange={handleChange}
                 style={{
@@ -648,6 +738,8 @@ const FormularioReserva = () => {
                   border: "1px solid #ccc",
                 }}
               />
+
+              {/*-------------- LABEL IDENTIFICADOR -------------- */}
               <label
                 htmlFor="identificador"
                 style={{ fontWeight: "light", fontSize: "12px" }}
@@ -655,24 +747,160 @@ const FormularioReserva = () => {
                 Se debe escribir el identificador(+)
               </label>
             </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center", // Alinea verticalmente el checkbox con el texto
+                justifyContent: "flex-start", // Alinea el contenido a la izquierda
+              }}
+            >
+              {/*-------------- INPUT LABEL Y CHECKBOX FACTURA ELECTRONICA -------------- */}
+              <label
+                htmlFor="facturaelectronica"
+                style={{ marginLeft: "10px" }}
+              >
+                ¿Desea factura electronica?
+              </label>
+              <input
+                style={{
+                  width: "15px", // Tamaño más claro y consistente
+                  height: "15px",
+                  marginLeft: "40px",
+                  cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+                  accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+                }}
+                type="checkbox"
+                id="facturaElectronica"
+                checked={facturaE}
+                onChange={(e) => setfacturaE(e.target.checked)}
+              />
+            </div>
+            <br />
+
+            {/*-------------- SECCION DATOS DE FACTURA ELECTRONICA -------------- */}
+            {facturaE && (
+              <div>
+                <h3>Datos factura electronica</h3>
+                <form style={{ marginTop: "20px" }}>
+                  <fieldset
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: "5px",
+                      padding: "15px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <legend> Informacion de la factura electronica</legend>
+
+                    {/*-------------- INPUT NOMBRE FACTURA -------------- */}
+                    <div>
+                      <label htmlFor="nombreEmpresa">
+                        Nombre: <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="nombreEmpresa"
+                        type="text"
+                        placeholder="Ingrese el nombre"
+                        // value={formData.apellidos}
+                        // onChange={handleChange}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+                    {/*-------------- INPUT NIT -------------- */}
+                    <div>
+                      <label htmlFor="NIT">
+                        NIT: <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="NIT"
+                        type="number"
+                        placeholder="Ingrese el numero de nit"
+                        // value={formData.celular}
+                        // onChange={handleChange}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+
+                    {/*-------------- INPUT EMAIL FACTURA -------------- */}
+                    <div>
+                      <label htmlFor="emailEmpresa">
+                        Correo electrónico:{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        placeholder="Ingrese el email"
+                        // value={formData.email}
+                        // onChange={handleChange}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+                    {/*-------------- INPUT TELEFONO FACTURA -------------- */}
+                    <div>
+                      <label htmlFor="celular">
+                        Telefono: <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="telefonoF"
+                        type="tel"
+                        placeholder="Ingrese el telefono"
+                        // value={formData.celular}
+                        // onChange={handleChange}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+            )}
+            <button
+              disabled={botondesactivado}
+              type="submit"
+              style={{
+                fontWeight: "500",
+                backgroundColor: "#26547B",
+                color: "white",
+                padding: "10px 20px ",
+                border: "none",
+                borderRadius: "5px",
+                cursor: botondesactivado ? "not-allowed" : "pointer", // Cambiar el cursor según el estado
+                alignSelf: "flex-end",
+                marginRight: "20px",
+              }}
+            >
+              {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
+            </button>
           </fieldset>
-          <button
-            disabled={botondesactivado}
-            type="submit"
-            style={{
-              fontWeight: "500",
-              backgroundColor: "#26547B",
-              color: "white",
-              padding: "10px 20px ",
-              border: "none",
-              borderRadius: "5px",
-              cursor: botondesactivado ? "not-allowed" : "pointer", // Cambiar el cursor según el estado
-              alignSelf: "flex-end",
-              marginRight: "20px",
-            }}
-          >
-            {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
-          </button>
         </form>
       </div>
     </>

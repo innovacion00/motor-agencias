@@ -37,7 +37,8 @@ const Tabla = () => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+       minimumFractionDigits: 0,
     }).format(value);
   };
 
@@ -153,11 +154,13 @@ const Tabla = () => {
       <table>
         <thead>
           <tr>
+            <th>Fecha de creacion</th>
             <th>Cod. reserva</th>
             <th>Hotel</th>
             <th>Check-in</th>
             <th>Check-out</th>
             <th>Agencia</th>
+            <th>Agente</th>
             <th>Huésped</th>
             <th>Plazo para pagar</th>
             <th>Valor a pagar</th>
@@ -168,11 +171,13 @@ const Tabla = () => {
         <tbody>
           {currentItems.map((dato, index) => (
             <tr key={index}>
+              <td>{format(dato.createdAt,"h:mm a DD/MM/YYYY ", "es" )}</td>
               <td>{dato.reservaChatbotId}</td>
               <td>{dato.hotel}</td>
-              <td>{dato.reservation.checkin}</td>
-              <td>{dato.reservation.checkout}</td>
+              <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td>
+              <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td>
               <td>{dato?.agenciaId?.fullName}</td>
+              <td>{dato?.userId?.fullName}</td>
               <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
               <td>
                 {
@@ -192,7 +197,7 @@ const Tabla = () => {
                     format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                     format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
-                  ) : (<p>Monto no valido</p>)
+                  ) : (<p>En proceso</p>)
                 }
 
               </td>
@@ -213,7 +218,7 @@ const Tabla = () => {
                   formatCurrency(dato.totalMitad)
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                   formatCurrency(dato.totalMitad)
-                ) : (<p>Monto no valido</p>)
+                ) : (<p>En proceso </p>)
                 }
 
               </td>
@@ -248,8 +253,8 @@ const Tabla = () => {
                   </span>
                 ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ?
                   (<span className={`${styles.status} ${styles.proces}`}>
-                    Pago en proceso segundo abono
-                  </span>) : (<p>Estado no valido</p>)
+                    Pago total en proceso
+                  </span>) : (<p>Estado en proceso</p>)
                 }
               </td>
               <td>

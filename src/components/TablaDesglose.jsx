@@ -33,32 +33,32 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
             // azuan
             case 1:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // aixo
             case 4:
                 return {
-                    valor: 45000
+                    valor: 35000
                 }
             // Marina
             case 9:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // Abi
             case 5:
                 return {
-                    valor: 45000
+                    valor: 35000
                 }
             // Avexi
             case 6:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // Bocagrande
             case 7:
                 return {
-                    valor: 40000
+                    valor: 30000
                 }
             // 1525
             case 2:
@@ -68,7 +68,7 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
             // Sansiraka
             case 44:
                 return {
-                    valor: 45000
+                    valor: 35000
                 }
             // Axis
             case 48:
@@ -83,18 +83,23 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
             // Madisson
             case 3:
                 return {
-                    valor: 60000
+                    valor: 50000
                 }
             // Windsor
             case 10:
                 return {
-                    valor: 60000
+                    valor: 50000
                 }
             // Zulita
             case 41:
                 return {
-                    valor: 60000
+                    valor: 50000
                 }
+            // Boquilla
+            case 56:
+                return{
+                    valor: 30000
+                }   
             default:
                 return 'Hotel no valido'
         }
@@ -122,8 +127,8 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
         }).format(value);
     };
 
-
-
+    const desyunohospedbase = (hospedajeBase+desayunoBase)
+    // console.log(desyunohospedbase)
     const subTotal = (hospedajeBase + desayunoBase + ivaHospedaje + impoconsumo)
     return (
         <div>
@@ -133,32 +138,22 @@ const TablaDesglose = ({ precio, adults, ninos, fechasreserva }) => {
                         <th>#</th>
                         <th>Paquete</th>
                         <th>Base</th>
-                        <th>Iva/Impoc</th>
+                        <th>Iva</th>
+                        <th>Impoconsumo</th>
                         <th>Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Servicio hospedaje</strong></td>
-                        <td>{formatCurrency(hospedaje.toFixed(0))}</td>
-                        <td>{formatCurrency(hospedajeBase.toFixed(0))}</td>
+                        <td><strong>Servicio hospedaje + A&B</strong></td>
+                        <td>{formatCurrency(subTotal.toFixed(0))}</td>
+                        <td>{formatCurrency(desyunohospedbase.toFixed(0))}</td>
                         <td>{formatCurrency(ivaHospedaje.toFixed(0))}</td>
-                        <td>{formatCurrency(hospedaje.toFixed(0))}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>A&B</strong></td>
-                        <td>{formatCurrency(desayunos.toFixed(0))}</td>
-                        <td>{formatCurrency(desayunoBase.toFixed(0))}</td>
                         <td>{formatCurrency(impoconsumo.toFixed(0))}</td>
-                        <td>{formatCurrency(desayunos.toFixed(0))}</td>
+                        <td>{formatCurrency(subTotal.toFixed(0))}</td>
                     </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><strong>{formatCurrency(subTotal.toFixed(0))}</strong></td>
-                    </tr>
+                    
+                   
                 </tbody>
             </table>
         </div>

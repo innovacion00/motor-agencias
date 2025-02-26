@@ -1,11 +1,11 @@
-.header {
+/* .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 85px;
     background-color: white;
     border-bottom: 1px solid #ddd;
-}
+} */
 
 .logo {
     display: flex;
@@ -66,6 +66,7 @@
 .profile-menu {
   position: sticky;
   display: inline-block;
+  cursor:pointer
 }
 
 .dropdown-content {
@@ -83,6 +84,11 @@
   text-decoration: none;
   color: black;
   cursor: pointer;
+}
+
+.logout-btn button{
+position: absolute;
+
 }
 
 .dropdown-content a:hover, .dropdown-content button:hover {

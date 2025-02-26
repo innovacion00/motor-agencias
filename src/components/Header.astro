@@ -1,11 +1,11 @@
 ---
-const logoPath = '/path/to/ghsuites-logo.png'; // Cambia esta ruta al logo que has mencionado
-const userIconPath = '/path/to/user-icon.png'; // Cambia esta ruta al icono de usuario
-const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ruta al icono de notificación
+const logoPath = "/path/to/ghsuites-logo.png"; // Cambia esta ruta al logo que has mencionado
+const userIconPath = "/path/to/user-icon.png"; // Cambia esta ruta al icono de usuario
+const notificationIconPath = "/path/to/notification-icon.png"; // Cambia esta ruta al icono de notificación
 ---
 
 <style>
-    @import '/public/styles/Header.css'; /* Importa el archivo CSS para estilos */
+  @import "/public/styles/Header.css"; /* Importa el archivo CSS para estilos */
 </style>
 
 <header class="header">
@@ -14,44 +14,53 @@ const notificationIconPath = '/path/to/notification-icon.png'; // Cambia esta ru
         </a>
     </div>
     <nav class="nav">
-        <a href="/misreservas" class="reservations-link">Consultar reservas</a>
-        <a href="/eventos" class="reservations-link" >Eventos</a>
+      <a href="/" class="reservations-link" >Inicio</a>
+        <a href="/misreservas" class="reservations-link">Gestionar reservas</a>
         <div class="icons">
             <!-- <div class="notification-icon">
               <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Notification_icon.png" alt="Notification Icon" />
             </div> -->
-                <div class="profile-menu">
-                    <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/genericavatar_icon.jpg" alt="User Icon" id="profile-img"  />
-                    <div id="dropdown-menu" class="dropdown-content" style="display: none;">
-                        <button id="logout-btn">Cerrar sesión</button>
-                      </div>
-                    </div>
-                </div>
-            </div>
+      <div class="profile-menu">
+        <img
+          src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/genericavatar_icon.jpg"
+          alt="User Icon"
+          id="profile-img"
+        />
+        <div id="dropdown-menu" class="dropdown-content" style="display: none;">
+          <button id="logout-btn">Cerrar sesión</button>
+          <button id="user-dashboard-btn">Mi perfil</button>
+          <!-- Nuevo botón -->
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 </header>
 
 <script>
-    document.getElementById('profile-img').addEventListener('click', function () {
-  const dropdownMenu = document.getElementById('dropdown-menu');
-  dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
-});
+  document.getElementById('profile-img').addEventListener('click', function () {
+      const dropdownMenu = document.getElementById('dropdown-menu');
+      dropdownMenu.style.display = dropdownMenu.style.display === 'none' ? 'block' : 'none';
+  });
 
-// Función de cierre de sesión
-document.getElementById('logout-btn').addEventListener('click', function () {
-  // Remover el token de localStorage o sessionStorage
-  localStorage.removeItem('authToken'); // O usa sessionStorage si lo guardaste allí
-  
-  // Redirigir al usuario a la página de login
-  window.location.href = 'https://www.gehsuites.com/es';
-});
+  // Función de cierre de sesión
+  document.getElementById('logout-btn').addEventListener('click', function () {
+      // Remover el token de localStorage o sessionStorage
+      localStorage.removeItem('authToken'); // O usa sessionStorage si lo guardaste allí
+      
+      // Redirigir al usuario a la página de login
+      window.location.href = 'https://www.gehsuites.com/es';
+  });
 
-// Opción para cerrar el menú si se hace clic fuera
-window.addEventListener('click', function(event) {
-  const dropdownMenu = document.getElementById('dropdown-menu');
-  if (!(event.target instanceof Element) || !event.target.matches('#profile-img')) {
-    dropdownMenu.style.display = 'none';
-  }
-});
+  // Función para redirigir al tablero de usuario
+  document.getElementById('user-dashboard-btn').addEventListener('click', function () {
+      window.location.href = '/tablerousuario'; // Redirige al tablero de usuario
+  });
+
+  // Opción para cerrar el menú si se hace clic fuera
+  window.addEventListener('click', function(event) {
+      const dropdownMenu = document.getElementById('dropdown-menu');
+      if (!(event.target instanceof Element) || !event.target.matches('#profile-img')) {
+          dropdownMenu.style.display = 'none';
+      }
+  });
 </script>

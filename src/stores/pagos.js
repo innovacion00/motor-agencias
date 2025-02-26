@@ -42,3 +42,41 @@ export const generarLinkPago = async (id, booleano) => {
 
 }
 
+export const generarLinkPagoBilletera = async (id, booleano) => {
+    console.log(id)
+    try {
+        const userFromCookie = Cookies.get("token");
+        const parsedUser = userFromCookie ? JSON.parse(userFromCookie) : null;
+        console.log(parsedUser)
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", `Bearer ${parsedUser}`);
+
+        const raw = JSON.stringify({
+            reservaId: id,
+            pagoTotal: booleano
+        });
+
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+        };
+
+        const response = await fetch("https://gehsuitesapps.com/agencias/v1/reservas/pago-billetera-compuesto", requestOptions)
+
+        if (response.ok) {
+            const data = await response.json();
+            // console.log(data.linkInfo)
+            linkPago.set(data.linkInfo)
+            return data.linkInfo
+        } else {
+            console.log('error al generar link')
+        }
+
+    } catch (error) {
+        console.log('erro en la peticion', error)
+    }
+
+}
+

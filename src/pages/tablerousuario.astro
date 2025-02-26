@@ -31,5 +31,16 @@ import Userdashboard from "../components/Userdashboard.jsx"
     <Userdashboard client:load/>
   
  </body>
+
+ <script>
+  function checkAuth() {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      window.location.href = "/login"; // Redirige al login si no hay token
+    }
+  }
+
+  checkAuth(); // Llamamos a esta función al cargar la página
+ </script>
 </html>
 
