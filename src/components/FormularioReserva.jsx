@@ -222,6 +222,8 @@ const FormularioReserva = ({ id }) => {
       };
       const informacionD = JSON.stringify({
         total: Math.round(totalRetenciones),
+        adicionAlmuerzo:almuerzo,
+        adicionCena:cena,
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,

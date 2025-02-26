@@ -21,16 +21,33 @@ const Gestionar = ({ reservas }) => {
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
   const [datosDelUsuario, setdatosDelUsuario] = useState();
+  const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false)
+  const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false)
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
 
   let contador = 1;
 
+
+
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
+
+    if (reservas?.adicionCena) {
+      setmostrarAdicionalC(true);
+    } else {
+      setmostrarAdicionalC(false);
+    }
+
+    if (reservas?.adicionAlmuerzo) {
+      setmostrarAdicionalA(true);
+    } else {
+      setmostrarAdicionalA(false);
+    }
+  
 
     if (reservas.status == "2" || reservas.status == "0") {
       setmostrarnota1(true);
@@ -456,6 +473,16 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
+                {mostrarAdicionalA &&(
+                  <div>
+                <p>Se adicionó almuerzo</p>
+                </div>
+              )}
+              {mostrarAdicionalC&&(
+                <div>
+                <p>Se adicionó cena</p>
+                </div>
+              )}
                 <p className={styles.plazoPago}>
                   Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
                 </p>
