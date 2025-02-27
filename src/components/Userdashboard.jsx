@@ -349,6 +349,7 @@ const UserDashboard = () => {
           <div className="pending-payments-list">
             <div className="pending-payment-item">
               <div>
+                
                 {reservas.slice(0, 3).map((dato, index) => (
                   <tr className="estadopago" key={index}>
                     <tr>
