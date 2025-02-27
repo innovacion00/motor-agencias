@@ -23,6 +23,10 @@ const SwiperSlider = () => {
     >
       <SwiperSlide >
         <a href="/tablerousuario">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-prepagados.jpeg" alt="banner cashback" /></a>
+      </SwiperSlide>
+      <SwiperSlide >
+        <a href="/tablerousuario">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="banner cashback" /></a>
       </SwiperSlide>
       <SwiperSlide>
