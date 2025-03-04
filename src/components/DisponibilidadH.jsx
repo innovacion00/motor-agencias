@@ -4,6 +4,8 @@ import DropdownSearch from "./DropdownSearch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { disponibilidad } from "../stores/disponibilidad";
+import { currency } from "../stores/divisas"; //  store de divisa
+import { useStore } from "@nanostores/react";
 const hotelesData = {
   9: {
     name: "Hotel Marina Suites",
@@ -403,11 +405,14 @@ const idRooms = {
   //Zulita
   41: {},
 
-//Boquilla
+  //Boquilla
   56: {
-    83803: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg",  //Doble
-    83802:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg", //Familiar
-    83801:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg"//
+    83803:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg", //Doble
+    83802:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg", //Familiar
+    83801:
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg", //
   },
 };
 
@@ -430,6 +435,7 @@ const plan_alimentacion = {
 // UseState
 
 export const Cid = ({ id }) => {
+  const currentCurrency = useStore(currency); // COP o USD
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
   const [rangosfechas, setfechas] = useState({});
@@ -439,12 +445,12 @@ export const Cid = ({ id }) => {
   const [categoria, setcategoria] = useState();
   const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id]);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno");
-  const [contadorHabitaciones, setcontadorHabitaciones] = useState(0)
-  const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] = useState("");
+  const [contadorHabitaciones, setcontadorHabitaciones] = useState(0);
+  const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
+    useState("");
 
-  
   //console.log("numero de camas:"camas)
-      const formatCurrency = (value) => {
+  const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
     }
@@ -487,7 +493,7 @@ export const Cid = ({ id }) => {
     setcategoria(category);
     setninos(ninos);
     setadultos(adultos);
-    setfechas(rangosdefechas);  
+    setfechas(rangosdefechas);
     setHabitaciones(resultado);
     setocultarseccion(plan_alimentacion[id]);
     //limpiar los datos de habitaciones
@@ -530,7 +536,6 @@ export const Cid = ({ id }) => {
   const checkout = new Date(
     rangosfechas?.dateRange?.endDate
   ).toLocaleDateString();
- 
 
   const renderIcons = () => {
     const icons = hotelIcons[id] || []; // Obtiene los íconos del hotel actual o un arreglo vacío
@@ -683,7 +688,7 @@ export const Cid = ({ id }) => {
             </div>
           </div>
         )}
-{/* habitaciones?.availability?.map((cam)=>
+        {/* habitaciones?.availability?.map((cam)=>
   cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
@@ -715,15 +720,16 @@ export const Cid = ({ id }) => {
                     <p className="price"></p>
                     <p className="price">
                       {dato.products?.map((product, idx) => {
-                        // Expresión regular para validar el roomName
                         if (regexSeleccionado?.test(product.roomName)) {
+                          const price =
+                            currentCurrency === "USD"
+                              ? product?.baseRate?.amountBeforeTaxUSD
+                              : product?.baseRate?.amountBeforeTax;
+
                           return (
                             <span key={idx}>
-                              {formatCurrency(
-                                product?.baseRate?.amountBeforeTax ||
-                                  "Sin precio disponible"
-                              )}
-                              <span>COP</span>
+                              {formatCurrency(price || "Sin precio disponible")}
+                              <span>{currentCurrency}</span>
                             </span>
                           );
                         }
@@ -736,7 +742,7 @@ export const Cid = ({ id }) => {
                       className={styles.select_room}
                       data-room="Doble Estándar"
                       data-price="#Valor"
-                      onClick={() =>{
+                      onClick={() => {
                         setDatohabitacion((prevState) => [
                           ...prevState,
                           {
@@ -750,19 +756,21 @@ export const Cid = ({ id }) => {
                             precio:
                               dato.products?.find((product) =>
                                 regexSeleccionado.test(product.roomName)
-                              )?.baseRate?.amountBeforeTax ||
-                              "Sin precio disponible",
+                              )?.baseRate?.[
+                                currentCurrency === "USD"
+                                  ? "amountBeforeTaxUSD"
+                                  : "amountBeforeTax"
+                              ] || "Sin precio disponible",
                             NombreH: dato.roomName, //NombreH: dato.roomName,
                             beds: dato.beds, //beds: dato.beds,
                             hotelid: habitaciones?.hotel?.roomcloud_id, //hotelid: habitaciones?.hotel?.roomcloud_id,
-                            ciudad:habitaciones?.hotel?.city, //ciudad:habitaciones?.hotel?.city,
+                            ciudad: habitaciones?.hotel?.city, //ciudad:habitaciones?.hotel?.city,
                             hotelidAutocore: habitaciones?.hotel?.id, //hotelidAutocore: habitaciones?.hotel?.id,
-                            rateId: dato.products?.find((product) => 
+                            rateId: dato.products?.find((product) =>
                               regexSeleccionado.test(product.roomName)
-                            )?.rateId, 
-                            
+                            )?.rateId,
                           },
-                        ])  
+                        ]);
                         setcontadorHabitaciones((prevCount) => prevCount + 1);
                       }}
                     >
@@ -793,7 +801,7 @@ export const Cid = ({ id }) => {
                 <ul id="selected-rooms">
                   <br />
                   <p>{dato.NombreH}</p>
-                  
+
                   <h5>
                     {checkin} - {checkout}
                   </h5>
@@ -804,7 +812,7 @@ export const Cid = ({ id }) => {
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
 
                   <h2>{formatCurrency(dato.precio)} COP</h2>
-                  <button 
+                  <button
                     style={{
                       position: "absolute",
                       bottom: "80px", // Ajusta la posición vertical
@@ -813,10 +821,12 @@ export const Cid = ({ id }) => {
                       border: "none",
                       cursor: "pointer",
                     }}
-                    onClick={(index) => {handleDelete(index);setcontadorHabitaciones((prevCount) =>
-                      prevCount > 0 ? prevCount - 1 : 0
-                    );
-                  }}
+                    onClick={(index) => {
+                      handleDelete(index);
+                      setcontadorHabitaciones((prevCount) =>
+                        prevCount > 0 ? prevCount - 1 : 0
+                      );
+                    }}
                   >
                     <FontAwesomeIcon
                       icon={faTrash}
