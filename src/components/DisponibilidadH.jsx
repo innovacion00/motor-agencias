@@ -729,7 +729,7 @@ export const Cid = ({ id }) => {
                           return (
                             <span key={idx}>
                               {formatCurrency(price || "Sin precio disponible")}
-                              <span>{currentCurrency}</span>
+                              <span> {currentCurrency}</span>
                             </span>
                           );
                         }
