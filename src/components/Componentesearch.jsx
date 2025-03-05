@@ -237,7 +237,7 @@ const BusquedaCartagena = () => {
 
   return (
     <>
-      <title>Resultados {Ciudad}</title>
+     
 
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
