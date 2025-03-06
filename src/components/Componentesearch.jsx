@@ -4,9 +4,11 @@ import Swal from "sweetalert2";
 import styles from "../../public/styles/componentesearch.module.css";
 import DropdownSearch from "./DropdownSearch";
 import { nightsStore } from "../stores/disponibilidad";
+import { currency } from "../stores/divisas";
 
 //UseState
 const BusquedaCartagena = () => {
+  const currentCurrency = currency.get(); // Lee directamente desde Nano Store
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
   const [nochesyedades1, setnochesyedades] = useState({});
   const [categoria, setcategoria] = useState();
@@ -161,7 +163,10 @@ const BusquedaCartagena = () => {
     data.forEach((entry) => {
       entry.available_rooms.forEach((room) => {
         room.products.forEach((product) => {
-          const amount = product.baseRate.amountBeforeTax; // Antes de impuestos
+          const amount =
+            currentCurrency == "USD"
+              ? product.baseRate.amountBeforeTaxUSD // Antes de impuestos USD
+              : product.baseRate.amountBeforeTax; // Antes de impuestos COP
           if (amount < minAmount) {
             minAmount = amount;
           }
@@ -232,7 +237,7 @@ const BusquedaCartagena = () => {
 
   return (
     <>
-      <title>Resultados {Ciudad}</title>
+     
 
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />

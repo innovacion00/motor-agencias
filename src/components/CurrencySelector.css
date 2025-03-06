@@ -1,0 +1,59 @@
+.currency-header {
+    background-color: #26547B;
+    padding: 7px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .currency-button {
+    font-weight: 500;
+    background-color: white;
+    color: #26547B;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .currency-button:hover {
+    background-color: #1f4563;
+    color: white;
+  }
+  
+  /* Modal */
+  .currency-modal {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  .modal-title {
+    font-weight: bold;
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .currency-option {
+    font-weight: 500;
+    background-color: #26547B;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: background-color 0.3s;
+  }
+  
+  .currency-option:hover {
+    background-color: #1f4563;
+  }
+  

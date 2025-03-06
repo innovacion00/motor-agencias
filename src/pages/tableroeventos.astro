@@ -8,12 +8,9 @@ async function fetchProtectedData() {
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DropdownSearch from '../components/DropdownSearch';
 import Componentesearch from "../components/Componentesearch";
-import Userdashboard from "../components/Userdashboard.jsx"
-
-
-
-
+import UserDashboardEventos from "../components/UserDashboardEventos.jsx"
 ---
+
 <html lang = "es">
     <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
@@ -28,8 +25,8 @@ import Userdashboard from "../components/Userdashboard.jsx"
   
  </head>
  <body>
-    <Userdashboard client:load/>
-  
+    
+<UserDashboardEventos/>
  </body>
 
  <script>
@@ -43,4 +40,3 @@ import Userdashboard from "../components/Userdashboard.jsx"
   checkAuth(); // Llamamos a esta función al cargar la página
  </script>
 </html>
-

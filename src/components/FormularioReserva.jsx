@@ -6,6 +6,8 @@ import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
 import TablaDesglose from "./TablaDesglose";
 import { faC } from "@fortawesome/free-solid-svg-icons";
+import { currency } from "../stores/divisas";
+import { useStore } from "@nanostores/react";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -39,10 +41,12 @@ const FormularioReserva = ({ id }) => {
     "19629", //Axis
     "15740", //Sansiraka
   ];
+
   const [datosreserva, setDatosreserva] = useState([]);
   const [mostrarTexto, setMostrarTexto] = useState(false); // Estado para controlar la visibilidad del texto //false para mas de 72h
   const [mostrarBoton, setmostrarBoton] = useState(false);
   const [fechasreserva, setfechasreserva] = useState();
+  const currentCurrency = useStore(currency); //USD O COP
   const [cantadultos, setcantadultos] = useState();
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
@@ -57,6 +61,10 @@ const FormularioReserva = ({ id }) => {
     fechaNacimiento: "",
     email: "",
     celular: "",
+    nombreEmpresa: "",
+    nit: "",
+    emailEmpresa: "",
+    telefonoF: "",
     // esExtranjero:false
   });
 
@@ -106,7 +114,7 @@ const FormularioReserva = ({ id }) => {
   const valorextranjero =
     esExtranjero == true ? "es extranjero" : "NO es extanjero";
 
-  // Parsea numeros de body a string
+  // PARSEA NUMEROS DE BODY A STRING
   const totalHuespedes = cantadultos + cantninos;
   const adults = JSON.stringify(cantadultos);
   const ninos = JSON.stringify(cantninos);
@@ -115,7 +123,7 @@ const FormularioReserva = ({ id }) => {
   const habitaciones = JSON.stringify(reserva.length);
   const cantnoches = reserva[0]?.nights;
 
-  // Formatea correctamente las fechas
+  // FORMATEA CORRECTAMENTE LAS FECHAS
   const checkin = format(
     fechasreserva?.dateRange?.startDate,
     "YYYY-MM-DD",
@@ -127,17 +135,17 @@ const FormularioReserva = ({ id }) => {
     "es"
   );
 
-  //Convetir edades en string y separarlos por coma
+  //CONVETIR EDADES EN STRING Y SEPARARLOS POR COMA
   const childrenAgesString =
     fechasreserva?.layout
       .flatMap((room) => room.children_ages || [])
       .join(",") || "";
 
-  //Arreglo con el rango de edades de los niños
+  //ARREGLO CON EL RANGO DE EDADES DE LOS NIÑOS
   const edadesninos = fechasreserva?.layout.map((dato) =>
     dato.children_ages.join(",")
   );
-  // console.log("edades niños",edadesninos)
+  // CONSOLE.LOG("EDADES NIÑOS",EDADESNINOS)
 
   const manejarDatos = (datosHijo, rtePorcentajes) => {
     //  console.log("Datos recibidos del hijo:", datosHijo);
@@ -145,7 +153,7 @@ const FormularioReserva = ({ id }) => {
     setRetencionesPorcentaje(rtePorcentajes);
   };
 
-  //Calculo del IVA
+  //CALCULO DEL IVA
   const marcadoAlmuerzo = almuerzo ? 30000 * totalHuespedes + cantnoches : 0;
   const marcadoCena = cena ? 30000 * totalHuespedes + cantnoches : 0;
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
@@ -169,6 +177,7 @@ const FormularioReserva = ({ id }) => {
       );
     }
   };
+  
   const totalRetenciones = totalRetencionesF();
   // console.log(totalRetenciones)
   //  console.log(checkin);
@@ -180,6 +189,10 @@ const FormularioReserva = ({ id }) => {
     apellidos,
     email,
     celular,
+    nombreEmpresa,
+    nit,
+    emailEmpresa,
+    telefonoF,
   } = formData;
 
   const handleChange = (e) => {
@@ -211,7 +224,6 @@ const FormularioReserva = ({ id }) => {
       });
       return;
     }
-
     const enviardatos = async () => {
       const filtrarRetenciones = (retenciones) => {
         return Object.fromEntries(
@@ -220,8 +232,10 @@ const FormularioReserva = ({ id }) => {
           })
         );
       };
-      const informacionD = JSON.stringify({
-        total: Math.round(totalRetenciones),
+      const informacionD = JSON.stringify( {
+        total: Math.round(totalRetenciones), //VALOR TOTAL
+        adicionAlmuerzo: almuerzo, // VALOR DE CHECKBOX DE ALMUERZO
+        adicionCena: cena,
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
@@ -243,62 +257,88 @@ const FormularioReserva = ({ id }) => {
             porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
           },
         }),
-        planAlimentario: reserva[0].plandealimentacion,
-        exentoIva: esExtranjero,
+        planAlimentario: reserva[0].plandealimentacion, //TIPO DE PLAN DE ALIMENTACION
+        exentoIva: esExtranjero, // HUESPED EXTRANJERO O COLOMBIANO
         reservaInfo: {
           agency: {
             is_agency: true,
-            agency_type: agencia.agencia.category, //token
+            agency_type: agencia.agencia.category, //TOKEN
             external_ref_id: "666222",
           },
           reservation: {
-            adults: adults,
-            checkin: checkin,
-            checkout: checkout,
-            children: ninos,
-            children_ages: childrenAgesString, //
-            city: reserva[0].ciudad,
-            country: "COL",
-            currency: "COP",
-            email: formData.email, //
-            firstName: formData.nombreCompleto,
-            lastName: formData.apellidos,
-            nights: noches,
+            adults: adults, //N°ADULTOS
+            checkin: checkin, //FECHA DE CHECKIN
+            checkout: checkout, // FECHA DE CHEKOUT
+            children: ninos, // N°NIÑOS
+            children_ages: childrenAgesString, // STRING DE EDADES NIÑOS
+            city: reserva[0].ciudad, // CIUDAD SELECCIONADA
+            country: "COL", //PAIS
+            currency: currentCurrency, //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
+            email: formData.email, //FORMDATA INPUT EMAIL
+            firstName: formData.nombreCompleto, // FORMDATA INPUT NOMBRECOMPLETO
+            lastName: formData.apellidos, //FORMDATA INPUT APELLIDOS
+            nights: noches, //N° DE NOCHES
             notes:
               DatosRetenciones == null
-              ? `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${
-                  valorextranjero == "es extranjero"
-                    ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                    : ""
-                } ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}`
-              : `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${
-                  valorextranjero == "es extranjero"
-                    ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                    : ""
-                } ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}`,
-            rooms: habitaciones,
+                ? `Creada por la agencia: ${
+                    agencia.agencia.fullName
+                  }. Reserva de ${noches} noches a nombre de ${
+                    formData.nombreCompleto
+                  } ${formData.apellidos}. ${
+                    valorextranjero == "es extranjero"
+                      ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                      : ""
+                  } ${cena ? "El huésped ha solicitado cena." : ""} ${
+                    almuerzo ? "El huésped ha solicitado almuerzo." : ""
+                  }${
+                    facturaE
+                      ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                      : ""
+                  }  `
+                : `Creada por la agencia: ${
+                    agencia.agencia.fullName
+                  }. Reserva de ${noches} noches a nombre de ${
+                    formData.nombreCompleto
+                  } ${
+                    formData.apellidos
+                  }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${
+                    valorextranjero == "es extranjero"
+                      ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                      : ""
+                  } ${
+                    cena ? "La agencia marco la casilla de solicitar cena." : ""
+                  } ${
+                    almuerzo
+                      ? "La agencia marco la casilla de solicitar almuerzo."
+                      : ""
+                  }${
+                    facturaE
+                      ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                      : ""
+                  }`,
+            rooms: habitaciones, // TIPO DE HABITACIONES
             roomsData: reserva.map((dato, index) => {
-              const roomConfig = fechasreserva.layout[index] || {}; // Asegúrate de obtener el layout correspondiente a la habitación.
+              const roomConfig = fechasreserva.layout[index] || {}; // ASEGÚRATE DE OBTENER EL LAYOUT CORRESPONDIENTE A LA HABITACIÓN.
               return {
-                nombreHabitacion: dato.NombreH,
-                adults: JSON.stringify(roomConfig.adults || 0), // Adultos específicos por habitación.
-                children_ages: roomConfig.children_ages?.join(",") || "",
-                children: roomConfig.children_ages
+                nombreHabitacion: dato.NombreH, //NOMBRE DE LA HABITACION
+                adults: JSON.stringify(roomConfig.adults || 0), // ADULTOS ESPECÍFICOS POR HABITACIÓN.
+                children_ages: roomConfig.children_ages?.join(",") || "", //EDADES DE LOS NIÑOS POR HABITACION [ARRAY]
+                children: roomConfig.children_ages // NIÑOS ESPECIFICOS POR HABITACION [ARRAY]
                   ? JSON.stringify(roomConfig.children_ages.length)
                   : "",
-                checkin: checkin,
-                checkout: checkout,
-                currency: "COP",
-                id: dato.roomId,
-                quantity: "1",
-                rateId: dato.rateId,
-                unitaryPrice: dato.precio,
+                checkin: checkin, //TIPO CHECKIN
+                checkout: checkout, //TIPO CHECKOUT
+                currency: currentCurrency, //TIPO DE MONEDA ACTUALMENTE (USD//COP)
+                id: dato.roomId, //  ROOMID DE LA HABITACION
+                quantity: "1", // QUANTITY ??
+                rateId: dato.rateId, //RATEID = HABITACION DEPENDIENDO DEL TIPO DE ALIMENTACION
+                unitaryPrice: dato.precio, //PRECIO POR HABITACION
               };
             }),
-            telephone: `${formData.celular}`,
+            telephone: `${formData.celular}`, //NUMERO DE CELULAR
           },
         },
-      }); //JSON.STRINGIFY
+      })//JSON.STRINGIFY
 
       try {
         // error409
@@ -319,7 +359,7 @@ const FormularioReserva = ({ id }) => {
         if (response.ok) {
           const data = await response.json();
 
-          // Notificación de éxito
+          // NOTIFICACIÓN DE ÉXITO
           console.log(data);
           Swal.fire({
             icon: "success",
@@ -327,7 +367,7 @@ const FormularioReserva = ({ id }) => {
             text: "Se ha confirmado su reserva con exito.",
           });
           setTimeout(() => {
-            window.location.href = "/misreservas"; //Redireccion hacia la pagina de reserva pagada
+            window.location.href = "/misreservas"; //REDIRECCION HACIA LA PAGINA DE RESERVA PAGADA
           }, 2500);
         } else if (response.status === 409) {
           // Manejo del error 409
@@ -340,7 +380,7 @@ const FormularioReserva = ({ id }) => {
           throw new Error("Error al consultar la API");
         }
       } catch (error) {
-        // Manejo de errores con SweetAlert
+        // MANEJO DE ERRORES CON SWEETALERT
         Swal.fire({
           icon: "error",
           title: "Error al realizar la reserva",
@@ -355,7 +395,7 @@ const FormularioReserva = ({ id }) => {
     enviardatos(); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
   };
 
-  //funcion para formatear el los valores de dinero
+  //FUNCION PARA FORMATEAR EL LOS VALORES DE DINERO
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
@@ -802,8 +842,8 @@ const FormularioReserva = ({ id }) => {
                         id="nombreEmpresa"
                         type="text"
                         placeholder="Ingrese el nombre"
-                        // value={formData.apellidos}
-                        // onChange={handleChange}
+                        value={formData.nombreEmpresa}
+                        onChange={handleChange}
                         style={{
                           display: "block",
                           width: "100%",
@@ -820,11 +860,11 @@ const FormularioReserva = ({ id }) => {
                         NIT: <span style={{ color: "red" }}>*</span>
                       </label>
                       <input
-                        id="NIT"
+                        id="nit"
                         type="number"
                         placeholder="Ingrese el numero de nit"
-                        // value={formData.celular}
-                        // onChange={handleChange}
+                        value={formData.nit}
+                        onChange={handleChange}
                         style={{
                           display: "block",
                           width: "100%",
@@ -843,11 +883,11 @@ const FormularioReserva = ({ id }) => {
                         <span style={{ color: "red" }}>*</span>
                       </label>
                       <input
-                        id="email"
+                        id="emailEmpresa"
                         type="email"
                         placeholder="Ingrese el email"
-                        // value={formData.email}
-                        // onChange={handleChange}
+                        value={formData.emailEmpresa}
+                        onChange={handleChange}
                         style={{
                           display: "block",
                           width: "100%",
@@ -867,8 +907,8 @@ const FormularioReserva = ({ id }) => {
                         id="telefonoF"
                         type="tel"
                         placeholder="Ingrese el telefono"
-                        // value={formData.celular}
-                        // onChange={handleChange}
+                        value={formData.telefonoF}
+                        onChange={handleChange}
                         style={{
                           display: "block",
                           width: "100%",
