@@ -3,7 +3,7 @@ import "../../public/styles/Header.css"; // Importa el archivo CSS
 
 const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [userData, setUserData] = useState(null)
+  const [userData, setUserData] = useState()
   const [profileImage, setprofileImage] = useState(userData?.imageUrl || "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
   
   const toggleDropdown = () => {
@@ -21,7 +21,7 @@ const Header = () => {
     
   }, [])
 
-  console.log(userData?.imageUrl)
+  
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
