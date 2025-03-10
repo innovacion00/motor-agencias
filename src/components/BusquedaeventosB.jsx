@@ -13,6 +13,7 @@ const hoteles = [
     salones: "9",
     capacidadPersonas: "250",
     id: 1,
+    ciudad:"Bogota"
   },
   {
     nombre: "Hotel Madisson Inn",
@@ -22,6 +23,7 @@ const hoteles = [
     salones: "6",
     capacidadPersonas: "90",
     id: 2,
+    ciudad:"Bogota"
   },
 ];
 
@@ -43,6 +45,7 @@ export const ResultadosCartagena = () => {
       saloneshotel: hotel.salones,
       habitacion: hotel.habitaciones,
       personas: hotel.capacidadPersonas,
+      ciudad: hotel.ciudad,
     };
 
     // Guardar en el localStorage

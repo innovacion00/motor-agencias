@@ -4,6 +4,9 @@ import "../../public/styles/SolicitudPresupuesto.css";
 
 //#region useState
 const SolicitudPresupuesto = () => {
+  const [ciduad, setCiduad] = useState("");
+  const [salones, setSalones] = useState([]);
+  const [mostrarSalones, setMostrarSalones] = useState(false)
   const [tipoAcomodacion, settipoAcomodacion] = useState("Auditorio");
   const [radioAlimBebida, setradioAlimBebida] = useState(true);
   const [mostrarTextarea, setMostrarTextarea] = useState(false);
@@ -11,6 +14,9 @@ const SolicitudPresupuesto = () => {
   const [mostrarTextareaDecoracion, setMostrarTextareaDecoracion] = useState(false);
 
 
+  const handleRadioChange = (event) => {
+    setMostrarSalones(event.target.value === "si");
+  };
   const handleRadioChangeA = (event) => {
     setradioAlimBebida(event.target.value == "no");
   };
@@ -23,10 +29,54 @@ const SolicitudPresupuesto = () => {
     setMostrarTextareaDecoracion(event.target.value === "si");
   };
 
+
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("infohotel"));
-    setinfohotel(data);
+    if (data) {
+      setinfohotel(data);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!infohotel) return;
+
+    if (infohotel.ciudad === "Bogota") {
+      setSalones([
+        {
+          nombre: "Salón Windsor",
+          imagen: "https://via.placeholder.com/200",
+          espacio: "200m²",
+          piso: "2",
+          capacidad: "100 personas",
+        },
+        {
+          nombre: "Salón Real",
+          imagen: "https://via.placeholder.com/200",
+          espacio: "300m²",
+          piso: "3",
+          capacidad: "150 personas",
+        },
+      ]);
+    } else if (infohotel.ciudad === "SantaMarta") {
+      setSalones([
+        {
+          nombre: "Salón Caribe",
+          imagen: "https://via.placeholder.com/200",
+          espacio: "250m²",
+          piso: "1",
+          capacidad: "120 personas",
+        },
+        {
+          nombre: "Salón Playa",
+          imagen: "https://via.placeholder.com/200",
+          espacio: "350m²",
+          piso: "2",
+          capacidad: "180 personas",
+        },
+      ]);
+    }
+  }, [infohotel]);
+
 
   console.log(infohotel);
 
@@ -308,6 +358,7 @@ const SolicitudPresupuesto = () => {
             Escribe los detalles de los audiovisuales que necesitas:
           </label>
           <textarea
+          className="observaciones-textarea"
             id="detallesAudiovisuales"
             placeholder="Describe qué audiovisuales necesitas..."
             rows="4"
@@ -350,6 +401,7 @@ const SolicitudPresupuesto = () => {
             Escribe los detalles de la decoración que necesitas:
           </label>
           <textarea
+          className="observaciones-textarea"
             id="detallesDecoracion"
             placeholder="Describe qué tipo de decoración necesitas..."
             rows="4"
