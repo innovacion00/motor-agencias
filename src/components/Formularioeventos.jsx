@@ -6,13 +6,13 @@ import "../../public/styles/SolicitudPresupuesto.css";
 const SolicitudPresupuesto = () => {
   const [ciduad, setCiduad] = useState("");
   const [salones, setSalones] = useState([]);
-  const [mostrarSalones, setMostrarSalones] = useState(false)
+  const [mostrarSalones, setMostrarSalones] = useState(false);
   const [tipoAcomodacion, settipoAcomodacion] = useState("Auditorio");
   const [radioAlimBebida, setradioAlimBebida] = useState(true);
   const [mostrarTextarea, setMostrarTextarea] = useState(false);
   const [infohotel, setinfohotel] = useState(null); // <-- asegúrate de iniciar en null o {}
-  const [mostrarTextareaDecoracion, setMostrarTextareaDecoracion] = useState(false);
-
+  const [mostrarTextareaDecoracion, setMostrarTextareaDecoracion] =
+    useState(false);
 
   const handleRadioChange = (event) => {
     setMostrarSalones(event.target.value === "si");
@@ -24,11 +24,10 @@ const SolicitudPresupuesto = () => {
   const handleAudiovisualesChange = (event) => {
     setMostrarTextarea(event.target.value === "si");
   };
-  
+
   const handleDecoracionChange = (event) => {
     setMostrarTextareaDecoracion(event.target.value === "si");
   };
-
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("infohotel"));
@@ -37,46 +36,167 @@ const SolicitudPresupuesto = () => {
     }
   }, []);
 
+  // Definir salones según la ciudad y el hotel guardado en infohotel
   useEffect(() => {
     if (!infohotel) return;
 
     if (infohotel.ciudad === "Bogota") {
-      setSalones([
-        {
-          nombre: "Salón Windsor",
-          imagen: "https://via.placeholder.com/200",
-          espacio: "200m²",
-          piso: "2",
-          capacidad: "100 personas",
-        },
-        {
-          nombre: "Salón Real",
-          imagen: "https://via.placeholder.com/200",
-          espacio: "300m²",
-          piso: "3",
-          capacidad: "150 personas",
-        },
-      ]);
+      if (infohotel.nombrehotel === "Hotel Windsor House") {
+        setSalones([
+          {
+            nombre: "Bond Club",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "200m²",
+            piso: "2",
+            capacidad: "100 personas",
+          },
+          {
+            nombre: "Cambridge",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "New Castle",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "Manchester",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "Kingstone",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "Gales",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "London",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "Oxford",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+          {
+            nombre: "Sala Windsor",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "300m²",
+            piso: "3",
+            capacidad: "150 personas",
+          },
+        ]);
+      } else if (infohotel.nombrehotel === "Hotel Madisson Inn") {
+        setSalones([
+          {
+            nombre: "Salón Zen ",
+            imagen:
+              "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/Sal%C3%B3nZenMadisson.jpeg",
+            espacio: "250m²",
+            piso: "1",
+            capacidad: "90 personas",
+          },
+          {
+            nombre: "Salón Iraca",
+            imagen:
+              "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/Sal%C3%B3nIracaMadisson.jpeg",
+            espacio: "280m²",
+            piso: "2",
+            capacidad: "80 personas",
+          },
+          {
+            nombre: "Salón Tagua",
+            imagen:
+              "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/SalonTagua2Madisson.jpeg",
+            espacio: "280m²",
+            piso: "2",
+            capacidad: "40 personas",
+          },
+          {
+            nombre: "Salón Macana",
+            imagen:
+              "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/Sal%C3%B3nMacanaMadisson.jpeg",
+            espacio: "280m²",
+            piso: "2",
+            capacidad: "25 personas",
+          },
+          {
+            nombre: "Sala de reuniones VIP 1",
+            imagen:
+              "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/SalaVIP1Madisson.JPG",
+            espacio: "280m²",
+            piso: "2",
+            capacidad: "6 personas",
+          },
+          {
+            nombre: "Sala de reuniones VIP 2",
+            imagen:
+              "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/SalonVIP2Madisson.JPG",
+            espacio: "280m²",
+            piso: "2",
+            capacidad: "6 personas",
+          },
+        ]);
+      }
     } else if (infohotel.ciudad === "SantaMarta") {
-      setSalones([
-        {
-          nombre: "Salón Caribe",
-          imagen: "https://via.placeholder.com/200",
-          espacio: "250m²",
-          piso: "1",
-          capacidad: "120 personas",
-        },
-        {
-          nombre: "Salón Playa",
-          imagen: "https://via.placeholder.com/200",
-          espacio: "350m²",
-          piso: "2",
-          capacidad: "180 personas",
-        },
-      ]);
+      if (infohotel.nombrehotel === "Hotel Irotama") {
+        setSalones([
+          {
+            nombre: "Salón Caribe",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "250m²",
+            piso: "1",
+            capacidad: "120 personas",
+          },
+          {
+            nombre: "Salón Playa",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "350m²",
+            piso: "2",
+            capacidad: "180 personas",
+          },
+        ]);
+      } else if (infohotel.nombrehotel === "Hotel Zuana") {
+        setSalones([
+          {
+            nombre: "Salón Coral",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "220m²",
+            piso: "1",
+            capacidad: "110 personas",
+          },
+          {
+            nombre: "Salón Mar",
+            imagen: "https://via.placeholder.com/200",
+            espacio: "330m²",
+            piso: "3",
+            capacidad: "160 personas",
+          },
+        ]);
+      }
     }
   }, [infohotel]);
-
 
   console.log(infohotel);
 
@@ -118,8 +238,6 @@ const SolicitudPresupuesto = () => {
     },
   ];
 
- 
-
   return (
     <div>
       <div className="container">
@@ -142,14 +260,56 @@ const SolicitudPresupuesto = () => {
             </p>
             <div className="radio-group">
               <label>
-                <input type="radio" name="hotel" value="si" /> Sí, quiero
-                seleccionar los salones.
+                <input
+                  type="radio"
+                  name="hotel"
+                  value="si"
+                  onChange={handleRadioChange}
+                />{" "}
+                Sí, quiero seleccionar los salones.
               </label>
               <label>
-                <input type="radio" name="hotel" value="no" defaultChecked />{" "}
+                <input
+                  type="radio"
+                  name="hotel"
+                  value="no"
+                  defaultChecked
+                  onChange={handleRadioChange}
+                />{" "}
                 No, prefiero que el asesor elija el mejor salón para mi evento.
               </label>
             </div>
+            {mostrarSalones && (
+              <div className="salones-lista">
+                <h3>Salones Disponibles:</h3>
+                <div className="salones-container">
+                  {salones.map((salon, index) => (
+                    <div key={index} className="salon-card">    
+                      <div className="infosalon">
+                      <div className="img">
+                        <img src={salon.imagen} alt={salon.nombre} />
+                      </div>
+                        <div className="detallesSalon">
+                        <h4>{salon.nombre}</h4>
+                          <div className="ambiente">
+                          <p>  
+                            <b>Espacio:</b> {salon.espacio}
+                          </p>
+                          <p>
+                            <b>Piso:</b> {salon.piso}
+                          </p>
+                          <p>
+                            <b>Capacidad Máxima:</b> {salon.capacidad}
+                          </p>
+                          </div>
+                        </div>
+                      </div>
+                      <button>Seleccionar</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
         <section className="section">
@@ -217,7 +377,7 @@ const SolicitudPresupuesto = () => {
             </label>
           </div>
           <br />
-          <label> 
+          <label>
             Tipo de acomodación <span style={{ color: "red" }}>*</span>
           </label>
           <div className="accommodation-type">
@@ -328,88 +488,87 @@ const SolicitudPresupuesto = () => {
           <hr />
           <br />
           <label htmlFor="reqAudiovisuales">
-        ¿Requieres audiovisuales? <span style={{ color: "red" }}>*</span>
-      </label>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="audiovisuales"
-            value="si"
-            onChange={handleAudiovisualesChange}
-          />{" "}
-          Sí
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="audiovisuales"
-            value="no"
-            defaultChecked
-            onChange={handleAudiovisualesChange}
-          />{" "}
-          No
-        </label>
-      </div>
-      {/* Mostrar textarea solo si selecciona "Sí" */}
-      {mostrarTextarea && (
-        <div>
-          <label htmlFor="detallesAudiovisuales">
-            Escribe los detalles de los audiovisuales que necesitas:
+            ¿Requieres audiovisuales? <span style={{ color: "red" }}>*</span>
           </label>
-          <textarea
-          className="observaciones-textarea"
-            id="detallesAudiovisuales"
-            placeholder="Describe qué audiovisuales necesitas..."
-            rows="4"
-            cols="50"
-            style={{ width: "100%", marginTop: "10px" }}
-          />
-        </div>
-      )}
+          <div className="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="audiovisuales"
+                value="si"
+                onChange={handleAudiovisualesChange}
+              />{" "}
+              Sí
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="audiovisuales"
+                value="no"
+                defaultChecked
+                onChange={handleAudiovisualesChange}
+              />{" "}
+              No
+            </label>
+          </div>
+          {/* Mostrar textarea solo si selecciona "Sí" */}
+          {mostrarTextarea && (
+            <div>
+              <label htmlFor="detallesAudiovisuales">
+                Escribe los detalles de los audiovisuales que necesitas:
+              </label>
+              <textarea
+                className="observaciones-textarea"
+                id="detallesAudiovisuales"
+                placeholder="Describe qué audiovisuales necesitas..."
+                rows="4"
+                cols="50"
+                style={{ width: "100%", marginTop: "10px" }}
+              />
+            </div>
+          )}
           <hr />
           <br />
           <label htmlFor="reqDecoracion">
-        ¿Requieres decoración? <span style={{ color: "red" }}>*</span>
-      </label>
-      <div className="radio-group">
-        <label>
-          <input
-            type="radio"
-            name="decoracion"
-            value="si"
-            onChange={handleDecoracionChange}
-          />{" "}
-          Sí
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="decoracion"
-            value="no"
-            defaultChecked
-            onChange={handleDecoracionChange}
-          />{" "}
-          No
-        </label>
-        
+            ¿Requieres decoración? <span style={{ color: "red" }}>*</span>
+          </label>
+          <div className="radio-group">
+            <label>
+              <input
+                type="radio"
+                name="decoracion"
+                value="si"
+                onChange={handleDecoracionChange}
+              />{" "}
+              Sí
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="decoracion"
+                value="no"
+                defaultChecked
+                onChange={handleDecoracionChange}
+              />{" "}
+              No
+            </label>
           </div>
           {/* Mostrar el textarea solo si selecciona "Sí" */}
-      {mostrarTextareaDecoracion && (
-        <div>
-          <label htmlFor="detallesDecoracion">
-            Escribe los detalles de la decoración que necesitas:
-          </label>
-          <textarea
-          className="observaciones-textarea"
-            id="detallesDecoracion"
-            placeholder="Describe qué tipo de decoración necesitas..."
-            rows="4"
-            cols="50"
-            style={{ width: "100%", marginTop: "10px" }}
-          />
-        </div>
-      )}  
+          {mostrarTextareaDecoracion && (
+            <div>
+              <label htmlFor="detallesDecoracion">
+                Escribe los detalles de la decoración que necesitas:
+              </label>
+              <textarea
+                className="observaciones-textarea"
+                id="detallesDecoracion"
+                placeholder="Describe qué tipo de decoración necesitas..."
+                rows="4"
+                cols="50"
+                style={{ width: "100%", marginTop: "10px" }}
+              />
+            </div>
+          )}
           <hr />
           <br />
           <label htmlFor="reqAlojamiento">
@@ -425,7 +584,7 @@ const SolicitudPresupuesto = () => {
                 name="alojamiento"
                 value="no"
                 defaultChecked
-              />{" "} 
+              />{" "}
               No
             </label>
           </div>

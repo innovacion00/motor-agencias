@@ -304,3 +304,66 @@
       .checkbox-group.disabled {
        display: none;
       }
+
+      .salones-lista {
+        margin-top: 15px;
+        padding: 10px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+      
+      .salones-container {
+        
+      }
+      
+      .img{
+        width: 300px;
+      }
+
+      .img img{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .infosalon{
+display:flex ;
+align-items: center;
+gap: 19px;
+      }
+
+      .detallesSalon{
+        /* display: flex; */
+        gap: 1rem;
+      }
+
+  
+      .salon-card {
+        align-items: flex-end;
+        justify-content: space-between;
+        display: flex;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: white;
+        text-align: center;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      
+      .salon-card img {
+        width: 100%;
+        border-radius: 8px;
+      }
+      
+      .salon-card h4 {
+        margin: 10px 0;
+        font-size: 18px;
+      }
+      
+      .salon-card p {
+        font-size: 14px;
+        margin: 4px 0;
+      }
+      
