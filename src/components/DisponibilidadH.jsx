@@ -416,6 +416,23 @@ const idRooms = {
   },
 };
 
+const quintuple = {
+  9: false, //marina
+  1: false, //azuan
+  6: false, //avexi
+  7: true, //bocagrande
+  4: false, //aixo
+  5: true, //abi
+  3: false, //madison
+  10: false, //windsor
+  8: false, //rodadero
+  2: false, //1525
+  48: true, //axis
+  44: true, //sansiraka
+  41: false, //Zulita
+  56: true, // Boquilla,
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
@@ -435,6 +452,7 @@ const plan_alimentacion = {
 // UseState
 
 export const Cid = ({ id }) => {
+  const [tooltipActivo, setTooltipActivo] = useState(null);
   const currentCurrency = useStore(currency); // COP o USD
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
@@ -448,6 +466,14 @@ export const Cid = ({ id }) => {
   const [contadorHabitaciones, setcontadorHabitaciones] = useState(0);
   const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
     useState("");
+
+  const habitacionesRestringidas = [
+    "Familiar quintuple",
+    "Quintuple",
+    "QUINTUPLE",
+    "Habitacion Sextuple",
+    "Quíntuple",
+  ];
 
   //console.log("numero de camas:"camas)
   const formatCurrency = (value) => {
@@ -736,46 +762,99 @@ export const Cid = ({ id }) => {
                         return null; // No renderiza nada si no cumple la condición
                       })}
                     </p>
+
+                    {/* Mostrar "Habitaciones disponibles" solo si la habitación está en la lista restringida */}
+                    {habitacionesRestringidas.includes(dato.roomName) && (
+                      <b style={{ marginTop: "100px", color: "red" }}>
+                        Habitaciones disponibles: {dato.count}
+                      </b>
+                    )}
                     <br />
 
-                    <button
-                      className={styles.select_room}
-                      data-room="Doble Estándar"
-                      data-price="#Valor"
-                      onClick={() => {
-                        setDatohabitacion((prevState) => [
-                          ...prevState,
-                          {
-                            plandealimentacion: planDeAlimentacionFormateado, //plandealimentacion: planDeAlimentacionFormateado,
-                            roomId: dato.roomId, //roomId: dato.roomId,
-                            checkin: checkin, // checkin: checkin,
-                            checkout: checkout, // checkout: checkout,
-                            nights: rangosfechas.nights, //nights: rangosfechas.nights,
-                            imgH: idRooms[habitaciones.hotel.id][dato.roomId], //imgH: idRooms[habitaciones.hotel.id][dato.roomId],
-                            huespedes: adultos + ninos, // huespedes: adultos + ninos,
-                            precio:
-                              dato.products?.find((product) =>
-                                regexSeleccionado.test(product.roomName)
-                              )?.baseRate?.[
-                                currentCurrency === "USD"
-                                  ? "amountBeforeTaxUSD"
-                                  : "amountBeforeTax"
-                              ] || "Sin precio disponible",
-                            NombreH: dato.roomName, //NombreH: dato.roomName,
-                            beds: dato.beds, //beds: dato.beds,
-                            hotelid: habitaciones?.hotel?.roomcloud_id, //hotelid: habitaciones?.hotel?.roomcloud_id,
-                            ciudad: habitaciones?.hotel?.city, //ciudad:habitaciones?.hotel?.city,
-                            hotelidAutocore: habitaciones?.hotel?.id, //hotelidAutocore: habitaciones?.hotel?.id,
-                            rateId: dato.products?.find((product) =>
-                              regexSeleccionado.test(product.roomName)
-                            )?.rateId,
-                          },
-                        ]);
-                        setcontadorHabitaciones((prevCount) => prevCount + 1);
-                      }}
-                    >
-                      Seleccionar
-                    </button>
+                    <div style={{ position: "relative", display: "inline-block" }}>
+  <button
+    className={styles.select_room}
+    data-room="Doble Estándar"
+    data-price="#Valor"
+    onClick={() => {
+      if (
+        !(
+          quintuple[habitaciones?.hotel?.id] &&
+          habitacionesRestringidas.includes(dato.roomName)
+        ) ||
+        contadorHabitaciones < (dato.count || Infinity) // Verifica el límite de habitaciones
+      ) {
+        setDatohabitacion((prevState) => [
+          ...prevState,
+          {
+            plandealimentacion: planDeAlimentacionFormateado,
+            roomId: dato.roomId,
+            checkin: checkin,
+            checkout: checkout,
+            nights: rangosfechas.nights,
+            imgH: idRooms[habitaciones.hotel.id][dato.roomId],
+            huespedes: adultos + ninos,
+            precio:
+              dato.products?.find((product) =>
+                regexSeleccionado.test(product.roomName)
+              )?.baseRate?.[
+                currentCurrency === "USD"
+                  ? "amountBeforeTaxUSD"
+                  : "amountBeforeTax"
+              ] || "Sin precio disponible",
+            NombreH: dato.roomName,
+            beds: dato.beds,
+            hotelid: habitaciones?.hotel?.roomcloud_id,
+            ciudad: habitaciones?.hotel?.city,
+            hotelidAutocore: habitaciones?.hotel?.id,
+            rateId: dato.products?.find((product) =>
+              regexSeleccionado.test(product.roomName)
+            )?.rateId,
+          },
+        ]);
+        setcontadorHabitaciones((prevCount) => prevCount + 1);
+      }
+    }}
+    disabled={
+      quintuple[habitaciones?.hotel?.id] &&
+      habitacionesRestringidas.includes(dato.roomName) &&
+      contadorHabitaciones >= dato.count
+    }
+    onMouseOver={() => {
+      if (
+        quintuple[habitaciones?.hotel?.id] &&
+        habitacionesRestringidas.includes(dato.roomName) &&
+        contadorHabitaciones >= dato.count
+      ) {
+        setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
+      }
+    }}
+    onMouseOut={() => setTooltipActivo(null)} // Desactiva el tooltip al salir
+  >
+    Seleccionar
+  </button>
+
+  {/* Tooltip SOLO para este botón */}
+  {tooltipActivo === dato.roomId && (
+    <div
+      style={{
+        position: "absolute",
+        bottom: "120%", // Posiciona el tooltip arriba del botón
+        left: "50%",
+        transform: "translateX(-50%)",
+        backgroundColor: "black",
+        color: "white",
+        padding: "5px 10px",
+        borderRadius: "5px",
+        fontSize: "12px",
+        whiteSpace: "nowrap",
+        zIndex: 1000,
+      }}
+    >
+      Límite de habitaciones alcanzado
+    </div>
+  )}
+</div>
                   </div>
                 </div>
               ))
