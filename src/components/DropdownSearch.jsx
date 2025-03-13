@@ -83,7 +83,7 @@ const mostrarTooltip = (mensaje) => {
   // const MIN_ROOMS = 10;
  
  //Limite general 
-  const MAX_ROOMS = 25;
+  const MAX_ROOMS = 40;
 
   const handleAddRoom = () => {
     if (rooms.length < limits.MAX_ROOMS) {
