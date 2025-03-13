@@ -53,6 +53,9 @@ export const ResultadosCartagena = () => {
     // Redireccionar
     window.location.href = "/solicitudpresupuesto";
   };
+
+  
+
   return (
     <>
       <div className="search-form-warpper">

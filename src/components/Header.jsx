@@ -93,9 +93,12 @@ const Header = () => {
         </a>
       </div>
       <nav className="nav">
+      
         <a href="/" className="reservations-link">Inicio</a>
         <a href="/misreservas" className="reservations-link">Gestionar reservas</a>
         <a href="/tablerousuario" className="reservations-link">Mi perfil</a>
+        <a href="/eventos" className="reservations-link">Eventos</a>
+        
         <div className="icons">
           <div className="profile-menu">
             <a href="/tablerousuario">
