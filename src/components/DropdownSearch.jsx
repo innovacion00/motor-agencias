@@ -109,7 +109,7 @@ const mostrarTooltip = (mensaje) => {
         children5to17: 0,
       }))
     );
-    setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 25 });
+    setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 40 });
     setbotonactivado("group");
     mostrarTooltip("Reserva para grupos seleccionado");
   };
