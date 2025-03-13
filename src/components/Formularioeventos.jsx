@@ -367,8 +367,8 @@ const SolicitudPresupuesto = () => {
       fechaInicioEvento: dateRange.startDate.toISOString(),
       fechaFinalEvento: dateRange.endDate.toISOString(),
       horarioEvento: horariosSeleccionados.map((horario) => ({
-        fechaInicio: horario.fechaInicio,
-        fechaFinal: horario.fechaFinal,
+        fechaInicio: new Date(horario.fechaInicio).toISOString(),
+        fechaFinal: new Date(horario.fechaFinal).toISOString(),
         cantidadAsistenteDia: cantidadAsistentes,
       })),
       flexibilidadEvento: flexibilidadEvento,
@@ -524,9 +524,10 @@ const SolicitudPresupuesto = () => {
               <label htmlFor="tipo_evento">
                 Tipo de evento <span style={{ color: "red" }}>*</span>
               </label>
-              <select id="tipo_evento" placeholder="Selecciona una opción">
-                value={tipoEvento || ""}
-                onChange={handleTipoEventoChange}
+              <select id="tipo_evento" placeholder="Selecciona una opción" 
+              value={tipoEvento || ""}
+                onChange={handleTipoEventoChange}>
+                
                 <option value="">Selecciona una opción</option>
                 <option value="1">Eventos Corporativos</option>
                 <option value="2">Eventos Sociales</option>

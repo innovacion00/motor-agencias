@@ -9,6 +9,7 @@ async function fetchProtectedData() {
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SwiperSliderEventos from "../components/SwiperSliderEventos.jsx";
 import DropdownSearch from "../components/DropdownSearch.jsx";
+import DropdownSearchEventos from "../components/DropdownSearchEventos.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 ---
 
@@ -31,7 +32,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 <body>
     <SwiperSliderEventos client:load/>
     <div class="search-form-wrapper">
-        <DropdownSearch client:load />
+        <DropdownSearchEventos client:load />
       </div>
     <div class="container">
      <h1>
