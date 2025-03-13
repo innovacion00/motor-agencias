@@ -507,6 +507,7 @@ export const Cid = ({ id }) => {
           return plan;
       }
     };
+    
     setPlanDeAlimentacionFormateado(formatearPlan(planDeAlimentacion));
 
     const category = JSON.parse(localStorage.getItem("datosUsuario"));

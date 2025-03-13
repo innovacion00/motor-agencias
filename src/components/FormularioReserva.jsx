@@ -155,7 +155,7 @@ const FormularioReserva = ({ id }) => {
 
   //CALCULO DEL IVA
   const marcadoAlmuerzo = almuerzo ?  totalHuespedes * cantnoches * 30000  : 0;
-  const marcadoCena = cena ? totalHuespedes * cantnoches * 30000 : 0;
+  const marcadoCena = cena ?  totalHuespedes * cantnoches * 30000 : 0;
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA

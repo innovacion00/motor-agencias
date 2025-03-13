@@ -126,3 +126,11 @@ body {
         margin-bottom: 20px;
     }
 }
+
+.boton-cotizacion{
+    padding: 10px 20px;
+    border: none;
+    cursor:pointer; 
+    font-size: 14px;
+
+}

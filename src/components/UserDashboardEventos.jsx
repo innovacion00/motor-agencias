@@ -1,10 +1,34 @@
 import React, { useEffect, useState, useRef } from "react";
 
+
+
+
 import "../../public/styles/UserDashboardEventos.css"; // Archivo CSS externo para mantener el código limpio
 
 const UserDashboard = () => {
+
+  const [obtenercotizaciones, setObtenerCotizaciones] = useState(null);
+  const [usuarioDatos, setUsuarioDatos] = useState(null);
+  const [datosHotel, setDatosHotel] = useState(null)
+
+
+
+  useEffect(() => {
+   const data = JSON.parse(localStorage.getItem("infohotel"));
+   const datosdelusuario =JSON.parse(localStorage.getItem("datosUsuario"))
+   setUsuarioDatos(datosdelusuario);
+   setDatosHotel(data);
+
+
+  
+  }, [])
+  
   return (
+    <div className="boton-cotizacion">
+    <button style={{padding:"10px", backgroundColor:"#26547B", borderRadius:"5px", fontFamily:"Roboto", fontSize:"14px"}}>Inicio</button>
+  
     <div className="main-container">
+      
       <div className="top-bar">
         <h1>Tablero de usuario</h1>
       </div>
@@ -36,6 +60,7 @@ const UserDashboard = () => {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

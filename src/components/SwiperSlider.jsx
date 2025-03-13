@@ -22,21 +22,25 @@ const SwiperSlider = () => {
       
     >
       <SwiperSlide >
-        <a href="/tablerousuario">
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-prepagados.jpeg" alt="banner cashback" /></a>
+        <a href="/eventos">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-eventos.jpeg" alt="Banner eventos" /></a>
       </SwiperSlide>
       <SwiperSlide >
         <a href="/tablerousuario">
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="banner cashback" /></a>
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-prepagados.jpeg" alt="Banner saldos prepagados" /></a>
+      </SwiperSlide>
+      <SwiperSlide >
+        <a href="/tablerousuario">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="Banner cashback" /></a>
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-grupos.jpeg" alt="Banner 1" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-grupos.jpeg" alt="Banner Grupos" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner 2" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner plan de alimentacion" />
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner 3" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner principal" />
       </SwiperSlide>
     </Swiper>
   );
