@@ -454,6 +454,7 @@ const plan_alimentacion = {
 export const Cid = ({ id }) => {
   const [tooltipActivo, setTooltipActivo] = useState(null);
   const currentCurrency = useStore(currency); // COP o USD
+  const [divisaSelec, setdivisaSelec] = useState("COP");
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
   const [rangosfechas, setfechas] = useState({});
@@ -755,7 +756,8 @@ export const Cid = ({ id }) => {
 
                           return (
                             <span key={idx}>
-                              {formatCurrency(price || "Sin precio disponible")}
+                              {currency == "USD" ? (null) : formatCurrency(price || "Sin precio disponible")}
+                              
                               <span> {currentCurrency}</span>
                             </span>
                           );
@@ -799,7 +801,7 @@ export const Cid = ({ id }) => {
               dato.products?.find((product) =>
                 regexSeleccionado.test(product.roomName)
               )?.baseRate?.[
-                currentCurrency === "USD"
+                currentCurrency == "USD"
                   ? "amountBeforeTaxUSD"
                   : "amountBeforeTax"
               ] || "Sin precio disponible",
@@ -891,7 +893,7 @@ export const Cid = ({ id }) => {
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
 
-                  <h2>{formatCurrency(dato.precio)} COP</h2>
+                  <h2>{formatCurrency(dato.precio)} {currentCurrency == "USD" ? "USD": "COP"}</h2>
                   <button
                     style={{
                       position: "absolute",

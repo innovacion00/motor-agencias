@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styles from "./styles/gestionar.module.css";
 import { format } from "@formkit/tempo";
+import { currency } from "../../stores/divisas"; //  store de divisa
+import { useStore } from "@nanostores/react";
 import { hoteles, habitaciones } from "./InfoHoteles";
 import Cookies from "js-cookie";
 import {
@@ -23,13 +25,15 @@ const Gestionar = ({ reservas }) => {
   const [datosDelUsuario, setdatosDelUsuario] = useState();
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false)
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false)
+  const [mostrarBeneficio, setMostrarBeneficio] = useState(false)
+  const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
 
   let contador = 1;
 
-
+  
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -56,7 +60,14 @@ const Gestionar = ({ reservas }) => {
       setmostrarnota1(false);
       setmostrarnota2(true);
     }
-  }, [reservas?.status]);
+
+  // Nueva validación para mostrarBeneficio
+    if (reservas?.cantidadHabitaciones >= 10) {
+      setMostrarBeneficio(true);
+    } else {
+      setMostrarBeneficio(false);
+    }
+  }, [reservas?.status, reservas?.cantidadHabitaciones]);
 
   const infoHoteles = hoteles(reservas?.hotel);
 
@@ -465,7 +476,8 @@ const Gestionar = ({ reservas }) => {
                     </div>
                   </div>
                   <p className={styles.totalCard}>
-                    {formatCurrency(dato.unitaryPrice)} COP
+                  {reservas?.reservation.currency == "USD" ? `$${(dato.unitaryPrice)} USD` :`${formatCurrency(dato.unitaryPrice)} COP`}
+                    
                   </p>
                 </div>
               ))}
@@ -488,8 +500,9 @@ const Gestionar = ({ reservas }) => {
                   Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
                 </p>
               </div>
-              <p className={styles.total}>
-                {formatCurrency(reservas?.total)} COP
+              
+              <p className={styles.total}> 
+              {reservas.reservation.currency == "USD" ? `$${(reservas?.total)} USD` :`${formatCurrency(reservas?.total)} COP`}
               </p>
             </div>
           </div>
@@ -532,6 +545,10 @@ const Gestionar = ({ reservas }) => {
             </div>
             <br />
             <div className={styles.acuerdos}>
+              {mostrarBeneficio && (
+              <b style={{}}>Se le aplicara bonificacion de Tour Conductor </b>
+            )}
+            <br />
               <p>Tener en cuenta:</p>
               <br />
               <p>

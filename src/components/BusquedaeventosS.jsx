@@ -91,7 +91,7 @@ export const ResultadosCartagena = () => {
                 </div>
               </div>
               <div className="links">
-                <a href="#">Ver detalle</a>
+                <a href="/infosansiraka">Ver detalle</a>
                 <button
                   className="quote-btn"
                   onClick={() => handleSeleccionar(hotel)}

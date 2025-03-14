@@ -5,7 +5,6 @@ import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
 import TablaDesglose from "./TablaDesglose";
-import { faC } from "@fortawesome/free-solid-svg-icons";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
 
@@ -53,6 +52,7 @@ const FormularioReserva = ({ id }) => {
   const [esExtranjero, setesExtranjero] = useState(false);
   const [facturaE, setfacturaE] = useState(false);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState();
+  const [divisaSelec, setdivisaSelec] = useState("COP");
   const [formData, setFormData] = useState({
     tipoDocumento: "",
     numeroDocumento: "",
@@ -70,6 +70,8 @@ const FormularioReserva = ({ id }) => {
 
   //#region UseEffect
   useEffect(() => {
+    const divisa = localStorage.getItem("selectedCurrency");
+    setdivisaSelec(divisa);
     const data = JSON.parse(localStorage.getItem("nochesyedades"));
     if (data && data.dateRange?.startDate) {
       const startDate = new Date(data.dateRange.startDate); // Convertir a objeto Date
@@ -154,15 +156,15 @@ const FormularioReserva = ({ id }) => {
   };
 
   //CALCULO DEL IVA
-  const marcadoAlmuerzo = almuerzo ?  totalHuespedes * cantnoches * 30000  : 0;
-  const marcadoCena = cena ?  totalHuespedes * cantnoches * 30000 : 0;
+  const marcadoAlmuerzo = almuerzo ? totalHuespedes * cantnoches * 30000 : 0;
+  const marcadoCena = cena ? totalHuespedes * cantnoches * 30000 : 0;
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
   const valorIVA =
     esExtranjero == true ? totalPrecio * 0 : totalPrecio * tasaIVA; //totalPrecio * tasaIVA;
   const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
-  console.log(totalConIVA);
+  // console.log(totalConIVA);
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
 
   const totalRetencionesF = () => {
@@ -177,7 +179,7 @@ const FormularioReserva = ({ id }) => {
       );
     }
   };
-  
+
   const totalRetenciones = totalRetencionesF();
   // console.log(totalRetenciones)
   //  console.log(checkin);
@@ -232,7 +234,7 @@ const FormularioReserva = ({ id }) => {
           })
         );
       };
-      const informacionD = JSON.stringify( {
+      const informacionD = JSON.stringify({
         total: Math.round(totalRetenciones), //VALOR TOTAL
         adicionAlmuerzo: almuerzo, // VALOR DE CHECKBOX DE ALMUERZO
         adicionCena: cena,
@@ -338,7 +340,7 @@ const FormularioReserva = ({ id }) => {
             telephone: `${formData.celular}`, //NUMERO DE CELULAR
           },
         },
-      })//JSON.STRINGIFY
+      }); //JSON.STRINGIFY
 
       try {
         // error409
@@ -493,7 +495,8 @@ const FormularioReserva = ({ id }) => {
               {data.plandealimentacion}
             </p>
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
-              <strong>Total a pagar:</strong> {formatCurrency(data.precio)}
+              <strong>Total a pagar:</strong>{" "}
+              {divisaSelec == "USD" ? data.precio : formatCurrency(data.precio)}
             </p>
 
             <br />
@@ -562,7 +565,11 @@ const FormularioReserva = ({ id }) => {
 
             <p>
               Precio total a pagar:{" "}
-              <strong> {formatCurrency(totalRetenciones)} </strong>
+              <strong>
+                {divisaSelec == "USD"
+                  ? totalRetenciones
+                  : formatCurrency(totalRetenciones)}
+              </strong>
             </p>
             <p>(Hospedaje + A&B + Impuestos incluidos)</p>
             <strong>
@@ -572,23 +579,32 @@ const FormularioReserva = ({ id }) => {
               asumir el impuesto del iva del 19%.{" "}
             </strong>
           </div>
+          {divisaSelec == "USD" ? (
+            ""
+          ) : (
+            <div>
+              <h3>Detallado</h3>
+              <TablaDesglose
+                precio={totalConIVA}
+                adults={adults}
+                ninos={ninos}
+                fechasreserva={fechasreserva}
+              />
+            </div>
+          )}
+        </div>
+        {divisaSelec == "USD" ? null : (
           <div>
-            <h3>Detallado</h3>
-            <TablaDesglose
+            <FormularioRetenciones
               precio={totalConIVA}
               adults={adults}
               ninos={ninos}
               fechasreserva={fechasreserva}
+              manejarDatos={manejarDatos}
             />
           </div>
-        </div>
-        <FormularioRetenciones
-          precio={totalConIVA}
-          adults={adults}
-          ninos={ninos}
-          fechasreserva={fechasreserva}
-          manejarDatos={manejarDatos}
-        />
+        )}
+
         {/*-------------- SECCION INFORMACION DEL TITULAR DE LA RESERVA -------------- */}
 
         <h3>Información de los huéspedes</h3>

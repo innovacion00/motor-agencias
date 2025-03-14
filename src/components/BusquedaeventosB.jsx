@@ -90,7 +90,7 @@ export const ResultadosCartagena = () => {
                 </div>
               </div>
               <div className="links">
-                <a href="#">Ver detalle</a>
+                <a href="/infowindsor">Ver detalle</a>
                 <button
                   className="quote-btn"
                   onClick={() => handleSeleccionar(hotel)}

@@ -111,7 +111,7 @@ const mostrarTooltip = (mensaje) => {
     );
     setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 40 });
     setbotonactivado("group");
-    mostrarTooltip("Reserva para grupos seleccionado");
+    mostrarTooltip("Reserva para grupos seleccionado. (Beneficio tourconductor)");
   };
 
   const handleSingleReservation = () => {
@@ -201,8 +201,9 @@ const mostrarTooltip = (mensaje) => {
       <div className={styles.dateButtons}>
       <button className={`${styles.button} ${botonactivado =="single"? styles.active: "" }`} onClick={handleSingleReservation}>Única fecha</button>
       <button className={`${styles.button} ${botonactivado=="group"? styles.active: "" }`}onClick={handleGroupReservation}>Reserva para grupos</button>
-      
       </div>
+      <br />
+      
       {tooltip && (
         <div className={styles.tooltip}>
           {tooltip}
