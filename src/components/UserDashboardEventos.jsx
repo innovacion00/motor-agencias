@@ -24,13 +24,10 @@ const UserDashboard = () => {
   }, [])
   
   return (
-    <div className="boton-cotizacion">
-    <button style={{padding:"10px", backgroundColor:"#26547B", borderRadius:"5px", fontFamily:"Roboto", fontSize:"14px"}}>Inicio</button>
-  
     <div className="main-container">
       
       <div className="top-bar">
-        <h1>Tablero de usuario</h1>
+        <h1>Tablero de eventos</h1>
       </div>
       <div className="navigation-tabs">
         <div className="nav-item active">Gestión de solicitudes</div>
@@ -41,9 +38,9 @@ const UserDashboard = () => {
         <button className="btn create">
           <i className="fas fa-plus"></i> Crear nueva cotización
         </button>
-        <button className="btn filter">
+        {/* <button className="btn filter">
           <i className="fas fa-filter"></i> Filtros
-        </button>
+        </button> */}
       </div>
       <div className="search-bar">
         <input type="text" placeholder="Buscar" />
@@ -61,7 +58,7 @@ const UserDashboard = () => {
         ))}
       </div>
     </div>
-    </div>
+    
   );
 };
 

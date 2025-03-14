@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../../public/styles/BusquedaeventosB.css"; // Asegúrate de tener los estilos en un archivo separado
-import DropdownSearch from "./DropdownSearch";
+import DropdownSearchEventos from "./DropdownSearchEventos";
 
 const hoteles = [
   {
@@ -58,11 +58,11 @@ export const ResultadosCartagena = () => {
   return (
     <>
       <div className="search-form-warpper">
-        <DropdownSearch client:load />
+        <DropdownSearchEventos client:load />
       </div>
       <div className="container">
         <div className="breadcrumb">
-          <a href="#">Inicio</a> / <a href="#">Resultados de búsqueda</a>
+          <a href="/eventos">Inicio</a> / <a href="/eventosbogota">Resultados de búsqueda</a>
         </div>
         <h1>Resultados Bogotá</h1>
         {hoteles.map((hotel, index) => (

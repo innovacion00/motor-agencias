@@ -239,7 +239,9 @@ const SolicitudPresupuesto = () => {
             nombre: "Salón Iraca",
             imagen:
               "https://space-img.sfo3.digitaloceanspaces.com/Agencias/eventos-agencias/Imagenes-salones/Bogota/Sal%C3%B3nIracaMadisson.jpeg",
-            espacio: "280m²",
+            ancho:"5,98",
+            largo:"13,80",
+              espacio: "280m²",
             piso: "2",
             capacidad: "80 personas",
           },
@@ -481,10 +483,10 @@ const SolicitudPresupuesto = () => {
                               <b>Ancho:</b> {salon.ancho}
                             </p>
                             <p>
-                              <b>Ancho:</b> {salon.largo}
+                              <b>largo:</b> {salon.largo}
                             </p>
                             <p>
-                              <b>Ancho:</b> {salon.altura}
+                              <b>Altura:</b> {salon.altura}
                             </p>
                             <p>
                               <b>Piso:</b> {salon.piso}
