@@ -279,7 +279,7 @@ const FormularioReserva = ({ id }) => {
             children_ages: childrenAgesString, // STRING DE EDADES NIÑOS
             city: reserva[0].ciudad, // CIUDAD SELECCIONADA
             country: "COL", //PAIS
-            currency: divisaSelec, //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
+            currency: divisaSelec || "COP", //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
             email: formData.email, //FORMDATA INPUT EMAIL
             firstName: formData.nombreCompleto, // FORMDATA INPUT NOMBRECOMPLETO
             lastName: formData.apellidos, //FORMDATA INPUT APELLIDOS
