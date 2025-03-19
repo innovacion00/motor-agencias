@@ -7,16 +7,13 @@ async function fetchProtectedData() {
 }
 
 import BaseLayout from "../layouts/BaseLayout.astro";
-import SwiperSlider from "../components/SwiperSlider.jsx";
-import DropdownSearch from "../components/DropdownSearch.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import CurrencySelector from '../components/Cambiardivisas';
 ---
-<CurrencySelector client:load/>
-<BaseLayout title="Bienvenido a Booking Connect">
-  <html lang = "es">
-    <head>
-      <title>Bienvenido a Booking Connect</title>
+
+
+<BaseLayout>
+    <html lang = "es">  
       <link rel="stylesheet" href="public/styles/Swipper.css" />
       <link
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -29,20 +26,11 @@ import CurrencySelector from '../components/Cambiardivisas';
       <link rel="icon" href="./public/favicon.png" type="image/x-icon" />
     </head>
 
-    <body>
-      <br>
-      <SwiperSlider client:load />
-
-      <div class="search-form-wrapper">
-        <DropdownSearch client:load />
-      </div>
-      
-      <div class="container">
+    <div class="container">
         <div class="header">
-          <h1>Conoce los mejores destinos con GEH Suites</h1>
+          <h1>Descargar Todo el contenido multimedia que necesitas</h1>
           <p>
-            Contamos con unas modernas y confortables infraestructuras, ideales
-            para todo tipo de viajero
+            Presionando el boton que esta en cada tarjeta por hotel, puedes descargar todos los archivos multimedias del hotel mismo
           </p>
         </div>
         <div class="nav">
@@ -106,7 +94,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                 </div>
 
                 <div class="button">
-                  <a href="/infoavexi"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_1525.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -153,7 +141,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infoazuan"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Azuan.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -206,7 +194,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infoabi"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Abi.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -259,7 +247,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infomarina"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Marina.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -325,7 +313,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infoaixo"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Aixo.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -378,7 +366,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infobocagrande"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Bocagrande.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -440,7 +428,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infoboquilla"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Boquilla.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -468,7 +456,7 @@ import CurrencySelector from '../components/Cambiardivisas';
               </div>
 
               <div class="button"><a href="/infosabana">
-                  <button>Ver hotel</button></a>
+                  <button>Descargar contenido</button></a>
               </div>
             </div>
           </div> -->
@@ -539,7 +527,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infomadisson"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Madisson.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -592,7 +580,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infowindsor"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Windsor.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -639,7 +627,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infozulita"> <button>Ver hotel</button></a>
+                  <a href="/infozulita"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div><!-- Repite las tarjetas de hotel para Bogotá aquí -->
@@ -697,7 +685,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/inforodadero"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Rodadero.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -750,7 +738,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/info1525"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_1525.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -815,7 +803,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infoaxis"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Axis.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -880,7 +868,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infosansiraka"> <button>Ver hotel</button></a>
+                  <a href="src/Archivos/Hotel_Sansiraka.rar"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -945,7 +933,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infodanubio"> <button>Ver hotel</button></a>
+                  <a href="/infodanubio"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -998,7 +986,7 @@ import CurrencySelector from '../components/Cambiardivisas';
                   />
                 </div>
                 <div class="button">
-                  <a href="/infojardines"> <button>Ver hotel</button></a>
+                  <a href="/infojardines"> <button>Descargar contenido</button></a>
                 </div>
               </div>
             </div>
@@ -1066,9 +1054,10 @@ import CurrencySelector from '../components/Cambiardivisas';
 
     .container {
       max-width: 1200px;
-      background-color: #fff;
+      background-color: #e6e4e4;
       margin: 0 auto;
       padding: 20px;
+      border-radius: 10px;
     }
 
     .header {
@@ -1079,13 +1068,13 @@ import CurrencySelector from '../components/Cambiardivisas';
 
     .header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 30px;
       color: #1c3d5a;
     }
 
     .header p {
       margin: 5px 0 20px;
-      font-size: 14px;
+      font-size: 15px;
       color: #1c3d5a;
     }
 
@@ -1098,9 +1087,10 @@ import CurrencySelector from '../components/Cambiardivisas';
     }
 
     .nav button {
-      color: #1c3d5a;
-      background-color: #ffffff;
+      color: #ffffff;
+      background-color: #1c3d5a;
       border: #26537b;
+      border-radius: 10px;
       border-bottom: #924f23;
       margin-right: 10px;
       padding: 10px 20px;
@@ -1110,12 +1100,16 @@ import CurrencySelector from '../components/Cambiardivisas';
       transition:
         background-color 0.3s,
         border-color 0.3s;
-      color: #1c3d5a;
+      color: #ffffff;
       font-weight: 800;
     }
 
     .nav button.active {
-      color: #7b4526f6;
+      color: #c4c4c4f6;
+      position: static;
+    }
+    .nav button:hover {
+      color: #979797f6;
       position: static;
     }
 
@@ -1134,7 +1128,8 @@ import CurrencySelector from '../components/Cambiardivisas';
 
     .content h2 {
       text-align: center;
-      background-color: #f5d7b4;
+      background-color: #1c3d5a;
+      color: #ffffff;
       padding: 10px;
       margin: 0 435px 20px;
       border-radius: 4px;
@@ -1232,7 +1227,7 @@ import CurrencySelector from '../components/Cambiardivisas';
     }
 
     .hotel .info .button button:hover {
-      background-color: #eeeeeec2;
+      background-color: #a8a8a8c2;
     }
 
     .discount {
@@ -1318,4 +1313,5 @@ import CurrencySelector from '../components/Cambiardivisas';
       margin-right: 10px;
     }
   </style>
-</BaseLayout>
+
+    </html>

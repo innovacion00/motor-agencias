@@ -250,7 +250,7 @@ const UserDashboard = () => {
           style={{ fontFamily: "roboto", fontSize: "17px" ,color:"white", backgroundColor:"#2c3e50"}}
           onClick={handleLogout}
         >
-          Cerrar sesion
+          Cerrar sesión
         </button>
         {/* <a href="#">Análisis de datos</a> */}
         {/* <a href="#">Configuración</a> */}

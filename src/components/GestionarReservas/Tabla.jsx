@@ -200,24 +200,24 @@ const Tabla = () => {
                   <p>En proceso</p>
                 )}
               </td>
-              {dato.reservation.currency == "COP" ? (
+              {dato.reservation.currency == "USD" ? (
                 <td>
                   {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
+                    `${formatCurrency(dato.totalMitad)} USD`
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
+                    `${formatCurrency(dato.totalMitad)} USD`
                   ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
+                    `${formatCurrency(dato.totalMitad)} USD`
                   ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.total)}`
+                    `${formatCurrency(dato.total)} USD`
                   ) : dato.status == "4" ? (
-                    `${formatCurrency(dato.total)}`
+                    `${formatCurrency(dato.total)} USD`
                   ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
+                    `${formatCurrency(dato.totalMitad)} USD`
                   ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
+                    `${formatCurrency(dato.totalMitad)} USD`
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
+                    `${formatCurrency(dato.totalMitad)} USD`
                   ) : (
                     <p>En proceso </p>
                   )}
@@ -225,21 +225,21 @@ const Tabla = () => {
               ) : (
                 <td>
                   {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                    dato.totalMitad
+                    `${formatCurrency(dato.totalMitad)} COP`
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                    dato.totalMitad
+                    `${formatCurrency(dato.totalMitad)} COP`
                   ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                    dato.totalMitad
+                    `${formatCurrency(dato.totalMitad)} COP`
                   ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                    dato.total
+                    `${formatCurrency(dato.total)} COP`
                   ) : dato.status == "4" ? (
-                    dato.total
+                    `${formatCurrency(dato.total)} COP`
                   ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                    dato.totalMitad
+                    `${formatCurrency(dato.totalMitad)} COP`
                   ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                    dato.totalMitad
+                    `${formatCurrency(dato.totalMitad)} COP`
                   ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                    dato.totalMitad
+                    `${formatCurrency(dato.totalMitad)} COP`
                   ) : (
                     <p>En proceso </p>
                   )}

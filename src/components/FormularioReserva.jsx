@@ -104,7 +104,11 @@ const FormularioReserva = ({ id }) => {
     setagencia(token);
   }, []);
 
-  const mostrarCheckboxes = datosreserva.some(
+   
+
+  const mostrarCheckboxes =
+  divisaSelec !== "USD" &&
+  datosreserva.some(
     (reserva) =>
       hotelIdsPermitidos.includes(reserva.hotelid) &&
       reserva.plandealimentacion === "Solo desayuno"
@@ -275,7 +279,7 @@ const FormularioReserva = ({ id }) => {
             children_ages: childrenAgesString, // STRING DE EDADES NIÑOS
             city: reserva[0].ciudad, // CIUDAD SELECCIONADA
             country: "COL", //PAIS
-            currency: currentCurrency, //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
+            currency: divisaSelec, //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
             email: formData.email, //FORMDATA INPUT EMAIL
             firstName: formData.nombreCompleto, // FORMDATA INPUT NOMBRECOMPLETO
             lastName: formData.apellidos, //FORMDATA INPUT APELLIDOS
@@ -496,10 +500,11 @@ const FormularioReserva = ({ id }) => {
             </p>
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong>{" "}
-              {divisaSelec == "USD" ? data.precio : formatCurrency(data.precio)}
+              {divisaSelec == "USD" ? `${(data.precio)} USD` : `${formatCurrency(data.precio)} COP`}
             </p>
 
             <br />
+
             {mostrarCheckboxes && (
               <div
                 style={{
@@ -567,8 +572,8 @@ const FormularioReserva = ({ id }) => {
               Precio total a pagar:{" "}
               <strong>
                 {divisaSelec == "USD"
-                  ? totalRetenciones
-                  : formatCurrency(totalRetenciones)}
+                  ? `${formatCurrency(totalRetenciones)} USD `
+                  : `${formatCurrency(totalRetenciones)} COP `}
               </strong>
             </p>
             <p>(Hospedaje + A&B + Impuestos incluidos)</p>

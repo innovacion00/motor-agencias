@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Gestionar from "../../components/GestionarReservas/Gestionar";
-
+import CurrencySelector from '../../components/Cambiardivisas';
 import { getReservas, reservasNano } from "../../stores/disponibilidad";
 
 export const prerender = false;
@@ -17,7 +17,7 @@ const { id } = Astro.params;
 const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
 // console.log(reservasNano.get())
 ---
-
+<CurrencySelector client:load/>
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
   
 <!doctype html>

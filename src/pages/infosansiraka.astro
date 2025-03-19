@@ -7,6 +7,7 @@ async function fetchProtectedData() {
 }
 import BaseLayout from "../layouts/BaseLayout.astro"
 import DropdownSearch from "../components/DropdownSearch"
+import CarrouselA from "../components/Carrouseles/CarrouselSansiraka"
 ---
 
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
@@ -32,7 +33,8 @@ import DropdownSearch from "../components/DropdownSearch"
 
       <div id="generalSection" class="section active">
         <div class="gallery">
-          <img alt="Hotel lobby with reception desk and seating area" class="main-image" height="400"
+          <CarrouselA client:load/>
+          <!-- <img alt="Hotel lobby with reception desk and seating area" class="main-image" height="400"
             src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/535987954.jpg?k=5cac863ce239869c6b33c36ccba105882fbeba21a5f8f068aecbec7e73b80695&o=&hp=1"
             width="800" />
           <div class="side-images">
@@ -42,7 +44,7 @@ import DropdownSearch from "../components/DropdownSearch"
             <img alt="Close-up of a breakfast dish with eggs and toast" height="150"
               src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1"
               width="250" />
-          </div>
+          </div> -->
         </div>
         <h2>
           Hotel Sansiraka

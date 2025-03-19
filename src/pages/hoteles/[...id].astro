@@ -3,7 +3,7 @@ import { getdisponibility, disponibilidad } from "../../stores/disponibilidad";
 // await getdisponibility();
 import DisponibilidadH from "../../components/DisponibilidadH.jsx";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-
+import CurrencySelector from '../../components/Cambiardivisas';
 export const prerender = true;
 
 // const localS =  localStorage.getItem("dato")
@@ -35,7 +35,7 @@ vaina.hotel.id == id
 )
 ---
 
-
+<CurrencySelector client:load/>
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
 
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />

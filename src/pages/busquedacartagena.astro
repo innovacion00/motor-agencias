@@ -2,9 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DropdownSearch from "../components/DropdownSearch";
 import Componentesearch from "../components/Componentesearch";
+import CurrencySelector from '../components/Cambiardivisas';
 ---
 
 <html lang = "es">
+  <CurrencySelector client:load/>
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <head>
       <title>Resultados Cartagena de Indias</title>
