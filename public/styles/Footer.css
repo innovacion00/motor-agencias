@@ -74,7 +74,8 @@
     color: #1C3D5A; /* Color del texto */
     border: none;
     border-radius: 5px;
-    padding: 10px 20px;
+    margin: 5px;
+    padding: 10px 5px;
     font-size: 14px;
     margin-top: 10px;
     cursor: pointer;
@@ -83,4 +84,10 @@
 
 .video-button:hover {
     background-color: #FFC107; /* Cambia ligeramente el color al pasar el mouse */
+}
+
+.botones-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
 }

@@ -5,14 +5,18 @@ import styles from "../../public/styles/componentesearch.module.css";
 import DropdownSearch from "./DropdownSearch";
 import { nightsStore } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas";
+import { useStore } from "@nanostores/react";
+import CurrencySelector from "./Cambiardivisas";
 
 //UseState
 const BusquedaCartagena = () => {
-  const currentCurrency = currency.get(); // Lee directamente desde Nano Store
+  
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
+   const currentCurrency = useStore(currency); // COP o USD
   const [nochesyedades1, setnochesyedades] = useState({});
   const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
+  
 
   //Objeto de imagenes  para las fachadas
   const hotelImages = {
@@ -287,9 +291,9 @@ const BusquedaCartagena = () => {
                 </div>
                 <div className={styles.price}>
                   Desde:{" "}
-                  {findMinBaseRate(tipo.availability) !== Infinity
+                  {`${findMinBaseRate(tipo.availability) !== Infinity
                     ? findMinBaseRate(tipo.availability)
-                    : "Sin Disponibilidad"}{" "}
+                    : "Sin Disponibilidad"} ${currentCurrency}`}{" "}
                   | Incluye desayuno y seguro
                 </div>
                 <a href={`/hoteles/${tipo.hotel.id}`}>
