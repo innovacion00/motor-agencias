@@ -7,12 +7,11 @@ import styles from "../../public/styles/DropdownSearch.module.css";
 import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
 
-
 const DropdownSearch = () => {
-  const [showDateRange, setShowDateRange] = useState(false); 
+  const [showDateRange, setShowDateRange] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [destination, setDestination] = useState("");
-  const [botonactivado, setbotonactivado] = useState("single")
+  const [botonactivado, setbotonactivado] = useState("single");
   const [tooltip, setTooltip] = useState(null);
   const [rooms, setRooms] = useState(
     Array.from({ length: 1 }, () => ({
@@ -20,8 +19,6 @@ const DropdownSearch = () => {
       children0to4: 0,
       children5to17: 0,
     }))
-
-    
   ); // Estado inicial con 10 habitaciones
   const [dateRange, setDateRange] = useState({
     startDate: new Date(),
@@ -29,19 +26,19 @@ const DropdownSearch = () => {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const [limits, setLimits] = useState({
     MIN_ROOMS: 1,
     MAX_ROOMS: 9,
   });
 
-// Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
-const mostrarTooltip = (mensaje) => {
-  setTooltip(mensaje);
-  setTimeout(() => {
-    setTooltip(null);
-  }, 3800);
-};
+  // Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
+  const mostrarTooltip = (mensaje) => {
+    setTooltip(mensaje);
+    setTimeout(() => {
+      setTooltip(null);
+    }, 3800);
+  };
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
 
@@ -81,16 +78,13 @@ const mostrarTooltip = (mensaje) => {
 
   // // Límites para reservas grupales
   // const MIN_ROOMS = 10;
- 
- //Limite general 
+
+  //Limite general
   const MAX_ROOMS = 40;
 
   const handleAddRoom = () => {
     if (rooms.length < limits.MAX_ROOMS) {
-      setRooms([
-        ...rooms,
-        { adults: 1, children0to4: 0, children5to17: 0 },
-      ]);
+      setRooms([...rooms, { adults: 1, children0to4: 0, children5to17: 0 }]);
     }
   };
 
@@ -111,7 +105,9 @@ const mostrarTooltip = (mensaje) => {
     );
     setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 40 });
     setbotonactivado("group");
-    mostrarTooltip("Reserva para grupos seleccionado. (Beneficio tourconductor)");
+    mostrarTooltip(
+      "Reserva para grupos seleccionado. (Beneficio tourconductor)"
+    );
   };
 
   const handleSingleReservation = () => {
@@ -124,7 +120,9 @@ const mostrarTooltip = (mensaje) => {
     );
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("single");
-    mostrarTooltip("Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)");  
+    mostrarTooltip(
+      "Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)"
+    );
   };
 
   const handleSearch = async () => {
@@ -175,15 +173,13 @@ const mostrarTooltip = (mensaje) => {
       };
 
       await getdisponibility(objetohotel);
-      
+
       const destinations = {
         CARTAGENA: "/busquedacartagena",
         BOGOTA: "/busquedabogota",
         SANTA_MARTA: "/busquedasantamarta",
-        
       };
-       window.location.href = destinations[destination];
-      
+      window.location.href = destinations[destination];
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -194,23 +190,33 @@ const mostrarTooltip = (mensaje) => {
       setIsLoading(false);
     }
   };
-  
-  
+
   return (
     <div className={styles.dropdownSearchContainer}>
       <div className={styles.dateButtons}>
-      <button className={`${styles.button} ${botonactivado =="single"? styles.active: "" }`} onClick={handleSingleReservation}>Única fecha</button>
-      <button className={`${styles.button} ${botonactivado=="group"? styles.active: "" }`}onClick={handleGroupReservation}>Reserva para grupos</button>
+        <button
+          className={`${styles.button} ${
+            botonactivado == "single" ? styles.active : ""
+          }`}
+          onClick={handleSingleReservation}
+        >
+          Única fecha
+        </button>
+        <button
+          className={`${styles.button} ${
+            botonactivado == "group" ? styles.active : ""
+          }`}
+          onClick={handleGroupReservation}
+        >
+          Reserva para grupos
+        </button>
       </div>
       <br />
-      
-      {tooltip && (
-        <div className={styles.tooltip}>
-          {tooltip}
-        </div>)}
+
+      {tooltip && <div className={styles.tooltip}>{tooltip}</div>}
 
       {/*------------------------ Dropdown de destino ------------------------*/}
-      
+
       <div className={styles.dropdown}>
         <select
           value={destination}
@@ -224,7 +230,7 @@ const mostrarTooltip = (mensaje) => {
       </div>
 
       {/*------------------------ Selector de rango de fechas------------------------ */}
-      
+
       <div className={styles.datePicker} ref={dateRangeRef}>
         <input
           type="text"
@@ -234,7 +240,7 @@ const mostrarTooltip = (mensaje) => {
           onFocus={() => setShowDateRange(true)}
           readOnly
         />
-        
+
         {showDateRange && (
           <div className={styles.dateRangePicker}>
             <DateRange
@@ -247,7 +253,7 @@ const mostrarTooltip = (mensaje) => {
               ]}
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
-              minDate={new Date()} //Limita la seleccion a partir de hoy 
+              minDate={new Date()} //Limita la seleccion a partir de hoy
             />
             <button
               onClick={() => setShowDateRange(false)}
@@ -258,10 +264,11 @@ const mostrarTooltip = (mensaje) => {
           </div>
         )}
       </div>
-        
+
       {/*--------------- Dropdown para habitaciones ----------------*/}
       <div className={styles.dropdownPeople} ref={dropdownRef}>
-        <div className={styles.dropdownToggle}
+        <div
+          className={styles.dropdownToggle}
           onClick={() => setShowDropdown(!showDropdown)}
         >
           {rooms.length} habitación{rooms.length > 1 ? "es" : ""}
@@ -297,7 +304,7 @@ const mostrarTooltip = (mensaje) => {
                     </button>
                   </div>
                 </div>
-                <div className={styles.counterGroup}>
+                {/* <div className={styles.counterGroup}>
                   <label>Niños (0-4 años)</label>
                   <div className={styles.counter}>
                     <button
@@ -322,7 +329,7 @@ const mostrarTooltip = (mensaje) => {
                       +
                     </button>
                   </div>
-                </div>
+                </div> */}
                 <div className={styles.counterGroup}>
                   <label>Niños (5-17 años)</label>
                   <div className={styles.counter}>
@@ -357,16 +364,22 @@ const mostrarTooltip = (mensaje) => {
                     Eliminar habitación
                   </button>
                 )}
+                
               </div>
+              
             ))}
-            <button className={styles.addRoomButton}            //-----------------------------------------------------------------
-            onClick={handleAddRoom}
-            disabled={rooms.length >= MAX_ROOMS} // Deshabilitar cuando se alcanza el máximo
-          >
-            Agregar habitación
-          </button>
-        </div>
-      )}
+            <div>
+                  <p style={{ color:"#1C3D5A", justifyContent:"center"}}>Nota: niños de 0 a 4 años ingresan gratis en el alojamiento en las camas incluidas </p>
+                </div>
+            <button
+              className={styles.addRoomButton} //-----------------------------------------------------------------
+              onClick={handleAddRoom}
+              disabled={rooms.length >= MAX_ROOMS} // Deshabilitar cuando se alcanza el máximo
+            >
+              Agregar habitación
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Botón de búsqueda */}
@@ -392,7 +405,6 @@ const mostrarTooltip = (mensaje) => {
           <h3>Espere un momento porfavor</h3>
         </div>
       </Modal>
-
     </div>
   );
 };

@@ -546,7 +546,10 @@ const Gestionar = ({ reservas }) => {
             <br />
             <div className={styles.acuerdos}>
               {mostrarBeneficio && (
-              <b style={{}}>Se le aplicara bonificacion de Tour Conductor </b>
+              <p><b style={{}}>Se le aplicara bonificacion de Tour Conductor </b><br />
+              Por cada 10 habitaciones reservadas se le obsequiará una habitación y por cada 20 reservadas seran 2 habitaciones obsequiadas</p>
+              
+              
             )}
             <br />
               <p>Tener en cuenta:</p>
