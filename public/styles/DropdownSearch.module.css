@@ -6,6 +6,7 @@
     align-items: center;
     gap: 1rem;
 border-radius: 8px;
+
   }
 
   .dateButtons {
@@ -66,11 +67,13 @@ border-radius: 8px;
     border:none;
     display: inline-flex;
     align-items: center;
+    
   }
   
   .datePicker {
     position: relative;
   }
+  
   
   .dateRangePicker {
     position:absolute;
@@ -84,6 +87,7 @@ border-radius: 8px;
   }
   .dateRangePicker input{
     width: 100px;
+    
   }
   
   
