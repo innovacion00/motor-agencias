@@ -173,6 +173,16 @@ border-radius: 8px;
     background-position: right 0.75rem top 50%;
     background-size: 0.65rem auto;
   }
+  .dateRangePicker {
+    position: absolute; /* O usa 'fixed' si quieres que se mantenga en la misma posición en la pantalla */
+    top: 100%; /* Ajusta esto según la ubicación del contenedor padre */
+    left: 0;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999; /* Asegura que esté por encima de otros elementos */
+    padding: 10px;
+    border-radius: 8px;
+  }
   
   .dropdown select:focus {
     outline: none;
