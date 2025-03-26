@@ -23,8 +23,10 @@ const Gestionar = ({ reservas }) => {
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
   const [datosDelUsuario, setdatosDelUsuario] = useState();
+  const [mostrarExtranjero, setmostrarExtranjero] = useState(false)
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false)
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false)
+  
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false)
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
@@ -39,6 +41,12 @@ const Gestionar = ({ reservas }) => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
+
+    if (reservas?.exentoIva) {
+      setmostrarExtranjero(true);
+    } else {
+      setmostrarExtranjero(false);
+    }
 
     if (reservas?.adicionCena) {
       setmostrarAdicionalC(true);
@@ -486,14 +494,20 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
+                
+                {mostrarExtranjero &&(<div>
+                <b>El huesped es extranjero </b>
+                </div>
+          
+                )}
                 {mostrarAdicionalA &&(
                   <div>
-                <p>Se adicionó almuerzo</p>
+                <b>Se adicionó almuerzo</b>
                 </div>
               )}
               {mostrarAdicionalC&&(
                 <div>
-                <p>Se adicionó cena</p>
+                <b>Se adicionó cena</b>
                 </div>
               )}
                 <p className={styles.plazoPago}>
@@ -548,9 +562,11 @@ const Gestionar = ({ reservas }) => {
               {mostrarBeneficio && (
               <p><b style={{}}>Se le aplicara bonificacion de Tour Conductor </b><br />
               Por cada 10 habitaciones reservadas se le obsequiará una habitación y por cada 20 reservadas seran 2 habitaciones obsequiadas</p>
-              
-              
             )}
+             
+             {mostrarExtranjero &&(
+            <p> Todo huesped extranjero sera exento de iva pero debe mostrar su pasaporte al momento de hacer check-in en la recepción </p>
+             )}
             <br />
               <p>Tener en cuenta:</p>
               <br />

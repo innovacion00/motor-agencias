@@ -38,6 +38,7 @@
     "reactjs": "^1.0.0",
     "styled-components": "^6.1.13",
     "sweetalert2": "^11.14.5",
-    "swiper": "^11.1.14"
+    "swiper": "^11.1.14",
+    "victory": "^37.3.6"
   }
 }

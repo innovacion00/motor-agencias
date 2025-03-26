@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este archivo CSS con los estilos adecuados
 import { getReservas, reservasNano } from "../stores/disponibilidad";
+import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme } from "victory";
 import { useHover } from "@uidotdev/usehooks";
 import Swal from "sweetalert2";
 
@@ -17,7 +18,12 @@ const UserDashboard = () => {
   const [ref, hovering] = useHover();
   const fileInputRef = useRef(null);
   const [displayValue, setDisplayValue] = useState(""); // Guardamos el valor formateado
-
+  const dataejem = [
+    { month: "Enero", reservas: 30 },
+    { month: "Febrero", reservas: 45 },
+    { month: "Marzo", reservas: 50 },
+   
+  ];
   //#region Use effect
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -246,13 +252,10 @@ const UserDashboard = () => {
           Mi perfil
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-        <button
-          style={{ fontFamily: "roboto", fontSize: "17px" ,color:"white", backgroundColor:"#2c3e50"}}
-          onClick={handleLogout}
-        >
+        <a href="#">Análisis de datos</a> 
+        <button onClick={handleLogout}>
           Cerrar sesión
         </button>
-        {/* <a href="#">Análisis de datos</a> */}
         {/* <a href="#">Configuración</a> */}
       </div>
       <div className="content">
@@ -404,7 +407,13 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
+      <VictoryChart theme={VictoryTheme.material} domainPadding={20}>
+      <VictoryAxis tickValues={["Enero", "Febrero", "Marzo"]} />
+      <VictoryAxis dependentAxis tickFormat={(x) => `${x} res`} />
+      <VictoryBar data={dataejem} x="month" y="reservas" style={{ data: { fill: "#4CAF50" } }} />
+    </VictoryChart>
     </div>
+    
   );
 };
 
