@@ -171,14 +171,16 @@ const Tabla = () => {
         <tbody>
           {currentItems.map((dato, index) => (
             <tr key={index}>
-              <td>{format(dato.createdAt, "h:mm a DD/MM/YYYY ", "es")}</td>
-              <td>{dato.reservaChatbotId}</td>
-              <td>{dato.hotel}</td>
-              <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td>
-              <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td>
-              <td>{dato?.agenciaId?.fullName}</td>
-              <td>{dato?.userId?.fullName}</td>
-              <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td>
+              <td>{format(dato.createdAt, "h:mm a DD/MM/YYYY ", "es")}</td> {/*Fecha de creacion*/}
+              <td>{dato.reservaChatbotId}</td> {/*ID de la reserva*/}
+              <td>{dato.hotel}</td> {/*Nombre del hotel*/}
+              <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td> {/*Fecha de check-in*/}
+              <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td> {/*Fecha de check-out*/}
+              <td>{dato?.agenciaId?.fullName}</td> {/*Nombre de la agencia*/}
+              <td>{dato?.userId?.fullName}</td> {/*Nombre del agente*/}
+              <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td> {/*Nombre del huésped*/}
+              
+              {/*Fechas limite de pago*/}
               <td>
                 {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
                   format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
@@ -200,6 +202,8 @@ const Tabla = () => {
                   <p>En proceso</p>
                 )}
               </td>
+
+              {/*Valor a pagar dolares*/}
               {dato.reservation.currency == "USD" ? (
                 <td>
                   {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
@@ -223,6 +227,8 @@ const Tabla = () => {
                   )}
                 </td>
               ) : (
+
+                //Valor a pagar pesos
                 <td>
                   {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
                     `${formatCurrency(dato.totalMitad)} COP`
@@ -245,7 +251,8 @@ const Tabla = () => {
                   )}
                 </td>
               )}
-
+              
+                {/*Estado de la reserva*/}
               <td>
                 {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
                   <span className={`${styles.status} ${styles.pending}`}>
