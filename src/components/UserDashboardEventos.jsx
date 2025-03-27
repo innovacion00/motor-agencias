@@ -35,9 +35,9 @@ const UserDashboard = () => {
       </div>
       <div className="actions">
         {/* <h3>Gestion de solicitudes</h3> */}
-        <button className="btn create">
-          <i className="fas fa-plus"></i> Crear nueva cotización
-        </button>
+        <a href="eventosbogota"> <button className="btn create">
+        <i className="fas fa-plus"></i> Crear nueva cotización
+        </button></a> 
         {/* <button className="btn filter">
           <i className="fas fa-filter"></i> Filtros
         </button> */}
