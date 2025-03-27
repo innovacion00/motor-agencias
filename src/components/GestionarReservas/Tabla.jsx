@@ -189,7 +189,7 @@ const Tabla = () => {
                 ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
                   format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                 ) : dato.status == "4" ? (
-                  format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                  format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
                 ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
                   format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                 ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
