@@ -407,11 +407,6 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
-      <VictoryChart theme={VictoryTheme.material} domainPadding={20}>
-      <VictoryAxis tickValues={["Enero", "Febrero", "Marzo"]} />
-      <VictoryAxis dependentAxis tickFormat={(x) => `${x} res`} />
-      <VictoryBar data={dataejem} x="month" y="reservas" style={{ data: { fill: "#4CAF50" } }} />
-    </VictoryChart>
     </div>
     
   );
