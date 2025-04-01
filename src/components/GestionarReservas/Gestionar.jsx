@@ -367,35 +367,35 @@ const Gestionar = ({ reservas }) => {
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
 
-      {reservas.status == "0" && reservas.pagadoPrimeraMitad == false ? (
+      {reservas.status == 0 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.pending}`}>
           Pago pendiente
         </p>
-      ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == false ? (
+      ) : reservas.status == 1 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago en proceso
         </p>
-      ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == false ? (
+      ) : reservas.status == 2 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago rechazado primer abono
         </p>
-      ) : reservas.status == "3" && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas.status == 3 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.clomplete}`}>
           Pago aprobado
         </p>
-      ) : reservas.status == "4" ? (
+      ) : reservas.status == 4 ? (
         <p className={`${styles.estadoPago} ${styles.cancel}`}>
           Reserva cancelada
         </p>
-      ) : reservas.status == "2" && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas.status == 2 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago total rechazado
         </p>
-      ) : reservas.status == "5" && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas.status == 5 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
           Abonado primera mitad
         </p>
-      ) : reservas.status == "1" && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas.status == 1 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago total en proceso
         </p>
