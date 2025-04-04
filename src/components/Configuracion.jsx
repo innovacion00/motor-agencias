@@ -5,24 +5,32 @@ import Swal from "sweetalert2";
 const Configuracion = () => {
   const [userData, setUserData] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [limiteUsuarios, setLimiteUsuarios] = useState(0);
   const [formData, setFormData] = useState({
     email: "",
     fullName: "",
     password: "",
     telefono: "",
-    adminRole: false 
-
+    adminRole: false,
   });
   const [isLoading, setIsLoading] = useState(false);
 
   //#region Use effect general
   useEffect(() => {
-    const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+  const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+   
     setUserData(datosdelusuario);
-    // setciudadSeleccionada(Ciudad)
-    // settokenusuario(token)
-  }, []);
 
+    // Determinar el límite según la categoría
+    if (datosdelusuario) {
+      if (datosdelusuario.agencia.category == 0) {
+        setLimiteUsuarios(10);
+      } else {
+
+        setLimiteUsuarios(20);
+      }
+    }
+  }, []);
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -33,13 +41,13 @@ const Configuracion = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     // Si es un checkbox, usamos la propiedad checked en lugar de value
-    const newValue = type === 'checkbox' ? checked : value;
-    
+    const newValue = type === "checkbox" ? checked : value;
+
     setFormData({
       ...formData,
-      [name]: newValue
+      [name]: newValue,
     });
   };
 
@@ -50,8 +58,12 @@ const Configuracion = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.fullName || !formData.password || !formData.telefono) {
-
+    if (
+      !formData.email ||
+      !formData.fullName ||
+      !formData.password ||
+      !formData.telefono
+    ) {
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -68,8 +80,8 @@ const Configuracion = () => {
       fullName: formData.fullName,
       password: formData.password,
       telefono: formData.telefono,
-      adminRole: formData.adminRole // Enviamos directamente el booleano
-    };  
+      adminRole: formData.adminRole, // Enviamos directamente el booleano
+    };
     try {
       const response = await fetch(
         "https://gehsuitesapps.com/agencias/v1/auth/register-user",
@@ -101,7 +113,7 @@ const Configuracion = () => {
         fullName: "",
         password: "",
         telefono: "",
-        adminRole: false
+        adminRole: false,
       });
 
       // Ocultar el formulario
@@ -138,9 +150,11 @@ const Configuracion = () => {
           Mi perfíl{" "}
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-        {userData && userData?.role && userData?.role.includes("super-admin")&&(
-        <a href="/estadisticas">Análisis de datos</a>
-      )} 
+        {userData &&
+          userData?.role &&
+          userData?.role.includes("super-admin") && (
+            <a href="/estadisticas">Análisis de datos</a>
+          )}
         <a href="/configuracion">Configuración</a>
         <button onClick={handleLogout}>Cerrar sesión</button>
       </div>
@@ -153,10 +167,7 @@ const Configuracion = () => {
               alt="Gestión de usuarios"
             />
             <h3>Gestión de usuarios</h3>
-            <p>
-              Administra usuarios: crea perfiles de
-              manera sencilla.
-            </p>
+            <p>Administra usuarios: crea perfiles de manera sencilla.</p>
           </div>
           <div className="cardd">
             <img
@@ -195,7 +206,9 @@ const Configuracion = () => {
               style={{ display: "flex", flexDirection: "column", gap: "15px" }}
             >
               <div className="form-group">
-                <label htmlFor="email" style={{paddingRight:"8px"}}>Correo electrónico:</label>
+                <label htmlFor="email" style={{ paddingRight: "8px" }}>
+                  Correo electrónico:
+                </label>
                 <input
                   type="email"
                   id="email"
@@ -213,7 +226,9 @@ const Configuracion = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="fullName" style={{paddingRight:"9px"}} >Nombre completo:</label>
+                <label htmlFor="fullName" style={{ paddingRight: "9px" }}>
+                  Nombre completo:
+                </label>
                 <input
                   type="text"
                   id="fullName"
@@ -231,7 +246,9 @@ const Configuracion = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="password" style={{paddingRight:"55px"}}>Contraseña:</label>
+                <label htmlFor="password" style={{ paddingRight: "55px" }}>
+                  Contraseña:
+                </label>
                 <input
                   type="password"
                   id="password"
@@ -242,7 +259,7 @@ const Configuracion = () => {
                   style={{
                     width: "30%",
                     padding: "10px",
-                    paddingLeft:"10px",
+                    paddingLeft: "10px",
                     borderRadius: "4px",
                     border: "1px solid #ddd",
                   }}
@@ -250,7 +267,9 @@ const Configuracion = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="telefono" style={{paddingRight:"74px"}}>Teléfono:</label>
+                <label htmlFor="telefono" style={{ paddingRight: "74px" }}>
+                  Teléfono:
+                </label>
                 <input
                   type="text"
                   id="telefono"
@@ -266,24 +285,34 @@ const Configuracion = () => {
                   }}
                 />
               </div>
-              <div className="form-group checkbox-container" style={{
-                display: "flex", 
-                alignItems: "center", 
-                gap: "8px",
-                marginTop: "5px"
-              }}>
+              <div
+                className="form-group checkbox-container"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginTop: "5px",
+                }}
+              >
                 <input
                   type="checkbox"
                   id="adminRole"
                   name="adminRole"
                   checked={formData.adminRole}
                   onChange={handleInputChange}
-                  style={{margin: "0"}}
+                  style={{ margin: "0" }}
                 />
-                <label htmlFor="adminRole" style={{margin: "0"}}>
+                <label htmlFor="adminRole" style={{ margin: "0" }}>
                   ¿Desea crear un usuario administrador?
                 </label>
               </div>
+              <label
+                htmlFor="identificador"
+                style={{ fontWeight: "light", fontSize: "12px" }}
+              >
+                El limite de usuarios permitidos para su agencia es de{" "}
+                {limiteUsuarios}.
+              </label>
               <div
                 className="form-actions"
                 style={{
@@ -306,8 +335,8 @@ const Configuracion = () => {
                 >
                   Cancelar
                 </button>
-                <button 
-                className="registerbtn"
+                <button
+                  className="registerbtn"
                   type="submit"
                   disabled={isLoading}
                   // style={{
