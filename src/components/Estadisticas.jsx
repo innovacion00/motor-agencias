@@ -6,7 +6,7 @@ import { useHover } from "@uidotdev/usehooks";
 
 import Swal from "sweetalert2";
 
-const UserDashboard = () => {
+const Estadisticas = () => {
   const [reservasPorHotel, setReservasPorHotel] = useState()
   const [reservasPorMes, setReservasPorMes] = useState([]);
   const [reservasPorCiudad, setReservasPorCiudad] = useState();
@@ -345,184 +345,102 @@ useEffect(() => {
 
   return (
     <div className="container">
-        <h1 style={{fontSize:"20px"}}>Tablero de usuario</h1>
-        <br />
-      <div className="header">
-        
-      <h1 style={{fontSize:"18px", paddingBottom:"10px"}}>Mi perfil</h1>
-      </div>
-      <div className="nav-tabs">
-        <a className="active" href="/tablerousuario">
-          Mi perfil
-        </a>
-        <a href="/misreservas">Gestionar reservas</a>
-        {userData && userData?.role && userData?.role.includes("super-admin")&&(
-        <a href="/estadisticas">Análisis de datos</a>
-      )} 
-        {/* Mostrar el enlace de configuración solo si el usuario tiene rol de admin */}
-        {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
-        <a href="/configuracion">Configuración</a>
-      )}
-        <button onClick={handleLogout}>
-          Cerrar sesión
-        </button>
-      </div>
+    <h1 style={{fontSize:"20px"}}>Tablero de usuario</h1>
+    <br />
+  <div className="header">
+    
+  <h1 style={{fontSize:"18px", paddingBottom:"10px", fontFamily:"Roboto"}}>Análisis de datos</h1>
+  </div>
+  <div className="nav-tabs">
+    <a className="active" href="/tablerousuario"> Mi perfíl </a>
+    <a href="/misreservas">Gestionar reservas</a>
+    <a href="/estadisticas">Análisis de datos</a> 
+    <a href="/configuracion">Configuración</a>
+    <button onClick={handleLogout}>
+      Cerrar sesión
+    </button>
+  </div>
       <div className="content">
-        <div className="card profile-card">
-          <img
-            ref={ref} // Se conecta el hook useHover a la imagen
-            alt="Profile picture"
-            src={userData?.imageUrl || profileImage}
-            className={`profile-image ${hovering ? "hover-effect" : ""}`}
-            onClick={handleClick} // Clic en la imagen activa el input oculto
-          />
-          <legend style={{ fontSize: "10px" }}>
-            Presione el icono para subir una foto
-          </legend>
-          {/* Input de archivo oculto */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            style={{ display: "none" }} // Oculta el input
-          />
-          <h2>{userData?.agencia.fullName}</h2>
-          <p>Correo: {userData?.email}</p>
-          <p>Celular:{userData?.telefono}</p>
-          <p>
-            Tipo de usuario:{" "}
-            <span style={{ fontWeight: "bold", color: "#1C3D5A" }}>
-              {userData?.role[0]}
-            </span>
-          </p>
-          {/* <button>Gestionar mi cuenta</button> */}
-        </div>
-        {/*--------------------------- Balance de Mi saldo ---------------------------*/}
-        <div className="card wallet-card">
-          <h3>Mi saldo</h3>
-          <div className="balance">{formatCurrency(availableAmount)}</div>
-          <br />
-          <h2
-            style={{
-              fontSize: "13px",
-              paddingTop: "10px",
-              paddingBottom: "10px",
-            }}
-          >
-            Ingrese un monto superior a $50.000 COP
-          </h2>
-          <input
-            type="text"
-            value={displayValue}
-            onChange={handleChangedinero}
-            placeholder="$0"
-            className="recharge-input"
-          />
-          <br />
-          <br />
-          <button onClick={handleRecharge}>Recargar saldo</button>
-          <br />
-          <label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "5px",
-              fontSize: "10px",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={terminosaceptados}
-              onChange={(e) => setterminosaceptados(e.target.checked)}
-            />
-            Para utilizar este apartado debe aceptar los{" "}
-            <a
-              href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/POLI%CC%81TICA%20Y%20CONDICIONES%20DE%20USO%20DEL%20PROGRAMA%20DE%20PREPAGOS%20Y%20CASHBACK.pdf%20BC.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              términos y condiciones
-            </a>
-          </label>
-        </div>
+      <div style={{ width: "80%", maxWidth: "600px", margin: "0 auto" }}>
+      <h2 style={{ textAlign: "center" }}>Reservas por Mes</h2>
+      <VictoryChart theme={VictoryTheme.material} domainPadding={20} width={500} height={350}  padding={{ left: 100, right: 20, top: 20, bottom: 50 }}>
+  {/* Eje X con nombres de meses */}
+  <VictoryAxis tickFormat={reservasPorMes?.map((d) => d.mes)} style={{ 
+        tickLabels: { fontSize: 11, padding: 5, fontFamily:"Roboto" } // Reducimos tamaño y ajustamos padding
+      }} />
 
-        {/* <div className="card agency-card">
-          <h3>Agencia: #nombre-agencia</h3>
-          <div className="discount">
-            <p>-8%</p>
-            <p>15 min de Spa (Solo Windsor)</p>
-            <p>Salida tardía: Sujeto a disponibilidad</p>
-          </div>
-        </div> */}
-        <div className="card pending-payments-card">
-          <h3 className="Ultimasreservas">Ultimas reservas</h3>
+  {/* Eje Y con valores numéricos seguidos de "reservas" */}
+  <VictoryAxis dependentAxis tickFormat={(x) => `${x} reservas`} style={{ 
+        tickLabels: { fontSize: 11, padding: 5, fontFamily:"Roboto" } // Reducimos tamaño y ajustamos padding
+      }} />
 
-          <div className="pending-payments-list">
-            <div className="pending-payment-item">
-              <div>
-                
-                {reservas.slice(0, 3).map((dato, index) => (
-                  <tr className="estadopago" key={index}>
-                    <tr>
-                      {dato.status == "0" &&
-                      dato.pagadoPrimeraMitad == false ? (
-                        <span className="status pending">Pago pendiente</span>
-                      ) : dato.status == "1" &&
-                        dato.pagadoPrimeraMitad == false ? (
-                        <span className="status proces">Pago en Proceso</span>
-                      ) : dato.status == "2" &&
-                        dato.pagadoPrimeraMitad == false ? (
-                        <span className="status denied">
-                          Pago rechazado primer abono
-                        </span>
-                      ) : dato.status == "3" &&
-                        dato.pagadoPrimeraMitad == true ? (
-                        <span className="status clomplete">Pago aprobado</span>
-                      ) : dato.status == "4" ? (
-                        <span className="status cancel">Reserva cancelada</span>
-                      ) : dato.status == "2" &&
-                        dato.pagadoPrimeraMitad == true ? (
-                        <span className="status denied">
-                          Pago rechazado segundo abono
-                        </span>
-                      ) : dato.status == "5" &&
-                        dato.pagadoPrimeraMitad == true ? (
-                        <span className="status abonado">
-                          Abonado primera mitad
-                        </span>
-                      ) : dato.status == "1" &&
-                        dato.pagadoPrimeraMitad == true ? (
-                        <span className="status proces">
-                          Pago total en proceso
-                        </span>
-                      ) : (
-                        <p>Estado no valido</p>
-                      )}
-                    </tr>
-                    <tr className="nombrehotel">Hotel: {dato.hotel}</tr>
-                    <tr className="fechalimit">
-                      Fecha limite de pago: {dato.reservation.checkin}
-                    </tr>
+  {/* Gráfico de barras */}
+  <VictoryBar
+    data={reservasPorMes}
+    x="mes"
+    y="reservas"
+    style={{ data: { fill: "#4CAF50" } }}
+    labels={({ datum }) => `${datum.reservas}`} // Muestra las etiquetas en las barras
+  />
+</VictoryChart>
+    </div>
 
-                    <div className="pending-payment-item">
-                      <div>Total:{formatCurrency(dato.total)} COP</div>
-                    </div>
-                    <hr style={{ marginBottom: "10px", color: "green" }} />
-                  </tr>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        
+    {/* ------------ NUMERO DE RESERVAS POR HOTEL ------------ */}
+    <div style={{ width: "80%", maxWidth: "750px", margin: "0 auto" }}>
+    <h2 style={{ textAlign: "center" }}>Reservas por hotel</h2>
+  <VictoryChart 
+    theme={VictoryTheme.material} 
+    domainPadding={20} 
+    width={700} 
+    height={400}
+    padding={{ left: 100, right: 30, top: 20, bottom: 100 }} // Más espacio para nombres largos
+  >
+    {/* Eje X con nombres de hoteles */}
+    <VictoryAxis 
+      tickFormat={reservasPorHotel?.map((d) => d.hotel)}
+      style={{
+        tickLabels: { angle: -45, fontSize: 12, textAnchor: "end" } // Rotar nombres para mejor visibilidad
+      }}
+    />
 
+    {/* Eje Y con número de reservas */}
+    <VictoryAxis 
+      dependentAxis 
+      tickFormat={(x) => `${x} reservas`}
+      style={{ tickLabels: { fontSize: 12 } }}
+    />
+
+    {/* Barras con número de reservas por hotel */}
+    <VictoryBar
+      data={reservasPorHotel}
+      x="hotel"
+      y="reservas"
+      style={{ data: { fill: "#FF5733" } }}
+      labels={({ datum }) => `${datum.reservas} `}
+    />
+  </VictoryChart>
+</div>
+
+{/* ------------ NUMERO DE RESERVAS POR CIUDAD ------------ */}
+<div style={{ width: "80%", maxWidth: "500px", margin: "0 auto" }}>
+  <h2 style={{ textAlign:"center" }}>Número de reservas por Ciudad</h2>
+  <VictoryPie
+    data={reservasPorCiudad}
+    colorScale={["#85c1e9", "#a2d9ce", "#d7bde2"]} // Colores personalizados
+    labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
+    style={{
+      labels: { fontSize: 13, fontWeight: "bold", fill: "#333" }, // Estilos de etiquetas
+    }}
+    innerRadius={80} // Hace la torta tipo "dona"
+    labelRadius={80} // Ubica mejor los textos fuera del centro
+  />
+</div>
       </div>
     </div>
     
   );
 };
 
-export default UserDashboard;
+export default Estadisticas;
 
 

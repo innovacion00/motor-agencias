@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "../../public/styles/Header.css"; // Importa el archivo CSS
 
-const Header = () => {
+const  Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userData, setUserData] = useState()
   const [profileImage, setprofileImage] = useState(userData?.imageUrl || "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
