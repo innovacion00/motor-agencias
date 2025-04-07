@@ -10,7 +10,7 @@ const Estadisticas = () => {
   const [reservasPorHotel, setReservasPorHotel] = useState()
   const [reservasPorMes, setReservasPorMes] = useState([]);
   const [reservasPorCiudad, setReservasPorCiudad] = useState();
-  const [ReservasCanceladas, setReservasCanceladas] = useState();
+  const [reservasCanceladas, setReservasCanceladas] = useState();
   const [userData, setUserData] = useState(null);
   const [reservas, setReservas] = useState([]);
   const [terminosaceptados, setterminosaceptados] = useState(false);
@@ -42,6 +42,19 @@ const Estadisticas = () => {
   //#region reservas por mes
   useEffect(() => {
     const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const ahora = new Date();
+      const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000); // Resta 24h
+  
+      // Filtrar reservas canceladas en las últimas 24h
+      const canceladasUltimas24h = reservasObtenidas.filter((reserva) => {
+        const fechaReserva = new Date(reserva.createdAt);
+        return reserva.status === 4 && fechaReserva >= hace24Horas;
+      });
+  
+      setReservasCanceladas(canceladasUltimas24h.length);
+    }
 
     if (reservasObtenidas.length > 0) {
       // Mapeo de meses en orden correcto
@@ -435,6 +448,22 @@ useEffect(() => {
     labelRadius={80} // Ubica mejor los textos fuera del centro
   />
 </div>
+<div style={{ textAlign: "center", margin: "20px" }}>
+  <h2 style={{fontSize:"15px"}}>Reservas Canceladas en las Últimas 24h</h2>
+  <p style={{ fontSize: "20px", fontWeight: "bold", color: "#E74C3C" }}>
+    {reservasCanceladas}
+  </p>
+  <div style={{ textAlign: "center", margin: "20px" }}>
+<h2 style={{fontSize:"15px"}}>Numero de reservas realizadas</h2>
+  <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E74C3C" }}>
+    
+    {reservas.length}
+  </p>
+</div>
+</div>
+
+
+
       </div>
     </div>
     
