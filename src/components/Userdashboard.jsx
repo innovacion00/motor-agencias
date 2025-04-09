@@ -7,10 +7,6 @@ import { useHover } from "@uidotdev/usehooks";
 import Swal from "sweetalert2";
 
 const UserDashboard = () => {
-  const [reservasPorHotel, setReservasPorHotel] = useState()
-  const [reservasPorMes, setReservasPorMes] = useState([]);
-  const [reservasPorCiudad, setReservasPorCiudad] = useState();
-  const [ReservasCanceladas, setReservasCanceladas] = useState();
   const [userData, setUserData] = useState(null);
   const [reservas, setReservas] = useState([]);
   const [terminosaceptados, setterminosaceptados] = useState(false);
