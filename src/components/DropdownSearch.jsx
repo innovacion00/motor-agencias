@@ -113,7 +113,7 @@ const DropdownSearch = () => {
   const handleSingleReservation = () => {
     setRooms(
       Array.from({ length: 1 }, () => ({
-        adults: 2,
+        adults: 1,
         children0to4: 0,
         children5to17: 0,
       }))
@@ -283,7 +283,7 @@ const DropdownSearch = () => {
                   <div className={styles.counter}>
                     <button
                       onClick={() => {
-                        if (room.adults > 2) {
+                        if (room.adults > 1) {
                           const updatedRooms = [...rooms];
                           updatedRooms[index].adults -= 1;
                           setRooms(updatedRooms);
