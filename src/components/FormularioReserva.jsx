@@ -302,7 +302,7 @@ const FormularioReserva = ({ id }) => {
             external_ref_id: "666222",
           },
           reservation: {
-           /* adults: adults,*/ //N°ADULTOS
+            adults: adults, //N°ADULTOS
             checkin: checkin, //FECHA DE CHECKIN
             checkout: checkout, // FECHA DE CHEKOUT
             children: ninos, // N°NIÑOS
@@ -420,7 +420,7 @@ const FormularioReserva = ({ id }) => {
         Swal.fire({
           icon: "error",
           title: "Error al realizar la reserva",
-          text: `No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva con otra organizacion. ${error.message}`,
+          text: `No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva mas tarde. ${error.message}`,
         });
         console.error("Error al obtener disponibilidad:", error);
       } finally {

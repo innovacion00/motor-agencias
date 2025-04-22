@@ -892,7 +892,7 @@ export const Cid = ({ id }) => {
                   <label htmlFor="A a H">
                     {" "}
                     Aereopuerto al hotel {/*"$24.500 COP cada 4 personas"*/}
-                    {"$"}
+                    
                   </label>
                   
                 </div>
@@ -906,7 +906,7 @@ export const Cid = ({ id }) => {
                   <label htmlFor="H a A">
                     {" "}
                     Hotel al Aereopuerto {/*" $24.500 COP cada 4 personas"*/}
-                    {"$"}
+                    
                   </label>
                   
                 </div>
@@ -921,7 +921,7 @@ export const Cid = ({ id }) => {
                     {" "}
                     Aereopuerto al hotel | Hotel al aereopuerto{" "}
                     {/*" $49.000 COP cada 4 personas"*/}
-                    {"$"}
+                    
                   </label>
                   
                 </div>
