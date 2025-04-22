@@ -113,7 +113,7 @@ const DropdownSearch = () => {
   const handleSingleReservation = () => {
     setRooms(
       Array.from({ length: 1 }, () => ({
-        adults: 1,
+        adults: 2,
         children0to4: 0,
         children5to17: 0,
       }))

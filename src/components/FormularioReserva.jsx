@@ -7,6 +7,7 @@ import { format } from "@formkit/tempo";
 import TablaDesglose from "./TablaDesglose";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
+import ToursCs from "./ToursCs";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -65,6 +66,10 @@ const FormularioReserva = ({ id }) => {
     nit: "",
     emailEmpresa: "",
     telefonoF: "",
+    telefonotraslado: "",
+    numeroVuelo: "",
+    aereolinea: "",
+
     // esExtranjero:false
   });
 
@@ -104,15 +109,13 @@ const FormularioReserva = ({ id }) => {
     setagencia(token);
   }, []);
 
-   
-
   const mostrarCheckboxes =
-  divisaSelec !== "USD" &&
-  datosreserva.some(
-    (reserva) =>
-      hotelIdsPermitidos.includes(reserva.hotelid) &&
-      reserva.plandealimentacion === "Solo desayuno"
-  );
+    divisaSelec !== "USD" &&
+    datosreserva.some(
+      (reserva) =>
+        hotelIdsPermitidos.includes(reserva.hotelid) &&
+        reserva.plandealimentacion === "Solo desayuno"
+    );
 
   const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
   const [DatosRetenciones, setDatosRetenciones] = useState(null);
@@ -159,6 +162,17 @@ const FormularioReserva = ({ id }) => {
     setRetencionesPorcentaje(rtePorcentajes);
   };
 
+  //#region tipo de translado
+  const tipodetraslado = (() => {
+   
+    const tipoTraslado = reserva[0]?.tipoTraslado;
+
+    if (tipoTraslado === "aereopuerto_hotel") return 0;
+    if (tipoTraslado === "hotel_aereopuerto") return 1;
+    if (tipoTraslado === "ambos") return 2;
+    return null;
+  })();
+
   //CALCULO DEL IVA
   const marcadoAlmuerzo = almuerzo ? totalHuespedes * cantnoches * 30000 : 0;
   const marcadoCena = cena ? totalHuespedes * cantnoches * 30000 : 0;
@@ -195,12 +209,17 @@ const FormularioReserva = ({ id }) => {
     apellidos,
     email,
     celular,
+    telefonotraslado,
+    numeroVuelo,
+    aereolinea,
     nombreEmpresa,
     nit,
     emailEmpresa,
     telefonoF,
   } = formData;
 
+  const enviartraslado = reserva[0]?.incluirTraslado === true;
+  console.log(enviartraslado);
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
     setFormData({
@@ -249,6 +268,17 @@ const FormularioReserva = ({ id }) => {
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
+
+        infoTransporte:
+          reserva[0].incluirTraslado === true
+            ? {
+                numeroVuelo: formData.numeroVuelo,
+                firstContactNumber: formData.telefonotraslado,
+                aerolinea: formData.aereolinea,
+                tipoRecogida: tipodetraslado || 2,
+                cantidadPersonas: totalHuespedes,
+              }
+            : null,
         ...filtrarRetenciones({
           reteFuente: {
             resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
@@ -272,7 +302,7 @@ const FormularioReserva = ({ id }) => {
             external_ref_id: "666222",
           },
           reservation: {
-            adults: adults, //N°ADULTOS
+           /* adults: adults,*/ //N°ADULTOS
             checkin: checkin, //FECHA DE CHECKIN
             checkout: checkout, // FECHA DE CHEKOUT
             children: ninos, // N°NIÑOS
@@ -294,9 +324,9 @@ const FormularioReserva = ({ id }) => {
                     valorextranjero == "es extranjero"
                       ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
                       : ""
-                  } ${cena ? "El huésped ha solicitado cena." : ""} ${
-                    almuerzo ? "El huésped ha solicitado almuerzo." : ""
-                  }${
+                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
+                    cena ? "El huésped ha solicitado cena." : ""
+                  } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${
                     facturaE
                       ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
                       : ""
@@ -311,7 +341,7 @@ const FormularioReserva = ({ id }) => {
                     valorextranjero == "es extranjero"
                       ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
                       : ""
-                  } ${
+                  } Tipo de traslado: ${reserva[0].tipoTraslado} ${
                     cena ? "La agencia marco la casilla de solicitar cena." : ""
                   } ${
                     almuerzo
@@ -390,7 +420,7 @@ const FormularioReserva = ({ id }) => {
         Swal.fire({
           icon: "error",
           title: "Error al realizar la reserva",
-          text: "No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva con otra organizacion ",
+          text: `No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva con otra organizacion. ${error.message}`,
         });
         console.error("Error al obtener disponibilidad:", error);
       } finally {
@@ -498,9 +528,21 @@ const FormularioReserva = ({ id }) => {
               <strong>Plan de alimentacion: </strong>
               {data.plandealimentacion}
             </p>
+            <p>
+              <strong>Tipo de traslado: </strong>
+              {data.tipoTraslado === "aeropuerto_hotel"
+                ? "Aeropuerto al hotel"
+                : data.tipoTraslado === "hotel_aeropuerto"
+                ? "Hotel al aeropuerto"
+                : data.tipoTraslado === "ambos"
+                ? "Aeropuerto al hotel y Hotel al aeropuerto"
+                : "No se seleccionó traslado"}
+            </p>
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong>{" "}
-              {divisaSelec == "USD" ? `${(data.precio)} USD` : `${formatCurrency(data.precio)} COP`}
+              {divisaSelec == "USD"
+                ? `${data.precio} USD`
+                : `${formatCurrency(data.precio)} COP`}
             </p>
 
             <br />
@@ -809,6 +851,99 @@ const FormularioReserva = ({ id }) => {
               </label>
             </div>
 
+            <br />
+            {reserva[0]?.incluirTraslado === true ? (
+              <div>
+                <h3>Datos del viajero para el traslado</h3>
+                <form style={{ marginTop: "20px" }}>
+                  <fieldset
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: "5px",
+                      padding: "15px",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <legend> Informacion del traslado</legend>
+
+                    {/*-------------- INPUT TELEFONO TRASLADO -------------- */}
+                    <div>
+                      <label htmlFor="telefonotraslado">
+                        Telefono del viajero:{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="telefonotraslado"
+                        type="tel"
+                        placeholder="Ingrese el telefono del viajero"
+                        value={formData.telefonotraslado}
+                        onChange={handleChange}
+                        maxLength={20}
+                        autoComplete="off"
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+                    {/*-------------- INPUT NUMERO DE VUELO -------------- */}
+                    <div>
+                      <label htmlFor="numeroVuelo">
+                        Número del vuelo:{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="numeroVuelo"
+                        type="text"
+                        placeholder="Ingrese el numero de vuelo"
+                        maxLength={30}
+                        value={formData.numeroVuelo}
+                        onChange={handleChange}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+
+                    {/*-------------- INPUT AEREOLINIA FACTURA -------------- */}
+                    <div>
+                      <label htmlFor="aereoliniaViajero">
+                        Aereolinia del viajero:{" "}
+                        <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="aereolinea"
+                        type="text"
+                        placeholder="Ingrese la aereolinia"
+                        value={formData.aereolinea}
+                        onChange={handleChange}
+                        maxLength={15}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+            ) : (
+              ""
+            )}
+
             <div
               style={{
                 display: "flex",
@@ -838,7 +973,6 @@ const FormularioReserva = ({ id }) => {
               />
             </div>
             <br />
-
             {/*-------------- SECCION DATOS DE FACTURA ELECTRONICA -------------- */}
             {facturaE && (
               <div>

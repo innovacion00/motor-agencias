@@ -6,6 +6,9 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { disponibilidad } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
+import { toursData } from "../stores/InfoTours";
+import ToursCs from "./ToursCs";
+
 const hotelesData = {
   9: {
     name: "Hotel Marina Suites",
@@ -165,7 +168,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   //Azuan
   1: [
@@ -173,7 +176,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   //Avexi
   6: [
@@ -182,7 +185,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   7: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -190,7 +193,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   4: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -201,7 +204,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   5: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -209,7 +212,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   3: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
@@ -218,7 +221,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   10: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
@@ -227,14 +230,14 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   8: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   2: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -242,7 +245,6 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-    
   ],
   48: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -252,7 +254,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   44: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
@@ -262,14 +264,14 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
   41: [
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
 
   56: [
@@ -279,7 +281,7 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
 };
 
@@ -447,6 +449,26 @@ const quintuple = {
   56: true, // Boquilla,
 };
 
+const trasladosCartagenaPesos = {
+  0: "33500",
+  1: "67000",
+};
+
+const trasladosCartagenaDolares = {
+  0: "15",
+  1: "30",
+};
+
+const trasladosSantamartaPesos = {
+  0: "17200",
+  1: "34400",
+};
+
+const trasladosSantamartaDolares = {
+  0: "5",
+  1: "10",
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
@@ -477,10 +499,29 @@ export const Cid = ({ id }) => {
   const [datohabitacion, setDatohabitacion] = useState([]);
   const [categoria, setcategoria] = useState();
   const [mostrarseccion, setocultarseccion] = useState(plan_alimentacion[id]);
+  const [mostrarToures, setmostrarToures] = useState(false);
+  const [mostrarTraslados, setmostrarTraslados] = useState(false);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState("solodesayuno");
   const [contadorHabitaciones, setcontadorHabitaciones] = useState(0);
+  const [infoToures, setinfoToures] = useState({});
+  const [selectedTours, setSelectedTours] = useState([]);
+  const [tipoTraslado, setTipoTraslado] = useState(null||"ambos");
+  const [modalIsOpen, setIsOpen] = React.useState(false);
+  const [selectedCity, setSelectedCity] = useState("");
+  const [filteredTours, setFilteredTours] = useState([]);
+
+  function openModal(tour) {
+    setIsOpen(true);
+    setinfoToures(tour);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
     useState("");
+
+  // console.log(selectedTours);
 
   const habitacionesRestringidas = [
     "Familiar quintuple",
@@ -502,13 +543,69 @@ export const Cid = ({ id }) => {
     }).format(value);
   };
 
+  const calculateTransferPrice = (city, currency, transferType, totalGuests) => {
+    if (!transferType) return 0;
+    
+    const precios = {
+      CARTAGENA: currency === 'USD' ? trasladosCartagenaDolares : trasladosCartagenaPesos,
+      SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos
+    };
+  
+    // Determinar el índice basado en el tipo de traslado
+    const priceIndex = transferType === 'ambos' ? 1 : 0;
+    
+    const precioBase = precios[city]?.[priceIndex];
+    if (!precioBase) return 0;
+  
+    // Calcular número de vehículos necesarios (cada vehículo lleva 4 personas)
+    const vehiculosNecesarios = Math.ceil(totalGuests / 4);
+    return parseFloat(precioBase) * vehiculosNecesarios;
+  };
+
+  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado) => {
+    const toursPrice = tours.reduce((total, tour) => {
+      const tourPrice = currency === 'USD' ? parseFloat(tour.preciousd) : parseFloat(tour.preciocol);
+      return total + tourPrice * totalGuests;
+    }, 0);
+  
+    const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests);
+    
+    return parseFloat(basePrice) + toursPrice + transferPrice;
+  };
+
   //Enviar datos de reserva
   const enviardatos = () => {
     localStorage.setItem("datosreserva", JSON.stringify(datohabitacion));
   };
 
-  // UseEffect
+  //Use effect selectedCity
+  useEffect(() => {
+    const city = localStorage.getItem("selectedCity");
+    if (city) {
+      setSelectedCity(city);
+    }
+  }, []);
 
+  // Filtrar tours cada vez que cambie la ciudad seleccionada
+  useEffect(() => {
+    if (selectedCity) {
+      // Filtra los tours que coincidan con la ciudad seleccionada (ignorando mayúsculas/minúsculas)
+      const tours = toursData.filter(
+        (tour) => tour.city.toUpperCase() === selectedCity.toUpperCase()
+      );
+      setFilteredTours(tours);
+    } else {
+      setFilteredTours([]);
+    }
+  }, [selectedCity]);
+
+  // Función para abrir el modal con la información del tour seleccionado
+  const openTourDetails = (tour) => {
+    setSelectedTours(tour);
+    setIsOpen(true);
+  };
+
+  // UseEffect
   useEffect(() => {
     const formatearPlan = (plan) => {
       switch (plan) {
@@ -522,7 +619,7 @@ export const Cid = ({ id }) => {
           return plan;
       }
     };
-    
+
     setPlanDeAlimentacionFormateado(formatearPlan(planDeAlimentacion));
 
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -546,9 +643,32 @@ export const Cid = ({ id }) => {
 
   // const regex =categoria?.agencia?.category == 0? /\[Booking connect Neto\]/i : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
 
+  const valorDelRadioTraslados = (event) => {
+    setmostrarTraslados(event.target.value === "si");
+  };
+
   const valorDelRadio = (event) => {
     setplanDeAlimentacion(event.target.value); //valor del radiobutton
   };
+
+  const valorDelRadioToures = (event) => {
+    setmostrarToures(event.target.value === "si"); //valor del radiobutton
+  };
+
+  const handleSeleccionTraslado = (opcion) => {
+    setTipoTraslado(opcion);
+  };
+
+  const handleTourSelection = (event, tour) => {
+    if (event.target.checked) {
+      // Si el checkbox está marcado, agregar el tour al array de seleccionados
+      setSelectedTours([...selectedTours, tour]);
+    } else {
+      // Si se desmarca, quitarlo del array de seleccionados
+      setSelectedTours(selectedTours.filter((item) => item.id !== tour.id));
+    }
+  };
+
   console.log("Plan de alimentación:", planDeAlimentacionFormateado);
   // console.log(planDeAlimentacion)
 
@@ -598,6 +718,7 @@ export const Cid = ({ id }) => {
       return nuevasHabitaciones;
     });
   };
+  console.log(mostrarTraslados);
 
   return (
     <>
@@ -730,6 +851,154 @@ export const Cid = ({ id }) => {
             </div>
           </div>
         )}
+
+        <div className={styles.plan_alimentacion}>
+          <div className={styles.planes}>
+            {/* --------------------------- TRASLADOS --------------------------- */}
+            <h3>¿Desea añadir traslados a su reserva?</h3>
+            <input
+              type="radio"
+              name="traslados"
+              value="si"
+              className={styles.radioInput}
+              onChange={() => setmostrarTraslados(true)}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> Si</span>
+            <input
+              type="radio"
+              name="traslados"
+              value="no"
+              defaultChecked
+              onChange={() => {
+                setmostrarTraslados(false);
+                setTipoTraslado(null);
+              }}
+              className={styles.radioInput}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> No</span>
+            {mostrarTraslados && (
+              <div className={styles.touresSection}>
+                <h4 style={{ color: "#1f3b64" }}>
+                  Selecciona la opcion de traslado deseada:
+                </h4>
+                <div className={styles.tour_item}>
+                  <input
+                    type="radio"
+                    name="tipoTraslado"
+                    value="aeropuerto_hotel"
+                    onChange={() => handleSeleccionTraslado('aeropuerto_hotel')}
+                  />
+
+                  <label htmlFor="A a H">
+                    {" "}
+                    Aereopuerto al hotel {/*"$24.500 COP cada 4 personas"*/}
+                    {"$"}
+                  </label>
+                  
+                </div>
+                <div className={styles.tour_item}>
+                  <input
+                    type="radio"
+                    name="tipoTraslado"
+                    value="hotel_aeropuerto"
+                    onChange={() => handleSeleccionTraslado('hotel_aeropuerto')}
+                  />
+                  <label htmlFor="H a A">
+                    {" "}
+                    Hotel al Aereopuerto {/*" $24.500 COP cada 4 personas"*/}
+                    {"$"}
+                  </label>
+                  
+                </div>
+                <div className={styles.tour_item}>
+                  <input
+                    type="radio"
+                    name="tipoTraslado"
+                    value="ambos"
+                    onChange={() => handleSeleccionTraslado('ambos')}
+                  />
+                  <label htmlFor="A a H Y H a A">
+                    {" "}
+                    Aereopuerto al hotel | Hotel al aereopuerto{" "}
+                    {/*" $49.000 COP cada 4 personas"*/}
+                    {"$"}
+                  </label>
+                  
+                </div>
+              </div>
+            )}
+            <br />
+            {/* ----------------------TOURES------------------- */}
+            <h3>¿Desea añadir tours a su reserva?</h3>
+            <input
+              type="radio"
+              name="tours"
+              value="si"
+              onChange={valorDelRadioToures}
+              className={styles.radioInput}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> Si</span>
+            <input
+              type="radio"
+              name="tours"
+              value="no"
+              defaultChecked
+              className={styles.radioInput}
+              onChange={valorDelRadioToures}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> No</span>
+            {mostrarToures && (
+              <div className={styles.touresSection}>
+                <br />
+                <h4 style={{ color: "#1f3b64" }}>
+                  Opciones de toures disponibles
+                  {selectedCity ? ` en ${selectedCity}` : ""}:
+                </h4>
+                <ToursCs
+                  isOpen={modalIsOpen}
+                  onRequest={closeModal}
+                  infoToures={infoToures}
+                />
+
+                {selectedCity ? (
+                  <>
+                    {filteredTours.length > 0 ? (
+                      filteredTours.map((tour, index) => (
+                        <div
+                          className={styles.tour_item}
+                          key={tour.id || index}
+                        >
+                          <input
+                            type="checkbox"
+                            id={`tour-${tour.id || index}`}
+                            name={`tour-${tour.id || index}`}
+                            onChange={(e) => handleTourSelection(e, tour)}
+                          />
+                          <label htmlFor={`tour-${tour.id || index}`}>
+                            {tour.title}
+                          </label>
+                          <button
+                            className="detail_btn"
+                            onClick={() => openModal(tour)}
+                          >
+                            Ver detalle
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No hay tours disponibles para {selectedCity}.</p>
+                    )}
+                  </>
+                ) : (
+                  <p>
+                    Por favor, seleccione una ciudad para ver los tours
+                    disponibles.
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
         {/* habitaciones?.availability?.map((cam)=>
   cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
@@ -770,8 +1039,12 @@ export const Cid = ({ id }) => {
 
                           return (
                             <span key={idx}>
-                              {currency == "USD" ? (null) : formatCurrency(price || "Sin precio disponible")}
-                              
+                              {currency == "USD"
+                                ? null
+                                : formatCurrency(
+                                    price || "Sin precio disponible"
+                                  )}
+
                               <span> {currentCurrency}</span>
                             </span>
                           );
@@ -788,90 +1061,115 @@ export const Cid = ({ id }) => {
                     )}
                     <br />
 
-                    <div style={{ position: "relative", display: "inline-block" }}>
-  <button
-    className={styles.select_room}
-    data-room="Doble Estándar"
-    data-price="#Valor"
-    onClick={() => {
-      if (
-        !(
-          quintuple[habitaciones?.hotel?.id] &&
-          habitacionesRestringidas.includes(dato.roomName)
-        ) ||
-        contadorHabitaciones < (dato.count || Infinity) // Verifica el límite de habitaciones
-      ) {
-        setDatohabitacion((prevState) => [
-          ...prevState,
-          {
-            plandealimentacion: planDeAlimentacionFormateado,
-            roomId: dato.roomId,
-            checkin: checkin,
-            checkout: checkout,
-            nights: rangosfechas.nights,
-            imgH: idRooms[habitaciones.hotel.id][dato.roomId],
-            huespedes: adultos + ninos,
-            precio:
-              dato.products?.find((product) =>
-                regexSeleccionado.test(product.roomName)
-              )?.baseRate?.[
-                currentCurrency == "USD"
-                  ? "amountBeforeTaxUSD"
-                  : "amountBeforeTax"
-              ] || "Sin precio disponible",
-            NombreH: dato.roomName,
-            beds: dato.beds,
-            hotelid: habitaciones?.hotel?.roomcloud_id,
-            ciudad: habitaciones?.hotel?.city,
-            hotelidAutocore: habitaciones?.hotel?.id,
-            rateId: dato.products?.find((product) =>
-              regexSeleccionado.test(product.roomName)
-            )?.rateId,
-          },
-        ]);
-        setcontadorHabitaciones((prevCount) => prevCount + 1);
-      }
-    }}
-    disabled={
-      quintuple[habitaciones?.hotel?.id] &&
-      habitacionesRestringidas.includes(dato.roomName) &&
-      contadorHabitaciones >= dato.count
-    }
-    onMouseOver={() => {
-      if (
-        quintuple[habitaciones?.hotel?.id] &&
-        habitacionesRestringidas.includes(dato.roomName) &&
-        contadorHabitaciones >= dato.count
-      ) {
-        setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
-      }
-    }}
-    onMouseOut={() => setTooltipActivo(null)} // Desactiva el tooltip al salir
-  >
-    Seleccionar
-  </button>
+                    <div
+                      style={{ position: "relative", display: "inline-block" }}
+                    >
+                      <button
+                        className={styles.select_room}
+                        data-room="Doble Estándar"
+                        data-price="#Valor"
+                        onClick={() => {
+                          if (
+                            !(
+                              quintuple[habitaciones?.hotel?.id] &&
+                              habitacionesRestringidas.includes(dato.roomName)
+                            ) ||
+                            contadorHabitaciones < (dato.count || Infinity) // Verifica el límite de habitaciones
+                          ) {
+                            setDatohabitacion((prevState) => [
+                              ...prevState,
+                              {
+                                incluirTraslado: mostrarTraslados, // Booleano que indica si se seleccionó traslado
+                                tipoTraslado: mostrarTraslados
+                                  ? tipoTraslado
+                                  : null, // El tipo específico de traslado
+                                tourSeleccionado: selectedTours,
+                                plandealimentacion:
+                                  planDeAlimentacionFormateado,
+                                roomId: dato.roomId,
+                                checkin: checkin,
+                                checkout: checkout,
+                                nights: rangosfechas.nights,
+                                imgH: idRooms[habitaciones.hotel.id][
+                                  dato.roomId
+                                ],
+                                huespedes: adultos + ninos,
+                                precio: calculateTotalPrice(
+                                  dato.products?.find((product) =>
+                                    regexSeleccionado.test(product.roomName)
+                                  )?.baseRate?.[
+                                    currentCurrency == "USD"
+                                      ? "amountBeforeTaxUSD"
+                                      : "amountBeforeTax"
+                                  ] || "Sin precio disponible",
+                                  selectedTours,
+                                  currentCurrency,
+                                  ninos + adultos,
+                                  habitaciones?.hotel?.city,
+                                  tipoTraslado
+                                ),
+                                precioBase: dato.products?.find((product) =>
+                                  regexSeleccionado.test(product.roomName)
+                                )?.baseRate?.[
+                                  currentCurrency == "USD"
+                                    ? "amountBeforeTaxUSD"
+                                    : "amountBeforeTax"
+                                ] || "Sin precio disponible",
+                                NombreH: dato.roomName,
+                                beds: dato.beds,
+                                hotelid: habitaciones?.hotel?.roomcloud_id,
+                                ciudad: habitaciones?.hotel?.city,
+                                hotelidAutocore: habitaciones?.hotel?.id,
+                                rateId: dato.products?.find((product) =>
+                                  regexSeleccionado.test(product.roomName)
+                                )?.rateId,
+                              },
+                            ]);
+                            setcontadorHabitaciones(
+                              (prevCount) => prevCount + 1
+                            );
+                          }
+                        }}
+                        disabled={
+                          quintuple[habitaciones?.hotel?.id] &&
+                          habitacionesRestringidas.includes(dato.roomName) &&
+                          contadorHabitaciones >= dato.count
+                        }
+                        onMouseOver={() => {
+                          if (
+                            quintuple[habitaciones?.hotel?.id] &&
+                            habitacionesRestringidas.includes(dato.roomName) &&
+                            contadorHabitaciones >= dato.count
+                          ) {
+                            setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
+                          }
+                        }}
+                        onMouseOut={() => setTooltipActivo(null)} // Desactiva el tooltip al salir
+                      >
+                        Seleccionar
+                      </button>
 
-  {/* Tooltip SOLO para este botón */}
-  {tooltipActivo === dato.roomId && (
-    <div
-      style={{
-        position: "absolute",
-        bottom: "120%", // Posiciona el tooltip arriba del botón
-        left: "50%",
-        transform: "translateX(-50%)",
-        backgroundColor: "black",
-        color: "white",
-        padding: "5px 10px",
-        borderRadius: "5px",
-        fontSize: "12px",
-        whiteSpace: "nowrap",
-        zIndex: 1000,
-      }}
-    >
-      Límite de habitaciones alcanzado
-    </div>
-  )}
-</div>
+                      {/* Tooltip SOLO para este botón */}
+                      {tooltipActivo === dato.roomId && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: "120%", // Posiciona el tooltip arriba del botón
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            backgroundColor: "black",
+                            color: "white",
+                            padding: "5px 10px",
+                            borderRadius: "5px",
+                            fontSize: "12px",
+                            whiteSpace: "nowrap",
+                            zIndex: 1000,
+                          }}
+                        >
+                          Límite de habitaciones alcanzado
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
@@ -906,8 +1204,28 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
-
-                  <h2>{formatCurrency(dato.precio)} {currentCurrency == "USD" ? "USD": "COP"}</h2>
+                  <h5>
+                    {selectedTours.length > 0 && ''} 
+                    {selectedTours.map((tour, i) => (
+                      <span key={i}>
+                        {i > 0 && ', '}
+                        {tour.title}
+                      </span>
+                    ))}
+                  </h5>
+                  <h2>
+                    {formatCurrency(
+                      calculateTotalPrice(
+                        dato.precioBase,
+                        selectedTours,
+                        currentCurrency,
+                        ninos + adultos,
+                        habitaciones?.hotel?.city,
+                        tipoTraslado
+                      )
+                    )}{" "}
+                    {currentCurrency == "USD" ? "USD" : "COP"}
+                  </h2>
                   <button
                     style={{
                       position: "absolute",

@@ -22,8 +22,8 @@ const SwiperSlider = () => {
       
     >
       <SwiperSlide >
-        <a href="/eventos">
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-eventos.jpeg" alt="Banner eventos" /></a>
+        
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner_tourtraslado.jpeg" alt="Banner toures y traslados" />
       </SwiperSlide>
       <SwiperSlide >
         <a href="/tablerousuario">

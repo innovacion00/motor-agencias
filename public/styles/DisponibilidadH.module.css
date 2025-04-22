@@ -1,499 +1,4 @@
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      width: 80%;
-      margin: 0 auto;
-      padding: 20px 0;
-    }
-
-    .breadcrumb {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .breadcrumb a {
-      color: #666;
-      text-decoration: none;
-    }
-
-    .breadcrumb a:hover {
-      text-decoration: underline;
-    }
-
-    .hotel_title {
-      font-size: 32px;
-      color: #2c3e50;
-      margin-bottom: 20px;
-    }
-
-    .hotel_info {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-    }
-
-    .hotel_info img {
-      width: 350px;
-      height: 300px;
-      border-radius: 8px;
-      margin-right: 20px;
-    }
-
-    .hotel_details {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-
-    .hotel_details .description {
-      flex: 1;
-      margin-right: 20px;
-    }
-
-    .hotel_details .description p {
-      margin: 0;
-      color: #666;
-    }
-
-    .hotel_details .description a {
-      color: #1C3D5A;
-      text-decoration: none;
-      align-self: flex-end;
-    
-    }
-
-    .hotel_details .description a:hover {
-      text-decoration: underline;
-    }
-
-    .hotel_details .services {
-      display: flex;
-      align-items: center;
-
-    }
-
-    .hotel_details .services i {
-      margin-right: 10px;
-      padding-right: 10px;
-      color: #666;
-    }
-
-    .hotel_details .more_info {
-      text-align: right;
-    }
-
-    .hotel_details .more_info button {
-      background-color: #fff;
-      border-style: solid;
-      border-width: 2px;
-      border-color: #1C3D5A;
-      color: #1C3D5A;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .hotel-details .more_info button:hover {
-      background-color: #c8cdd370;
-
-    }
-
-    .available_rooms {
-      font-size: 24px;
-      color: #2c3e50;
-      margin-bottom: 20px;
-    }
-
-    .search_criteria {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .search_criteria div {
-      text-align: center;
-    }
-
-    .search_criteria div p {
-      margin: 0;
-      color: #666;
-    }
-
-    .search_criteria div strong {
-      font-size: 18px;
-      display: block;
-      color: #2c3e50;
-      margin-top: 5px;
-    }
-
-    /* .search_criteria button {
-      background-color: #fff;
-      border-style: solid;
-      border-width: 2px;
-      border-color: #1C3D5A;
-      color: #1C3D5A;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .search_criteria button:hover {
-      background-color: #c8cdd370;
-    } */
-
-    .cards {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-
-    }
-
-    /* Detalles y tipos de habitaciones*/
-    
-    .room_section {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .room_card {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex: 3;
-    }
-
-    .room_card img {
-      width: 250px;
-      border-radius: 8px;
-    }
-    .room_card a {
-      text-decoration: none;
-      
-    }
-    .room_card a:hover {
-      text-decoration: underline;
-      
-    }
-
-    .room_details {
-      flex: 1;
-      margin-left: 20px;
-      position: relative;
-    }
-
-    .room_details h3 {
-      margin: 0;
-      color: #2c3e50;
-    }
-    .room_details h2 {
-      margin: 0;
-      font-size: 17px;
-      color: #1C3D5A;
-    }
-
-    .room_details p {
-
-      margin: 5px 0;
-      color: #1C3D5A;
-    }
-
-    .room_details span {
-      position: relative;
-      margin: 5px 0;
-      color: #2f4a66;
-      font-weight:bold;
-    }
-
-    .room_details .price {
-      font-size: 18px;
-      color: #2f4a66;
-    }
-
-    .room_details .price del {
-      color: #999;
-      margin-left: 10px;
-    }
-
-    /* .room_details .discount {
-      background-color: #ff6f61;
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 14px;
-      position: absolute;
-      top: 20px;
-      right: 20px;
-    } */
-
-    /* Boton seleccionar las habitaciones */
-
-    .room_details button {
-      background-color: #26547B;
-      border: none;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .room_details button:hover {
-      background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
-      transform: scale(1.1);
-    }
-    
-    .room_details button:active {
-      
-        background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
-        transform: scale(1.1);
-      
-    }
-
-
-
-    .reservation {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 250px;
-      margin-left: 20px;
-      flex-shrink: 0;
-    }
-
-    .reservation h3 {
-      margin: 0;
-      color: #2c3e50;
-      margin-bottom: 20px;
-    }
-
-    .reservation p {
-      margin: 0;
-      color: #666;
-      margin-bottom: 20px;
-    }
-
-    .reservation button {
-      width: 200px;
-      
-      border: none;
-      color: #1C3D5A;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .search_form_wrapper {
-      background-color: #F29C38;
-      padding: 20px;
-      border-radius: 8px;
-      display: flexbox justify-content center;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .search_form_container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      align-items: flex-start;
-    }
-
-    .dropdown select,
-    .people-counter input,
-    .date-picker input {
-      padding: 10px;
-      font-size: 16px;
-    }
-
-    .date_picker {
-      position: absolute;
-    }
-
-    .date_range_picker {
-      margin-top: 10px;
-      position: absolute;
-      /* Posiciona el calendario sobre los demás elementos */
-      top: 1000%;
-      /* Alinea el calendario debajo del input */
-      left: 0;
-      z-index: 1000;
-      /* Asegura que el calendario esté por encima de otros elementos */
-      background-color: white;
-      /* Asegura que el fondo del calendario sea blanco */
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-      /* Añade una sombra para destacar el calendario */
-      border-radius: 8px;
-      /* Bordes redondeados */
-      padding: 1rem;
-    }
-
-    .child_age_warning {
-      color: #ff0000;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-
-    .child_age_selector {
-      margin-top: 10px;
-    }
-
-    .icons img {
-
-      width: 26px;
-      height: 26px;
-      margin-right: 10px;
-    }
-
-    #selected_rooms {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    #selected_rooms li {
-      margin-bottom: 5px;
-      font-size: 14px;
-    }
-
-    .fas_fa_bed i {
-      margin-right: 10px;
-      padding-right: 10px;
-    }
-    
-    /* Contenedor principal */
-.reservation {
-  border: 1px solid #ddd; /* Borde gris claro */
-  border-radius: 20px; /* Bordes redondeados */
-  padding-bottom: 500px;
-  padding: 30px; /* Espaciado interno */
-  background-color: #fff; /* Fondo blanco */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sutil sombra */
-  color: #333; /* Color del texto */
-  width: 300px; /* Ancho del contenedor */
-  margin: 0 auto; /* Centrar */
-}
-
-/* Título */
-.reservation h3 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.reservation hr{
-  position: absolute;
-
-  width: 250px;
-  color: #333;
-}
-
-
-
-.reservation h2  {
-  font-size: 18px;
-  
-  margin-bottom: 8px;
-  display: flex;
-  font-weight: 600;
-  color: #1C3D5A;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-/* Icono y título extra */
-
-
-/* Información del hotel */
-.reservation p {
-  justify-self: center;
-  margin: 4px 0;
-  font-size: 15px;
-  font-weight: 700;
-  color: #1C3D5A;
-}
-.reservation h5 {
-  justify-self: center;
-  margin: 4px 0;
-  font-size: 14px;
-  font-weight: 400;
-  color: #1C3D5A;
-}
-
-.reservation h4 {
-  
-  
-  font-size: 14px;
-  font-weight: 400;
-  color: #585555;
-}
-/* Flecha */
-.reservation i {
-  margin: 0 6px;
-  color: #9F6118;
-  font-weight: bold;
-}
-
-/* Lista de habitaciones */
-#selected-rooms {
-  border-top: 1px solid #ddd; /* Línea separadora */
-  margin-top: 12px;
-  padding-top: 12px;
-  list-style: none; /* Eliminar viñetas */
-}
-
-
-
-/* Botón  de reservar*/
-.reservation a button {
-  margin-top: 12px;
-  padding: 8px 16px;
-  background-color: #26547B; /* Fondo azul */
-  color: #fff; /* Texto blanco */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.reservation a button:hover {
-  background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
-  transform: scale(1.1);
-}
-
-.reservation a button:active {
-  background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
-  transform: scale(1.1);
-} body {
+body {
   font-family: 'Roboto', sans-serif;
   background-color: #ffffff;
   margin: 0;
@@ -987,6 +492,500 @@ transform: scale(1.1);
 .reservation a button:active {
 background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
 transform: scale(1.1);
+} body {
+font-family: 'Roboto', sans-serif;
+background-color: #ffffff;
+margin: 0;
+padding: 0;
+}
+
+.container {
+width: 80%;
+margin: 0 auto;
+padding: 20px 0;
+}
+
+.breadcrumb {
+font-size: 14px;
+color: #666;
+margin-bottom: 20px;
+}
+
+.breadcrumb a {
+color: #666;
+text-decoration: none;
+}
+
+.breadcrumb a:hover {
+text-decoration: underline;
+}
+
+.hotel_title {
+font-size: 32px;
+color: #2c3e50;
+margin-bottom: 20px;
+}
+
+.hotel_info {
+background-color: #fff;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+}
+
+.hotel_info img {
+width: 350px;
+height: 300px;
+border-radius: 8px;
+margin-right: 20px;
+}
+
+.hotel_details {
+display: flex;
+justify-content: space-between;
+align-items: center;
+width: 100%;
+}
+
+.hotel_details .description {
+flex: 1;
+margin-right: 20px;
+}
+
+.hotel_details .description p {
+margin: 0;
+color: #666;
+}
+
+.hotel_details .description a {
+color: #1C3D5A;
+text-decoration: none;
+align-self: flex-end;
+
+}
+
+.hotel_details .description a:hover {
+text-decoration: underline;
+}
+
+.hotel_details .services {
+display: flex;
+align-items: center;
+
+}
+
+.hotel_details .services i {
+margin-right: 10px;
+padding-right: 10px;
+color: #666;
+}
+
+.hotel_details .more_info {
+text-align: right;
+}
+
+.hotel_details .more_info button {
+background-color: #fff;
+border-style: solid;
+border-width: 2px;
+border-color: #1C3D5A;
+color: #1C3D5A;
+padding: 10px 20px;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.hotel-details .more_info button:hover {
+background-color: #c8cdd370;
+
+}
+
+.available_rooms {
+font-size: 24px;
+color: #2c3e50;
+margin-bottom: 20px;
+}
+
+.search_criteria {
+background-color: #fff;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.search_criteria div {
+text-align: center;
+}
+
+.search_criteria div p {
+margin: 0;
+color: #666;
+}
+
+.search_criteria div strong {
+font-size: 18px;
+display: block;
+color: #2c3e50;
+margin-top: 5px;
+}
+
+/* .search_criteria button {
+background-color: #fff;
+border-style: solid;
+border-width: 2px;
+border-color: #1C3D5A;
+color: #1C3D5A;
+padding: 10px 20px;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.search_criteria button:hover {
+background-color: #c8cdd370;
+} */
+
+.cards {
+display: flex;
+flex-direction: column;
+width: 100%;
+
+}
+
+/* Detalles y tipos de habitaciones*/
+
+.room_section {
+display: flex;
+justify-content: space-between;
+}
+
+.room_card {
+background-color: #fff;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+flex: 3;
+}
+
+.room_card img {
+width: 250px;
+border-radius: 8px;
+}
+.room_card a {
+text-decoration: none;
+
+}
+.room_card a:hover {
+text-decoration: underline;
+
+}
+
+.room_details {
+flex: 1;
+margin-left: 20px;
+position: relative;
+}
+
+.room_details h3 {
+margin: 0;
+color: #2c3e50;
+}
+.room_details h2 {
+margin: 0;
+font-size: 17px;
+color: #1C3D5A;
+}
+
+.room_details p {
+
+margin: 5px 0;
+color: #1C3D5A;
+}
+
+.room_details span {
+position: relative;
+margin: 5px 0;
+color: #2f4a66;
+font-weight:bold;
+}
+
+.room_details .price {
+font-size: 18px;
+color: #2f4a66;
+}
+
+.room_details .price del {
+color: #999;
+margin-left: 10px;
+}
+
+/* .room_details .discount {
+background-color: #ff6f61;
+color: #fff;
+padding: 5px 10px;
+border-radius: 4px;
+font-size: 14px;
+position: absolute;
+top: 20px;
+right: 20px;
+} */
+
+/* Boton seleccionar las habitaciones */
+
+.room_details button {
+background-color: #26547B;
+border: none;
+color: #fff;
+padding: 10px 20px;
+border-radius: 4px;
+cursor: pointer;
+font-weight: 500;
+transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.room_details button:hover {
+background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+transform: scale(1.1);
+}
+
+.room_details button:active {
+
+background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
+transform: scale(1.1);
+
+}
+
+
+
+.reservation {
+background-color: #fff;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+text-align: center;
+width: 250px;
+margin-left: 20px;
+flex-shrink: 0;
+}
+
+.reservation h3 {
+margin: 0;
+color: #2c3e50;
+margin-bottom: 20px;
+}
+
+.reservation p {
+margin: 0;
+color: #666;
+margin-bottom: 20px;
+}
+
+.reservation button {
+width: 200px;
+
+border: none;
+color: #1C3D5A;
+padding: 10px 20px;
+border-radius: 4px;
+cursor: pointer;
+font-weight: 600;
+font-size: 14px;
+}
+
+.search_form_wrapper {
+background-color: #F29C38;
+padding: 20px;
+border-radius: 8px;
+display: flexbox justify-content center;
+align-items: center;
+gap: 15px;
+}
+
+.search_form_container {
+display: flex;
+flex-direction: column;
+gap: 20px;
+align-items: flex-start;
+}
+
+.dropdown select,
+.people-counter input,
+.date-picker input {
+padding: 10px;
+font-size: 16px;
+}
+
+.date_picker {
+position: absolute;
+}
+
+.date_range_picker {
+margin-top: 10px;
+position: absolute;
+/* Posiciona el calendario sobre los demás elementos */
+top: 1000%;
+/* Alinea el calendario debajo del input */
+left: 0;
+z-index: 1000;
+/* Asegura que el calendario esté por encima de otros elementos */
+background-color: white;
+/* Asegura que el fondo del calendario sea blanco */
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+/* Añade una sombra para destacar el calendario */
+border-radius: 8px;
+/* Bordes redondeados */
+padding: 1rem;
+}
+
+.child_age_warning {
+color: #ff0000;
+font-size: 14px;
+margin-top: 10px;
+}
+
+.child_age_selector {
+margin-top: 10px;
+}
+
+.icons img {
+
+width: 26px;
+height: 26px;
+margin-right: 10px;
+}
+
+#selected_rooms {
+list-style-type: none;
+padding: 0;
+}
+
+#selected_rooms li {
+margin-bottom: 5px;
+font-size: 14px;
+}
+
+.fas_fa_bed i {
+margin-right: 10px;
+padding-right: 10px;
+}
+
+/* Contenedor principal */
+.reservation {
+border: 1px solid #ddd; /* Borde gris claro */
+border-radius: 20px; /* Bordes redondeados */
+padding-bottom: 500px;
+padding: 30px; /* Espaciado interno */
+background-color: #fff; /* Fondo blanco */
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sutil sombra */
+color: #333; /* Color del texto */
+width: 300px; /* Ancho del contenedor */
+margin: 0 auto; /* Centrar */
+}
+
+/* Título */
+.reservation h3 {
+font-size: 20px;
+font-weight: 700;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+}
+
+.reservation hr{
+position: absolute;
+
+width: 250px;
+color: #333;
+}
+
+
+
+.reservation h2  {
+font-size: 18px;
+
+margin-bottom: 8px;
+display: flex;
+font-weight: 600;
+color: #1C3D5A;
+align-items: center;
+justify-content: flex-end;
+}
+
+/* Icono y título extra */
+
+
+/* Información del hotel */
+.reservation p {
+justify-self: center;
+margin: 4px 0;
+font-size: 15px;
+font-weight: 700;
+color: #1C3D5A;
+}
+.reservation h5 {
+justify-self: center;
+margin: 4px 0;
+font-size: 14px;
+font-weight: 400;
+color: #1C3D5A;
+}
+
+.reservation h4 {
+
+
+font-size: 14px;
+font-weight: 400;
+color: #585555;
+}
+/* Flecha */
+.reservation i {
+margin: 0 6px;
+color: #9F6118;
+font-weight: bold;
+}
+
+/* Lista de habitaciones */
+#selected-rooms {
+border-top: 1px solid #ddd; /* Línea separadora */
+margin-top: 12px;
+padding-top: 12px;
+list-style: none; /* Eliminar viñetas */
+}
+
+
+
+/* Botón  de reservar*/
+.reservation a button {
+margin-top: 12px;
+padding: 8px 16px;
+background-color: #26547B; /* Fondo azul */
+color: #fff; /* Texto blanco */
+border: none;
+border-radius: 4px;
+cursor: pointer;
+font-weight: bold;
+transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reservation a button:hover {
+background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+transform: scale(1.1);
+}
+
+.reservation a button:active {
+background-color: #003f7f; /* Azul más oscuro al pasar el mouse */
+transform: scale(1.1);
 }
 
 .plan_alimentacion {
@@ -1018,7 +1017,9 @@ margin-bottom: 10px;
 font-size: 14px;
 color: #1f3b64; /* Azul oscuro */
 cursor: pointer;
+
 }
+
 
 .radioInput {
 margin-top: 1px;
@@ -1044,4 +1045,56 @@ line-height: 1.5;
 .radioLabel strong {
 font-weight: bold;
 font-size: 15px;
+}
+
+.touresSection {
+
+padding: 15px;
+background-color: #f8f9fa;
+border-radius: 8px;
+margin: 0 auto;
+}
+
+h4 {
+color: #343a40;
+margin-bottom: 20px;
+font-size: 18px;
+}
+
+.tour_item {
+display: flex;
+align-items: center;
+margin-bottom: 12px;
+padding: 10px;
+background-color: white;
+border-radius: 5px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+input[type="checkbox"] {
+margin-right: 10px;
+}
+
+input[type="radio"] {
+  margin-right: 10px;
+  
+  }
+
+label {
+flex-grow: 1;
+margin-right: 10px;
+}
+
+.detail_btn {
+background-color: #003f7f;
+color: white;
+border: none;
+border-radius: 4px;
+padding: 5px 10px;
+cursor: pointer;
+font-size: 14px;
+}
+
+.detail_btn:hover {
+background-color: #0069d9;
 }

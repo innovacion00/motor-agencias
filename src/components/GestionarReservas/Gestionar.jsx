@@ -18,24 +18,22 @@ const Gestionar = ({ reservas }) => {
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
-  const [nota, setNota] = useState("")
+  const [nota, setNota] = useState(reservas.notasSuperAdmin || "");
   const [mostrarnota1, setmostrarnota1] = useState(false);
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
   const [datosDelUsuario, setdatosDelUsuario] = useState();
-  const [mostrarExtranjero, setmostrarExtranjero] = useState(false)
-  const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false)
-  const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false)
-  
-  const [mostrarBeneficio, setMostrarBeneficio] = useState(false)
+  const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
+  const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
+  const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
+
+  const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
     Number(reservas?.reservation.children) +
     Number(reservas?.reservation.adults);
 
   let contador = 1;
-
-  
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -59,7 +57,6 @@ const Gestionar = ({ reservas }) => {
     } else {
       setmostrarAdicionalA(false);
     }
-  
 
     if (reservas.status == "2" || reservas.status == "0") {
       setmostrarnota1(true);
@@ -69,7 +66,7 @@ const Gestionar = ({ reservas }) => {
       setmostrarnota2(true);
     }
 
-  // Nueva validación para mostrarBeneficio
+    // Nueva validación para mostrarBeneficio
     if (reservas?.cantidadHabitaciones >= 10) {
       setMostrarBeneficio(true);
     } else {
@@ -79,7 +76,7 @@ const Gestionar = ({ reservas }) => {
 
   const infoHoteles = hoteles(reservas?.hotel);
 
-//#region Texto del textarea
+  //#region Texto del textarea
   const handleChange = (event) => {
     setNota(event.target.value); // Guarda el valor del textarea en el estado
   };
@@ -123,6 +120,7 @@ const Gestionar = ({ reservas }) => {
       console.log(linkP);
       if (linkP.link) {
         window.location.href = linkP.link; // Redireccionar al link generado
+        window.history.replaceState(null, "", "/misreservas");
       } else {
         alert("No se pudo generar el link de pago.");
       }
@@ -158,8 +156,6 @@ const Gestionar = ({ reservas }) => {
       setisLoading(false); // Habilitar el botón nuevamente
     }
   };
-
-  
 
   //#region boton pagar mitad
   const onClick = async (id, booleano) => {
@@ -212,60 +208,58 @@ const Gestionar = ({ reservas }) => {
 
   //#region editar reserva(nota)
 
-    const editarnota = async (reservas) =>{
-      try{
-        const datosUsuario =JSON.parse(localStorage.getItem("datosUsuario"));
-        const token =datosUsuario.token;
+  const editarnota = async (reservas) => {
+    try {
+      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
+      const token = datosUsuario.token;
 
-        const response = await fetch(
-          `https://gehsuitesapps.com/agencias/v1/reservas/editar-reserva/${reservas}`,
-          {
-            method:"PUT",
-            headers:{
-              "Content-Type":"application/json",
-              Authorization:`Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              notasSuperAdmin:nota
-            })
-          }
-          
-        );//#region Noti erro editar reserva
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error("Error al cancelar la reserva:", errorData);
-          Swal.fire(
-            "Error",
-            "No se pudo guardar la nota. Intente nuevamente.",
-            "error"
-          );
-          return;
+      const response = await fetch(
+        `https://gehsuitesapps.com/agencias/v1/reservas/editar-reserva/${reservas}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            notasSuperAdmin: nota,
+          }),
         }
-  
-        //#region Noti exito editar reserva
-        const data = await response.json();
-        console.log("Nota guardadaexitosamente:", data);
-        Swal.fire({
-          title: "¡Éxito!",
-          text: "Nota guardada exitosamente.",
-          icon: "success",
-          timer: 1000, // La alerta se cierra automáticamente en 2 segundos
-          showConfirmButton: false, // Ocultar botón de confirmación
-        }).then(() => {
-          window.location.reload(); // Recargar la página
-        });
-
-      } catch (error) {
-        console.error("Error al cancelar la reserva:", error);
-        //#region Noti fallo en la api de editar reserva
+      ); //#region Noti erro editar reserva
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error al cancelar la reserva:", errorData);
         Swal.fire(
           "Error",
-          "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
+          "No se pudo guardar la nota. Intente nuevamente.",
           "error"
         );
-
+        return;
       }
+
+      //#region Noti exito editar reserva
+      const data = await response.json();
+      console.log("Nota guardada exitosamente:", data);
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Nota guardada exitosamente.",
+        icon: "success",
+        timer: 1000, // La alerta se cierra automáticamente en 2 segundos
+        showConfirmButton: false, // Ocultar botón de confirmación
+        confirmButtonColor:"#26547B" 
+      }).then(() => {
+        window.location.reload(); // Recargar la página
+      });
+    } catch (error) {
+      console.error("Error al cancelar la reserva:", error);
+      //#region Noti fallo en la api de editar reserva
+      Swal.fire(
+        "Error",
+        "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
+        "error"
+      );
     }
+  };
 
   //#region Peticion cancelar reservas
   const cancelarReserva = async (reservas) => {
@@ -306,11 +300,15 @@ const Gestionar = ({ reservas }) => {
       //#region Noti exito al cancelar la reserva
       const data = await response.json();
       console.log("Reserva cancelada exitosamente:", data);
-      Swal.fire("¡Éxito!", "Reserva cancelada exitosamente.", "success").then(
-        () => {
-          window.location.href = "/misreservas";
-        }
-      );
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Reserva cancelada exitosamente.",
+        icon: "success",
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.href = "/misreservas";
+      });
     } catch (error) {
       console.error("Error al cancelar la reserva:", error);
       //#region Noti fallo en la api de cancelar reserva
@@ -360,10 +358,7 @@ const Gestionar = ({ reservas }) => {
     });
   };
 
-
-
   return (
-    
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
 
@@ -484,8 +479,9 @@ const Gestionar = ({ reservas }) => {
                     </div>
                   </div>
                   <p className={styles.totalCard}>
-                  {reservas?.reservation.currency == "USD" ? `$${(dato.unitaryPrice)} USD` :`${formatCurrency(dato.unitaryPrice)} COP`}
-                    
+                    {reservas?.reservation.currency == "USD"
+                      ? `$${dato.unitaryPrice} USD`
+                      : `${formatCurrency(dato.unitaryPrice)} COP`}
                   </p>
                 </div>
               ))}
@@ -494,29 +490,31 @@ const Gestionar = ({ reservas }) => {
             <div className={styles.infoTotal}>
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
-                
-                {mostrarExtranjero &&(<div>
-                <b>El huesped es extranjero </b>
-                </div>
-          
-                )}
-                {mostrarAdicionalA &&(
+
+                {mostrarExtranjero && (
                   <div>
-                <b>Se adicionó almuerzo</b>
-                </div>
-              )}
-              {mostrarAdicionalC&&(
-                <div>
-                <b>Se adicionó cena</b>
-                </div>
-              )}
+                    <b>El huesped es extranjero </b>
+                  </div>
+                )}
+                {mostrarAdicionalA && (
+                  <div>
+                    <b>Se adicionó almuerzo</b>
+                  </div>
+                )}
+                {mostrarAdicionalC && (
+                  <div>
+                    <b>Se adicionó cena</b>
+                  </div>
+                )}
                 <p className={styles.plazoPago}>
                   Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
                 </p>
               </div>
-              
-              <p className={styles.total}> 
-              {reservas.reservation.currency == "USD" ? `$${(reservas?.total)} USD` :`${formatCurrency(reservas?.total)} COP`}
+
+              <p className={styles.total}>
+                {reservas.reservation.currency == "USD"
+                  ? `$${reservas?.total} USD`
+                  : `${formatCurrency(reservas?.total)} COP`}
               </p>
             </div>
           </div>
@@ -560,14 +558,25 @@ const Gestionar = ({ reservas }) => {
             <br />
             <div className={styles.acuerdos}>
               {mostrarBeneficio && (
-              <p><b style={{}}>Se le aplicara bonificacion de Tour Conductor </b><br />
-              Por cada 10 habitaciones reservadas se le obsequiará una habitación y por cada 20 reservadas seran 2 habitaciones obsequiadas</p>
-            )}
-             
-             {mostrarExtranjero &&(
-            <p> Todo huesped extranjero sera exento de iva pero debe mostrar su pasaporte al momento de hacer check-in en la recepción </p>
-             )}
-            <br />
+                <p>
+                  <b style={{}}>
+                    Se le aplicara bonificacion de Tour Conductor{" "}
+                  </b>
+                  <br />
+                  Por cada 10 habitaciones reservadas se le obsequiará una
+                  habitación y por cada 20 reservadas seran 2 habitaciones
+                  obsequiadas
+                </p>
+              )}
+
+              {mostrarExtranjero && (
+                <p>
+                  {" "}
+                  Todo huesped extranjero sera exento de iva pero debe mostrar
+                  su pasaporte al momento de hacer check-in en la recepción{" "}
+                </p>
+              )}
+              <br />
               <p>Tener en cuenta:</p>
               <br />
               <p>
@@ -620,29 +629,42 @@ const Gestionar = ({ reservas }) => {
               </tbody>
             </table>
             <br />
-              {datosDelUsuario?.role.includes("super-admin") ? (
-                <div className={styles.textAreaNotas}>
-                  <h3>Nota:</h3>
+            {datosDelUsuario?.role.includes("super-admin") ? (
+              <div className={styles.textAreaNotas}>
+                <h3>Nota:</h3>
 
-                  <p style={{fontStyle:"normal", color:"black", fontSize:"14px"}}>{reservas.notasSuperAdmin}</p>
+                <p
+                  style={{
+                    fontStyle: "normal",
+                    color: "black",
+                    fontSize: "14px",
+                  }}
+                >
+                  {reservas.notasSuperAdmin}
+                </p>
 
-                  <h3 style={{fontSize:"14px"}}>Ingrese la nota que desee:</h3>
-                  <textarea
-                    name="notas"
-                    id="notaspropias"
-                    value={nota}
-                    placeholder="Escriba sus notas aquí"
-                    onChange={handleChange}
-                  ></textarea>
-                  
-                  <button onClick={()=>editarnota(reservas._id)}>Acualizar nota </button>
+                <h3 style={{ fontSize: "14px" }}>Ingrese la nota que desee:</h3>
+                <textarea
+                  name="notas"
+                  id="notaspropias"
+                  value={nota}
+                  placeholder="Escriba sus notas aquí"
+                  onChange={handleChange}
+                  maxLength={200}
+                ></textarea>
 
-                  <p>Atención: Estas notas solo son visibles para uso interno y no la podra ver las agencias que realizaron la reserva
-                  </p>
-                </div>
-              ) : (
-                <></>
-              )}
+                <button onClick={() => editarnota(reservas._id)}>
+                  Acualizar nota{" "}
+                </button>
+
+                <p>
+                  Atención: Estas notas solo son visibles para uso interno y no
+                  la podra ver las agencias que realizaron la reserva
+                </p>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div>
