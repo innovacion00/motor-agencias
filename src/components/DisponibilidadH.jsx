@@ -505,7 +505,7 @@ export const Cid = ({ id }) => {
   const [contadorHabitaciones, setcontadorHabitaciones] = useState(0);
   const [infoToures, setinfoToures] = useState({});
   const [selectedTours, setSelectedTours] = useState([]);
-  const [tipoTraslado, setTipoTraslado] = useState(null||"ambos");
+  const [tipoTraslado, setTipoTraslado] = useState(null);
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredTours, setFilteredTours] = useState([]);
@@ -854,148 +854,144 @@ export const Cid = ({ id }) => {
 
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
-            {/* --------------------------- TRASLADOS --------------------------- */}
-            <h3>¿Desea añadir traslados a su reserva?</h3>
-            <input
-              type="radio"
-              name="traslados"
-              value="si"
-              className={styles.radioInput}
-              onChange={() => setmostrarTraslados(true)}
-            />{" "}
-            <span style={{ paddingRight: "10px" }}> Si</span>
-            <input
-              type="radio"
-              name="traslados"
-              value="no"
-              defaultChecked
-              onChange={() => {
-                setmostrarTraslados(false);
-                setTipoTraslado(null);
-              }}
-              className={styles.radioInput}
-            />{" "}
-            <span style={{ paddingRight: "10px" }}> No</span>
-            {mostrarTraslados && (
-              <div className={styles.touresSection}>
-                <h4 style={{ color: "#1f3b64" }}>
-                  Selecciona la opcion de traslado deseada:
-                </h4>
-                <div className={styles.tour_item}>
-                  <input
-                    type="radio"
-                    name="tipoTraslado"
-                    value="aeropuerto_hotel"
-                    onChange={() => handleSeleccionTraslado('aeropuerto_hotel')}
-                  />
-
-                  <label htmlFor="A a H">
-                    {" "}
-                    Aereopuerto al hotel {/*"$24.500 COP cada 4 personas"*/}
-                    
-                  </label>
-                  
-                </div>
-                <div className={styles.tour_item}>
-                  <input
-                    type="radio"
-                    name="tipoTraslado"
-                    value="hotel_aeropuerto"
-                    onChange={() => handleSeleccionTraslado('hotel_aeropuerto')}
-                  />
-                  <label htmlFor="H a A">
-                    {" "}
-                    Hotel al Aereopuerto {/*" $24.500 COP cada 4 personas"*/}
-                    
-                  </label>
-                  
-                </div>
-                <div className={styles.tour_item}>
-                  <input
-                    type="radio"
-                    name="tipoTraslado"
-                    value="ambos"
-                    onChange={() => handleSeleccionTraslado('ambos')}
-                  />
-                  <label htmlFor="A a H Y H a A">
-                    {" "}
-                    Aereopuerto al hotel | Hotel al aereopuerto{" "}
-                    {/*" $49.000 COP cada 4 personas"*/}
-                    
-                  </label>
-                  
-                </div>
-              </div>
-            )}
-            <br />
-            {/* ----------------------TOURES------------------- */}
-            <h3>¿Desea añadir tours a su reserva?</h3>
-            <input
-              type="radio"
-              name="tours"
-              value="si"
-              onChange={valorDelRadioToures}
-              className={styles.radioInput}
-            />{" "}
-            <span style={{ paddingRight: "10px" }}> Si</span>
-            <input
-              type="radio"
-              name="tours"
-              value="no"
-              defaultChecked
-              className={styles.radioInput}
-              onChange={valorDelRadioToures}
-            />{" "}
-            <span style={{ paddingRight: "10px" }}> No</span>
-            {mostrarToures && (
-              <div className={styles.touresSection}>
-                <br />
-                <h4 style={{ color: "#1f3b64" }}>
-                  Opciones de toures disponibles
-                  {selectedCity ? ` en ${selectedCity}` : ""}:
-                </h4>
-                <ToursCs
-                  isOpen={modalIsOpen}
-                  onRequest={closeModal}
-                  infoToures={infoToures}
-                />
-
-                {selectedCity ? (
-                  <>
-                    {filteredTours.length > 0 ? (
-                      filteredTours.map((tour, index) => (
-                        <div
-                          className={styles.tour_item}
-                          key={tour.id || index}
-                        >
-                          <input
-                            type="checkbox"
-                            id={`tour-${tour.id || index}`}
-                            name={`tour-${tour.id || index}`}
-                            onChange={(e) => handleTourSelection(e, tour)}
-                          />
-                          <label htmlFor={`tour-${tour.id || index}`}>
-                            {tour.title}
-                          </label>
-                          <button
-                            className="detail_btn"
-                            onClick={() => openModal(tour)}
-                          >
-                            Ver detalle
-                          </button>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No hay tours disponibles para {selectedCity}.</p>
-                    )}
-                  </>
-                ) : (
-                  <p>
-                    Por favor, seleccione una ciudad para ver los tours
-                    disponibles.
-                  </p>
+            {/* Mostrar traslados y tours solo para CARTAGENA o SANTA_MARTA */}
+            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA') && (
+              <>
+                {/* --------------------------- TRASLADOS --------------------------- */}
+                <h3>¿Desea añadir traslados a su reserva?</h3>
+                <input
+                  type="radio"
+                  name="traslados"
+                  value="si"
+                  className={styles.radioInput}
+                  onChange={() => setmostrarTraslados(true)}
+                />{" "}
+                <span style={{ paddingRight: "10px" }}> Si</span>
+                <input
+                  type="radio"
+                  name="traslados"
+                  value="no"
+                  defaultChecked
+                  onChange={() => {
+                    setmostrarTraslados(false);
+                    setTipoTraslado(null);
+                  }}
+                  className={styles.radioInput}
+                />{" "}
+                <span style={{ paddingRight: "10px" }}> No</span>
+                {mostrarTraslados && (
+                  <div className={styles.touresSection}>
+                    <h4 style={{ color: "#1f3b64" }}>
+                      Selecciona la opcion de traslado deseada:
+                    </h4>
+                    <div className={styles.tour_item}>
+                      <input
+                        type="radio"
+                        name="tipoTraslado"
+                        value="aeropuerto_hotel"
+                        onChange={() => handleSeleccionTraslado('aeropuerto_hotel')}
+                      />
+                      <label htmlFor="A a H">
+                        {" "}
+                        Aereopuerto al hotel
+                      </label>
+                    </div>
+                    <div className={styles.tour_item}>
+                      <input
+                        type="radio"
+                        name="tipoTraslado"
+                        value="hotel_aeropuerto"
+                        onChange={() => handleSeleccionTraslado('hotel_aeropuerto')}
+                      />
+                      <label htmlFor="H a A">
+                        {" "}
+                        Hotel al Aereopuerto
+                      </label>
+                    </div>
+                    <div className={styles.tour_item}>
+                      <input
+                        type="radio"
+                        name="tipoTraslado"
+                        value="ambos"
+                        onChange={() => handleSeleccionTraslado('ambos')}
+                      />
+                      <label htmlFor="A a H Y H a A">
+                        {" "}
+                        Aereopuerto al hotel | Hotel al aereopuerto{" "}
+                      </label>
+                    </div>
+                  </div>
                 )}
-              </div>
+                <br />
+                {/* ----------------------TOURES------------------- */}
+                <h3>¿Desea añadir tours a su reserva?</h3>
+                <input
+                  type="radio"
+                  name="tours"
+                  value="si"
+                  onChange={valorDelRadioToures}
+                  className={styles.radioInput}
+                />{" "}
+                <span style={{ paddingRight: "10px" }}> Si</span>
+                <input
+                  type="radio"
+                  name="tours"
+                  value="no"
+                  defaultChecked
+                  className={styles.radioInput}
+                  onChange={valorDelRadioToures}
+                />{" "}
+                <span style={{ paddingRight: "10px" }}> No</span>
+                {mostrarToures && (
+                  <div className={styles.touresSection}>
+                    <br />
+                    <h4 style={{ color: "#1f3b64" }}>
+                      Opciones de toures disponibles
+                      {selectedCity ? ` en ${selectedCity}` : ""}:
+                    </h4>
+                    <ToursCs
+                      isOpen={modalIsOpen}
+                      onRequest={closeModal}
+                      infoToures={infoToures}
+                    />
+                    {selectedCity ? (
+                      <>
+                        {filteredTours.length > 0 ? (
+                          filteredTours.map((tour, index) => (
+                            <div
+                              className={styles.tour_item}
+                              key={tour.id || index}
+                            >
+                              <input
+                                type="checkbox"
+                                id={`tour-${tour.id || index}`}
+                                name={`tour-${tour.id || index}`}
+                                onChange={(e) => handleTourSelection(e, tour)}
+                              />
+                              <label htmlFor={`tour-${tour.id || index}`}>
+                                {tour.title}
+                              </label>
+                              <button
+                                className="detail_btn"
+                                onClick={() => openModal(tour)}
+                              >
+                                Ver detalle
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No hay tours disponibles para {selectedCity}.</p>
+                        )}
+                      </>
+                    ) : (
+                      <p>
+                        Por favor, seleccione una ciudad para ver los tours
+                        disponibles.
+                      </p>
+                    )}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
