@@ -538,6 +538,18 @@ const FormularioReserva = ({ id }) => {
                 ? "Aeropuerto al hotel y Hotel al aeropuerto"
                 : "No se seleccionó traslado"}
             </p>
+            
+            {data.tourSeleccionado && data.tourSeleccionado.length > 0 && (
+              <p>
+                <strong>Tours seleccionados: </strong>
+                {data.tourSeleccionado.map((tour, index) => (
+                  <span key={tour.id}>
+                    {index > 0 ? ', ' : ''}{tour.title}
+                  </span>
+                ))}
+              </p>
+            )}
+            
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong>{" "}
               {divisaSelec == "USD"
