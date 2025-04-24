@@ -279,6 +279,14 @@ const FormularioReserva = ({ id }) => {
                 cantidadPersonas: totalHuespedes,
               }
             : null,
+        infoToures: 
+        reserva[0].tourSeleccionado?.length > 0
+          ? {
+              nombres: reserva[0].tourSeleccionado.map(tour => tour.title),
+              firstContactNumber: formData.celular,
+              secondContacNumber: formData.celular || formData.telefonotraslado
+            }
+          : null,
         ...filtrarRetenciones({
           reteFuente: {
             resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
@@ -324,9 +332,9 @@ const FormularioReserva = ({ id }) => {
                     valorextranjero == "es extranjero"
                       ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
                       : ""
-                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
-                    cena ? "El huésped ha solicitado cena." : ""
-                  } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${
+                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${
+                    almuerzo ? "El huésped ha solicitado almuerzo." : ""
+                  }${
                     facturaE
                       ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
                       : ""
