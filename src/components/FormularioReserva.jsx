@@ -268,7 +268,10 @@ const FormularioReserva = ({ id }) => {
           reserva[0].incluirTraslado === true
             ? {
                 numeroVuelo: formData.numeroVuelo,
-                numeroVueloSalida: formData.numeroVueloSalida,
+                ...(reserva[0].tipoTraslado === 'hotel_aeropuerto' || 
+                    reserva[0].tipoTraslado === 'ambos') && {
+                  numeroVueloSalida: formData.numeroVueloSalida
+                },
                 firstContactNumber: formData.telefonotraslado,
                 aerolinea: formData.aereolinea,
                 tipoRecogida: tipodetraslado ,
