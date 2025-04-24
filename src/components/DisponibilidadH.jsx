@@ -895,11 +895,11 @@ export const Cid = ({ id }) => {
                         {" "}
                         Aeropuerto al hotel {" "}
                         {selectedCity === 'CARTAGENA' 
-                          ? `$${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
-                          ? `$${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
                           : ''
-                        } cada 4 personas
+                        } cada 4 personas)
                       </label>
                     </div>
                     <div className={styles.tour_item}>
@@ -913,11 +913,11 @@ export const Cid = ({ id }) => {
                         {" "}
                         Hotel al Aeropuerto {" "}
                         {selectedCity === 'CARTAGENA' 
-                          ? `$${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
-                          ? `$${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
                           : ''
-                        } cada 4 personas
+                        } cada 4 personas)
                       </label>
                     </div>
                     <div className={styles.tour_item}>
@@ -931,11 +931,11 @@ export const Cid = ({ id }) => {
                         {" "}
                         Aeropuerto al hotel | Hotel al aeropuerto {" "}
                         {selectedCity === 'CARTAGENA' 
-                          ? `$${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
+                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
-                          ? `$${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
+                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
                           : ''
-                        } cada 4 personas
+                        } cada 4 personas)
                       </label>
                     </div>
                   </div>
