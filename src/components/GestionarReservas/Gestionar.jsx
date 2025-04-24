@@ -513,10 +513,10 @@ const Gestionar = ({ reservas }) => {
                 {reservas?.infoTransporte && (
                   <div className={styles.flexCol}>
                     <p style={{fontWeight:"bold"}}>Tipo de traslado:  {reservas.infoTransporte.tipoRecogida == 0
-                        ? "Aereopuerto al hotel"
+                        ? "Aeropuerto al hotel"
                         : reservas.infoTransporte.tipoRecogida == 1
-                        ? "Hotel al aereopuerto"
-                        : "Aereopuerto al hotel y Hotel al aereopuerto"}</p>
+                        ? "Hotel al aeropuerto"
+                        : "Aeropuerto al hotel y Hotel al aeropuerto"}</p>
                     
                   </div>
                 )}
@@ -524,8 +524,8 @@ const Gestionar = ({ reservas }) => {
                 {/* Mostrar información de tours si existen */}
                 {reservas?.infoToures?.nombres?.length > 0 && (
                   <div className={styles.flexCol}>
-                    <p>Tours seleccionados</p>
-                    <p>{reservas.infoToures.nombres.join(", ")}</p>
+                    <p style={{fontWeight:"bold"}}>Tours seleccionados</p>
+                    <p style={{fontWeight:"bold"}}>{reservas.infoToures.nombres.join(", ")}</p>
                   </div>
                 )}
                 <p className={styles.plazoPago}>

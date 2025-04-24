@@ -891,9 +891,15 @@ export const Cid = ({ id }) => {
                         value="aeropuerto_hotel"
                         onChange={() => handleSeleccionTraslado('aeropuerto_hotel')}
                       />
-                      <label htmlFor="A a H">
+                       <label htmlFor="A a H">
                         {" "}
-                        Aereopuerto al hotel
+                        Aeropuerto al hotel {" "}
+                        {selectedCity === 'CARTAGENA' 
+                          ? `$${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          : selectedCity === 'SANTA_MARTA'
+                          ? `$${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          : ''
+                        } cada 4 personas
                       </label>
                     </div>
                     <div className={styles.tour_item}>
@@ -905,7 +911,13 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="H a A">
                         {" "}
-                        Hotel al Aereopuerto
+                        Hotel al Aeropuerto {" "}
+                        {selectedCity === 'CARTAGENA' 
+                          ? `$${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          : selectedCity === 'SANTA_MARTA'
+                          ? `$${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          : ''
+                        } cada 4 personas
                       </label>
                     </div>
                     <div className={styles.tour_item}>
@@ -917,7 +929,13 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
-                        Aereopuerto al hotel | Hotel al aereopuerto{" "}
+                        Aeropuerto al hotel | Hotel al aeropuerto {" "}
+                        {selectedCity === 'CARTAGENA' 
+                          ? `$${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
+                          : selectedCity === 'SANTA_MARTA'
+                          ? `$${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
+                          : ''
+                        } cada 4 personas
                       </label>
                     </div>
                   </div>

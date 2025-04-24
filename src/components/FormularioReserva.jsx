@@ -68,6 +68,7 @@ const FormularioReserva = ({ id }) => {
     telefonoF: "",
     telefonotraslado: "",
     numeroVuelo: "",
+    numeroVueloSalida:"",
     aereolinea: "",
 
     // esExtranjero:false
@@ -209,13 +210,7 @@ const FormularioReserva = ({ id }) => {
     apellidos,
     email,
     celular,
-    telefonotraslado,
-    numeroVuelo,
-    aereolinea,
-    nombreEmpresa,
-    nit,
-    emailEmpresa,
-    telefonoF,
+    
   } = formData;
 
   const enviartraslado = reserva[0]?.incluirTraslado === true;
@@ -273,9 +268,10 @@ const FormularioReserva = ({ id }) => {
           reserva[0].incluirTraslado === true
             ? {
                 numeroVuelo: formData.numeroVuelo,
+                numeroVueloSalida: formData.numeroVueloSalida,
                 firstContactNumber: formData.telefonotraslado,
                 aerolinea: formData.aereolinea,
-                tipoRecogida: tipodetraslado,
+                tipoRecogida: tipodetraslado ,
                 cantidadPersonas: totalHuespedes,
               }
             : null,
@@ -910,6 +906,12 @@ const FormularioReserva = ({ id }) => {
                         }}
                       />
                     </div>
+                    <label
+                htmlFor="identificador"
+                style={{ fontWeight: "light", fontSize: "12px" }}
+              >
+                Se debe escribir el identificador(+)
+              </label>
                     {/*-------------- INPUT NUMERO DE VUELO -------------- */}
                     <div>
                       <label htmlFor="numeroVuelo">
@@ -933,6 +935,34 @@ const FormularioReserva = ({ id }) => {
                         }}
                       />
                     </div>
+
+                    {/* Mostrar número de vuelo de salida solo si es traslado al aeropuerto o ambos */}
+                    {reserva[0]?.incluirTraslado && 
+                     (reserva[0]?.tipoTraslado === 'hotel_aeropuerto' || 
+                      reserva[0]?.tipoTraslado === 'ambos') && (
+                      <div>
+                        <label htmlFor="numeroVueloSalida">
+                          Número del vuelo Salida :{" "}
+                          <span style={{ color: "red" }}>*</span>
+                        </label>
+                        <input
+                          id="numeroVueloSalida"
+                          type="text"
+                          placeholder="Ingrese el numero de vuelo de regreso"
+                          maxLength={30}
+                          value={formData.numeroVueloSalida}
+                          onChange={handleChange}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            padding: "8px",
+                            marginBottom: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      </div>
+                    )}
 
                     {/*-------------- INPUT AEREOLINIA FACTURA -------------- */}
                     <div>
