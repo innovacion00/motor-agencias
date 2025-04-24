@@ -454,6 +454,7 @@ const Gestionar = ({ reservas }) => {
                   <p>Tipo de plan de alimentacion</p>
                   {<p>{reservas?.planAlimentario}</p>}
                 </div>
+                
               </div>
             </div>
             <br />
@@ -504,6 +505,27 @@ const Gestionar = ({ reservas }) => {
                 {mostrarAdicionalC && (
                   <div>
                     <b>Se adicionó cena</b>
+                  </div>
+                )}
+                
+
+                {/* Mostrar información de traslado si existe */}
+                {reservas?.infoTransporte && (
+                  <div className={styles.flexCol}>
+                    <p style={{fontWeight:"bold"}}>Tipo de traslado:  {reservas.infoTransporte.tipoRecogida == 0
+                        ? "Aereopuerto al hotel"
+                        : reservas.infoTransporte.tipoRecogida == 1
+                        ? "Hotel al aereopuerto"
+                        : "Aereopuerto al hotel y Hotel al aereopuerto"}</p>
+                    
+                  </div>
+                )}
+
+                {/* Mostrar información de tours si existen */}
+                {reservas?.infoToures?.nombres?.length > 0 && (
+                  <div className={styles.flexCol}>
+                    <p>Tours seleccionados</p>
+                    <p>{reservas.infoToures.nombres.join(", ")}</p>
                   </div>
                 )}
                 <p className={styles.plazoPago}>

@@ -167,8 +167,8 @@ const FormularioReserva = ({ id }) => {
    
     const tipoTraslado = reserva[0]?.tipoTraslado;
 
-    if (tipoTraslado === "aereopuerto_hotel") return 0;
-    if (tipoTraslado === "hotel_aereopuerto") return 1;
+    if (tipoTraslado === "aeropuerto_hotel") return 0;
+    if (tipoTraslado === "hotel_aeropuerto") return 1;
     if (tipoTraslado === "ambos") return 2;
     return null;
   })();
@@ -258,8 +258,8 @@ const FormularioReserva = ({ id }) => {
         );
       };
       const informacionD = JSON.stringify({
-        total: Math.round(totalRetenciones), //VALOR TOTAL
-        adicionAlmuerzo: almuerzo, // VALOR DE CHECKBOX DE ALMUERZO
+        total: Math.round(totalRetenciones),
+        adicionAlmuerzo: almuerzo,
         adicionCena: cena,
         titularInfo: {
           firstName: formData.nombreCompleto,
@@ -275,7 +275,7 @@ const FormularioReserva = ({ id }) => {
                 numeroVuelo: formData.numeroVuelo,
                 firstContactNumber: formData.telefonotraslado,
                 aerolinea: formData.aereolinea,
-                tipoRecogida: tipodetraslado || 2,
+                tipoRecogida: tipodetraslado,
                 cantidadPersonas: totalHuespedes,
               }
             : null,
@@ -284,7 +284,7 @@ const FormularioReserva = ({ id }) => {
           ? {
               nombres: reserva[0].tourSeleccionado.map(tour => tour.title),
               firstContactNumber: formData.celular,
-              secondContacNumber: formData.celular || formData.telefonotraslado
+              secondContacNumber: formData.telefonotraslado || formData.celular
             }
           : null,
         ...filtrarRetenciones({
@@ -332,9 +332,9 @@ const FormularioReserva = ({ id }) => {
                     valorextranjero == "es extranjero"
                       ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
                       : ""
-                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${
-                    almuerzo ? "El huésped ha solicitado almuerzo." : ""
-                  }${
+                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
+                    cena ? "El huésped ha solicitado cena." : ""
+                  } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${
                     facturaE
                       ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
                       : ""
@@ -1123,3 +1123,4 @@ const FormularioReserva = ({ id }) => {
 };
 
 export default FormularioReserva;
+
