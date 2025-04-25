@@ -323,8 +323,8 @@ const FormularioReserva = ({ id }) => {
                   } ${formData.apellidos}. ${
                     valorextranjero == "es extranjero"
                       ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                      : ""
-                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
+                        : ""
+                    } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
                     cena ? "El huésped ha solicitado cena." : ""
                   } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${
                     facturaE
