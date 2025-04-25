@@ -637,7 +637,7 @@ const FormularioReserva = ({ id }) => {
                   : `${formatCurrency(totalRetenciones)} COP `}
               </strong>
             </p>
-            <p>(Hospedaje + A&B + Impuestos incluidos)</p>
+            <p>(Hospedaje + A&B + Impuestos incluidos + Paquetes y servicios adicionales)</p>
             <strong>
               Nota: En caso de que el titular de la reserva sea de nacionalidad
               colombiana{" "}

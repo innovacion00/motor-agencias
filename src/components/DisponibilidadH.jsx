@@ -450,13 +450,13 @@ const quintuple = {
 };
 
 const trasladosCartagenaPesos = {
-  0: "33500",
-  1: "67000",
+  0: "38000",
+  1: "76000",
 };
 
 const trasladosCartagenaDolares = {
-  0: "15",
-  1: "30",
+  0: "12",
+  1: "21",
 };
 
 const trasladosSantamartaPesos = {
