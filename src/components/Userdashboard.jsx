@@ -145,7 +145,7 @@ const UserDashboard = () => {
     localStorage.removeItem("authToken");
 
     // Redirigir al usuario a la página de login
-    window.location.href = "https://www.gehsuites.com/es";
+    window.location.href = "/login";
   };
 
   //#region Reservas obtenidas
