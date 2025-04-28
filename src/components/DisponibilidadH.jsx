@@ -483,7 +483,7 @@ const plan_alimentacion = {
   48: true, //axis
   44: true, //sansiraka
   41: false, //Zulita
-  56: true, // Boquilla,
+  56: false, // Boquilla,
 };
 // UseState
 
