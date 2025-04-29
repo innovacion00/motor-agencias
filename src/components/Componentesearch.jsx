@@ -201,7 +201,9 @@ const BusquedaCartagena = () => {
     const adult =
       data.reduce((acumulador, tAdults) => acumulador + tAdults.adults, 0) || 0;
 
-    localStorage.setItem("cantAdultos", adult); //cantidad de adultos
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("cantAdultos", adult);
+    }
     return adult;
   };
 
@@ -209,40 +211,36 @@ const BusquedaCartagena = () => {
   const cantNinos = (data) => {
     const ninos =
       data.reduce((acumulador, tChildren) => {
-        // Validar si children_ages existe y no está vacío
         if (tChildren.children_ages) {
           return acumulador + tChildren.children_ages.split(",").length;
         }
-        return acumulador; // Si no existe, no suma nada
+        return acumulador;
       }, 0) || 0;
 
-    localStorage.setItem("cantNinos", ninos); //cantidad de niños
-
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("cantNinos", ninos);
+    }
     return ninos;
   };
 
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
-    // Recuperar la ciudad desde el localStorage
+    if (typeof window === 'undefined') return;
+
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
     setcategoria(category);
     const storedCity = localStorage.getItem("selectedCity");
     if (storedCity) {
-      const transformedCity = cityMap[storedCity] || "Ciudad desconocida"; // Transforma o asigna un fallback
+      const transformedCity = cityMap[storedCity] || "Ciudad desconocida";
       setCiudad(transformedCity);
     }
-    if (typeof window !== "undefined") {
-      const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));
-      const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
-      setnochesyedades(nochesyedades);
-      if (disponibilidadLocal) {
-        disponibilidad.set(disponibilidadLocal);
-        setHotelesDisponibles(disponibilidadLocal);
 
-        //console.log("Datos recuperados de LocalStorage:", disponibilidadLocal);  //datos de disponibilidad localS
-      } else {
-        // console.log("No hay datos disponibles en LocalStorage.");
-      }
+    const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));
+    const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
+    setnochesyedades(nochesyedades);
+    if (disponibilidadLocal) {
+      disponibilidad.set(disponibilidadLocal);
+      setHotelesDisponibles(disponibilidadLocal);
     }
   }, []);
   console.log(hotelesDisponibles);
@@ -259,7 +257,34 @@ const BusquedaCartagena = () => {
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
-      <div className={styles.container}>
+      <br />
+      <div className={styles.stepper}>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>1</div>
+    <div className={styles.steptitle}>Alojamiento</div>
+    <div className={styles.stepcontent}>
+      Seleccione el alojamiento <br />
+      {nochesyedades1.nights} noches, {hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños
+    </div>
+  </div>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>2</div>
+    <div className={styles.steptitle}>Vuelo</div>
+    <div className={styles.stepcontent}>
+      Bog ⇆ CTG
+      Lun 19 May - Jue 22 May
+    </div>
+  </div>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>3</div>
+    <div className={styles.steptitle}>Adicionales</div>
+    <div className={styles.stepcontent}>
+      ¡Disfruta al máximo tu viaje!
+      Incluye opciones de traslado, tours, y planes de alimentación
+    </div>
+  </div>
+</div>
+      <div className={styles.container}>    
         <div className={styles.breadcrumb}>
           <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
         </div>
