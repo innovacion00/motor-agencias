@@ -271,7 +271,7 @@ button:active{
     height: 60%;
     background: #ccc;
   }
-  .stepnumber {
+  .stepnumberActive {
     background-color: #002f4b;
     color: white;
     width: 24px;
@@ -283,6 +283,19 @@ button:active{
     font-size: 14px;
     margin-bottom: 8px;
   }
+  .stepnumber {
+    background-color: #585e61;
+    color: white;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
   .steptitle {
     font-weight: bold;
     margin-bottom: 5px;
@@ -291,4 +304,13 @@ button:active{
   .stepcontent {
     font-size: 14px;
     color: #555;
+  }
+  .steptitleActive {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #00263b;
+  }
+  .stepcontentActive {
+    font-size: 14px;
+    color: #00263b;
   }

@@ -260,9 +260,9 @@ const BusquedaCartagena = () => {
       <br />
       <div className={styles.stepper}>
   <div className={styles.step}>
-    <div className={styles.stepnumber}>1</div>
-    <div className={styles.steptitle}>Alojamiento</div>
-    <div className={styles.stepcontent}>
+    <div className={styles.stepnumberActive}>1</div>
+    <div className={styles.steptitleActive}>Alojamiento</div>
+    <div className={styles.stepcontentActive}>
       Seleccione el alojamiento <br />
       {nochesyedades1.nights} noches, {hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños
     </div>
