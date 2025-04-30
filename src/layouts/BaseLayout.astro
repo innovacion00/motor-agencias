@@ -1,23 +1,28 @@
 ---
+const { title } = Astro.props;
 // import Header from '../components/Header.astro';
 import Header from '../components/Header'
 import Footer from '../components/Footer.astro';
+import CurrencySelector from '../components/Cambiardivisas'
 // import CurrencySelector from '../components/Cambiardivisas';
 
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <link rel="icon" type="image/png" href="https://www.gehsuites.com/favicon/favicon-32x32.png" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BookingConnect - GEH Suites</title>
+    <title>{title}</title>
     <link rel="stylesheet" href="/styles/global.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
   </head>
   <body>
     <div class="wrapper"> <!-- Añadido: contenedor flex -->
       <!-- <CurrencySelector client:load/> -->
+      <CurrencySelector client:load/>
       <Header />
       <main>
         <slot />
