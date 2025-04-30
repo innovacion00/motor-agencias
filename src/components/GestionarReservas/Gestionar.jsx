@@ -529,7 +529,7 @@ const Gestionar = ({ reservas }) => {
                   </div>
                 )}
                 <p className={styles.plazoPago}>
-                  Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
+                  Tienes plazo de pagar hasta el {reservas.status === 3 ? reservas.fechaLimitePago2 : reservas.fechaLimitePago}
                 </p>
               </div>
 
