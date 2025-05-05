@@ -17,6 +17,12 @@ const BusquedaCartagena = () => {
   const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
   
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+  };
 
   //Objeto de imagenes  para las fachadas
   const hotelImages = {
@@ -258,6 +264,11 @@ const BusquedaCartagena = () => {
         <DropdownSearch client:load />
       </div>
       <br />
+      <div className={styles.container}>    
+        <div className={styles.breadcrumb}>
+          <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
+        </div>
+
       <div className={styles.stepper}>
   <div className={styles.step}>
     <div className={styles.stepnumberActive}>1</div>
@@ -271,8 +282,10 @@ const BusquedaCartagena = () => {
     <div className={styles.stepnumber}>2</div>
     <div className={styles.steptitle}>Vuelo</div>
     <div className={styles.stepcontent}>
-      Bog ⇆ CTG
-      Lun 19 May - Jue 22 May
+      Origen ⇆ Destino final<br/>
+      {nochesyedades1?.dateRange ? 
+        `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
+        'Fechas no seleccionadas'}
     </div>
   </div>
   <div className={styles.step}>
@@ -280,15 +293,11 @@ const BusquedaCartagena = () => {
     <div className={styles.steptitle}>Adicionales</div>
     <div className={styles.stepcontent}>
       ¡Disfruta al máximo tu viaje!
-      Incluye opciones de traslado, tours, y planes de alimentación
+      Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
     </div>
   </div>
 </div>
-      <div className={styles.container}>    
-        <div className={styles.breadcrumb}>
-          <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
-        </div>
-
+<br />
         <div className={styles.title}>Resultados {Ciudad}</div>
         <div className={styles.filter}>
           <select>
