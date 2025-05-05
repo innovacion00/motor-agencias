@@ -574,6 +574,27 @@ const Gestionar = ({ reservas }) => {
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
 
+                {reservas?.infoToures && (
+                  <div className={styles.tourInfo}>
+                    <h4>Información del Tour</h4>
+                    {reservas.infoToures.nombres && (
+                      <p>Tours seleccionados: {reservas.infoToures.nombres.join(', ')}</p>
+                    )}
+                    <p>Contacto principal: {reservas.infoToures.firstContactNumber}</p>
+                  </div>
+                )}
+
+                {reservas?.infoTransporte && (
+                  <div className={styles.transportInfo}>
+                    <h4>Información del Transporte</h4>
+                    <p>Número de vuelo: {reservas.infoTransporte.numeroVuelo}</p>
+                    <p>Aerolínea: {reservas.infoTransporte.aerolinea}</p>
+                    <p>Tipo de recogida: {reservas.infoTransporte.tipoRecogida === 0 ? 'Aeropuerto' : 'Terminal'}</p>
+                    <p>Contacto: {reservas.infoTransporte.firstContactNumber}</p>
+                    <p>Cantidad de personas: {reservas.infoTransporte.cantidadPersonas}</p>
+                  </div>
+                )}
+
                 {mostrarExtranjero && (
                   <div>
                     <b>El huesped es extranjero </b>

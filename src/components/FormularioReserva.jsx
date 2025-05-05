@@ -864,9 +864,9 @@ const FormularioReserva = ({ id }) => {
               {/*-------------- LABEL IDENTIFICADOR -------------- */}
               <label
                 htmlFor="identificador"
-                style={{ fontWeight: "light", fontSize: "12px" }}
+                style={{ color:"red" ,fontWeight: "light", fontSize: "12px" }}
               >
-                Se debe escribir el identificador(+)
+                Incluir código de área (+57,+55, etc.) eje:+573002215487
               </label>
             </div>
 

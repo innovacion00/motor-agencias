@@ -483,3 +483,20 @@
     outline: none;
   }
 
+.tourInfo, .transportInfo {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tourInfo h4, .transportInfo h4 {
+  margin: 0 0 8px 0;
+  color: #26547B;
+}
+
+.tourInfo p, .transportInfo p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
