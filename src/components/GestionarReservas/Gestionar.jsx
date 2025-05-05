@@ -11,7 +11,7 @@ import {
   linkPago,
 } from "../../stores/pagos";
 import Swal from "sweetalert2";
-import jsPDF from 'jspdf';
+import jsPDF from "jspdf";
 
 //UseState
 const Gestionar = ({ reservas }) => {
@@ -247,7 +247,7 @@ const Gestionar = ({ reservas }) => {
         icon: "success",
         timer: 1000, // La alerta se cierra automáticamente en 2 segundos
         showConfirmButton: false, // Ocultar botón de confirmación
-        confirmButtonColor:"#26547B" 
+        confirmButtonColor: "#26547B",
       }).then(() => {
         window.location.reload(); // Recargar la página
       });
@@ -363,67 +363,77 @@ const Gestionar = ({ reservas }) => {
     const doc = new jsPDF();
     const margin = 20;
     let yPos = margin;
-    
+
     // Configuración de estilos
     doc.setFontSize(20);
     doc.text("Voucher de Reserva", margin, yPos);
-    
+
     // Información básica
     doc.setFontSize(12);
     yPos += 20;
     doc.text(`Código de Reserva: ${reservas?.reservaChatbotId}`, margin, yPos);
-    
+
     yPos += 10;
-    doc.text(`Hotel: ${reservas?.hotel}`, margin, yPos);
-    
+    doc.text(`Hotel reservado: ${reservas?.hotel}`, margin, yPos);
+
     yPos += 10;
     doc.text(`Check-in: ${checkin}`, margin, yPos);
-    
+
     yPos += 10;
     doc.text(`Check-out: ${checkout}`, margin, yPos);
-    
+
     yPos += 10;
-    doc.text(`Noches: ${reservas?.reservation.nights}`, margin, yPos);
-    
+    doc.text(`Numero de noches: ${reservas?.reservation.nights}`, margin, yPos);
+
     yPos += 10;
-    doc.text(`Huéspedes: ${sumaHuespe}`, margin, yPos);
-    
+    doc.text(`Cantidad de huéspedes: ${sumaHuespe}`, margin, yPos);
+
     yPos += 10;
     doc.text(`Habitaciones: ${reservas?.cantidadHabitaciones}`, margin, yPos);
-    
+
     yPos += 10;
-    doc.text(`Plan de alimentación: ${reservas?.planAlimentario}`, margin, yPos);
-    
+    doc.text(
+      `Plan de alimentación: ${reservas?.planAlimentario}`,
+      margin,
+      yPos
+    );
+
     // Información del titular
     yPos += 20;
     doc.setFontSize(14);
     doc.text("Información del Titular", margin, yPos);
-    
+
     doc.setFontSize(12);
     yPos += 10;
-    doc.text(`Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`, margin, yPos);
-    
+    doc.text(
+      `Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`,
+      margin,
+      yPos
+    );
+
     yPos += 10;
     doc.text(`Documento: ${reservas?.titularInfo?.documento}`, margin, yPos);
-    
+
     yPos += 10;
     doc.text(`Email: ${reservas?.reservation.email}`, margin, yPos);
-    
+
     yPos += 10;
     doc.text(`Teléfono: ${reservas?.reservation.telephone}`, margin, yPos);
-    
+
     // Valor total
     yPos += 20;
     doc.setFontSize(14);
     doc.text("Valor Total", margin, yPos);
-    
+
     doc.setFontSize(12);
     yPos += 10;
     doc.text(
-      `Total: ${reservas.reservation.currency == "USD" 
-        ? `$${reservas?.total} USD` 
-        : `${formatCurrency(reservas?.total)} COP`}`,
-      margin, 
+      `Total: ${
+        reservas.reservation.currency == "USD"
+          ? `$${reservas?.total} USD`
+          : `${formatCurrency(reservas?.total)} COP`
+      }`,
+      margin,
       yPos
     );
 
@@ -930,8 +940,15 @@ const Gestionar = ({ reservas }) => {
               >
                 Cancelar reserva
               </button>
-              {/* <button onClick={imprimirVoucher}>Imprimir voucher</button> */}
-              
+              {/* <button
+                onClick={imprimirVoucher}
+                disabled={reservas?.status == "4"}
+                className={`${styles.cancelarButton} ${
+                  reservas?.status == "4" ? styles.disabledButtonc : ""
+                }`}
+              >
+                Imprimir voucher
+              </button> */}
             </div>
           </div>
         </div>
