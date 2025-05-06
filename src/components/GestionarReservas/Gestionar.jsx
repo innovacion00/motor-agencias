@@ -589,7 +589,11 @@ const Gestionar = ({ reservas }) => {
                     <h4>Información del Transporte</h4>
                     <p>Número de vuelo: {reservas.infoTransporte.numeroVuelo}</p>
                     <p>Aerolínea: {reservas.infoTransporte.aerolinea}</p>
-                    <p>Tipo de recogida: {reservas.infoTransporte.tipoRecogida === 0 ? 'Aeropuerto' : 'Terminal'}</p>
+                    <p>Tipo de recogida: {
+                      reservas.infoTransporte.tipoRecogida == 0 ? 'Aeropuerto - Hotel' :
+                      reservas.infoTransporte.tipoRecogida == 1 ? 'Hotel - Aeropuerto' :
+                      'Aeropuerto - Hotel || Hotel - Aeropuerto'
+                    }</p>
                     <p>Contacto: {reservas.infoTransporte.firstContactNumber}</p>
                     <p>Cantidad de personas: {reservas.infoTransporte.cantidadPersonas}</p>
                   </div>
