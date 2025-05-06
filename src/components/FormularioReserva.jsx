@@ -30,6 +30,7 @@ const plan_alimentacion = {
 const FormularioReserva = ({ id }) => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
+  const [mascotas, setmascotas] = useState(false)
   const [cena, setCena] = useState(false);
   const [almuerzo, setAlmuerzo] = useState(false);
   const hotelIdsPermitidos = [
@@ -254,6 +255,7 @@ const FormularioReserva = ({ id }) => {
       };
       const informacionD = JSON.stringify({
         total: Math.round(totalRetenciones),
+        mascotas:mascotas,
         adicionAlmuerzo: almuerzo,
         adicionCena: cena,
         titularInfo: {
@@ -565,6 +567,32 @@ const FormularioReserva = ({ id }) => {
             </p>
 
             <br />
+
+            <div
+                style={{
+                  display: "flex",
+                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
+                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
+                }}
+              >
+                <strong>¿Desea adicionar una mascota a su reserva?</strong>
+                <input
+                  type="checkbox"
+                  checked={mascotas}
+                  onChange={(e) => setmascotas(e.target.checked)}
+                  style={{
+                    width: "15px", // Tamaño más claro y consistente
+                    height: "15px",
+                    marginTop: "10px",
+                    marginLeft: "40px",
+                    // gap:"1rem",
+                    marginRight: "20px",
+                    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
+                    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
+                  }}
+                />
+                
+              </div>
 
             {mostrarCheckboxes && (
               <div

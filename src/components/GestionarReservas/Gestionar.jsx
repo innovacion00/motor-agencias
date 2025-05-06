@@ -27,7 +27,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
-
+  const [mostrarMascotas, setMostrarMascotas] = useState(false)
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
@@ -40,6 +40,12 @@ const Gestionar = ({ reservas }) => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
+
+    if(reservas?.mascotas){
+      setMostrarMascotas(true);
+    } else {
+      setMostrarMascotas(false)
+    }
 
     if (reservas?.exentoIva) {
       setmostrarExtranjero(true);
@@ -598,7 +604,11 @@ const Gestionar = ({ reservas }) => {
                     <p>Cantidad de personas: {reservas.infoTransporte.cantidadPersonas}</p>
                   </div>
                 )}
-
+                {mostrarMascotas && (
+                  <div>
+                    <b>El huesped llevara una mascota</b>
+                  </div>
+                )}
                 {mostrarExtranjero && (
                   <div>
                     <b>El huesped es extranjero </b>
@@ -614,6 +624,7 @@ const Gestionar = ({ reservas }) => {
                     <b>Se adicionó cena</b>
                   </div>
                 )}
+
                 <p className={styles.plazoPago}>
                   Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
                 </p>
