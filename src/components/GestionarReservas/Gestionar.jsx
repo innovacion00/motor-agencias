@@ -606,7 +606,7 @@ const Gestionar = ({ reservas }) => {
                 )}
                 {mostrarMascotas && (
                   <div>
-                    <b>El huesped llevara una mascota</b>
+                    <b>El huésped llevará una mascota</b>
                   </div>
                 )}
                 {mostrarExtranjero && (
