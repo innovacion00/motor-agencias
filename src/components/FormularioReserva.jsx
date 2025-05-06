@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import intlTelInput from 'intl-tel-input';
+import 'intl-tel-input/build/css/intlTelInput.css';
 import DropdownSearch from "./DropdownSearch";
 import FormularioRetenciones from "./FormularioRetenciones";
 import "./FormularioReserva.css";
@@ -28,6 +30,8 @@ const plan_alimentacion = {
 
 //#region UseState
 const FormularioReserva = ({ id }) => {
+  const phoneInputRef = useRef(null);
+  const [phone, setPhone] = useState("");
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
   const [cena, setCena] = useState(false);
@@ -107,6 +111,28 @@ const FormularioReserva = ({ id }) => {
     setcantninos(ninos);
     setfechasreserva(fechas);
     setagencia(token);
+  }, []);
+
+  useEffect(() => {
+    // Inicializar el input de teléfono
+    if (phoneInputRef.current) {
+      const iti = intlTelInput(phoneInputRef.current, {
+        initialCountry: "co",
+        preferredCountries: ["co", "us", "gb"],
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      });
+
+      // Guardar el número completo cuando cambie
+      phoneInputRef.current.addEventListener('change', () => {
+        setPhone(iti.getNumber());
+      });
+
+      // Limpiar al desmontar
+      return () => {
+        iti.destroy();
+      };
+    }
   }, []);
 
   const mostrarCheckboxes =
@@ -237,7 +263,7 @@ const FormularioReserva = ({ id }) => {
       nombreCompleto.trim() == "" ||
       apellidos.trim() == "" ||
       email.trim() == "" ||
-      celular.trim() == ""
+      !phone
     ) {
       Swal.fire({
         //Alerta de datos de incio de sesion incorrectos
@@ -827,18 +853,16 @@ const FormularioReserva = ({ id }) => {
                 Celular <span style={{ color: "red" }}>*</span>
               </label>
               <input
-                id="celular"
+                ref={phoneInputRef}
                 type="tel"
-                placeholder="Ingrese el numero de celular"
-                value={formData.celular}
-                onChange={handleChange}
+                id="celular"
                 style={{
                   display: "block",
                   width: "100%",
                   padding: "8px",
                   marginBottom: "10px",
                   borderRadius: "5px",
-                  border: "1px solid #ccc",
+                  border: "1px solid #ccc"
                 }}
               />
 
