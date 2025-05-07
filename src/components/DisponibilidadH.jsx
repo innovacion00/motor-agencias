@@ -491,6 +491,7 @@ export const Cid = ({ id }) => {
   const [tooltipActivo, setTooltipActivo] = useState(null);
   const currentCurrency = useStore(currency); // COP o USD
   const [divisaSelec, setdivisaSelec] = useState("COP");
+  
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
   const [rangosfechas, setfechas] = useState({});
@@ -711,6 +712,8 @@ export const Cid = ({ id }) => {
     ));
   };
 
+
+  
   const handleDelete = (index) => {
     setDatohabitacion((prevHabitaciones) => {
       const nuevasHabitaciones = [...prevHabitaciones];
@@ -732,6 +735,34 @@ export const Cid = ({ id }) => {
           <a href="/">Inicio</a> / <a href="#">Resultados de búsqueda</a> /{" "}
           {habitaciones?.hotel?.name}
         </div>
+        <div className={styles.stepper}>
+  <div className={styles.step}>
+    <div className={styles.stepnumberActive}>1</div>
+    <div className={styles.steptitleActive}>Alojamiento</div>
+    <div className={styles.stepcontentActive}>
+      Seleccione el alojamiento <br />
+      {rangosfechas.nights} noches, {/*{hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños */}
+    </div>
+  </div>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>2</div>
+    <div className={styles.steptitle}>Vuelo</div>
+    <div className={styles.stepcontent}>
+      Origen ⇆ Destino final<br/>
+      {/* {nochesyedades1?.dateRange ? 
+        `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
+        'Fechas no seleccionadas'} */}
+    </div>
+  </div>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>3</div>
+    <div className={styles.steptitle}>Adicionales</div>
+    <div className={styles.stepcontent}>
+      ¡Disfruta al máximo tu viaje!
+      Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
+    </div>
+  </div>
+</div>
         <div className={styles.hotel_title}>
           {habitaciones?.hotel?.name || "Hotel no encontrado"}
         </div>
@@ -1252,6 +1283,7 @@ export const Cid = ({ id }) => {
 
             <a href="/reservas">
               <button
+              name="btn-confirmarHab"
                 onClick={enviardatos}
                 disabled={datohabitacion.length === 0}
                 style={{
