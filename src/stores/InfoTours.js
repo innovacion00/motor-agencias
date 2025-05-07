@@ -301,7 +301,8 @@ export const toursData = [
         ],
         notIncludes: [
           "Gastos no especificados",
-          "No incluye carpas , sillas, hamacas"
+          "No incluye carpas , sillas, hamacas",
+          "No incluye almuerzo (valor adicional con almuerzo: 90.000 )"
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia.",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -335,11 +336,12 @@ export const toursData = [
           "Gafas de sol", 
           "Sombrero", 
           "Cámara acuática (opcional)", 
-          "Dinero extra para consumos adicionales"
+          "Dinero extra para consumos adicionales",
         ],
         notIncludes: [
           "Gastos no especificados",
-          "No incluye carpas , sillas, hamacas"
+          "No incluye carpas , sillas, hamacas",
+          "No incluye almuerzo (valor adicional con almuerzo: 90.000 )",
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -377,7 +379,8 @@ export const toursData = [
         ],
         notIncludes: [
           "Gastos no especificados",
-          "No incluye carpas , sillas, hamacas"
+          "No incluye carpas , sillas, hamacas",
+          "No incluye almuerzo (valor adicional con almuerzo: 160.000 )"
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -446,6 +449,7 @@ export const toursData = [
         ],
         notIncludes: [
           "Gastos no especificados",
+          "No incluye almuerzo"
           
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",
