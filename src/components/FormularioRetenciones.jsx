@@ -188,9 +188,11 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
 
     return (
         <>
+        
             <h3>Retenciones</h3>
             <div className="contenRetenciones">
-                <label>Marque la casilla si su agencia aplica retenciones</label>
+                <label>Marque la casilla si su agencia aplica retenciones </label>
+                
                 <input
                     style={{
                         width: "15px", // Tamaño más claro y consistente
