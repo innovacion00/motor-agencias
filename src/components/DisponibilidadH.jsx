@@ -763,6 +763,7 @@ export const Cid = ({ id }) => {
     </div>
   </div>
 </div>
+<br />
         <div className={styles.hotel_title}>
           {habitaciones?.hotel?.name || "Hotel no encontrado"}
         </div>
