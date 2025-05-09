@@ -8,6 +8,7 @@ import { currency } from "../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
+import UpgradeModal from './UpgradeModal';
 
 const hotelesData = {
   9: {
@@ -491,7 +492,7 @@ export const Cid = ({ id }) => {
   const [tooltipActivo, setTooltipActivo] = useState(null);
   const currentCurrency = useStore(currency); // COP o USD
   const [divisaSelec, setdivisaSelec] = useState("COP");
-  
+
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
   const [rangosfechas, setfechas] = useState({});
@@ -510,6 +511,22 @@ export const Cid = ({ id }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredTours, setFilteredTours] = useState([]);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  
+  const handleReservarClick = () => {
+    // Solo mostrar el modal para hoteles específicos en Cartagena
+    if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
+      setShowUpgradeModal(true);
+    } else {
+      enviardatos();
+      window.location.href = "/reservas";
+    }
+  };
+
+  const handleUpgradeSelect = (newHotelId) => {
+    // Redirigir a la página del nuevo hotel
+    window.location.href = `/hoteles/${newHotelId}`;
+  };
 
   function openModal(tour) {
     setIsOpen(true);
@@ -544,33 +561,59 @@ export const Cid = ({ id }) => {
     }).format(value);
   };
 
-  const calculateTransferPrice = (city, currency, transferType, totalGuests) => {
+  const calculateTransferPrice = (
+    city,
+    currency,
+    transferType,
+    totalGuests
+  ) => {
     if (!transferType) return 0;
-    
+
     const precios = {
-      CARTAGENA: currency === 'USD' ? trasladosCartagenaDolares : trasladosCartagenaPesos,
-      SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos
+      CARTAGENA:
+        currency === "USD"
+          ? trasladosCartagenaDolares
+          : trasladosCartagenaPesos,
+      SANTA_MARTA:
+        currency === "USD"
+          ? trasladosSantamartaDolares
+          : trasladosSantamartaPesos,
     };
-  
+
     // Determinar el índice basado en el tipo de traslado
-    const priceIndex = transferType === 'ambos' ? 1 : 0;
-    
+    const priceIndex = transferType === "ambos" ? 1 : 0;
+
     const precioBase = precios[city]?.[priceIndex];
     if (!precioBase) return 0;
-  
+
     // Calcular número de vehículos necesarios (cada vehículo lleva 4 personas)
     const vehiculosNecesarios = Math.ceil(totalGuests / 4);
     return parseFloat(precioBase) * vehiculosNecesarios;
   };
 
-  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado) => {
+  const calculateTotalPrice = (
+    basePrice,
+    tours,
+    currency,
+    totalGuests,
+    city,
+    tipoTraslado
+  ) => {
     const toursPrice = tours.reduce((total, tour) => {
-      const tourPrice = currency === 'USD' ? parseFloat(tour.preciousd) : parseFloat(tour.preciocol);
+      const tourPrice =
+        currency === "USD"
+          ? parseFloat(tour.preciousd)
+          : parseFloat(tour.preciocol);
       return total + tourPrice * totalGuests;
     }, 0);
-  
-    const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests);
-    
+
+    const transferPrice = calculateTransferPrice(
+      city,
+      currency,
+      tipoTraslado,
+      totalGuests
+    );
+
     return parseFloat(basePrice) + toursPrice + transferPrice;
   };
 
@@ -712,8 +755,6 @@ export const Cid = ({ id }) => {
     ));
   };
 
-
-  
   const handleDelete = (index) => {
     setDatohabitacion((prevHabitaciones) => {
       const nuevasHabitaciones = [...prevHabitaciones];
@@ -736,34 +777,36 @@ export const Cid = ({ id }) => {
           {habitaciones?.hotel?.name}
         </div>
         <div className={styles.stepper}>
-  <div className={styles.step}>
-    <div className={styles.stepnumberActive}>1</div>
-    <div className={styles.steptitleActive}>Alojamiento</div>
-    <div className={styles.stepcontentActive}>
-      Seleccione el alojamiento <br />
-      {rangosfechas.nights} noches, {/*{hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños */}
-    </div>
-  </div>
-  <div className={styles.step}>
-    <div className={styles.stepnumber}>2</div>
-    <div className={styles.steptitle}>Vuelo</div>
-    <div className={styles.stepcontent}>
-      Origen ⇆ Destino final<br/>
-      {/* {nochesyedades1?.dateRange ? 
+          <div className={styles.step}>
+            <div className={styles.stepnumberActive}>1</div>
+            <div className={styles.steptitleActive}>Alojamiento</div>
+            <div className={styles.stepcontentActive}>
+              Seleccione el alojamiento <br />
+              {rangosfechas.nights} noches,{" "}
+              {/*{hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños */}
+            </div>
+          </div>
+          <div className={styles.step}>
+            <div className={styles.stepnumber}>2</div>
+            <div className={styles.steptitle}>Vuelo</div>
+            <div className={styles.stepcontent}>
+              Origen ⇆ Destino final
+              <br />
+              {/* {nochesyedades1?.dateRange ? 
         `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
         'Fechas no seleccionadas'} */}
-    </div>
-  </div>
-  <div className={styles.step}>
-    <div className={styles.stepnumber}>3</div>
-    <div className={styles.steptitle}>Adicionales</div>
-    <div className={styles.stepcontent}>
-      ¡Disfruta al máximo tu viaje!
-      Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
-    </div>
-  </div>
-</div>
-<br />
+            </div>
+          </div>
+          <div className={styles.step}>
+            <div className={styles.stepnumber}>3</div>
+            <div className={styles.steptitle}>Adicionales</div>
+            <div className={styles.stepcontent}>
+              ¡Disfruta al máximo tu viaje! Incluye opciones de traslado, tours,
+              y planes de alimentación entre otros adicionales
+            </div>
+          </div>
+        </div>
+        <br />
         <div className={styles.hotel_title}>
           {habitaciones?.hotel?.name || "Hotel no encontrado"}
         </div>
@@ -887,7 +930,8 @@ export const Cid = ({ id }) => {
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
             {/* Mostrar traslados y tours solo para CARTAGENA o SANTA_MARTA */}
-            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA') && (
+            {(selectedCity === "CARTAGENA" ||
+              selectedCity === "SANTA_MARTA") && (
               <>
                 {/* --------------------------- TRASLADOS --------------------------- */}
                 <h3>¿Desea añadir traslados a su reserva?</h3>
@@ -921,31 +965,29 @@ export const Cid = ({ id }) => {
                         type="radio"
                         name="tipoTraslado"
                         value="aeropuerto_hotel"
-                        onChange={() => handleSeleccionTraslado('aeropuerto_hotel')}
+                        onChange={() =>
+                          handleSeleccionTraslado("aeropuerto_hotel")
+                        }
                       />
-                      <label htmlFor="A a H">
-                        {" "}
-                        Aereopuerto al hotel
-                      </label>
+                      <label htmlFor="A a H"> Aereopuerto al hotel</label>
                     </div>
                     <div className={styles.tour_item}>
                       <input
                         type="radio"
                         name="tipoTraslado"
                         value="hotel_aeropuerto"
-                        onChange={() => handleSeleccionTraslado('hotel_aeropuerto')}
+                        onChange={() =>
+                          handleSeleccionTraslado("hotel_aeropuerto")
+                        }
                       />
-                      <label htmlFor="H a A">
-                        {" "}
-                        Hotel al Aereopuerto
-                      </label>
+                      <label htmlFor="H a A"> Hotel al Aereopuerto</label>
                     </div>
                     <div className={styles.tour_item}>
                       <input
                         type="radio"
                         name="tipoTraslado"
                         value="ambos"
-                        onChange={() => handleSeleccionTraslado('ambos')}
+                        onChange={() => handleSeleccionTraslado("ambos")}
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
@@ -1136,13 +1178,14 @@ export const Cid = ({ id }) => {
                                   habitaciones?.hotel?.city,
                                   tipoTraslado
                                 ),
-                                precioBase: dato.products?.find((product) =>
-                                  regexSeleccionado.test(product.roomName)
-                                )?.baseRate?.[
-                                  currentCurrency == "USD"
-                                    ? "amountBeforeTaxUSD"
-                                    : "amountBeforeTax"
-                                ] || "Sin precio disponible",
+                                precioBase:
+                                  dato.products?.find((product) =>
+                                    regexSeleccionado.test(product.roomName)
+                                  )?.baseRate?.[
+                                    currentCurrency == "USD"
+                                      ? "amountBeforeTaxUSD"
+                                      : "amountBeforeTax"
+                                  ] || "Sin precio disponible",
                                 NombreH: dato.roomName,
                                 beds: dato.beds,
                                 hotelid: habitaciones?.hotel?.roomcloud_id,
@@ -1233,10 +1276,10 @@ export const Cid = ({ id }) => {
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
                   <h5>
-                    {selectedTours.length > 0 && ''} 
+                    {selectedTours.length > 0 && ""}
                     {selectedTours.map((tour, i) => (
                       <span key={i}>
-                        {i > 0 && ', '}
+                        {i > 0 && ", "}
                         {tour.title}
                       </span>
                     ))}
@@ -1282,21 +1325,30 @@ export const Cid = ({ id }) => {
               </div>
             ))}
 
-            <a href="/reservas">
-              <button
+            {/* Reemplazar el anchor tag y modificar el botón */}
+            <button
               name="btn-confirmarHab"
-                onClick={enviardatos}
-                disabled={datohabitacion.length === 0}
-                style={{
-                  backgroundColor:
-                    datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
-                  cursor:
-                    datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
-                }}
-              >
-                Reservar ahora
-              </button>
-            </a>
+              onClick={handleReservarClick}
+              disabled={datohabitacion.length === 0}
+              style={{
+                backgroundColor:
+                  datohabitacion.length === 0 ? "#d3d3d3" : "#26547B",
+                cursor:
+                  datohabitacion.length === 0 ? "not-allowed" : "pointer",
+              }}
+            >
+              Reservar ahora
+            </button>
+            <UpgradeModal 
+              isOpen={showUpgradeModal}
+              onClose={() => setShowUpgradeModal(false)}
+              currentHotelId={Number(id)}
+              onSelectUpgrade={handleUpgradeSelect}
+              onContinue={() => {
+                enviardatos();
+                window.location.href = "/reservas";
+              }}
+            />
           </div>
         </div>
       </div>
