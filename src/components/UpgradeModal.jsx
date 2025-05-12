@@ -63,6 +63,7 @@ const UpgradeModal = ({ isOpen, onClose, currentHotelId, onSelectUpgrade, onCont
               <p className={styles.price}>Diferencia en precio: {hotel.price}</p>
               <button 
                 className={styles.selectButton}
+                style={{color:"white", fontWeight:"lighter", fontFamily:"roboto"}}
                 onClick={() => onSelectUpgrade(hotel.id)}
               >
                 Seleccionar
@@ -71,14 +72,15 @@ const UpgradeModal = ({ isOpen, onClose, currentHotelId, onSelectUpgrade, onCont
           ))}
         </div>
         <div className={styles.modalFooter}>
-          <button className={styles.closeButton} onClick={onClose}>
+          <button className={styles.closeButton} onClick={onClose} style={{color:"white", fontWeight:"lighter", fontFamily:"roboto"}}>
             Cancelar
           </button>
           <button 
             className={styles.continueButton}
             onClick={onContinue}
+            style={{color:"white", fontWeight:"lighter", fontFamily:"roboto"}}
           >
-            Continuar con mi selección actual
+            Siguiente
           </button>
         </div>
       </div>

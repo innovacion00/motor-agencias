@@ -235,16 +235,7 @@ body {
   margin-left: 10px;
 }
 
-/* .room_details .discount {
-  background-color: #ff6f61;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-} */
+
 
 /* Boton seleccionar las habitaciones */
 
@@ -307,62 +298,6 @@ body {
   font-weight: 600;
   font-size: 14px;
 }
-
-.search_form_wrapper {
-  background-color: #F29C38;
-  padding: 20px;
-  border-radius: 8px;
-  display: flexbox justify-content center;
-  align-items: center;
-  gap: 15px;
-}
-
-.search_form_container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: flex-start;
-}
-
-.dropdown select,
-.people-counter input,
-.date-picker input {
-  padding: 10px;
-  font-size: 16px;
-}
-
-.date_picker {
-  position: absolute;
-}
-
-.date_range_picker {
-  margin-top: 10px;
-  position: absolute;
-  /* Posiciona el calendario sobre los demás elementos */
-  top: 1000%;
-  /* Alinea el calendario debajo del input */
-  left: 0;
-  z-index: 1000;
-  /* Asegura que el calendario esté por encima de otros elementos */
-  background-color: white;
-  /* Asegura que el fondo del calendario sea blanco */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  /* Añade una sombra para destacar el calendario */
-  border-radius: 8px;
-  /* Bordes redondeados */
-  padding: 1rem;
-}
-
-.child_age_warning {
-  color: #ff0000;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-.child_age_selector {
-  margin-top: 10px;
-}
-
 .icons img {
 
   width: 26px;
@@ -636,20 +571,7 @@ color: #2c3e50;
 margin-top: 5px;
 }
 
-/* .search_criteria button {
-background-color: #fff;
-border-style: solid;
-border-width: 2px;
-border-color: #1C3D5A;
-color: #1C3D5A;
-padding: 10px 20px;
-border-radius: 4px;
-cursor: pointer;
-}
 
-.search_criteria button:hover {
-background-color: #c8cdd370;
-} */
 
 .cards {
 display: flex;
@@ -1048,18 +970,13 @@ font-size: 15px;
 }
 
 .touresSection {
-
 padding: 15px;
 background-color: #f8f9fa;
 border-radius: 8px;
 margin: 0 auto;
 }
 
-h4 {
-color: #343a40;
-margin-bottom: 20px;
-font-size: 18px;
-}
+
 
 .tour_item {
 display: flex;

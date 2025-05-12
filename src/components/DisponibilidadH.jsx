@@ -1327,14 +1327,22 @@ export const Cid = ({ id }) => {
 
             {/* Reemplazar el anchor tag y modificar el botón */}
             <button
-              name="btn-confirmarHab"
+              
               onClick={handleReservarClick}
               disabled={datohabitacion.length === 0}
               style={{
-                backgroundColor:
-                  datohabitacion.length === 0 ? "#d3d3d3" : "#26547B",
-                cursor:
-                  datohabitacion.length === 0 ? "not-allowed" : "pointer",
+                width: '100%',
+                padding: '12px 20px',
+                fontSize: '16px',
+                fontWeight: '500',
+                backgroundColor: datohabitacion.length === 0 ? "#d3d3d3" : "#26547B",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: datohabitacion.length === 0 ? "not-allowed" : "pointer",
+                transition: "background-color 0.3s ease",
+                marginTop: "20px",
+                marginBottom: "20px"
               }}
             >
               Reservar ahora
