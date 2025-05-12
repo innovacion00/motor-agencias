@@ -36,6 +36,92 @@ const Gestionar = ({ reservas }) => {
 
   let contador = 1;
 
+  const [isEditingTitular, setIsEditingTitular] = useState(false);
+  const [titularData, setTitularData] = useState({
+    documento: '',
+    firstName: '',
+    lastName: '',
+    fechaNacimiento: '',
+    email: '',
+    telephone: ''
+  });
+
+  useEffect(() => {
+    if (reservas?.titularInfo && reservas?.reservation) {
+      setTitularData({
+        documento: reservas.titularInfo.documento || '',
+        firstName: reservas.reservation.firstName || '',
+        lastName: reservas.reservation.lastName || '',
+        fechaNacimiento: reservas.titularInfo.fechaNacimiento || '',
+        email: reservas.reservation.email || '',
+        telephone: reservas.reservation.telephone || ''
+      });
+    }
+  }, [reservas]);
+
+  const handleTitularChange = (e) => {
+    const { name, value } = e.target;
+    setTitularData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  //#region Editar datos titular 
+
+  const guardarCambiosTitular = async () => {
+    try {
+      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
+      const token = datosUsuario.token;
+
+      const response = await fetch(
+        `https://gehsuitesapps.com/agencias/v1/reservas/editar-reserva/${reservas._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+
+              documento: titularData.documento,
+              firstName: titularData.firstName,
+              lastName: titularData.lastName,
+              email: titularData.email,
+              telephone: titularData.telephone
+            
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar datos');
+      }
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Datos del titular actualizados correctamente",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.reload();
+      });
+
+      setIsEditingTitular(false);
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        title: "Error",
+        text: "No se pudieron actualizar los datos del titular",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    }
+  };
+
+//#region UseEffect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
@@ -649,30 +735,122 @@ const Gestionar = ({ reservas }) => {
             </p>
             <p className={styles.checkin}>Check-in: {checkin}</p>
             <div className={styles.cardHuesped}>
-              <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Cédula de ciudadanía:</p>
-                <p>{reservas?.titularInfo?.documento}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
+                <button 
+                  onClick={() => setIsEditingTitular(!isEditingTitular)}
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    cursor: 'pointer',
+                    fontSize: '20px'
+                  }}
+                >
+                  ✎
+                </button>
               </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Nombre completo:</p>
-                <p>
-                  {reservas?.reservation.firstName}{" "}
-                  {reservas?.reservation.lastName}
-                </p>
-              </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Fecha de nacimiento:</p>
-                <p>{reservas?.titularInfo?.fechaNacimiento}</p>
-              </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Correo electrónico:</p>
-                <p>{reservas?.reservation.email}</p>
-              </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Celular:</p>
-                <p>{reservas?.reservation.telephone}</p>
-              </div>
+              
+              {!isEditingTitular ? (
+                <>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Cédula de ciudadanía:</p>
+                    <p>{reservas?.titularInfo?.documento}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Nombre completo:</p>
+                    <p>{reservas?.reservation.firstName} {reservas?.reservation.lastName}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Fecha de nacimiento:</p>
+                    <p>{reservas?.titularInfo?.fechaNacimiento}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Correo electrónico:</p>
+                    <p>{reservas?.reservation.email}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Celular:</p>
+                    <p>{reservas?.reservation.telephone}</p>
+                  </div>
+                </>
+              ) : (
+                <div className={styles.editForm}>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Cédula de ciudadanía:</p>
+                    <input 
+                      type="text"
+                      name="documento"
+                      value={titularData.documento}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Nombres:</p>
+                    <input 
+                      type="text"
+                      name="firstName"
+                      value={titularData.firstName}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Apellidos:</p>
+                    <input 
+                      type="text"
+                      name="lastName"
+                      value={titularData.lastName}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Fecha de nacimiento:</p>
+                    <input 
+                      type="date"
+                      name="fechaNacimiento"
+                      value={titularData.fechaNacimiento}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Correo electrónico:</p>
+                    <input 
+                      type="email"
+                      name="email"
+                      value={titularData.email}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Celular:</p>
+                    <input 
+                      type="tel"
+                      name="telephone"
+                      value={titularData.telephone}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.editButtons}>
+                    <button
+                      onClick={() => setIsEditingTitular(false)}
+                      className={styles.cancelButton}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={guardarCambiosTitular}
+                      className={styles.saveButton}
+                    >
+                      Guardar
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <br />
             <div className={styles.acuerdos}>
