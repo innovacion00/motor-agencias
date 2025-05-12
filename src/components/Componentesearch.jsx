@@ -273,7 +273,9 @@ const BusquedaCartagena = () => {
 
         {/* Mostrar los hoteles disponibles */}
         {hotelesDisponibles.length > 0 ? (
-          hotelesDisponibles.map((tipo) => (
+          hotelesDisponibles
+            .filter(hotel => hotel.hotel.id !== 2) // Filter out hotel with ID 2
+            .map((tipo) => (
             <div className={styles.hotel} key={tipo.hotel.id}>
               <img
                 alt="Imagen del hotel"
