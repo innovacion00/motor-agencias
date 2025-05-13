@@ -257,14 +257,16 @@ export const toursData = [
          "Transporte terrestre",
          "Conductor guía",
          "Seguro de viaje",
-         "Entradas a la Quinta de San Pedro Alejandrino"
+         "Entradas a la Quinta de San Pedro Alejandrino",
+         ""
        ],
        toBring: [
          "Gafas de sol",   
          "Dinero extra para consumos adicionales",
        ],
        notIncludes: [
-         "Gastos no especificados"
+         "Gastos no especificados",
+         
        ],
        restrictions: "Está prohibido fumar o consumir alcohol dentro de los vehículos,El pasajero será responsable por cualquier daño ocasionado al vehículo durante el traslado. ",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."

@@ -46,6 +46,8 @@ const Gestionar = ({ reservas }) => {
     telephone: ''
   });
 
+  const [isSaving, setIsSaving] = useState(false);
+
   useEffect(() => {
     if (reservas?.titularInfo && reservas?.reservation) {
       setTitularData({
@@ -71,6 +73,20 @@ const Gestionar = ({ reservas }) => {
 
   const guardarCambiosTitular = async () => {
     try {
+      setIsSaving(true);
+      
+      // Show loading state with Swal
+      Swal.fire({
+        title: 'Guardando cambios...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
       const token = datosUsuario.token;
 
@@ -83,13 +99,11 @@ const Gestionar = ({ reservas }) => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-
-              documento: titularData.documento,
-              firstName: titularData.firstName,
-              lastName: titularData.lastName,
-              email: titularData.email,
-              telephone: titularData.telephone
-            
+            documento: titularData.documento,
+            firstName: titularData.firstName,
+            lastName: titularData.lastName,
+            email: titularData.email,
+            telephone: titularData.telephone
           }),
         }
       );
@@ -118,6 +132,8 @@ const Gestionar = ({ reservas }) => {
         icon: "error",
         confirmButtonColor: "#26547B",
       });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -845,8 +861,9 @@ const Gestionar = ({ reservas }) => {
                     <button
                       onClick={guardarCambiosTitular}
                       className={styles.saveButton}
+                      disabled={isSaving}
                     >
-                      Guardar
+                      {isSaving ? "Guardando..." : "Guardar"}
                     </button>
                   </div>
                 </div>
