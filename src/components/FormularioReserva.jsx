@@ -673,7 +673,7 @@ const FormularioReserva = ({ id }) => {
               asumir el impuesto del iva del 19%.{" "}
             </strong>
           </div>
-          {divisaSelec == "USD" || totalRetenciones < 199000 ? (
+          {divisaSelec == "USD" || totalRetenciones < 199000 || reserva[0]?.hotelid === "13633" ? (
             ""
           ) : (
             <div>
@@ -687,7 +687,7 @@ const FormularioReserva = ({ id }) => {
             </div>
           )}
         </div>
-        {divisaSelec == "USD" || totalRetenciones < 199000 ? null : (
+        {divisaSelec == "USD" || totalRetenciones < 199000 || reserva[0]?.hotelid === "13633" ? null : (
           <div>
             <FormularioRetenciones
               precio={totalConIVA}
