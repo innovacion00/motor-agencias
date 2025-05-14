@@ -27,7 +27,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
-  const [mostrarMascotas, setMostrarMascotas] = useState(false)
+  const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
@@ -38,12 +38,12 @@ const Gestionar = ({ reservas }) => {
 
   const [isEditingTitular, setIsEditingTitular] = useState(false);
   const [titularData, setTitularData] = useState({
-    documento: '',
-    firstName: '',
-    lastName: '',
-    fechaNacimiento: '',
-    email: '',
-    telephone: ''
+    documento: "",
+    firstName: "",
+    lastName: "",
+    fechaNacimiento: "",
+    email: "",
+    telephone: "",
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -51,40 +51,40 @@ const Gestionar = ({ reservas }) => {
   useEffect(() => {
     if (reservas?.titularInfo && reservas?.reservation) {
       setTitularData({
-        documento: reservas.titularInfo.documento || '',
-        firstName: reservas.reservation.firstName || '',
-        lastName: reservas.reservation.lastName || '',
-        fechaNacimiento: reservas.titularInfo.fechaNacimiento || '',
-        email: reservas.reservation.email || '',
-        telephone: reservas.reservation.telephone || ''
+        documento: reservas.titularInfo.documento || "",
+        firstName: reservas.reservation.firstName || "",
+        lastName: reservas.reservation.lastName || "",
+        fechaNacimiento: reservas.titularInfo.fechaNacimiento || "",
+        email: reservas.reservation.email || "",
+        telephone: reservas.reservation.telephone || "",
       });
     }
   }, [reservas]);
 
   const handleTitularChange = (e) => {
     const { name, value } = e.target;
-    setTitularData(prev => ({
+    setTitularData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  //#region Editar datos titular 
+  //#region Editar datos titular
 
   const guardarCambiosTitular = async () => {
     try {
       setIsSaving(true);
-      
+
       // Show loading state with Swal
       Swal.fire({
-        title: 'Guardando cambios...',
-        text: 'Por favor espere',
+        title: "Guardando cambios...",
+        text: "Por favor espere",
         allowOutsideClick: false,
         allowEscapeKey: false,
         showConfirmButton: false,
         willOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
 
       const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -103,13 +103,13 @@ const Gestionar = ({ reservas }) => {
             firstName: titularData.firstName,
             lastName: titularData.lastName,
             email: titularData.email,
-            telephone: titularData.telephone
+            telephone: titularData.telephone,
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error('Error al actualizar datos');
+        throw new Error("Error al actualizar datos");
       }
 
       Swal.fire({
@@ -137,16 +137,16 @@ const Gestionar = ({ reservas }) => {
     }
   };
 
-//#region UseEffect general
+  //#region UseEffect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
 
-    if(reservas?.mascotas){
+    if (reservas?.mascotas) {
       setMostrarMascotas(true);
     } else {
-      setMostrarMascotas(false)
+      setMostrarMascotas(false);
     }
 
     if (reservas?.exentoIva) {
@@ -686,24 +686,40 @@ const Gestionar = ({ reservas }) => {
                   <div className={styles.tourInfo}>
                     <h4>Información del Tour</h4>
                     {reservas.infoToures.nombres && (
-                      <p>Tours seleccionados: {reservas.infoToures.nombres.join(', ')}</p>
+                      <p>
+                        Tours seleccionados:{" "}
+                        {reservas.infoToures.nombres.join(", ")}
+                      </p>
                     )}
-                    <p>Contacto principal: {reservas.infoToures.firstContactNumber}</p>
+                    <p>
+                      Contacto principal:{" "}
+                      {reservas.infoToures.firstContactNumber}
+                    </p>
                   </div>
                 )}
 
                 {reservas?.infoTransporte && (
                   <div className={styles.transportInfo}>
                     <h4>Información del Transporte</h4>
-                    <p>Número de vuelo: {reservas.infoTransporte.numeroVuelo}</p>
+                    <p>
+                      Número de vuelo: {reservas.infoTransporte.numeroVuelo}
+                    </p>
                     <p>Aerolínea: {reservas.infoTransporte.aerolinea}</p>
-                    <p>Tipo de recogida: {
-                      reservas.infoTransporte.tipoRecogida == 0 ? 'Aeropuerto - Hotel' :
-                      reservas.infoTransporte.tipoRecogida == 1 ? 'Hotel - Aeropuerto' :
-                      'Aeropuerto - Hotel || Hotel - Aeropuerto'
-                    }</p>
-                    <p>Contacto: {reservas.infoTransporte.firstContactNumber}</p>
-                    <p>Cantidad de personas: {reservas.infoTransporte.cantidadPersonas}</p>
+                    <p>
+                      Tipo de recogida:{" "}
+                      {reservas.infoTransporte.tipoRecogida == 0
+                        ? "Aeropuerto - Hotel"
+                        : reservas.infoTransporte.tipoRecogida == 1
+                        ? "Hotel - Aeropuerto"
+                        : "Aeropuerto - Hotel || Hotel - Aeropuerto"}
+                    </p>
+                    <p>
+                      Contacto: {reservas.infoTransporte.firstContactNumber}
+                    </p>
+                    <p>
+                      Cantidad de personas:{" "}
+                      {reservas.infoTransporte.cantidadPersonas}
+                    </p>
                   </div>
                 )}
                 {mostrarMascotas && (
@@ -751,21 +767,27 @@ const Gestionar = ({ reservas }) => {
             </p>
             <p className={styles.checkin}>Check-in: {checkin}</p>
             <div className={styles.cardHuesped}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
                 <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
-                <button 
+                <button
                   onClick={() => setIsEditingTitular(!isEditingTitular)}
-                  style={{ 
-                    background: 'none', 
-                    border: 'none', 
-                    cursor: 'pointer',
-                    fontSize: '20px'
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "20px",
                   }}
                 >
                   ✎
                 </button>
               </div>
-              
+
               {!isEditingTitular ? (
                 <>
                   <div className={styles.flexHuespe}>
@@ -774,7 +796,10 @@ const Gestionar = ({ reservas }) => {
                   </div>
                   <div className={styles.flexHuespe}>
                     <p className={styles.infoH}>Nombre completo:</p>
-                    <p>{reservas?.reservation.firstName} {reservas?.reservation.lastName}</p>
+                    <p>
+                      {reservas?.reservation.firstName}{" "}
+                      {reservas?.reservation.lastName}
+                    </p>
                   </div>
                   <div className={styles.flexHuespe}>
                     <p className={styles.infoH}>Fecha de nacimiento:</p>
@@ -793,7 +818,7 @@ const Gestionar = ({ reservas }) => {
                 <div className={styles.editForm}>
                   <div className={styles.inputGroup}>
                     <p className={styles.infoH}>Cédula de ciudadanía:</p>
-                    <input 
+                    <input
                       type="text"
                       name="documento"
                       value={titularData.documento}
@@ -803,7 +828,7 @@ const Gestionar = ({ reservas }) => {
                   </div>
                   <div className={styles.inputGroup}>
                     <p className={styles.infoH}>Nombres:</p>
-                    <input 
+                    <input
                       type="text"
                       name="firstName"
                       value={titularData.firstName}
@@ -813,7 +838,7 @@ const Gestionar = ({ reservas }) => {
                   </div>
                   <div className={styles.inputGroup}>
                     <p className={styles.infoH}>Apellidos:</p>
-                    <input 
+                    <input
                       type="text"
                       name="lastName"
                       value={titularData.lastName}
@@ -823,7 +848,7 @@ const Gestionar = ({ reservas }) => {
                   </div>
                   <div className={styles.inputGroup}>
                     <p className={styles.infoH}>Fecha de nacimiento:</p>
-                    <input 
+                    <input
                       type="date"
                       name="fechaNacimiento"
                       value={titularData.fechaNacimiento}
@@ -833,7 +858,7 @@ const Gestionar = ({ reservas }) => {
                   </div>
                   <div className={styles.inputGroup}>
                     <p className={styles.infoH}>Correo electrónico:</p>
-                    <input 
+                    <input
                       type="email"
                       name="email"
                       value={titularData.email}
@@ -843,7 +868,7 @@ const Gestionar = ({ reservas }) => {
                   </div>
                   <div className={styles.inputGroup}>
                     <p className={styles.infoH}>Celular:</p>
-                    <input 
+                    <input
                       type="tel"
                       name="telephone"
                       value={titularData.telephone}
@@ -909,6 +934,21 @@ const Gestionar = ({ reservas }) => {
                 * Si los niños que viajan no son hijos de los adultos que los
                 representan deben contar con un permiso de los padres,
                 autenticado en una notaría.
+              </p>
+              <br />
+              <p >
+
+                <b>
+                Política de mascotas: {" "}
+                </b>
+                <br />
+                {"º"} Se permite el ingreso de mascotas con un peso máximo de 8 kg. 
+                <br />
+                {"º"} Solo se permite una mascota por habitación.
+                <br />
+               {"º"} El ingreso es gratuito únicamente al presentar un certificado de apoyo emocional válido. 
+                <br />
+               {"º"} No se permite dejar a la mascota sola en la habitación en ningún momento.
               </p>
             </div>
           </div>
