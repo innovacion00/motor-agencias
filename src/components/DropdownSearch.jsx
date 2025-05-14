@@ -32,6 +32,9 @@ const DropdownSearch = () => {
     MAX_ROOMS: 9,
   });
 
+  const [includesFlight, setIncludesFlight] = useState(false);
+  const [origin, setOrigin] = useState("");
+
   // Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
   const mostrarTooltip = (mensaje) => {
     setTooltip(mensaje);
@@ -135,6 +138,15 @@ const DropdownSearch = () => {
       return;
     }
 
+    if (includesFlight && !origin) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Por favor ingresa la ciudad de origen del vuelo",
+      });
+      return;
+    }
+
     const nights = calculateNights(dateRange.startDate, dateRange.endDate);
 
     if (nights === 0) {
@@ -160,6 +172,8 @@ const DropdownSearch = () => {
       layout,
       nights,
       dateRange,
+      includesFlight,
+      origin: includesFlight ? origin : null,
     };
 
     localStorage.setItem("nochesyedades", JSON.stringify(nochesyedades));
@@ -214,6 +228,17 @@ const DropdownSearch = () => {
       <br />
 
       {tooltip && <div className={styles.tooltip}>{tooltip}</div>}
+
+      {includesFlight && (
+        <div className={styles.dropdown}>
+          <input
+            type="text"
+            value={origin}
+            onChange={(e) => setOrigin(e.target.value)}
+            placeholder="Ciudad de origen"
+          />
+        </div>
+      )}
 
       {/*------------------------ Dropdown de destino ------------------------*/}
 
@@ -392,6 +417,16 @@ const DropdownSearch = () => {
       >
         {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
       </button>
+      <div className={styles.flightOption}>
+        <label>
+          <input
+            type="checkbox"
+            checked={includesFlight}
+            onChange={(e) => setIncludesFlight(e.target.checked)}
+          />
+          Incluir vuelo
+        </label>
+      </div>
       {/* Modal de carga */}
       <Modal
         isOpen={isLoading}
