@@ -253,7 +253,7 @@ const FormularioReserva = ({ id }) => {
       };
       const informacionD = JSON.stringify({
         total: Math.round(totalRetenciones),
-        mascotasNumber: reserva[0]?.mascotas || 0, // Changed from mascotas to mascotasNumber
+        mascotasNumber: reserva[0]?.mascotas || null, // Changed from mascotas to mascotasNumber
         adicionAlmuerzo: almuerzo,
         adicionCena: cena,
         titularInfo: {

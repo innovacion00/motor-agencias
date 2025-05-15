@@ -27,6 +27,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
+  
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
@@ -722,9 +723,12 @@ const Gestionar = ({ reservas }) => {
                     </p>
                   </div>
                 )}
-                {mostrarMascotas && (
+                {reservas.mascotasNumber > 0 && (
                   <div>
-                    <b>El huésped llevará una mascota</b>
+                    <b>
+                      El huésped llevará {reservas.mascotasNumber} 
+                      {reservas.mascotasNumber === 1 ? ' mascota' : ' mascotas'}
+                    </b>
                   </div>
                 )}
                 {mostrarExtranjero && (
@@ -742,6 +746,7 @@ const Gestionar = ({ reservas }) => {
                     <b>Se adicionó cena</b>
                   </div>
                 )}
+
 
                 <p className={styles.plazoPago}>
                   Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
