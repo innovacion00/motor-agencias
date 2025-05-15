@@ -30,7 +30,7 @@ const plan_alimentacion = {
 const FormularioReserva = ({ id }) => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
-  const [mascotas, setmascotas] = useState(false)
+  
   const [cena, setCena] = useState(false);
   const [almuerzo, setAlmuerzo] = useState(false);
   const hotelIdsPermitidos = [
@@ -69,7 +69,7 @@ const FormularioReserva = ({ id }) => {
     telefonoF: "",
     telefonotraslado: "",
     numeroVuelo: "",
-    numeroVueloSalida:"",
+    numeroVueloSalida: "",
     aereolinea: "",
 
     // esExtranjero:false
@@ -166,7 +166,6 @@ const FormularioReserva = ({ id }) => {
 
   //#region tipo de translado
   const tipodetraslado = (() => {
-   
     const tipoTraslado = reserva[0]?.tipoTraslado;
 
     if (tipoTraslado === "aeropuerto_hotel") return 0;
@@ -211,7 +210,6 @@ const FormularioReserva = ({ id }) => {
     apellidos,
     email,
     celular,
-    
   } = formData;
 
   const enviartraslado = reserva[0]?.incluirTraslado === true;
@@ -255,7 +253,7 @@ const FormularioReserva = ({ id }) => {
       };
       const informacionD = JSON.stringify({
         total: Math.round(totalRetenciones),
-        mascotas:mascotas,
+        mascotasNumber: reserva[0]?.mascotas || 0, // Changed from mascotas to mascotasNumber
         adicionAlmuerzo: almuerzo,
         adicionCena: cena,
         titularInfo: {
@@ -270,24 +268,25 @@ const FormularioReserva = ({ id }) => {
           reserva[0].incluirTraslado === true
             ? {
                 numeroVuelo: formData.numeroVuelo,
-                ...(reserva[0].tipoTraslado === 'hotel_aeropuerto' || 
-                    reserva[0].tipoTraslado === 'ambos') && {
-                  numeroVueloSalida: formData.numeroVueloSalida
-                },
+                ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
+                  reserva[0].tipoTraslado === "ambos") && {
+                  numeroVueloSalida: formData.numeroVueloSalida,
+                }),
                 firstContactNumber: formData.telefonotraslado,
                 aerolinea: formData.aereolinea,
-                tipoRecogida: tipodetraslado ,
+                tipoRecogida: tipodetraslado,
                 cantidadPersonas: totalHuespedes,
               }
             : null,
-        infoToures: 
-        reserva[0].tourSeleccionado?.length > 0
-          ? {
-              nombres: reserva[0].tourSeleccionado.map(tour => tour.title),
-              firstContactNumber: formData.celular,
-              secondContacNumber: formData.telefonotraslado || formData.celular
-            }
-          : null,
+        infoToures:
+          reserva[0].tourSeleccionado?.length > 0
+            ? {
+                nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
+                firstContactNumber: formData.celular,
+                secondContacNumber:
+                  formData.telefonotraslado || formData.celular,
+              }
+            : null,
         ...filtrarRetenciones({
           reteFuente: {
             resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
@@ -547,18 +546,21 @@ const FormularioReserva = ({ id }) => {
                 ? "Aeropuerto al hotel y Hotel al aeropuerto"
                 : "No se seleccionó traslado"}
             </p>
-            
+
             {data.tourSeleccionado && data.tourSeleccionado.length > 0 && (
               <p>
                 <strong>Tours seleccionados: </strong>
                 {data.tourSeleccionado.map((tour, index) => (
                   <span key={tour.id}>
-                    {index > 0 ? ', ' : ''}{tour.title}
+                    {index > 0 ? ", " : ""}
+                    {tour.title}
                   </span>
                 ))}
               </p>
             )}
-            
+
+            <p><strong>Numero de mascotas:</strong> {data.mascotas}</p>
+
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong>{" "}
               {divisaSelec == "USD"
@@ -567,32 +569,6 @@ const FormularioReserva = ({ id }) => {
             </p>
 
             <br />
-
-            <div
-                style={{
-                  display: "flex",
-                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
-                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
-                }}
-              >
-                <strong>¿Desea adicionar una mascota a su reserva?</strong>
-                <input
-                  type="checkbox"
-                  checked={mascotas}
-                  onChange={(e) => setmascotas(e.target.checked)}
-                  style={{
-                    width: "15px", // Tamaño más claro y consistente
-                    height: "15px",
-                    marginTop: "10px",
-                    marginLeft: "40px",
-                    // gap:"1rem",
-                    marginRight: "20px",
-                    cursor: "pointer", // Cambia el cursor al pasar sobre el checkbox
-                    accentColor: "#007BFF", // Color del checkbox (moderno y llamativo)
-                  }}
-                />
-                
-              </div>
 
             {mostrarCheckboxes && (
               <div
@@ -665,7 +641,10 @@ const FormularioReserva = ({ id }) => {
                   : `${formatCurrency(totalRetenciones)} COP `}
               </strong>
             </p>
-            <p>(Hospedaje + A&B + Impuestos incluidos + Paquetes y servicios adicionales)</p>
+            <p>
+              (Hospedaje + A&B + Impuestos incluidos + Paquetes y servicios
+              adicionales)
+            </p>
             <strong>
               Nota: En caso de que el titular de la reserva sea de nacionalidad
               colombiana{" "}
@@ -673,21 +652,15 @@ const FormularioReserva = ({ id }) => {
               asumir el impuesto del iva del 19%.{" "}
             </strong>
           </div>
-          {divisaSelec == "USD" || totalRetenciones < 199000 || reserva[0]?.hotelid === "13633" ? (
+          {divisaSelec == "USD" ||
+          totalRetenciones < 199000  ? (
             ""
           ) : (
-            <div>
-              <h3>Detallado</h3>
-              <TablaDesglose
-                precio={totalConIVA}
-                adults={adults}
-                ninos={ninos}
-                fechasreserva={fechasreserva}
-              />
-            </div>
+            ""
           )}
         </div>
-        {divisaSelec == "USD" || totalRetenciones < 199000 || reserva[0]?.hotelid === "13633" ? null : (
+        {divisaSelec == "USD" ||
+        totalRetenciones < 199000  ? null : (
           <div>
             <FormularioRetenciones
               precio={totalConIVA}
@@ -892,7 +865,7 @@ const FormularioReserva = ({ id }) => {
               {/*-------------- LABEL IDENTIFICADOR -------------- */}
               <label
                 htmlFor="identificador"
-                style={{ color:"red" ,fontWeight: "light", fontSize: "12px" }}
+                style={{ color: "red", fontWeight: "light", fontSize: "12px" }}
               >
                 Incluir código de área (+57,+55, etc.) eje:+573002215487
               </label>
@@ -938,11 +911,11 @@ const FormularioReserva = ({ id }) => {
                       />
                     </div>
                     <label
-                htmlFor="identificador"
-                style={{ fontWeight: "light", fontSize: "12px" }}
-              >
-                Se debe escribir el identificador(+)
-              </label>
+                      htmlFor="identificador"
+                      style={{ fontWeight: "light", fontSize: "12px" }}
+                    >
+                      Se debe escribir el identificador(+)
+                    </label>
                     {/*-------------- INPUT NUMERO DE VUELO -------------- */}
                     <div>
                       <label htmlFor="numeroVuelo">
@@ -968,32 +941,32 @@ const FormularioReserva = ({ id }) => {
                     </div>
 
                     {/* Mostrar número de vuelo de salida solo si es traslado al aeropuerto o ambos */}
-                    {reserva[0]?.incluirTraslado && 
-                     (reserva[0]?.tipoTraslado === 'hotel_aeropuerto' || 
-                      reserva[0]?.tipoTraslado === 'ambos') && (
-                      <div>
-                        <label htmlFor="numeroVueloSalida">
-                          Número del vuelo Salida :{" "}
-                          <span style={{ color: "red" }}>*</span>
-                        </label>
-                        <input
-                          id="numeroVueloSalida"
-                          type="text"
-                          placeholder="Ingrese el numero de vuelo de regreso"
-                          maxLength={30}
-                          value={formData.numeroVueloSalida}
-                          onChange={handleChange}
-                          style={{
-                            display: "block",
-                            width: "100%",
-                            padding: "8px",
-                            marginBottom: "10px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                          }}
-                        />
-                      </div>
-                    )}
+                    {reserva[0]?.incluirTraslado &&
+                      (reserva[0]?.tipoTraslado === "hotel_aeropuerto" ||
+                        reserva[0]?.tipoTraslado === "ambos") && (
+                        <div>
+                          <label htmlFor="numeroVueloSalida">
+                            Número del vuelo Salida :{" "}
+                            <span style={{ color: "red" }}>*</span>
+                          </label>
+                          <input
+                            id="numeroVueloSalida"
+                            type="text"
+                            placeholder="Ingrese el numero de vuelo de regreso"
+                            maxLength={30}
+                            value={formData.numeroVueloSalida}
+                            onChange={handleChange}
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              padding: "8px",
+                              marginBottom: "10px",
+                              borderRadius: "5px",
+                              border: "1px solid #ccc",
+                            }}
+                          />
+                        </div>
+                      )}
 
                     {/*-------------- INPUT AEREOLINIA FACTURA -------------- */}
                     <div>
@@ -1184,4 +1157,3 @@ const FormularioReserva = ({ id }) => {
 };
 
 export default FormularioReserva;
-

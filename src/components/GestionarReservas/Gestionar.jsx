@@ -936,7 +936,7 @@ const Gestionar = ({ reservas }) => {
                 autenticado en una notaría.
               </p>
               <br />
-              {/* <p >
+              <p >
 
                 <b>
                 Política de mascotas: {" "}
@@ -946,10 +946,8 @@ const Gestionar = ({ reservas }) => {
                 <br />
                 {"º"} Solo se permite una mascota por habitación.
                 <br />
-               {"º"} El ingreso es gratuito únicamente al presentar un certificado de apoyo emocional válido. 
-                <br />
                {"º"} No se permite dejar a la mascota sola en la habitación en ningún momento.
-              </p> */}
+              </p>
             </div>
           </div>
           <div className={styles.Retenciones}>

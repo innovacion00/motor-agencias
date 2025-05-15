@@ -418,7 +418,6 @@ const idRooms = {
     104979:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
-  //Zulita
   41: {},
 
   //Boquilla
@@ -485,6 +484,11 @@ const plan_alimentacion = {
   41: false, //Zulita
   56: false, // Boquilla,
 };
+
+// Add these constants near the top with other price constants
+const MASCOTA_PRECIO_COP = 50000;
+const MASCOTA_PRECIO_USD = 10;
+
 // UseState
 
 export const Cid = ({ id }) => {
@@ -509,6 +513,8 @@ export const Cid = ({ id }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredTours, setFilteredTours] = useState([]);
+  const [mostrarMascotas, setMostrarMascotas] = useState(false);
+  const [cantidadMascotas, setCantidadMascotas] = useState(0);
 
   function openModal(tour) {
     setIsOpen(true);
@@ -562,7 +568,8 @@ export const Cid = ({ id }) => {
     return parseFloat(precioBase) * vehiculosNecesarios;
   };
 
-  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado) => {
+  // Modify the calculateTotalPrice function
+  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado, numMascotas = 0) => {
     const toursPrice = tours.reduce((total, tour) => {
       const tourPrice = currency === 'USD' ? parseFloat(tour.preciousd) : parseFloat(tour.preciocol);
       return total + tourPrice * totalGuests;
@@ -570,7 +577,12 @@ export const Cid = ({ id }) => {
   
     const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests);
     
-    return parseFloat(basePrice) + toursPrice + transferPrice;
+    // Add pet price calculation
+    const mascotasPrice = currency === 'USD' 
+      ? (numMascotas * MASCOTA_PRECIO_USD)
+      : (numMascotas * MASCOTA_PRECIO_COP);
+  
+    return parseFloat(basePrice) + toursPrice + transferPrice + mascotasPrice;
   };
 
   //Enviar datos de reserva
@@ -625,7 +637,9 @@ export const Cid = ({ id }) => {
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
-    //console.log("Datos de disponibilidad" , disponibilidad)
+    // Obtener el número real de habitaciones del layout
+    rangosdefechas.numRooms = rangosdefechas.layout ? rangosdefechas.layout.length : 1;
+    
     const resultado = disponibilidad.find((vaina) => vaina.hotel.id == id);
     const adultos = Number(localStorage.getItem("cantNinos"));
     const ninos = Number(localStorage.getItem("cantAdultos"));
@@ -666,6 +680,26 @@ export const Cid = ({ id }) => {
     } else {
       // Si se desmarca, quitarlo del array de seleccionados
       setSelectedTours(selectedTours.filter((item) => item.id !== tour.id));
+    }
+  };
+
+  const valorDelRadioMascotas = (event) => {
+    const seleccionSi = event.target.value === "si";
+    setMostrarMascotas(seleccionSi);
+    if (seleccionSi) {
+      setCantidadMascotas(1); // Iniciar en 1 cuando se selecciona "si"
+    } else {
+      setCantidadMascotas(0);
+    }
+  };
+
+  const handleCantidadMascotas = (operacion) => {
+    const numHabitaciones = rangosfechas.layout ? rangosfechas.layout.length : 1;
+    
+    if (operacion === "incremento" && cantidadMascotas < numHabitaciones) {
+      setCantidadMascotas(prev => prev + 1);
+    } else if (operacion === "decremento" && cantidadMascotas > 1) { // Cambiado de 0 a 1
+      setCantidadMascotas(prev => prev - 1);
     }
   };
 
@@ -854,6 +888,71 @@ export const Cid = ({ id }) => {
 
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
+            <h3>¿Desea añadir mascotas a su reserva?</h3>
+            <p>Puede añadir máximo 1 mascota por habitación</p>
+            <input
+              type="radio"
+              name="mascotas"
+              value="si"
+              className={styles.radioInput}
+              onChange={valorDelRadioMascotas}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> Si</span>
+            <input
+              type="radio"
+              name="mascotas"
+              value="no"
+              defaultChecked
+              className={styles.radioInput}
+              onChange={valorDelRadioMascotas}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> No</span>
+
+            {mostrarMascotas && (
+              <div className={styles.mascotasSection} style={{ marginTop: "15px" }}>
+                <h4 style={{ color: "#1f3b64", marginBottom: "10px" }}>
+                  Seleccione la cantidad de mascotas:
+                </h4>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <button 
+                    onClick={() => handleCantidadMascotas("decremento")}
+                    style={{
+                      padding: "5px 10px",
+                      backgroundColor: "#26547B",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    -
+                  </button>
+                  <span>{cantidadMascotas}</span>
+                  <button 
+                    onClick={() => handleCantidadMascotas("incremento")}
+                    style={{
+                      padding: "5px 10px",
+                      backgroundColor: "#26547B",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                    disabled={cantidadMascotas >= (rangosfechas.layout?.length || 1)}
+                  >
+                    +
+                  </button>
+                  <span style={{ marginLeft: "10px" }}>
+                    (Máximo {rangosfechas.layout?.length || 1} {(rangosfechas.layout?.length || 1) === 1 ? 'mascota' : 'mascotas'})
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.plan_alimentacion}>
+          <div className={styles.planes}>
             {/* Mostrar traslados y tours solo para CARTAGENA o SANTA_MARTA */}
             {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA') && (
               <>
@@ -960,6 +1059,7 @@ export const Cid = ({ id }) => {
                   onChange={valorDelRadioToures}
                 />{" "}
                 <span style={{ paddingRight: "10px" }}> No</span>
+                
                 {mostrarToures && (
                   <div className={styles.touresSection}>
                     <br />
@@ -1013,6 +1113,7 @@ export const Cid = ({ id }) => {
             )}
           </div>
         </div>
+        
         {/* habitaciones?.availability?.map((cam)=>
   cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
@@ -1120,7 +1221,8 @@ export const Cid = ({ id }) => {
                                   currentCurrency,
                                   ninos + adultos,
                                   habitaciones?.hotel?.city,
-                                  tipoTraslado
+                                  tipoTraslado,
+                                  cantidadMascotas // Add this parameter
                                 ),
                                 precioBase: dato.products?.find((product) =>
                                   regexSeleccionado.test(product.roomName)
@@ -1137,6 +1239,7 @@ export const Cid = ({ id }) => {
                                 rateId: dato.products?.find((product) =>
                                   regexSeleccionado.test(product.roomName)
                                 )?.rateId,
+                                mascotas: mostrarMascotas ? cantidadMascotas : 0,
                               },
                             ]);
                             setcontadorHabitaciones(
@@ -1227,6 +1330,7 @@ export const Cid = ({ id }) => {
                       </span>
                     ))}
                   </h5>
+                  <h5>Numero de mascotas: {cantidadMascotas}</h5>
                   <h2>
                     {formatCurrency(
                       calculateTotalPrice(
@@ -1235,7 +1339,8 @@ export const Cid = ({ id }) => {
                         currentCurrency,
                         ninos + adultos,
                         habitaciones?.hotel?.city,
-                        tipoTraslado
+                        tipoTraslado,
+                        cantidadMascotas // Add this parameter
                       )
                     )}{" "}
                     {currentCurrency == "USD" ? "USD" : "COP"}
