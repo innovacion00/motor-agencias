@@ -27,7 +27,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
-  
+
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
@@ -267,7 +267,7 @@ const Gestionar = ({ reservas }) => {
     }
   };
 
-  //#region boton pagar mitad
+  //#region Boton pagar mitad
   const onClick = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -278,7 +278,7 @@ const Gestionar = ({ reservas }) => {
     }
     await generarLink(id, booleano);
   };
-  //#region boton pagar total
+  //#region Boton pagar total
   const onClickTotal = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -291,7 +291,7 @@ const Gestionar = ({ reservas }) => {
     await generarLink(id, booleano);
   };
 
-  //#region boton pagar billetera
+  //#region Boton pagar billetera
   const onClickBilletera = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -304,7 +304,7 @@ const Gestionar = ({ reservas }) => {
     await generarLinkBilletera(id, booleano);
   };
 
-  //#region formatear valores de dinero
+  //#region Formatear dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
@@ -347,7 +347,7 @@ const Gestionar = ({ reservas }) => {
         return;
       }
 
-      //#region Noti exito editar reserva
+      //#region Exito editar reserva
       const data = await response.json();
       console.log("Nota guardada exitosamente:", data);
       Swal.fire({
@@ -370,8 +370,12 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
-
-  //#region Peticion cancelar reservas
+/*method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,*/
+            
+  //#region Cancelar reservas
   const cancelarReserva = async (reservas) => {
     try {
       // Obtener los datos del usuario desde localStorage
@@ -386,8 +390,8 @@ const Gestionar = ({ reservas }) => {
         {
           method: "DELETE",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Incluir el token en el encabezado
+            "Content-Type":"application/json",
+            Authorization:`Bearer${token}`, // Incluir el token en el encabezado
           },
           body: JSON.stringify({
             reservaId: reservas, // Pasar el ID de la reserva
@@ -395,7 +399,7 @@ const Gestionar = ({ reservas }) => {
         }
       );
 
-      //#region Noti Validar la respuesta de la API
+      //#region Validar respuesta api
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error al cancelar la reserva:", errorData);
@@ -421,7 +425,7 @@ const Gestionar = ({ reservas }) => {
       });
     } catch (error) {
       console.error("Error al cancelar la reserva:", error);
-      //#region Noti fallo en la api de cancelar reserva
+
       Swal.fire(
         "Error",
         "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
@@ -429,28 +433,60 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
+  
+  //#region Modal Pago mi saldo
 
-  //#region Noti pago mi saldo
   const confirmarPago = (id) => {
     Swal.fire({
-      title: "¿Está seguro?",
-      text: `Se procederá al pago con 'Mi saldo' que es ${formatCurrency(
-        AvailableAmount
-      )}. ¿Estas seguro que deseas realizarlo?`,
-      icon: "warning",
-      showCancelButton: true,
+      title: "Seleccione el tipo de pago",
+      text: "¿Qué porcentaje del valor total desea pagar?",
+      icon: "question",
+      showDenyButton: true,
+      confirmButtonText: "Pagar Total",
+      denyButtonText: "Pagar 50%",
       confirmButtonColor: "#26547B",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, pagar",
-      cancelButtonText: "Cancelar",
+      denyButtonColor: "#4B70B2",
+      showClass: {
+        popup: "animate__animated animate__fadeInDown animate__faster",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutUp animate__faster",
+      },
     }).then((result) => {
-      if (result.isConfirmed) {
-        onClickBilletera(id, true);
+      if (result.isConfirmed || result.isDenied) {
+        const isPagoCompleto = result.isConfirmed;
+
+        Swal.fire({
+          title: "¿Está seguro?",
+          text: `Se procederá al pago con 'Mi saldo' que es ${formatCurrency(
+            AvailableAmount
+          )}. ${
+            isPagoCompleto
+              ? `Pagará el total del valor`
+              : "Pagará el 50% del valor"
+          }`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#26547B",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, pagar",
+          cancelButtonText: "Cancelar",
+          showClass: {
+            popup: "animate__animated animate__fadeInDown animate__faster",
+          },
+          hideClass: {
+            popup: "animate__animated animate__fadeOutUp animate__faster",
+          },
+        }).then((confirmResult) => {
+          if (confirmResult.isConfirmed) {
+            onClickBilletera(id, isPagoCompleto);
+          }
+        });
       }
     });
   };
 
-  //#region Noti cancelar reservas
+  //#region Modal cancelar reservas
   const confirmarCancelacion = (reservaId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -726,8 +762,8 @@ const Gestionar = ({ reservas }) => {
                 {reservas.mascotasNumber > 0 && (
                   <div>
                     <b>
-                      El huésped llevará {reservas.mascotasNumber} 
-                      {reservas.mascotasNumber === 1 ? ' mascota' : ' mascotas'}
+                      El huésped llevará {reservas.mascotasNumber}
+                      {reservas.mascotasNumber === 1 ? " mascota" : " mascotas"}
                     </b>
                   </div>
                 )}
@@ -746,7 +782,6 @@ const Gestionar = ({ reservas }) => {
                     <b>Se adicionó cena</b>
                   </div>
                 )}
-
 
                 <p className={styles.plazoPago}>
                   Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
@@ -941,17 +976,16 @@ const Gestionar = ({ reservas }) => {
                 autenticado en una notaría.
               </p>
               <br />
-              <p >
-
-                <b>
-                Política de mascotas: {" "}
-                </b>
+              <p>
+                <b>Política de mascotas: </b>
                 <br />
-                {"º"} Se permite el ingreso de mascotas con un peso máximo de 8 kg. 
+                {"º"} Se permite el ingreso de mascotas con un peso máximo de 8
+                kg.
                 <br />
                 {"º"} Solo se permite una mascota por habitación.
                 <br />
-               {"º"} No se permite dejar a la mascota sola en la habitación en ningún momento.
+                {"º"} No se permite dejar a la mascota sola en la habitación en
+                ningún momento.
               </p>
             </div>
           </div>
