@@ -390,8 +390,8 @@ const Gestionar = ({ reservas }) => {
         {
           method: "DELETE",
           headers: {
-            "Content-Type":"application/json",
-            Authorization:`Bearer${token}`, // Incluir el token en el encabezado
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Incluir el token en el encabezado
           },
           body: JSON.stringify({
             reservaId: reservas, // Pasar el ID de la reserva
