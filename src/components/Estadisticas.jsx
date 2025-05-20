@@ -29,6 +29,7 @@ const Estadisticas = () => {
     { month: "Marzo", reservas: 50 },
    
   ];
+  const [agenciasRegistradas, setAgenciasRegistradas] = useState(0);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -156,7 +157,33 @@ useEffect(() => {
     setReservasPorCiudad(datosFormateados);
   }
 }, [reservasNano.get()]);
-    
+      
+useEffect(() => {
+  const obtenerAgencias = async () => {
+    try {
+      const response = await fetch("https://gehsuitesapps.com/agencias/v1/agencias/", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userData?.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al obtener agencias");
+      }
+
+      const data = await response.json();
+      setAgenciasRegistradas(data.length);
+    } catch (error) {
+      console.error("Error obteniendo agencias:", error);
+    }
+  };
+
+  if (userData?.token) {
+    obtenerAgencias();
+  }
+}, [userData]);  
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -460,6 +487,12 @@ useEffect(() => {
     {reservas.length}
   </p>
 </div>
+<div style={{ textAlign: "center", margin: "20px" }}>
+    <h2 style={{fontSize:"15px"}}>Agencias Registradas</h2>
+    <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E74C3C" }}>
+      {agenciasRegistradas}
+    </p>
+  </div>
 </div>
 
 
