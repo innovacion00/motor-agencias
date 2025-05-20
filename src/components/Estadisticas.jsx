@@ -32,6 +32,7 @@ const Estadisticas = () => {
   ];
   const [agenciasRegistradas, setAgenciasRegistradas] = useState(0);
   const [estadosPago, setEstadosPago] = useState([]);
+  const [agenciasNuevas, setAgenciasNuevas] = useState(0);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -177,6 +178,17 @@ useEffect(() => {
 
       const data = await response.json();
       setAgenciasRegistradas(data.length);
+
+      // Calcular agencias nuevas en las últimas 24h
+      const ahora = new Date();
+      const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000);
+
+      const agenciasRecientes = data.filter(agencia => {
+        const fechaCreacion = new Date(agencia.createdAt);
+        return fechaCreacion >= hace24Horas;
+      });
+
+      setAgenciasNuevas(agenciasRecientes.length);
     } catch (error) {
       console.error("Error obteniendo agencias:", error);
     }
@@ -508,27 +520,9 @@ useEffect(() => {
     labelRadius={80} // Ubica mejor los textos fuera del centro
   />
 </div>
-<div style={{ textAlign: "center", margin: "20px" }}>
-  <h2 style={{fontSize:"15px"}}>Reservas Canceladas en las Últimas 24h</h2>
-  <p style={{ fontSize: "20px", fontWeight: "bold", color: "#E74C3C" }}>
-    {reservasCanceladas}
-  </p>
-  <div style={{ textAlign: "center", margin: "20px" }}>
-<h2 style={{fontSize:"15px"}}>Numero de reservas realizadas</h2>
-  <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E74C3C" }}>
-    
-    {reservas.length}
-  </p>
-</div>
-<div style={{ textAlign: "center", margin: "20px" }}>
-    <h2 style={{fontSize:"15px"}}>Agencias Registradas</h2>
-    <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E74C3C" }}>
-      {agenciasRegistradas}
-    </p>
-  </div>
-</div>
 
-<div style={{ width: "80%", maxWidth: "600px", margin: "10px auto" }} className="chart-container">
+
+<div style={{ width: "80%", maxWidth: "500px", margin: "10px auto" }} className="chart-container">
   <h2 style={{ textAlign: "center" }}>Estados de pago en tiempo real</h2>
   <VictoryPie
     data={estadosPago}
@@ -549,7 +543,31 @@ useEffect(() => {
     }}
   />
 </div>
-
+<div style={{ textAlign: "center", margin: "20px" }}>
+  <h2 style={{fontSize:"15px"}}>Reservas Canceladas en las Últimas 24h</h2>
+  <p style={{ fontSize: "20px", fontWeight: "bold", color: "#4CAF50" }}>
+    {reservasCanceladas}
+  </p>
+  <div style={{ textAlign: "center", margin: "20px" }}>
+<h2 style={{fontSize:"15px"}}>Numero de reservas realizadas</h2>
+  <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+    
+    {reservas.length}
+  </p>
+</div>
+<div style={{ textAlign: "center", margin: "20px" }}>
+    <h2 style={{fontSize:"15px"}}>Agencias Registradas</h2>
+    <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+      {agenciasRegistradas}
+    </p>
+  </div>
+  <div style={{ textAlign: "center", margin: "20px" }}>
+    <h2 style={{fontSize:"15px"}}>Agencias Nuevas (Últimas 24h)</h2>
+    <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+      {agenciasNuevas}
+    </p>
+  </div>
+</div>
       </div>
     </div>
     

@@ -210,7 +210,7 @@ const Gestionar = ({ reservas }) => {
       }
 
       const data = await response.json();
-      setAvailableAmount(data.available_amount);
+      setAvailableAmount(data.total_available_amount);
     } catch (error) {
       console.error("Error obteniendo saldo:", error);
       Swal.fire({
