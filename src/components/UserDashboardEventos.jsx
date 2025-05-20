@@ -19,27 +19,29 @@ const UserDashboard = () => {
     setUsuarioDatos(datosdelusuario.token);
     setDatosHotel(data);
   }, []);
-
   // Función para consultar las cotizaciones
-  const obtenerCotizaciones = async (token) => {
+  const obtenerCotizaciones = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("https://gehsuitesapps.com/agencias/v1/eventos",
-      {
+      if (!usuarioDatos) {
+        throw new Error('No hay token de autorización');
+      }
+
+      const response = await fetch("https://gehsuitesapps.com/agencias/v1/eventos", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${usuarioDatos}`,
         },
       });
-      // console.log(usuarioDatos.token)
+
       if (!response.ok) {
         throw new Error(`Error al obtener datos: ${response.status}`);
       }
+
       const data = await response.json();
-      
-       setCotizaciones(data);
-       setCotizacionesFiltradas(data);
+      setCotizaciones(data);
+      setCotizacionesFiltradas(data);
       setIsLoading(false);
     } catch (err) {
       console.error("Error al obtener cotizaciones:", err);
@@ -47,11 +49,12 @@ const UserDashboard = () => {
       setIsLoading(false);
     }
   };
-
-  // Consultar API al cargar el componente
+  // Consultar API al cargar el componente y cuando el token esté disponible
   useEffect(() => {
-    obtenerCotizaciones();
-  }, []);
+    if (usuarioDatos) {
+      obtenerCotizaciones();
+    }
+  }, [usuarioDatos]);
 
   // Manejar la búsqueda
   useEffect(() => {
@@ -176,13 +179,12 @@ const UserDashboard = () => {
                   <td>{cotizacion.nombreOrganizador}</td>
                   <td>{cotizacion.cantidadAsistentes}</td>
                   <td>{formatearFecha(cotizacion.fechaInicioEvento)}</td>
-                  <td>
-                    <button
+                  <td>                    <a
+                      href={`/evento/${cotizacion._id}`}
                       className="btn-action view"
-                      onClick={() => verDetalles(cotizacion)}
                     >
                       <i className="fas fa-eye"></i>
-                    </button>
+                    </a>
                   </td>
                 </tr>
               ))}
