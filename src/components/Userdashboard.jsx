@@ -35,110 +35,7 @@ const UserDashboard = () => {
     // settokenusuario(token)
   }, []);
 
-  //#region reservas por mes
-  // useEffect(() => {
-  //   const reservasObtenidas = reservasNano.get();
 
-  //   if (reservasObtenidas.length > 0) {
-  //     // Mapeo de meses en orden correcto
-  //     const mesesOrdenados = [
-  //       "Ene", "Feb", "Mar", "Abril", "May", "Jun",
-  //       "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-  //     ];
-
-  //     // Contar reservas por mes
-  //     const conteoPorMes = reservasObtenidas.reduce((acc, reserva) => {
-  //       const fecha = new Date(reserva.createdAt);
-  //       const mes = fecha.getMonth(); // Devuelve un número de 0 (enero) a 11 (diciembre)
-
-  //       acc[mes] = (acc[mes] || 0) + 1;
-  //       return acc;
-  //     }, {});
-
-  //     // Convertir a formato compatible con Victory y ordenar por meses
-  //     const datosFormateados = mesesOrdenados.map((mes, index) => ({
-  //       mes ,
-  //       reservas: conteoPorMes[index] || 0, // Si no hay reservas en un mes, poner 0
-  //     }));
-
-  //     setReservasPorMes(datosFormateados);
-  //   }
-  // }, [reservasNano.get()]);
-
-    // //#region reservas por hotel
-    // useEffect(() => {
-    //   const reservasObtenidas = reservasNano.get();
-    
-    //   if (reservasObtenidas.length > 0) {
-    //     // Lista de hoteles en orden
-    //     const hotelesOrdenados = [
-    //      "Hotel Azuan", "Hotel Avexi","Hotel Axis","Hotel Aixo", "Hotel Bocagrande","Hotel Rodadero",
-    //       "Hotel Boquilla", "Hotel Sansiraka", "Hotel Abi",   "Hotel 1525", "Hotel Windsor", "Hotel Madisson", 
-    //     ];
-    
-    //     // Contar reservas por hotel
-    //     const conteoPorHotel = reservasObtenidas.reduce((acc, reserva) => {
-    //       const nombreHotel = reserva.hotel;
-    //       acc[nombreHotel] = (acc[nombreHotel] || 0) + 1;
-    //       return acc;
-    //     }, {});
-    
-    //     // Convertir datos a formato de Victory
-    //     const datosFormateados = hotelesOrdenados.map((hotel) => ({
-    //       hotel,
-    //       reservas: conteoPorHotel[hotel] || 0,
-    //     }));
-    
-    //     setReservasPorHotel(datosFormateados);
-    //   }
-    // }, [reservasNano.get()]);
-    
-// #region Reservas por ciudad
-
-// useEffect(() => {
-//   const reservasObtenidas = reservasNano.get();
-
-//   if (reservasObtenidas.length > 0) {
-//     // Mapeo para normalizar los nombres de las ciudades
-//     const ciudadFormato = {
-//       CARTAGENA: "Cartagena",
-//       BOGOTA: "Bogotá",
-//       SANTA_MARTA: "Santa Marta",
-//     };
-
-//     // Inicializar conteo de reservas por ciudad
-//     const conteoPorCiudad = { Cartagena: 0, Bogotá: 0, "Santa Marta": 0 };
-
-//     // Contar reservas por ciudad
-//     reservasObtenidas.forEach((reserva) => {
-//       const ciudad = reserva.reservation.city.toUpperCase(); // Normalizar a mayúsculas
-//       const ciudadFormateada = ciudadFormato[ciudad] || ciudad; // Convertir a formato correcto
-//       if (conteoPorCiudad[ciudadFormateada] !== undefined) {
-//         conteoPorCiudad[ciudadFormateada] += 1;
-//       }
-//     });
-
-//     // Convertir datos a formato compatible con VictoryPie
-//     const datosFormateados = Object.entries(conteoPorCiudad).map(([ciudad, reservas]) => ({
-//       x: ciudad,
-//       y: reservas,
-//     }));
-
-//     if (reservasObtenidas.length > 0) {
-//       const ahora = new Date();
-//       const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000); // Resta 24h
-  
-//       // Filtrar reservas canceladas en las últimas 24h
-//       const canceladasUltimas24h = reservasObtenidas.filter((reserva) => {
-//         const fechaReserva = new Date(reserva.createdAt);
-//         return reserva.status === 4 && fechaReserva >= hace24Horas;
-//       });
-  
-//       setReservasCanceladas(canceladasUltimas24h.length);
-//     }
-//     setReservasPorCiudad(datosFormateados);
-//   }
-// }, [reservasNano.get()]);
     
   const handleLogout = () => {
     // Eliminar el token de autenticación
@@ -218,7 +115,7 @@ const UserDashboard = () => {
       }
 
       const data = await response.json();
-      setAvailableAmount(data.available_amount);
+      setAvailableAmount(data.total_available_amount);
     } catch (error) {
       console.error("Error obteniendo saldo:", error);
       Swal.fire({
