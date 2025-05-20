@@ -7,6 +7,7 @@ import { useHover } from "@uidotdev/usehooks";
 import Swal from "sweetalert2";
 
 const Estadisticas = () => {
+  
   const [reservasPorHotel, setReservasPorHotel] = useState()
   const [reservasPorMes, setReservasPorMes] = useState([]);
   const [reservasPorCiudad, setReservasPorCiudad] = useState();
@@ -30,6 +31,7 @@ const Estadisticas = () => {
    
   ];
   const [agenciasRegistradas, setAgenciasRegistradas] = useState(0);
+  const [estadosPago, setEstadosPago] = useState([]);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -184,6 +186,37 @@ useEffect(() => {
     obtenerAgencias();
   }
 }, [userData]);  
+
+useEffect(() => {
+  const reservasObtenidas = reservasNano.get();
+
+  if (reservasObtenidas.length > 0) {
+    const estadosLabel = {
+      0: "Pendiente de pago",
+      1: "En proceso",
+      2: "Pago rechazado", // Changed from "Pago recibido" to "Pago rechazado"
+      3: "Pago aprobado",
+      4: "Cancelado",
+      5: "Pagado primera mitad"
+    };
+
+    // Inicializar conteo
+    const conteoEstados = reservasObtenidas.reduce((acc, reserva) => {
+      const estado = reserva.status;
+      acc[estado] = (acc[estado] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Formatear datos para Victory
+    const datosFormateados = Object.entries(conteoEstados).map(([estado, cantidad]) => ({
+      x: estadosLabel[estado],
+      y: cantidad,
+      label: `${estadosLabel[estado]}: ${cantidad}`
+    }));
+
+    setEstadosPago(datosFormateados);
+  }
+}, [reservasNano.get()]);
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -495,7 +528,27 @@ useEffect(() => {
   </div>
 </div>
 
-
+<div style={{ width: "80%", maxWidth: "600px", margin: "10px auto" }} className="chart-container">
+  <h2 style={{ textAlign: "center" }}>Estados de pago en tiempo real</h2>
+  <VictoryPie
+    data={estadosPago}
+    colorScale={["#f39c12", "#36a3c4", "#e0577a", "#3a963f", "#bd1f1f", "#b58a2d"]}
+    style={{
+      labels: { 
+        fontWeight:"bolder",
+        fontSize: 9,
+        fill: "#232222",
+        fontFamily: "Roboto"
+      }
+    }}
+    labelRadius={({ innerRadius }) => innerRadius + 70}
+    innerRadius={50}
+    padAngle={2}
+    animate={{
+      duration: 1000
+    }}
+  />
+</div>
 
       </div>
     </div>
