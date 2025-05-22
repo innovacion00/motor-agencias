@@ -41,6 +41,7 @@ const Estadisticas = () => {
   const [reservasUltimas24h, setReservasUltimas24h] = useState(0);
   const [promedioHuespedes, setPromedioHuespedes] = useState(0);
   const [tasaConversion, setTasaConversion] = useState(0);
+  const [promedioEstadia, setPromedioEstadia] = useState(0);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -321,6 +322,18 @@ const Estadisticas = () => {
       setTasaConversion(tasa);
     }
   }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const totalNoches = reservasObtenidas.reduce((acc, reserva) => {
+        return acc + Number(reserva.reservation.nights);
+      }, 0);
+
+      const promedio = (totalNoches / reservasObtenidas.length).toFixed(1);
+      setPromedioEstadia(promedio);
+    }
+  }, [reservasNano.get()]);
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -547,10 +560,6 @@ const Estadisticas = () => {
       {/* Indicadores numéricos - Movidos fuera de stats-content */}
       <div className="indicators-grid">
         <div className="stats-indicator">
-          <h2>Reservas Canceladas en las Últimas 24h</h2>
-          <p style={{ color: "#4CAF50" }}>{reservasCanceladas}</p>
-        </div>
-        <div className="stats-indicator">
           <h2>Numero de reservas realizadas</h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
             {reservas.length}
@@ -561,6 +570,10 @@ const Estadisticas = () => {
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
             {agenciasRegistradas}
           </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Reservas Canceladas en las Últimas 24h</h2>
+          <p style={{ color: "#4CAF50" }}>{reservasCanceladas}</p>
         </div>
         <div className="stats-indicator">
           <h2>Agencias Nuevas (Últimas 24h)</h2>
@@ -590,6 +603,12 @@ const Estadisticas = () => {
           <h2>Tasa de reservas completadas con exito</h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E67E22" }}>
             {tasaConversion}%
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Promedio de Noches por Reserva</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#16A085" }}>
+            {promedioEstadia} noches
           </p>
         </div>
       </div>
