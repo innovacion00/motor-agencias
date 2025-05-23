@@ -965,7 +965,7 @@ export const Cid = ({ id }) => {
 
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
-            {/* Mostrar traslados y tours solo para CARTAGENA o SANTA_MARTA */}
+            {/* Mostrar trasladoss y tours solo para CARTAGENA o SANTA_MARTA */}
             {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA' || selectedCity === 'BOGOTA') && (
               <>
                 {/* --------------------------- TRASLADOS --------------------------- */}
