@@ -468,6 +468,17 @@ const trasladosSantamartaDolares = {
   1: "10",
 };
 
+// Agregar los nuevos objetos para Bogotá
+const trasladosBogotaPesos = {
+  0: "73200",
+  1: "146200",
+};
+
+const trasladosBogotaDolares = {
+  0: "17.7",
+  1: "35.4",
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
@@ -554,7 +565,8 @@ export const Cid = ({ id }) => {
     
     const precios = {
       CARTAGENA: currency === 'USD' ? trasladosCartagenaDolares : trasladosCartagenaPesos,
-      SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos
+      SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos,
+      BOGOTA: currency === 'USD' ? trasladosBogotaDolares : trasladosBogotaPesos
     };
   
     // Determinar el índice basado en el tipo de traslado
@@ -954,7 +966,7 @@ export const Cid = ({ id }) => {
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
             {/* Mostrar traslados y tours solo para CARTAGENA o SANTA_MARTA */}
-            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA') && (
+            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA' || selectedCity === 'BOGOTA') && (
               <>
                 {/* --------------------------- TRASLADOS --------------------------- */}
                 <h3>¿Desea añadir traslados a su reserva?</h3>
@@ -997,6 +1009,8 @@ export const Cid = ({ id }) => {
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
                           ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          : selectedCity === 'BOGOTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
                           : ''
                         } cada 4 personas)
                       </label>
@@ -1015,6 +1029,8 @@ export const Cid = ({ id }) => {
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
                           ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          : selectedCity === 'BOGOTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
                           : ''
                         } cada 4 personas)
                       </label>
@@ -1033,6 +1049,8 @@ export const Cid = ({ id }) => {
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
                           ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
+                          : selectedCity === 'BOGOTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[1] : trasladosBogotaPesos[1]} ${currentCurrency}`
                           : ''
                         } cada 4 personas)
                       </label>
