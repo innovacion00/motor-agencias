@@ -370,11 +370,11 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
-/*method: "DELETE",
+  /*method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,*/
-            
+
   //#region Cancelar reservas
   const cancelarReserva = async (reservas) => {
     try {
@@ -433,7 +433,7 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
-  
+
   //#region Modal Pago mi saldo
 
   const confirmarPago = (id) => {
@@ -506,37 +506,37 @@ const Gestionar = ({ reservas }) => {
 
   const imprimirVoucher = () => {
     Swal.fire({
-      title: 'Porcentaje de incremento',
-      text: 'Ingrese el porcentaje a incrementar en los valores (0-100):',
-      input: 'number',
+      title: "Porcentaje de incremento",
+      text: "Ingrese el porcentaje a incrementar en los valores (0-100):",
+      input: "number",
       inputAttributes: {
         min: 0,
         max: 100,
-        step: 1
+        step: 1,
       },
       showCancelButton: true,
-      confirmButtonColor: '#26547B',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Imprimir',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#26547B",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Imprimir",
+      cancelButtonText: "Cancelar",
       inputValidator: (value) => {
         if (!value || value < 0 || value > 100) {
-          return 'Por favor ingrese un número válido entre 0 y 100'
+          return "Por favor ingrese un número válido entre 0 y 100";
         }
-      }
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         // Mostrar loading mientras se genera el PDF
         Swal.fire({
-          title: 'Generando PDF',
-          text: 'Por favor espere...',
+          title: "Generando PDF",
+          text: "Por favor espere...",
           allowOutsideClick: false,
           didOpen: () => {
             Swal.showLoading();
-          }
+          },
         });
 
-        const incremento = 1 + (Number(result.value) / 100);
+        const incremento = 1 + Number(result.value) / 100;
         const doc = new jsPDF();
         const margin = 20;
         let yPos = margin;
@@ -547,7 +547,7 @@ const Gestionar = ({ reservas }) => {
           doc.setFontSize(20);
           doc.setTextColor(38, 84, 124);
           doc.text("VOUCHER DE RESERVA", margin, yPos);
-          
+
           // Línea decorativa
           yPos += 5;
           doc.setDrawColor(38, 84, 124);
@@ -557,19 +557,35 @@ const Gestionar = ({ reservas }) => {
           // Información básica
           doc.setFontSize(12);
           doc.setTextColor(0, 0, 0);
-          doc.text(`Código de Reserva: ${reservas?.reservaChatbotId}`, margin, yPos);
+          doc.text(
+            `Código de Reserva: ${reservas?.reservaChatbotId}`,
+            margin,
+            yPos
+          );
           yPos += 10;
           doc.text(`Hotel: ${reservas?.hotel}`, margin, yPos);
           yPos += 10;
-          doc.text(`Check-in: ${checkin} - Check-out: ${checkout}`, margin, yPos);
+          doc.text(
+            `Check-in: ${checkin} - Check-out: ${checkout}`,
+            margin,
+            yPos
+          );
           yPos += 10;
           doc.text(`Noches: ${reservas?.reservation.nights}`, margin, yPos);
           yPos += 10;
           doc.text(`Huéspedes totales: ${sumaHuespe}`, margin, yPos);
           yPos += 10;
-          doc.text(`Habitaciones: ${reservas?.cantidadHabitaciones}`, margin, yPos);
+          doc.text(
+            `Habitaciones: ${reservas?.cantidadHabitaciones}`,
+            margin,
+            yPos
+          );
           yPos += 10;
-          doc.text(`Plan de alimentación: ${reservas?.planAlimentario}`, margin, yPos);
+          doc.text(
+            `Plan de alimentación: ${reservas?.planAlimentario}`,
+            margin,
+            yPos
+          );
 
           // Separador
           yPos += 15;
@@ -583,13 +599,25 @@ const Gestionar = ({ reservas }) => {
           yPos += 10;
           doc.setFontSize(12);
           doc.setTextColor(0, 0, 0);
-          doc.text(`Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`, margin, yPos);
+          doc.text(
+            `Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`,
+            margin,
+            yPos
+          );
           yPos += 10;
-          doc.text(`Documento: ${reservas?.titularInfo?.documento}`, margin, yPos);
+          doc.text(
+            `Documento: ${reservas?.titularInfo?.documento}`,
+            margin,
+            yPos
+          );
           yPos += 10;
           doc.text(`Email: ${reservas?.reservation.email}`, margin, yPos);
           yPos += 10;
-          doc.text(`Teléfono: ${reservas?.reservation.telephone}`, margin, yPos);
+          doc.text(
+            `Teléfono: ${reservas?.reservation.telephone}`,
+            margin,
+            yPos
+          );
 
           // Separador
           yPos += 15;
@@ -623,7 +651,7 @@ const Gestionar = ({ reservas }) => {
           yPos += 10;
           const totalIncrementado = reservas.total * incremento;
           doc.setFillColor(38, 84, 124);
-          doc.rect(margin, yPos, 170, 10, 'F');
+          doc.rect(margin, yPos, 170, 10, "F");
           doc.setTextColor(255, 255, 255);
           doc.text(
             `Total a pagar: ${
@@ -646,7 +674,7 @@ const Gestionar = ({ reservas }) => {
 
           // Guardar PDF
           doc.save(`voucher-${reservas?.reservaChatbotId}.pdf`);
-          
+
           // Cerrar el loading
           Swal.close();
         };
@@ -1047,6 +1075,21 @@ const Gestionar = ({ reservas }) => {
                 autenticado en una notaría.
               </p>
               <br />
+              {/* <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
+              <p style={{fontFamily:"Roboto"}}>
+                <br />
+                Las facturas serán emitidas a su empresa Reservas sin garantías
+                o con garantías vencidas serán canceladas .
+                En caso de ser viajeros con nacionalidad colombiana o extranjeros con
+                residencia en Colombia, o en su defecto, si han pasado más de 3
+                meses en el país, deberán abonar adicional el IVA del 19% en la
+                recepción al momento de su check-in. PDT: No- shows: Todo
+                pasajero que por cualquier motivo no se presente el día de su
+                viaje será considerado como “NO SHOW” y se le aplicará
+                penalidad, valor 1 noche. No dude en contactarnos a través de
+                llamadas y WhatsApp a la línea +57 3336025021.
+              </p> */}
+              <br />
               <p>
                 <b>Política de mascotas: </b>
                 <br />
@@ -1319,7 +1362,7 @@ const Gestionar = ({ reservas }) => {
               >
                 Cancelar reserva
               </button>
-              <button
+              {/* <button
                 onClick={imprimirVoucher}
                 disabled={reservas?.status == "4"}
                 className={`${styles.cancelarButton} ${
@@ -1327,7 +1370,7 @@ const Gestionar = ({ reservas }) => {
                 }`}
               >
                 Imprimir voucher
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

@@ -582,7 +582,7 @@ const Estadisticas = () => {
           </p>
         </div>
         <div className="stats-indicator">
-          <h2>Reservas Completadas en las Últimas 24h</h2>
+          <h2>Reservas garantizadas en las Últimas 24h</h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2ECC71" }}>
             {reservasCompletadas24h}
           </p>
@@ -600,17 +600,21 @@ const Estadisticas = () => {
           </p>
         </div>
         <div className="stats-indicator">
-          <h2>Tasa de reservas completadas con exito</h2>
+          <h2>Tasa de reservas garantizadas </h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E67E22" }}>
             {tasaConversion}%
           </p>
         </div>
         <div className="stats-indicator">
-          <h2>Promedio de Noches por Reserva</h2>
+          <h2>Tavel Window</h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#16A085" }}>
             {promedioEstadia} noches
           </p>
         </div>
+        {/* <div className="stats-indicator">
+          <h2>Booking Window</h2>
+          <p style={{fontSize:"24px", fontWeight:"bold", color:"#16A085"}}></p>
+        </div> */}
       </div>
 
       <div className="stats-content">
