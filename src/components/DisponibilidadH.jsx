@@ -1004,6 +1004,7 @@ export const Cid = ({ id }) => {
                       />
                        <label htmlFor="A a H">
                         {" "}
+                        {/* datos de persona en traslados bogota ah/ha */}
                         Aeropuerto al hotel {" "}
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
@@ -1031,6 +1032,7 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="H a A">
                         {" "}
+                         {/* datos de persona en traslados bogota ah/ha */}
                         Hotel al Aeropuerto {" "}
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
@@ -1058,6 +1060,7 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
+                         {/* datos de persona en traslados bogota ahYha */}
                         Aeropuerto al hotel | Hotel al aeropuerto {" "} 
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
