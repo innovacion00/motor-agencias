@@ -1012,7 +1012,14 @@ export const Cid = ({ id }) => {
                           : selectedCity === 'BOGOTA'
                           ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
                           : ''
-                        } cada 4 personas)
+                        } cada 4 personas) <span style={{ 
+                         color: 'gray',  
+                          fontSize: '0.85em', 
+                          display: 'block',
+                          marginTop: '5px'
+                        }}>
+                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                        </span>
                       </label>
                     </div>
                     <div className={styles.tour_item}>
@@ -1032,7 +1039,14 @@ export const Cid = ({ id }) => {
                           : selectedCity === 'BOGOTA'
                           ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
                           : ''
-                        } cada 4 personas)
+                        } cada 4 personas) <span style={{ 
+                          color: 'gray', 
+                          fontSize: '0.85em', 
+                          display: 'block',
+                          marginTop: '5px'
+                        }}>
+                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                        </span>
                       </label>
                     </div>
                     <div className={styles.tour_item}>
@@ -1044,7 +1058,7 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
-                        Aeropuerto al hotel | Hotel al aeropuerto {" "}
+                        Aeropuerto al hotel | Hotel al aeropuerto {" "} 
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
@@ -1052,7 +1066,14 @@ export const Cid = ({ id }) => {
                           : selectedCity === 'BOGOTA'
                           ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[1] : trasladosBogotaPesos[1]} ${currentCurrency}`
                           : ''
-                        } cada 4 personas)
+                        } cada 4 personas) <span style={{ 
+                         color: 'gray', 
+                          fontSize: '0.85em', 
+                          display: 'block',
+                          marginTop: '5px'
+                        }}>
+                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                        </span>
                       </label>
                     </div>
                   </div>
