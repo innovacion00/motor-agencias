@@ -505,85 +505,156 @@ const Gestionar = ({ reservas }) => {
   };
 
   const imprimirVoucher = () => {
-    const doc = new jsPDF();
-    const margin = 20;
-    let yPos = margin;
+    Swal.fire({
+      title: 'Porcentaje de incremento',
+      text: 'Ingrese el porcentaje a incrementar en los valores (0-100):',
+      input: 'number',
+      inputAttributes: {
+        min: 0,
+        max: 100,
+        step: 1
+      },
+      showCancelButton: true,
+      confirmButtonColor: '#26547B',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Imprimir',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value || value < 0 || value > 100) {
+          return 'Por favor ingrese un número válido entre 0 y 100'
+        }
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Mostrar loading mientras se genera el PDF
+        Swal.fire({
+          title: 'Generando PDF',
+          text: 'Por favor espere...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
 
-    // Configuración de estilos
-    doc.setFontSize(20);
-    doc.text("Voucher de Reserva", margin, yPos);
+        const incremento = 1 + (Number(result.value) / 100);
+        const doc = new jsPDF();
+        const margin = 20;
+        let yPos = margin;
 
-    // Información básica
-    doc.setFontSize(12);
-    yPos += 20;
-    doc.text(`Código de Reserva: ${reservas?.reservaChatbotId}`, margin, yPos);
+        // Función para crear el contenido del PDF
+        const generarContenidoPDF = () => {
+          // Título principal
+          doc.setFontSize(20);
+          doc.setTextColor(38, 84, 124);
+          doc.text("VOUCHER DE RESERVA", margin, yPos);
+          
+          // Línea decorativa
+          yPos += 5;
+          doc.setDrawColor(38, 84, 124);
+          doc.line(margin, yPos, 190, yPos);
+          yPos += 15;
 
-    yPos += 10;
-    doc.text(`Hotel reservado: ${reservas?.hotel}`, margin, yPos);
+          // Información básica
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.text(`Código de Reserva: ${reservas?.reservaChatbotId}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Hotel: ${reservas?.hotel}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Check-in: ${checkin} - Check-out: ${checkout}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Noches: ${reservas?.reservation.nights}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Huéspedes totales: ${sumaHuespe}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Habitaciones: ${reservas?.cantidadHabitaciones}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Plan de alimentación: ${reservas?.planAlimentario}`, margin, yPos);
 
-    yPos += 10;
-    doc.text(`Check-in: ${checkin}`, margin, yPos);
+          // Separador
+          yPos += 15;
+          doc.line(margin, yPos, 190, yPos);
+          yPos += 15;
 
-    yPos += 10;
-    doc.text(`Check-out: ${checkout}`, margin, yPos);
+          // Información del titular
+          doc.setFontSize(14);
+          doc.setTextColor(38, 84, 124);
+          doc.text("INFORMACIÓN DEL TITULAR", margin, yPos);
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.text(`Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Documento: ${reservas?.titularInfo?.documento}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Email: ${reservas?.reservation.email}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Teléfono: ${reservas?.reservation.telephone}`, margin, yPos);
 
-    yPos += 10;
-    doc.text(`Numero de noches: ${reservas?.reservation.nights}`, margin, yPos);
+          // Separador
+          yPos += 15;
+          doc.line(margin, yPos, 190, yPos);
+          yPos += 15;
 
-    yPos += 10;
-    doc.text(`Cantidad de huéspedes: ${sumaHuespe}`, margin, yPos);
+          // Detalle de valores
+          doc.setFontSize(14);
+          doc.setTextColor(38, 84, 124);
+          doc.text("DETALLE DE VALORES", margin, yPos);
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
 
-    yPos += 10;
-    doc.text(`Habitaciones: ${reservas?.cantidadHabitaciones}`, margin, yPos);
+          // Valores de habitaciones
+          reservas?.reservation.roomsData.forEach((dato) => {
+            const precioIncrementado = dato.unitaryPrice * incremento;
+            doc.text(
+              `${habitaciones[dato.id].name}: ${
+                reservas.reservation.currency == "USD"
+                  ? `$${Math.round(precioIncrementado)} USD`
+                  : `${formatCurrency(Math.round(precioIncrementado))} COP`
+              }`,
+              margin,
+              yPos
+            );
+            yPos += 10;
+          });
 
-    yPos += 10;
-    doc.text(
-      `Plan de alimentación: ${reservas?.planAlimentario}`,
-      margin,
-      yPos
-    );
+          // Total
+          yPos += 10;
+          const totalIncrementado = reservas.total * incremento;
+          doc.setFillColor(38, 84, 124);
+          doc.rect(margin, yPos, 170, 10, 'F');
+          doc.setTextColor(255, 255, 255);
+          doc.text(
+            `Total a pagar: ${
+              reservas.reservation.currency == "USD"
+                ? `$${Math.round(totalIncrementado)} USD`
+                : `${formatCurrency(Math.round(totalIncrementado))} COP`
+            }`,
+            margin + 2,
+            yPos + 7
+          );
 
-    // Información del titular
-    yPos += 20;
-    doc.setFontSize(14);
-    doc.text("Información del Titular", margin, yPos);
+          // Pie de página
+          doc.setFontSize(8);
+          doc.setTextColor(128, 128, 128);
+          doc.text(
+            "Este documento es un comprobante de reserva. Preséntelo al momento del check-in.",
+            margin,
+            280
+          );
 
-    doc.setFontSize(12);
-    yPos += 10;
-    doc.text(
-      `Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`,
-      margin,
-      yPos
-    );
+          // Guardar PDF
+          doc.save(`voucher-${reservas?.reservaChatbotId}.pdf`);
+          
+          // Cerrar el loading
+          Swal.close();
+        };
 
-    yPos += 10;
-    doc.text(`Documento: ${reservas?.titularInfo?.documento}`, margin, yPos);
-
-    yPos += 10;
-    doc.text(`Email: ${reservas?.reservation.email}`, margin, yPos);
-
-    yPos += 10;
-    doc.text(`Teléfono: ${reservas?.reservation.telephone}`, margin, yPos);
-
-    // Valor total
-    yPos += 20;
-    doc.setFontSize(14);
-    doc.text("Valor Total", margin, yPos);
-
-    doc.setFontSize(12);
-    yPos += 10;
-    doc.text(
-      `Total: ${
-        reservas.reservation.currency == "USD"
-          ? `$${reservas?.total} USD`
-          : `${formatCurrency(reservas?.total)} COP`
-      }`,
-      margin,
-      yPos
-    );
-
-    // Guardar PDF
-    doc.save(`voucher-${reservas?.reservaChatbotId}.pdf`);
+        // Generar el PDF
+        generarContenidoPDF();
+      }
+    });
   };
 
   return (
@@ -1248,7 +1319,7 @@ const Gestionar = ({ reservas }) => {
               >
                 Cancelar reserva
               </button>
-              {/* <button
+              <button
                 onClick={imprimirVoucher}
                 disabled={reservas?.status == "4"}
                 className={`${styles.cancelarButton} ${
@@ -1256,7 +1327,7 @@ const Gestionar = ({ reservas }) => {
                 }`}
               >
                 Imprimir voucher
-              </button> */}
+              </button>
             </div>
           </div>
         </div>
