@@ -42,6 +42,7 @@ const Estadisticas = () => {
   const [promedioHuespedes, setPromedioHuespedes] = useState(0);
   const [tasaConversion, setTasaConversion] = useState(0);
   const [promedioEstadia, setPromedioEstadia] = useState(0);
+  const [bookingWindow, setBookingWindow] = useState(0);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -334,6 +335,43 @@ const Estadisticas = () => {
       setPromedioEstadia(promedio);
     }
   }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const totalDias = reservasObtenidas.reduce((acc, reserva) => {
+        const fechaCreacion = new Date(reserva.createdAt);
+        const fechaCheckin = new Date(reserva.reservation.checkin);
+        const diferenciaDias = Math.ceil((fechaCheckin - fechaCreacion) / (1000 * 60 * 60 * 24));
+        return acc + diferenciaDias;
+      }, 0);
+
+      const promedio = (totalDias / reservasObtenidas.length).toFixed(1);
+      setBookingWindow(promedio);
+    }
+  }, [reservasNano.get()]);
+  
+  const formatBookingWindow = (dias) => {
+    if (!dias) return "0 días";
+    
+    const diasNum = parseFloat(dias);
+    
+    if (diasNum < 30) {
+      return `${diasNum} días`;
+    } else {
+      const meses = Math.floor(diasNum / 30);
+      const diasRestantes = Math.round(diasNum % 30);
+      
+      if (diasRestantes === 0) {
+        return meses === 1 ? "1 mes" : `${meses} meses`;
+      } else {
+        return meses === 1 
+          ? `1 mes y ${diasRestantes} días`
+          : `${meses} meses y ${diasRestantes} días`;
+      }
+    }
+  };
+
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -606,15 +644,17 @@ const Estadisticas = () => {
           </p>
         </div>
         <div className="stats-indicator">
-          <h2>Tavel Window</h2>
+          <h2>Travel Window</h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#16A085" }}>
             {promedioEstadia} noches
           </p>
         </div>
-        {/* <div className="stats-indicator">
+        <div className="stats-indicator">
           <h2>Booking Window</h2>
-          <p style={{fontSize:"24px", fontWeight:"bold", color:"#16A085"}}></p>
-        </div> */}
+          <p style={{fontSize:"24px", fontWeight:"bold", color:"#2980B9"}}>
+            {formatBookingWindow(bookingWindow)}
+          </p>
+        </div>
       </div>
 
       <div className="stats-content">

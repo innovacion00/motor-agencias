@@ -95,7 +95,7 @@
   transition: transform 0.3s ease;
   flex: 1 1 150px;         /* Ajuste del flex-basis a 150px para más elementos por fila */
   min-width: 150px;        /* Ancho mínimo reducido */
-  max-width: 200px;        /* Ancho máximo para evitar que sean demasiado anchos */
+  max-width: 220px;        /* Ancho máximo para evitar que sean demasiado anchos */
 }
 
 .stats-indicator:hover {
