@@ -791,86 +791,6 @@ const Estadisticas = () => {
         </div>
       </div>
 
-      <div className="tables-grid">
-        <div className="agencies-table-container">
-          <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-            Reservas por Agencia
-          </h2>
-          <div className="agencies-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Posición</th>
-                  <th>Nombre de Agencia</th>
-                  <th>Número de Reservas</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reservasPorAgencia.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.agencia}</td>
-                    <td>{item.reservas}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="agencies-table-container">
-          <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-            Reservas por agencias 30 días
-          </h2>
-          <div className="agencies-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Posición</th>
-                  <th>Nombre de agencias</th>
-                  <th>Número de reservas</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reservasUltimos30Dias.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.agencia}</td>
-                    <td>{item.reservas}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="agencies-table-container">
-          <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-            Reservas Aprobadas por Agencia
-          </h2>
-          <div className="agencies-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Posición</th>
-                  <th>Nombre de Agencia</th>
-                  <th>Reservas Aprobadas</th>
-                </tr>
-              </thead>
-              <tbody>
-                {reservasAprobadas.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.agencia}</td>
-                    <td>{item.reservas}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
       <div className="stats-content">
         {/* ----------Gráficas--------- */}
         <div className="chart-wrapper">
@@ -987,6 +907,86 @@ const Estadisticas = () => {
           />
         </div>
       </div>
+            
+                  <div className="tables-grid">
+                    <div className="agencies-table-container">
+                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+                        Reservas por Agencia
+                      </h2>
+                      <div className="agencies-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Posición</th>
+                              <th>Nombre de Agencia</th>
+                              <th>Número de Reservas</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reservasPorAgencia.map((item, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.agencia}</td>
+                                <td>{item.reservas}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+            
+                    <div className="agencies-table-container">
+                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+                        Reservas por agencias 30 días
+                      </h2>
+                      <div className="agencies-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Posición</th>
+                              <th>Nombre de agencias</th>
+                              <th>Número de reservas</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reservasUltimos30Dias.map((item, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.agencia}</td>
+                                <td>{item.reservas}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+            
+                    <div className="agencies-table-container">
+                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+                        Reservas Aprobadas por Agencia
+                      </h2>
+                      <div className="agencies-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Posición</th>
+                              <th>Nombre de Agencia</th>
+                              <th>Reservas Aprobadas</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reservasAprobadas.map((item, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.agencia}</td>
+                                <td>{item.reservas}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
     </div>
   );
 };
