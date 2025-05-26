@@ -7,6 +7,7 @@ import {
   VictoryAxis,
   VictoryTheme,
   VictoryPie,
+  VictoryLabel,
 } from "victory";
 import { useHover } from "@uidotdev/usehooks";
 
@@ -43,6 +44,8 @@ const Estadisticas = () => {
   const [tasaConversion, setTasaConversion] = useState(0);
   const [promedioEstadia, setPromedioEstadia] = useState(0);
   const [bookingWindow, setBookingWindow] = useState(0);
+  const [reservasPorAgencia, setReservasPorAgencia] = useState([]);
+  const [reservasUltimos30Dias, setReservasUltimos30Dias] = useState([]); // Nuevo estado para reservas de últimos 30 días
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -302,9 +305,11 @@ const Estadisticas = () => {
 
     if (reservasObtenidas.length > 0) {
       const totalHuespedes = reservasObtenidas.reduce((acc, reserva) => {
-        return acc + 
-          (Number(reserva.reservation.adults) + 
-           Number(reserva.reservation.children));
+        return (
+          acc +
+          (Number(reserva.reservation.adults) +
+            Number(reserva.reservation.children))
+        );
       }, 0);
 
       const promedio = (totalHuespedes / reservasObtenidas.length).toFixed(1);
@@ -316,10 +321,13 @@ const Estadisticas = () => {
 
     if (reservasObtenidas.length > 0) {
       const reservasCompletadas = reservasObtenidas.filter(
-        reserva => reserva.status === 3
+        (reserva) => reserva.status === 3
       ).length;
 
-      const tasa = ((reservasCompletadas / reservasObtenidas.length) * 100).toFixed(1);
+      const tasa = (
+        (reservasCompletadas / reservasObtenidas.length) *
+        100
+      ).toFixed(1);
       setTasaConversion(tasa);
     }
   }, [reservasNano.get()]);
@@ -342,7 +350,9 @@ const Estadisticas = () => {
       const totalDias = reservasObtenidas.reduce((acc, reserva) => {
         const fechaCreacion = new Date(reserva.createdAt);
         const fechaCheckin = new Date(reserva.reservation.checkin);
-        const diferenciaDias = Math.ceil((fechaCheckin - fechaCreacion) / (1000 * 60 * 60 * 24));
+        const diferenciaDias = Math.ceil(
+          (fechaCheckin - fechaCreacion) / (1000 * 60 * 60 * 24)
+        );
         return acc + diferenciaDias;
       }, 0);
 
@@ -350,22 +360,116 @@ const Estadisticas = () => {
       setBookingWindow(promedio);
     }
   }, [reservasNano.get()]);
-  
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    console.log("Reservas obtenidas:", reservasObtenidas); // Debug
+
+    if (reservasObtenidas && reservasObtenidas.length > 0) {
+      // Contar reservas por agencia
+      const conteoAgencias = reservasObtenidas.reduce((acc, reserva) => {
+        // Acceder al nombre de la agencia desde reservation.agencyData
+        const nombreAgencia =
+          reserva.reservation?.agencyData?.name || "Sin agencia";
+        console.log("Nombre agencia encontrado:", nombreAgencia); // Debug
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log("Conteo de agencias:", conteoAgencias); // Debug
+
+      // Convertir a array y filtrar agencias con reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad,
+        }));
+
+      console.log("Datos formateados finales:", datosFormateados); // Debug
+      setReservasPorAgencia(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    console.log("Reservas obtenidas:", reservasObtenidas);
+
+    if (reservasObtenidas?.length > 0) {
+      // Contar reservas por agencia
+      const conteoAgencias = reservasObtenidas.reduce((acc, reserva) => {
+        // Acceder al nombre correcto de la agencia desde agenciaId.fullName
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log("Conteo de agencias:", conteoAgencias);
+
+      // Convertir a array y filtrar agencias con reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad,
+        }));
+
+      console.log("Datos formateados finales:", datosFormateados);
+      setReservasPorAgencia(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  // Nuevo useEffect para procesar reservas de los últimos 30 días
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    
+    if (reservasObtenidas?.length > 0) {
+      const ahora = new Date();
+      const hace30Dias = new Date(ahora.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      // Filtrar reservas de los últimos 30 días
+      const reservasRecientes = reservasObtenidas.filter(reserva => {
+        const fechaReserva = new Date(reserva.createdAt);
+        return fechaReserva >= hace30Dias;
+      });
+
+      // Contar reservas por agencia
+      const conteoAgencias = reservasRecientes.reduce((acc, reserva) => {
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir a array y ordenar por cantidad de reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad
+        }));
+
+      setReservasUltimos30Dias(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
   const formatBookingWindow = (dias) => {
     if (!dias) return "0 días";
-    
+
     const diasNum = parseFloat(dias);
-    
+
     if (diasNum < 30) {
       return `${diasNum} días`;
     } else {
       const meses = Math.floor(diasNum / 30);
       const diasRestantes = Math.round(diasNum % 30);
-      
+
       if (diasRestantes === 0) {
         return meses === 1 ? "1 mes" : `${meses} meses`;
       } else {
-        return meses === 1 
+        return meses === 1
           ? `1 mes y ${diasRestantes} días`
           : `${meses} meses y ${diasRestantes} días`;
       }
@@ -651,16 +755,68 @@ const Estadisticas = () => {
         </div>
         <div className="stats-indicator">
           <h2>Booking Window</h2>
-          <p style={{fontSize:"24px", fontWeight:"bold", color:"#2980B9"}}>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2980B9" }}>
             {formatBookingWindow(bookingWindow)}
           </p>
+        </div>
+      </div>
+
+      <div className="agencies-table-container">
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+          Reservas por Agencia
+        </h2>
+        <div className="agencies-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Posición</th>
+                <th>Nombre de Agencia</th>
+                <th>Número de Reservas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reservasPorAgencia.map((item, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{item.agencia}</td>
+                  <td>{item.reservas}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="agencies-tabke-container">
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+          Reservas por agencias 30 dias{" "}
+        </h2>
+        <div className="agencies-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Posición</th>
+                <th>Nombre de agencias</th>
+                <th>Número de reservas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reservasUltimos30Dias.map((item, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{item.agencia}</td>
+                  <td>{item.reservas}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
       <div className="stats-content">
         {/* ----------Gráficas--------- */}
         <div className="chart-wrapper">
-        {/* -------------------- Gráfico de reservas por mes ------------------------ */}
+          {/* -------------------- Gráfico de reservas por mes ------------------------ */}
           <h2 style={{ textAlign: "center" }}>Reservas por Mes</h2>
           <VictoryChart
             theme={VictoryTheme.material}
