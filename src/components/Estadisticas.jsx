@@ -47,6 +47,7 @@ const Estadisticas = () => {
   const [reservasPorAgencia, setReservasPorAgencia] = useState([]);
   const [reservasUltimos30Dias, setReservasUltimos30Dias] = useState([]); // Nuevo estado para reservas de últimos 30 días
   const [reservasAprobadas, setReservasAprobadas] = useState([]);
+  const [reservasCanceladasPorAgencia, setReservasCanceladasPorAgencia] = useState([]);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -482,6 +483,36 @@ const Estadisticas = () => {
         }));
 
       setReservasAprobadas(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  // Nuevo useEffect para procesar reservas canceladas por agencia
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    
+    if (reservasObtenidas?.length > 0) {
+      // Filtrar solo las reservas canceladas (status 4)
+      const reservasCanceladasFiltradas = reservasObtenidas.filter(
+        reserva => reserva.status === 4
+      );
+
+      // Contar reservas por agencia
+      const conteoAgencias = reservasCanceladasFiltradas.reduce((acc, reserva) => {
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir a array y ordenar por cantidad de reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad
+        }));
+
+      setReservasCanceladasPorAgencia(datosFormateados);
     }
   }, [reservasNano.get()]);
 
@@ -963,7 +994,7 @@ const Estadisticas = () => {
             
                     <div className="agencies-table-container">
                       <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-                        Reservas Aprobadas por Agencia
+                        Reservas garantizadas por agencia
                       </h2>
                       <div className="agencies-table">
                         <table>
@@ -976,6 +1007,32 @@ const Estadisticas = () => {
                           </thead>
                           <tbody>
                             {reservasAprobadas.map((item, index) => (
+                              <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.agencia}</td>
+                                <td>{item.reservas}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div className="agencies-table-container">
+                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+                        Reservas Canceladas por Agencia
+                      </h2>
+                      <div className="agencies-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Posición</th>
+                              <th>Nombre de Agencia</th>
+                              <th>Reservas Canceladas</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reservasCanceladasPorAgencia.map((item, index) => (
                               <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{item.agencia}</td>
