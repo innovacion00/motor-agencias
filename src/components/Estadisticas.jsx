@@ -46,6 +46,7 @@ const Estadisticas = () => {
   const [bookingWindow, setBookingWindow] = useState(0);
   const [reservasPorAgencia, setReservasPorAgencia] = useState([]);
   const [reservasUltimos30Dias, setReservasUltimos30Dias] = useState([]); // Nuevo estado para reservas de últimos 30 días
+  const [reservasAprobadas, setReservasAprobadas] = useState([]);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -455,6 +456,35 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
 
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    
+    if (reservasObtenidas?.length > 0) {
+      // Filtrar solo las reservas con status 3 (aprobadas)
+      const reservasAprobadasFiltradas = reservasObtenidas.filter(
+        reserva => reserva.status === 3
+      );
+
+      // Contar reservas por agencia
+      const conteoAgencias = reservasAprobadasFiltradas.reduce((acc, reserva) => {
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir a array y ordenar por cantidad de reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad
+        }));
+
+      setReservasAprobadas(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
   const formatBookingWindow = (dias) => {
     if (!dias) return "0 días";
 
@@ -761,55 +791,83 @@ const Estadisticas = () => {
         </div>
       </div>
 
-      <div className="agencies-table-container">
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-          Reservas por Agencia
-        </h2>
-        <div className="agencies-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Posición</th>
-                <th>Nombre de Agencia</th>
-                <th>Número de Reservas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservasPorAgencia.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{item.agencia}</td>
-                  <td>{item.reservas}</td>
+      <div className="tables-grid">
+        <div className="agencies-table-container">
+          <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+            Reservas por Agencia
+          </h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Número de Reservas</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {reservasPorAgencia.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
 
-      <div className="agencies-tabke-container">
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-          Reservas por agencias 30 dias{" "}
-        </h2>
-        <div className="agencies-table">
-          <table>
-            <thead>
-              <tr>
-                <th>Posición</th>
-                <th>Nombre de agencias</th>
-                <th>Número de reservas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reservasUltimos30Dias.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{item.agencia}</td>
-                  <td>{item.reservas}</td>
+        <div className="agencies-table-container">
+          <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+            Reservas por agencias 30 días
+          </h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de agencias</th>
+                  <th>Número de reservas</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {reservasUltimos30Dias.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="agencies-table-container">
+          <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
+            Reservas Aprobadas por Agencia
+          </h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Reservas Aprobadas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasAprobadas.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

@@ -125,6 +125,13 @@
   justify-content: space-between; /* Distribuye el espacio entre los elementos */
 }
 
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin: 20px 0;
+}
+
 .agencies-chart-container {
   width: 100%;
   margin: 20px 0;
@@ -152,8 +159,7 @@
 .agencies-table-container {
   background: white;
   border-radius: 8px;
-  padding: 20px;
-  margin: 20px 0;
+  padding: 15px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -167,20 +173,21 @@
 .agencies-table table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 .agencies-table th {
-  background: #26547B;
+  background: #4CAF50;
   color: white;
-  padding: 12px;
-  position: sticky;
-  top: 0;
+  padding: 8px;
   text-align: left;
+  font-size: 13px;
 }
 
 .agencies-table td {
-  padding: 12px;
+  padding: 6px 8px;
   border-bottom: 1px solid #eee;
+  font-size: 13px;
 }
 
 .agencies-table tr:hover {
