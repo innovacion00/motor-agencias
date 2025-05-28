@@ -256,6 +256,8 @@ const UserDashboard = () => {
         {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
         <a href="/configuracion">Configuración</a>
       )}
+      
+      {/* <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a> */}
         <button onClick={handleLogout}>
           Cerrar sesión
         </button>
@@ -349,7 +351,7 @@ const UserDashboard = () => {
           </div>
         </div> */}
         <div className="card pending-payments-card">
-          <h3 className="Ultimasreservas">Ultimas reservas</h3>
+          <h3 className="Ultimasreservas">Ultimos movimientos</h3>
 
           <div className="pending-payments-list">
             <div className="pending-payment-item">

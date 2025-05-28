@@ -363,3 +363,40 @@ body {
     opacity: 0.5; /* Reduce opacidad al pasar el mouse */
     border: 2px solid #163d5f;
   }
+
+  .payment-movement {
+    padding: 15px 0;
+}
+
+.movement-details {
+  margin-top: 10px;
+}
+
+.movement-details p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.amount {
+  font-weight: bold;
+  color: #26547B;
+  margin-top: 8px;
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.clomplete { background-color: #4CAF50; color: white; }
+.pending { background-color: #FFC107; color: black; }
+.proces { background-color: #2196F3; color: white; }
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #eee;
+  margin: 15px 0;
+}

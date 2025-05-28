@@ -194,6 +194,26 @@
   background-color: #f5f5f5;
 }
 
+.movements-container {
+  margin-top: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+.movements-container table {
+  min-width: 1000px;
+}
+
+.movements-container th {
+  font-weight: 600;
+  color: #333;
+}
+
+.movements-container tr:hover {
+  background-color: #f5f5f5;
+}
+
 @media (max-width: 768px) {
   .stats-navigation {
     flex-direction: column;

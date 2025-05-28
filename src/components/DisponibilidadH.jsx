@@ -483,7 +483,7 @@ const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
   6: false, //avexi
-  7: false, //bocagrande (proximamente)
+  7: true, //bocagrande (proximamente)
   4: true, //aixo
   5: true, //abi
   3: true, //madison
