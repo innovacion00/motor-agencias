@@ -459,13 +459,13 @@ const trasladosCartagenaDolares = {
 };
 
 const trasladosSantamartaPesos = {
-  0: "17200",
-  1: "34400",
+  0: "70000",
+  1: "140000",
 };
 
 const trasladosSantamartaDolares = {
-  0: "5",
-  1: "10",
+  0: "17",
+  1: "34",
 };
 
 // Agregar los nuevos objetos para Bogotá
@@ -707,7 +707,6 @@ export const Cid = ({ id }) => {
 
   const handleCantidadMascotas = (operacion) => {
     const numHabitaciones = rangosfechas.layout ? rangosfechas.layout.length : 1;
-    
     if (operacion === "incremento" && cantidadMascotas < numHabitaciones) {
       setCantidadMascotas(prev => prev + 1);
     } else if (operacion === "decremento" && cantidadMascotas > 1) { // Cambiado de 0 a 1
@@ -722,7 +721,7 @@ export const Cid = ({ id }) => {
   console.log("categoria de la agencia:", categoriagencia);
 
   const regexMayorista = {
-    solodesayuno: /\[Booking connect Mayorista\]/i,
+    solodesayuno: /\[<Booking connect Mayorista\]/i,
     pensioncompleta: /\[Booking connect Mayorista PA\]/i,
     mediapension: /\[Booking connect Mayorista PAM\]/i,
   };
