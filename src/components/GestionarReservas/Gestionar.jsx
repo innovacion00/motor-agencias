@@ -27,7 +27,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
-
+const [userData, setUserData] = useState(null);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
@@ -50,6 +50,8 @@ const Gestionar = ({ reservas }) => {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
+    const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+    setUserData(datosdelusuario);
     if (reservas?.titularInfo && reservas?.reservation) {
       setTitularData({
         documento: reservas.titularInfo.documento || "",
@@ -736,6 +738,10 @@ const Gestionar = ({ reservas }) => {
         <div className={styles.infoHabitaciones}>
           <p className={styles.idReserva}>
             Cod. Reserva: <span>{reservas?.reservaChatbotId}</span>
+            <br />
+            { userData && userData?.role && userData?.role.includes("super-admin")&&(
+           <span>{reservas?.linkInfo.idLinkPago}</span>
+            )}
           </p>
           <div className={styles.infoHotelHabitaciones}>
             <p className={styles.NombreHotel}>{reservas?.hotel}</p>
