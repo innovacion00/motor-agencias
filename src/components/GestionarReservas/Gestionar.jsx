@@ -737,9 +737,12 @@ const [userData, setUserData] = useState(null);
 
         <div className={styles.infoHabitaciones}>
           <p className={styles.idReserva}>
-            Cod. Reserva: <span>{reservas?.reservaChatbotId}  {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
-           <span> || {reservas?.linkInfo.idLinkPago}</span>
-            )}</span>
+            Cod. Reserva: <span>
+  {reservas?.reservaChatbotId}  
+  {userData?.agencia?._id === "677d771d155954115cea20a3" && (
+    <span> || {reservas?.linkInfo.idLinkPago}</span>
+  )}
+</span>
             <br />
             
           </p>
