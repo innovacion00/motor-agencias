@@ -721,7 +721,7 @@ export const Cid = ({ id }) => {
   console.log("categoria de la agencia:", categoriagencia);
 
   const regexMayorista = {
-    solodesayuno: /\[<Booking connect Mayorista\]/i,
+    solodesayuno: /\[Booking connect Mayorista\]/i,
     pensioncompleta: /\[Booking connect Mayorista PA\]/i,
     mediapension: /\[Booking connect Mayorista PAM\]/i,
   };
@@ -737,6 +737,7 @@ export const Cid = ({ id }) => {
       ? regexminoristas[planDeAlimentacion]
       : regexMayorista[planDeAlimentacion];
 
+      
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
