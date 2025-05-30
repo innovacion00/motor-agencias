@@ -966,7 +966,7 @@ export const Cid = ({ id }) => {
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
             {/* Mostrar trasladoss y tours solo para CARTAGENA o SANTA_MARTA */}
-            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA' || selectedCity === 'BOGOTA') && (
+            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA' ) && (
               <>
                 {/* --------------------------- TRASLADOS --------------------------- */}
                 <h3>¿Desea añadir traslados a su reserva?</h3>
