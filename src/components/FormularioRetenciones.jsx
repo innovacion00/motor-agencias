@@ -88,7 +88,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
             // Bocagrande
             case 7:
                 return {
-                    valor: 30000
+                    valor: 35000
                 }
             // 1525
             case 2:
