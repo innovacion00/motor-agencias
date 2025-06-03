@@ -12,21 +12,36 @@ const Movimientos = () => {
     ObtenerReservas(datosdelusuario.token, datosdelusuario.role[0]);
   }, []);
 
+  const formatearFecha = (fecha) => {
+    return new Date(fecha).toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   const ObtenerReservas = async (token, nombreAgencia) => {
     await getReservas(token, nombreAgencia);
     const reservasObtenidas = reservasNano.get();
+    console.log("Reservas obtenidas:", reservasObtenidas); // Debug 1
     
     // Ordenar por fecha de creación (más recientes primero)
     const reservasOrdenadas = [...reservasObtenidas].sort((a, b) => 
       new Date(b.createdAt) - new Date(a.createdAt)
     );
+    console.log("Reservas ordenadas:", reservasOrdenadas); // Debug 2
 
     // Procesar todas las reservas y sus intentos de pago
     const todosLosMovimientos = reservasOrdenadas.flatMap(reserva => {
+      console.log("Procesando reserva:", reserva); // Debug 3
+      console.log("Links history:", reserva.linksHistory); // Debug 4
+
       // Movimiento principal de la reserva
       const movimientoPrincipal = {
         id: reserva._id,
-        fecha: new Date(reserva.createdAt).toLocaleDateString(),
+        fecha: formatearFecha(reserva.createdAt), // Usar función formatearFecha
         agencia: reserva.agenciaId?.fullName || "Sin agencia",
         metodoPago: reserva.linkInfo?.paymentMethod || "Pendiente",
         reservaId: reserva.reservaChatbotId,
@@ -39,17 +54,18 @@ const Movimientos = () => {
 
       // Procesar historial de links si existe
       const intentosDePago = reserva.linksHistory?.map((link, index) => {
-        const fechaGeneracionLink = new Date(link.createdAt).toLocaleDateString();
+        const fechaGeneracionLink = formatearFecha(link.fecha); // Usar función formatearFecha
+
         return ({
           id: `${reserva._id}-${index}`,
-          fecha: new Date(link.createdAt).toLocaleDateString(),
+          fecha: fechaGeneracionLink,
           agencia: reserva.agenciaId?.fullName || "Sin agencia",
-          metodoPago: "Intento de pago",
+          metodoPago: link.typeOfPayment || "Intento de pago",
           reservaId: reserva.reservaChatbotId,
           monto: link.amount || reserva.total,
           hotel: reserva.hotel,
           estado: "Intento de pago",
-          detalleReserva: `ID de pago: ${link.idLinkPago || 'No disponible'} | Generado: ${fechaGeneracionLink}`,
+          detalleReserva: `ID de pago: ${link.id || 'No disponible'} | Generado: ${fechaGeneracionLink}`,
           esIntentoPago: true
         })
       }) || [];
@@ -57,6 +73,10 @@ const Movimientos = () => {
       // Combina la reserva principal con todos sus intentos de pago
       return [movimientoPrincipal, ...intentosDePago];
     });
+
+    console.log("Todos los movimientos:", todosLosMovimientos); // Debug 6
+    console.log("Movimientos finales:", todosLosMovimientos.slice(0, 5)); // Debug 7
+    
     // Tomar los últimos 5 movimientos
     setMovimientos(todosLosMovimientos.slice(0, 5));
   };
@@ -116,7 +136,7 @@ const Movimientos = () => {
         <a href="/tablerousuario">Mi perfíl</a>
         <a href="/misreservas">Gestionar reservas</a>
         <a href="/estadisticas">Análisis de datos</a>
-        <a className="active" href="/movimientos">Movimientos</a>
+        <a className="active" href="/ultimosmovimientos">Movimientos</a>
         <a href="/configuracion">Configuración</a>
       </div>
 
