@@ -5,6 +5,10 @@ import { getReservas, reservasNano } from "../stores/disponibilidad";
 const Movimientos = () => {
   const [movimientos, setMovimientos] = useState([]);
   const [userData, setUserData] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todosLosMovimientos, setTodosLosMovimientos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const movimientosPorPagina = 15;
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -22,64 +26,86 @@ const Movimientos = () => {
     });
   };
 
+  const SkeletonRow = () => (
+    <tr style={{ borderBottom: "1px solid #eee" }}>
+      {[...Array(8)].map((_, index) => (
+        <td key={index} style={{ padding: "12px" }}>
+          <div style={{
+            height: "20px",
+            backgroundColor: "#f0f0f0",
+            borderRadius: "4px",
+            animation: "pulse 1.5s infinite",
+          }}></div>
+        </td>
+      ))}
+    </tr>
+  );
+
   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(token, nombreAgencia);
-    const reservasObtenidas = reservasNano.get();
-    console.log("Reservas obtenidas:", reservasObtenidas); // Debug 1
-    
-    // Ordenar por fecha de creación (más recientes primero)
-    const reservasOrdenadas = [...reservasObtenidas].sort((a, b) => 
-      new Date(b.createdAt) - new Date(a.createdAt)
-    );
-    console.log("Reservas ordenadas:", reservasOrdenadas); // Debug 2
+    setIsLoading(true);
+    try {
+      await getReservas(token, nombreAgencia);
+      const reservasObtenidas = reservasNano.get();
+      
+      const reservasOrdenadas = [...reservasObtenidas].sort((a, b) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+      );
 
-    // Procesar todas las reservas y sus intentos de pago
-    const todosLosMovimientos = reservasOrdenadas.flatMap(reserva => {
-      console.log("Procesando reserva:", reserva); // Debug 3
-      console.log("Links history:", reserva.linksHistory); // Debug 4
+      const movimientosProcesados = reservasOrdenadas.flatMap(reserva => {
+        console.log("Procesando reserva:", reserva); // Debug 3
+        console.log("Links history:", reserva.linksHistory); // Debug 4
 
-      // Movimiento principal de la reserva
-      const movimientoPrincipal = {
-        id: reserva._id,
-        fecha: formatearFecha(reserva.createdAt), // Usar función formatearFecha
-        agencia: reserva.agenciaId?.fullName || "Sin agencia",
-        metodoPago: reserva.linkInfo?.paymentMethod || "Pendiente",
-        reservaId: reserva.reservaChatbotId,
-        monto: reserva.status === 5 && reserva.pagadoPrimeraMitad ? reserva.totalMitad : reserva.total,
-        hotel: reserva.hotel,
-        estado: getEstadoReserva(reserva.status, reserva.pagadoPrimeraMitad),
-        detalleReserva: `${reserva.reservation.nights} noches, ${reserva.cantidadHabitaciones} habitación(es)`,
-        esIntentoPago: false
-      };
-
-      // Procesar historial de links si existe
-      const intentosDePago = reserva.linksHistory?.map((link, index) => {
-        const fechaGeneracionLink = formatearFecha(link.fecha); // Usar función formatearFecha
-
-        return ({
-          id: `${reserva._id}-${index}`,
-          fecha: fechaGeneracionLink,
+        // Movimiento principal de la reserva
+        const movimientoPrincipal = {
+          id: reserva._id,
+          fecha: formatearFecha(reserva.createdAt), // Usar función formatearFecha
           agencia: reserva.agenciaId?.fullName || "Sin agencia",
-          metodoPago: link.typeOfPayment || "Intento de pago",
+          metodoPago: reserva.linkInfo?.paymentMethod || "Pendiente",
           reservaId: reserva.reservaChatbotId,
-          monto: link.amount || reserva.total,
+          monto: reserva.status === 5 && reserva.pagadoPrimeraMitad ? reserva.totalMitad : reserva.total,
           hotel: reserva.hotel,
-          estado: "Intento de pago",
-          detalleReserva: `ID de pago: ${link.id || 'No disponible'} | Generado: ${fechaGeneracionLink}`,
-          esIntentoPago: true
-        })
-      }) || [];
+          estado: getEstadoReserva(reserva.status, reserva.pagadoPrimeraMitad),
+          detalleReserva: `${reserva.reservation.nights} noches, ${reserva.cantidadHabitaciones} habitación(es)`,
+          esIntentoPago: false
+        };
 
-      // Combina la reserva principal con todos sus intentos de pago
-      return [movimientoPrincipal, ...intentosDePago];
-    });
+        // Procesar historial de links si existe
+        const intentosDePago = reserva.linksHistory?.map((link, index) => {
+          const fechaGeneracionLink = formatearFecha(link.fecha); // Usar función formatearFecha
 
-    console.log("Todos los movimientos:", todosLosMovimientos); // Debug 6
-    console.log("Movimientos finales:", todosLosMovimientos.slice(0, 5)); // Debug 7
-    
-    // Tomar los últimos 5 movimientos
-    setMovimientos(todosLosMovimientos.slice(0, 5));
+          return ({
+            id: `${reserva._id}-${index}`,
+            fecha: fechaGeneracionLink,
+            agencia: reserva.agenciaId?.fullName || "Sin agencia",
+            metodoPago: link.typeOfPayment || "Intento de pago",
+            reservaId: reserva.reservaChatbotId,
+            monto: link.amount || reserva.total,
+            hotel: reserva.hotel,
+            estado: "Intento de pago",
+            detalleReserva: `ID de pago: ${link.id || 'No disponible'} | Generado: ${fechaGeneracionLink}`,
+            esIntentoPago: true
+          })
+        }) || [];
+
+        // Combina la reserva principal con todos sus intentos de pago
+        return [movimientoPrincipal, ...intentosDePago];
+      });
+
+      setTodosLosMovimientos(movimientosProcesados);
+      actualizarPaginaActual(1, movimientosProcesados);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const actualizarPaginaActual = (pagina, movimientos = todosLosMovimientos) => {
+    const indexInicial = (pagina - 1) * movimientosPorPagina;
+    const indexFinal = indexInicial + movimientosPorPagina;
+    setMovimientos(movimientos.slice(indexInicial, indexFinal));
+    setCurrentPage(pagina);
+  };
+
+  const totalPaginas = Math.ceil(todosLosMovimientos.length / movimientosPorPagina);
 
   const getEstadoReserva = (status, pagadoPrimeraMitad) => {
     const estados = {
@@ -141,6 +167,15 @@ const Movimientos = () => {
       </div>
 
       <div className="movements-container" style={{ padding: "20px" }}>
+        <style>
+          {`
+            @keyframes pulse {
+              0% { opacity: 0.6; }
+              50% { opacity: 1; }
+              100% { opacity: 0.6; }
+            }
+          `}
+        </style>
         <table style={{ 
           width: "100%", 
           borderCollapse: "collapse", 
@@ -160,37 +195,90 @@ const Movimientos = () => {
             </tr>
           </thead>
           <tbody>
-            {movimientos.map((movimiento) => (
-              <tr key={movimiento.id} style={{ borderBottom: "1px solid #eee" }}>
-                <td style={{ padding: "12px" }}>{movimiento.fecha}</td>
-                <td style={{ padding: "12px" }}>{movimiento.agencia}</td>
-                <td style={{ padding: "12px" }}>{movimiento.metodoPago}</td>
-                <td style={{ padding: "12px" }}>{movimiento.reservaId}</td>
-                <td style={{ padding: "12px" }}>{movimiento.hotel}</td>
-                <td style={{ padding: "12px" }}>{formatCurrency(movimiento.monto)}</td>
-                <td style={{ padding: "12px" }}>
-                  <span style={{
-                    padding: "4px 8px",
-                    borderRadius: "4px",
-                    fontSize: "12px",
-                    ...getEstadoStyle(movimiento.estado)
-                  }}>
-                    {movimiento.estado}
-                  </span>
-                </td>
-                <td style={{ padding: "12px" }}>
-                  {movimiento.esIntentoPago ? (
-                    <span style={{ color: "#666", fontSize: "0.9em" }}>
-                      {movimiento.detalleReserva}
+            {isLoading ? (
+              // Mostrar 5 filas de skeleton loader
+              [...Array(15)].map((_, index) => (
+                <SkeletonRow key={index} />
+              ))
+            ) : (
+              movimientos.map((movimiento) => (
+                <tr key={movimiento.id} style={{ borderBottom: "1px solid #eee" }}>
+                  <td style={{ padding: "12px" }}>{movimiento.fecha}</td>
+                  <td style={{ padding: "12px" }}>{movimiento.agencia}</td>
+                  <td style={{ padding: "12px" }}>{movimiento.metodoPago}</td>
+                  <td style={{ padding: "12px" }}>{movimiento.reservaId}</td>
+                  <td style={{ padding: "12px" }}>{movimiento.hotel}</td>
+                  <td style={{ padding: "12px" }}>{formatCurrency(movimiento.monto)}</td>
+                  <td style={{ padding: "12px" }}>
+                    <span style={{
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      fontSize: "12px",
+                      ...getEstadoStyle(movimiento.estado)
+                    }}>
+                      {movimiento.estado}
                     </span>
-                  ) : (
-                    movimiento.detalleReserva
-                  )}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td style={{ padding: "12px" }}>
+                    {movimiento.esIntentoPago ? (
+                      <span style={{ color: "#666", fontSize: "0.9em" }}>
+                        {movimiento.detalleReserva}
+                      </span>
+                    ) : (
+                      movimiento.detalleReserva
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
+
+        {/* Mostrar la paginación solo cuando no está cargando */}
+        {!isLoading && (
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            marginTop: '20px',
+            gap: '10px'
+          }}>
+            <button
+              onClick={() => actualizarPaginaActual(currentPage - 1)}
+              disabled={currentPage === 1}
+              style={{
+                padding: '8px 16px',
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                backgroundColor: currentPage === 1 ? '#ddd' : '#2196F3',
+                color: currentPage === 1 ? '#666' : 'white',
+                border: 'none',
+                borderRadius: '4px'
+              }}
+            >
+              Anterior
+            </button>
+            <span style={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              margin: '0 10px'
+            }}>
+              Página {currentPage} de {totalPaginas}
+            </span>
+            <button
+              onClick={() => actualizarPaginaActual(currentPage + 1)}
+              disabled={currentPage === totalPaginas}
+              style={{
+                padding: '8px 16px',
+                cursor: currentPage === totalPaginas ? 'not-allowed' : 'pointer',
+                backgroundColor: currentPage === totalPaginas ? '#ddd' : '#2196F3',
+                color: currentPage === totalPaginas ? '#666' : 'white',
+                border: 'none',
+                borderRadius: '4px'
+              }}
+            >
+              Siguiente
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
