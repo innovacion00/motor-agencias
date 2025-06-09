@@ -257,7 +257,7 @@ const UserDashboard = () => {
         <a href="/configuracion">Configuración</a>
       )}
       
-      {/* <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a> */}
+      <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         <button onClick={handleLogout}>
           Cerrar sesión
         </button>

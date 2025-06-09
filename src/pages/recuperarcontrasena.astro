@@ -209,10 +209,11 @@
                 requestCodeForm.style.display = "none";
                 verifyCodeForm.style.display = "block";
               } else {
+                const errorData = await response.json();
                 Swal.fire({
                   icon: "error",
-                  title: "El correo electronico no está asociado",
-                  text: "Error al enviar el código. Por favor, verifica tu correo.",
+                  title: "Error al intentar recuperar contraseña",
+                  text: errorData.message || "Error al enviar el código. Por favor, verifica tu correo.",
                   showConfirmButton: false,
                   timer: 5000,
                 });
