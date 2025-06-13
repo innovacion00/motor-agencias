@@ -337,8 +337,7 @@ const UserDashboard = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              términos y condiciones
-            </a>
+              Términos y condiciones</a>
           </label>
         </div>
 
