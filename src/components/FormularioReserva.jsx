@@ -180,8 +180,7 @@ const FormularioReserva = ({ id }) => {
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA =
-    esExtranjero == true ? totalPrecio * 0 : totalPrecio * tasaIVA; //totalPrecio * tasaIVA;
+  const valorIVA = esExtranjero || reserva[0]?.hotelidAutocore === 56 ? 0 : totalPrecio * tasaIVA;
   const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
   // console.log(totalConIVA);
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
@@ -284,7 +283,7 @@ const FormularioReserva = ({ id }) => {
                 nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
                 firstContactNumber: formData.celular,
                 secondContacNumber:
-                  formData.telefonotraslado || formData.celular,
+                  formData.telefonotraslado || formData.celular
               }
             : null,
         ...filtrarRetenciones({
@@ -642,15 +641,15 @@ const FormularioReserva = ({ id }) => {
               </strong>
             </p>
             <p>
-              (Hospedaje + A&B + Impuestos incluidos + Paquetes y servicios
+              (Hospedaje + A&B {reserva[0]?.hotelidAutocore !== 56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
               adicionales)
             </p>
-            <strong>
-              Nota: En caso de que el titular de la reserva sea de nacionalidad
-              colombiana{" "}
-              {/*y cumpla con los requisitos de migración colombia,*/} se debe
-              asumir el impuesto del iva del 19%.{" "}
-            </strong>
+            {reserva[0]?.hotelidAutocore !==56 && (
+              <strong>
+                Nota: En caso de que el titular de la reserva sea de nacionalidad
+                colombiana se debe asumir el impuesto del iva del 19%.{" "}
+              </strong>
+            )}
           </div>
           {divisaSelec == "USD" ||
           totalRetenciones < 199000  ? (
