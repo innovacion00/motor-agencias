@@ -641,10 +641,10 @@ const FormularioReserva = ({ id }) => {
               </strong>
             </p>
             <p>
-              (Hospedaje + A&B {reserva[0].hotelidAutocore !==56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
+              (Hospedaje + A&B {reserva[0]?.hotelidAutocore !== 56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
               adicionales)
             </p>
-            {reserva[0].hotelidAutocore !== 56 && (
+             {reserva[0]?.hotelidAutocore !==56 && (
               <strong>
                 Nota: En caso de que el titular de la reserva sea de nacionalidad
                 colombiana se debe asumir el impuesto del iva del 19%.{" "}
