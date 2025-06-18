@@ -432,15 +432,15 @@ const idRooms = {
 };
 
 const quintuple = {
-  9: false, //marina
-  1: false, //azuan
-  6: false, //avexi
+  9: true, //marina
+  1: true, //azuan
+  6: true, //avexi
   7: true, //bocagrande
   4: false, //aixo
   5: true, //abi
   3: false, //madison
   10: false, //windsor
-  8: false, //rodadero
+  8: true, //rodadero
   2: false, //1525
   48: true, //axis
   44: true, //sansiraka
@@ -546,6 +546,9 @@ export const Cid = ({ id }) => {
     "QUINTUPLE",
     "Habitacion Sextuple",
     "Quíntuple",
+    "Habitacion Cuadruple Standard",
+    "Cuadruple estandar ",
+    "Cuádruple"
   ];
 
   //console.log("numero de camas:"camas)
