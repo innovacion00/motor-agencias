@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import DropdownSearch from "./DropdownSearch";
-import FormularioRetenciones from "./FormularioRetenciones";
+import FormularioRetenciones from "./desglose/FormularioRetenciones";
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
-import TablaDesglose from "./TablaDesglose";
+import TablaDesglose from "./desglose/TablaDesglose";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
 import ToursCs from "./ToursCs";
@@ -30,7 +30,7 @@ const plan_alimentacion = {
 const FormularioReserva = ({ id }) => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
-  
+
   const [cena, setCena] = useState(false);
   const [almuerzo, setAlmuerzo] = useState(false);
   const hotelIdsPermitidos = [
@@ -266,25 +266,25 @@ const FormularioReserva = ({ id }) => {
         infoTransporte:
           reserva[0].incluirTraslado === true
             ? {
-                numeroVuelo: formData.numeroVuelo,
-                ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
-                  reserva[0].tipoTraslado === "ambos") && {
-                  numeroVueloSalida: formData.numeroVueloSalida,
-                }),
-                firstContactNumber: formData.telefonotraslado,
-                aerolinea: formData.aereolinea,
-                tipoRecogida: tipodetraslado,
-                cantidadPersonas: totalHuespedes,
-              }
+              numeroVuelo: formData.numeroVuelo,
+              ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
+                reserva[0].tipoTraslado === "ambos") && {
+                numeroVueloSalida: formData.numeroVueloSalida,
+              }),
+              firstContactNumber: formData.telefonotraslado,
+              aerolinea: formData.aereolinea,
+              tipoRecogida: tipodetraslado,
+              cantidadPersonas: totalHuespedes,
+            }
             : null,
         infoToures:
           reserva[0].tourSeleccionado?.length > 0
             ? {
-                nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
-                firstContactNumber: formData.celular,
-                secondContacNumber:
-                  formData.telefonotraslado || formData.celular
-              }
+              nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
+              firstContactNumber: formData.celular,
+              secondContacNumber:
+                formData.telefonotraslado || formData.celular
+            }
             : null,
         ...filtrarRetenciones({
           reteFuente: {
@@ -323,42 +323,30 @@ const FormularioReserva = ({ id }) => {
             nights: noches, //N° DE NOCHES
             notes:
               DatosRetenciones == null
-                ? `Creada por la agencia: ${
-                    agencia.agencia.fullName
-                  }. Reserva de ${noches} noches a nombre de ${
-                    formData.nombreCompleto
-                  } ${formData.apellidos}. ${
-                    valorextranjero == "es extranjero"
-                      ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                      : ""
-                  } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
-                    cena ? "El huésped ha solicitado cena." : ""
-                  } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${
-                    facturaE
-                      ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                      : ""
-                  }  `
-                : `Creada por la agencia: ${
-                    agencia.agencia.fullName
-                  }. Reserva de ${noches} noches a nombre de ${
-                    formData.nombreCompleto
-                  } ${
-                    formData.apellidos
-                  }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${
-                    valorextranjero == "es extranjero"
-                      ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                      : ""
-                  } Tipo de traslado: ${reserva[0].tipoTraslado} ${
-                    cena ? "La agencia marco la casilla de solicitar cena." : ""
-                  } ${
-                    almuerzo
-                      ? "La agencia marco la casilla de solicitar almuerzo."
-                      : ""
-                  }${
-                    facturaE
-                      ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                      : ""
-                  }`,
+                ? `Creada por la agencia: ${agencia.agencia.fullName
+                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+                } ${formData.apellidos}. ${valorextranjero == "es extranjero"
+                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                  : ""
+                } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
+                } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
+                  ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                  : ""
+                }  `
+                : `Creada por la agencia: ${agencia.agencia.fullName
+                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+                } ${formData.apellidos
+                }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
+                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                  : ""
+                } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
+                } ${almuerzo
+                  ? "La agencia marco la casilla de solicitar almuerzo."
+                  : ""
+                }${facturaE
+                  ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                  : ""
+                }`,
             rooms: habitaciones, // TIPO DE HABITACIONES
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // ASEGÚRATE DE OBTENER EL LAYOUT CORRESPONDIENTE A LA HABITACIÓN.
@@ -540,10 +528,10 @@ const FormularioReserva = ({ id }) => {
               {data.tipoTraslado === "aeropuerto_hotel"
                 ? "Aeropuerto al hotel"
                 : data.tipoTraslado === "hotel_aeropuerto"
-                ? "Hotel al aeropuerto"
-                : data.tipoTraslado === "ambos"
-                ? "Aeropuerto al hotel y Hotel al aeropuerto"
-                : "No se seleccionó traslado"}
+                  ? "Hotel al aeropuerto"
+                  : data.tipoTraslado === "ambos"
+                    ? "Aeropuerto al hotel y Hotel al aeropuerto"
+                    : "No se seleccionó traslado"}
             </p>
 
             {data.tourSeleccionado && data.tourSeleccionado.length > 0 && (
@@ -644,22 +632,24 @@ const FormularioReserva = ({ id }) => {
               (Hospedaje + A&B {reserva[0]?.hotelidAutocore !== 56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
               adicionales)
             </p>
-             {reserva[0]?.hotelidAutocore !==56 && (
+            {reserva[0]?.hotelidAutocore !== 56 && (
               <strong>
                 Nota: En caso de que el titular de la reserva sea de nacionalidad
                 colombiana se debe asumir el impuesto del iva del 19%.{" "}
               </strong>
             )}
+            {/* formuario desglose */}
+            <TablaDesglose precio={totalConIVA} adults={cantadultos} ninos={cantninos} fechasreserva={fechasreserva} totalRetenciones={totalRetenciones}/>
           </div>
           {divisaSelec == "USD" ||
-          totalRetenciones < 199000  ? (
+            totalRetenciones < 199000 ? (
             ""
           ) : (
             ""
           )}
         </div>
         {divisaSelec == "USD" ||
-        totalRetenciones < 199000  ? null : (
+          totalRetenciones < 199000 ? null : (
           <div>
             <FormularioRetenciones
               precio={totalConIVA}

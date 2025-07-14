@@ -12,6 +12,7 @@ import {
 } from "../../stores/pagos";
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
+import TablaDesglose from "../desglose/TablaDesglose";
 
 //UseState
 const Gestionar = ({ reservas }) => {
@@ -1142,6 +1143,8 @@ const [userData, setUserData] = useState(null);
                 </tr>
               </tbody>
             </table>
+            
+            {/* <TablaDesglose precio={reservas?.total}/> */}
             <br />
             {datosDelUsuario?.role.includes("super-admin") ? (
               <div className={styles.textAreaNotas}>
