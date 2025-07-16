@@ -632,15 +632,10 @@ const FormularioReserva = ({ id }) => {
               (Hospedaje + A&B {reserva[0]?.hotelidAutocore !== 56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
               adicionales)
             </p>
-            {reserva[0]?.hotelidAutocore !== 56 && (
-              <strong>
-                Nota: Condiciones para estar exento del iva.{" "}
-                <br />
-                <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" className='migracion' target="_blank">Concepto DIAN</a>
-              </strong>
-            )}
+            {/* {reserva[0]?.hotelidAutocore !== 56 && (
+            )} */}
             {/* formuario desglose */}
-            <TablaDesglose precio={totalConIVA} adults={cantadultos} ninos={cantninos} fechasreserva={fechasreserva} totalRetenciones={totalRetenciones}/>
+            <TablaDesglose precio={totalConIVA} adults={cantadultos} ninos={cantninos} fechasreserva={fechasreserva} totalRetenciones={totalRetenciones} />
           </div>
           {divisaSelec == "USD" ||
             totalRetenciones < 199000 ? (
@@ -702,7 +697,11 @@ const FormularioReserva = ({ id }) => {
                   checked={esExtranjero}
                   onChange={(e) => setesExtranjero(e.target.checked)}
                 />
+
               </div>
+              <strong>
+                Nota: <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" target="_blank" className="migracion">Condiciones para estar exento del iva.</a>{" "}
+              </strong>
               {/*-------------- INPUT TIPO DE DOCUMENTO -------------- */}
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
