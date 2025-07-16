@@ -636,7 +636,7 @@ const FormularioReserva = ({ id }) => {
               <strong>
                 Nota: Condiciones para estar exento del iva.{" "}
                 <br />
-                <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" className='migracion'>Concepto DIAN</a>
+                <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" className='migracion' target="_blank">Concepto DIAN</a>
               </strong>
             )}
             {/* formuario desglose */}
