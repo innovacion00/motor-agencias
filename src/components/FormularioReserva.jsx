@@ -634,8 +634,9 @@ const FormularioReserva = ({ id }) => {
             </p>
             {reserva[0]?.hotelidAutocore !== 56 && (
               <strong>
-                Nota: En caso de que el titular de la reserva sea de nacionalidad
-                colombiana se debe asumir el impuesto del iva del 19%.{" "}
+                Nota: Condiciones para estar exento del iva.{" "}
+                <br />
+                <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" className='migracion'>Concepto DIAN</a>
               </strong>
             )}
             {/* formuario desglose */}
