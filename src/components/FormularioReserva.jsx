@@ -27,20 +27,20 @@ const plan_alimentacion = {
 };
 
 //#region UseState
-const FormularioReserva = ({ id }) => {
+const FormularioReserva = () => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
 
   const [cena, setCena] = useState(false);
   const [almuerzo, setAlmuerzo] = useState(false);
   const hotelIdsPermitidos = [
-    "13633", //Aixo
-    "17644", //Abi
-    "13677", //Boquilla
+    // "13633", //Aixo
+    // "17644", //Abi
+    // "13677", //Boquilla
     // "18004", //Windsor
     // "16255", //Madisson
-    "19629", //Axis
-    "15740", //Sansiraka
+    // "19629", //Axis
+    // "15740", //Sansiraka
   ];
 
   const [datosreserva, setDatosreserva] = useState([]);

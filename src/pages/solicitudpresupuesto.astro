@@ -1,12 +1,5 @@
 ---
-import { fetchWithAuth } from "../utils/fetchWithAuth";
-
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BusquedaeventosB from "../components/BusquedaeventosB";
 import Formularioeventos from "../components/Formularioeventos";
 ---
 
@@ -26,10 +19,19 @@ import Formularioeventos from "../components/Formularioeventos";
       />
     </head>
     <body>
-        <Formularioeventos client:load/>
-        
+      <Formularioeventos client:load />
     </body>
+    <script>
+      import Cookies from "js-cookie";
+      function checkAuth() {
+        const token = Cookies.get("token");
 
+        if (!token) {
+          window.location.href = "/login";
+        }
+      }
+      checkAuth();
+    </script>
     <style>
       body {
         font-family: "Roboto", sans-serif;

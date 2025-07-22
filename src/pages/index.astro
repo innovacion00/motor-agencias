@@ -6,9 +6,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import InfoHoteles from "../components/infoHoteles/InfoHoteles";
 ---
 
-<html lang = "es">
-<BaseLayout title="Bienvenido a Booking Connect">
-  
+<html lang="es">
+  <BaseLayout title="Bienvenido a Booking Connect">
     <head>
       <title>Bienvenido a Booking Connect</title>
       <link rel="stylesheet" href="public/styles/Swipper.css" />
@@ -24,13 +23,13 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
     </head>
 
     <body>
-      <br>
+      <br />
       <SwiperSlider client:load />
 
       <div class="search-form-wrapper">
         <DropdownSearch client:load />
       </div>
-      
+
       <div class="container">
         <div class="header">
           <h1>Conoce los mejores destinos con GEH Suites</h1>
@@ -152,7 +151,7 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                     width="24"
                     height="24"
                   />
-                  <img 
+                  <img
                     src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
                     alt="icon_van"
                     width="24"
@@ -342,7 +341,6 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                     width="24"
                     height="24"
                   />
-                  
                 </div>
                 <div class="button">
                   <a href="/infoaixo"> <button>Ver hotel</button></a>
@@ -628,7 +626,6 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                     width="24"
                     height="24"
                   />
-                  
                 </div>
                 <div class="button">
                   <a href="/infowindsor"> <button>Ver hotel</button></a>
@@ -770,7 +767,7 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                     width="24"
                     height="24"
                   />
-                  
+
                   <img
                     src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
                     alt="icon_buffet"
@@ -813,7 +810,6 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                 </div>
               </div>
             </div>
-            
 
             <div class="hotel">
               <img
@@ -838,7 +834,7 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                     width="24"
                     height="24"
                   />
-                  
+
                   <img
                     src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
                     alt="icon_buffet"
@@ -881,7 +877,7 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
                 </div>
               </div>
             </div>
-            
+
             <!-- Repite las tarjetas de hotel para Santa Marta aquí -->
           </div>
         </div>
@@ -1007,14 +1003,15 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
 
       <!-- Script para manejar la visibilidad de las secciones -->
       <script>
+        import Cookies from "js-cookie";
         function checkAuth() {
-          const token = localStorage.getItem("authToken");
+          const token = Cookies.get("token");
+
           if (!token) {
-            window.location.href = "/login"; // Redirige al login si no hay token
+            window.location.href = "/login";
           }
         }
-
-        checkAuth(); // Llamamos a esta función al cargar la página
+        checkAuth();
         document.addEventListener("DOMContentLoaded", () => {
           const buttons = document.querySelectorAll(".nav button");
           const hideAllSections = () => {
@@ -1053,268 +1050,267 @@ import InfoHoteles from "../components/infoHoteles/InfoHoteles";
         });
       </script>
     </body>
-  
 
-  <style>
-    body {
-      font-family: "Roboto", sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-    }
-
-    .container {
-      max-width: 1200px;
-      background-color: #fff;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .header {
-      text-align: center;
-      color: #000;
-      padding: 20px 0;
-    }
-
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #1c3d5a;
-    }
-
-    .header p {
-      margin: 5px 0 20px;
-      font-size: 14px;
-      color: #1c3d5a;
-    }
-
-    .nav {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-
-    .nav button {
-      color: #1c3d5a;
-      background-color: #ffffff;
-      border: #26537b;
-      border-bottom: #924f23;
-      margin-right: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      position: static;
-      font-size: 14px;
-      transition:
-        background-color 0.3s,
-        border-color 0.3s;
-      color: #1c3d5a;
-      font-weight: 800;
-    }
-
-    .nav button.active {
-      color: #7b4526f6;
-      position: static;
-    }
-
-    .content {
-      display: none;
-      /* Oculta todas las secciones por defecto */
-    }
-
-    .content.active {
-      display: block;
-      /* Muestra la sección activa */
-      background-color: #f4f4f4;
-      padding-top: 50px;
-      padding-bottom: 50px;
-    }
-
-    .content h2 {
-      text-align: center;
-      background-color: #f5d7b4;
-      padding: 10px;
-      margin: 0 435px 20px;
-      border-radius: 4px;
-      width: 29%;
-      height: 80;
-    }
-
-    .content p {
-      text-align: center;
-      margin: 0px 29px 20px;
-      font-size: 16px;
-      color: #1c3d5a;
-      padding: 20px;
-      background-color: #ffffff;
-    }
-
-    .hotels {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-
-    .hotel {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      position: static;
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.3s;
-    }
-
-    .hotel:hover {
-      transform: translateY(-5px);
-    }
-
-    .hotel img {
-      width: 100%;
-      height: auto;
-    }
-
-    .hotel .info {
-      padding: 10px;
-    }
-    .hotel .hotel-header {
-      display: flex;
-      align-items: center; /* Alinea el logo y el nombre del hotel verticalmente */
-      margin-bottom: 10px; /* Añade espacio debajo del nombre del hotel */
-    }
-    .hotel .hotel-logo {
-      width: 50px; /* Ajusta el tamaño del logo */
-      height: auto; /* Mantén la proporción del logo */
-      margin-right: 15px; /* Espacio entre el logo y el nombre del hotel */
-    }
-
-    .hotel .info h3 {
-      font-weight: bold;
-      margin: 0;
-      font-size: 18px;
-      color: #1c3d5a;
-    }
-    .hotel .icons {
-      display: flex;
-      gap: 4px; /* Espacio entre los íconos */
-      margin-bottom: 15px; /* Espacio debajo de los íconos */
-    }
-
-    .hotel .info .icons {
-      padding: 10px;
-      margin: 10px 0;
-      color: #1c3d5a;
-    }
-
-    .hotel .info .button {
-      font-family: "Roboto";
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .hotel .info .button button {
-      background-color: #ffffff;
-      border-style: solid;
-      border-width: 3px;
-      color: #26547b;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-      border-color: #1c3d5a;
-      width: 280px;
-    }
-
-    .hotel .info .button button:hover {
-      background-color: #eeeeeec2;
-    }
-
-    .discount {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #f5d7b4;
-      padding: 5px 10px;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-
-    @media (max-width: 768px) {
-      .content h2 {
-        margin: 0 20px 20px;
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
       }
 
-      .hotel {
-        width: 100%;
+      .container {
+        max-width: 1200px;
+        background-color: #fff;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        text-align: center;
+        color: #000;
+        padding: 20px 0;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #1c3d5a;
+      }
+
+      .header p {
+        margin: 5px 0 20px;
+        font-size: 14px;
+        color: #1c3d5a;
       }
 
       .nav {
-        flex-direction: column;
-        align-items: center;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
       }
 
       .nav button {
-        width: 100%;
-        max-width: 300px;
+        color: #1c3d5a;
+        background-color: #ffffff;
+        border: #26537b;
+        border-bottom: #924f23;
+        margin-right: 10px;
+        padding: 10px 20px;
+        cursor: pointer;
+        position: static;
+        font-size: 14px;
+        transition:
+          background-color 0.3s,
+          border-color 0.3s;
+        color: #1c3d5a;
+        font-weight: 800;
       }
-    }
 
-    .search-form-wrapper {
-      background-color: #f29c38;
-      padding: 20px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-    }
+      .nav button.active {
+        color: #7b4526f6;
+        position: static;
+      }
 
-    .search-form-container {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      align-items: flex-start;
-    }
+      .content {
+        display: none;
+        /* Oculta todas las secciones por defecto */
+      }
 
-    .dropdown select,
-    .people-counter input,
-    .date-picker input {
-      width: max-content;
-      padding-bottom: 5px;
-      padding-top: 5px;
-      padding-left: 4px;
-      padding-right: 4px;
-      border-radius: 4px;
-      background-color: white;
-      font-size: 16px;
-      color: #1c3d5a;
-    }
+      .content.active {
+        display: block;
+        /* Muestra la sección activa */
+        background-color: #f4f4f4;
+        padding-top: 50px;
+        padding-bottom: 50px;
+      }
 
-    .date-picker {
-      position: relative;
-    }
+      .content h2 {
+        text-align: center;
+        background-color: #f5d7b4;
+        padding: 10px;
+        margin: 0 435px 20px;
+        border-radius: 4px;
+        width: 29%;
+        height: 80;
+      }
 
-    .date-range-picker {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000px;
-      background-color: white;
-      box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
-      border-radius: 8px;
-      padding: 50px;
-    }
+      .content p {
+        text-align: center;
+        margin: 0px 29px 20px;
+        font-size: 16px;
+        color: #1c3d5a;
+        padding: 20px;
+        background-color: #ffffff;
+      }
 
-    .icons img {
-      width: 26px;
-      height: 26px;
-      margin-right: 10px;
-    }
-  </style>
-</BaseLayout>
+      .hotels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+
+      .hotel {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        width: 300px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        position: static;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s;
+      }
+
+      .hotel:hover {
+        transform: translateY(-5px);
+      }
+
+      .hotel img {
+        width: 100%;
+        height: auto;
+      }
+
+      .hotel .info {
+        padding: 10px;
+      }
+      .hotel .hotel-header {
+        display: flex;
+        align-items: center; /* Alinea el logo y el nombre del hotel verticalmente */
+        margin-bottom: 10px; /* Añade espacio debajo del nombre del hotel */
+      }
+      .hotel .hotel-logo {
+        width: 50px; /* Ajusta el tamaño del logo */
+        height: auto; /* Mantén la proporción del logo */
+        margin-right: 15px; /* Espacio entre el logo y el nombre del hotel */
+      }
+
+      .hotel .info h3 {
+        font-weight: bold;
+        margin: 0;
+        font-size: 18px;
+        color: #1c3d5a;
+      }
+      .hotel .icons {
+        display: flex;
+        gap: 4px; /* Espacio entre los íconos */
+        margin-bottom: 15px; /* Espacio debajo de los íconos */
+      }
+
+      .hotel .info .icons {
+        padding: 10px;
+        margin: 10px 0;
+        color: #1c3d5a;
+      }
+
+      .hotel .info .button {
+        font-family: "Roboto";
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .hotel .info .button button {
+        background-color: #ffffff;
+        border-style: solid;
+        border-width: 3px;
+        color: #26547b;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+        border-color: #1c3d5a;
+        width: 280px;
+      }
+
+      .hotel .info .button button:hover {
+        background-color: #eeeeeec2;
+      }
+
+      .discount {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f5d7b4;
+        padding: 5px 10px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+
+      @media (max-width: 768px) {
+        .content h2 {
+          margin: 0 20px 20px;
+        }
+
+        .hotel {
+          width: 100%;
+        }
+
+        .nav {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .nav button {
+          width: 100%;
+          max-width: 300px;
+        }
+      }
+
+      .search-form-wrapper {
+        background-color: #f29c38;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .search-form-container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .dropdown select,
+      .people-counter input,
+      .date-picker input {
+        width: max-content;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        padding-left: 4px;
+        padding-right: 4px;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 16px;
+        color: #1c3d5a;
+      }
+
+      .date-picker {
+        position: relative;
+      }
+
+      .date-range-picker {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000px;
+        background-color: white;
+        box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
+        border-radius: 8px;
+        padding: 50px;
+      }
+
+      .icons img {
+        width: 26px;
+        height: 26px;
+        margin-right: 10px;
+      }
+    </style>
+  </BaseLayout>
 </html>

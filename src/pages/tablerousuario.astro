@@ -1,42 +1,53 @@
 ---
-import { fetchWithAuth } from '../utils/fetchWithAuth';
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 async function fetchProtectedData() {
   const data = await fetchWithAuth("URL_PROTEGIDA");
   console.log(data);
-} 
-import BaseLayout from '../layouts/BaseLayout.astro';
-import DropdownSearch from '../components/DropdownSearch';
+}
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DropdownSearch from "../components/DropdownSearch";
 import Componentesearch from "../components/Componentesearch";
-import Userdashboard from "../components/Userdashboard.jsx"
+import Userdashboard from "../components/Userdashboard.jsx";
 ---
-<html lang = "es">
-    <BaseLayout title="Mi perfil - BookingConnect">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-        <html>
- <head>
-  <title>
-   Tablero de usuario
-  </title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
-  
- </head>
- <body>
-    <Userdashboard client:load/>
-  
- </body>
 
- <script>
-  function checkAuth() {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      window.location.href = "/login"; // Redirige al login si no hay token
-    }
-  }
+<html lang="es">
+  <BaseLayout title="Mi perfil - BookingConnect">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <html>
+      <head>
+        <title>Tablero de usuario</title>
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <Userdashboard client:load />
+      </body>
 
-  checkAuth(); // Llamamos a esta función al cargar la página
- </script>
+      <script>
+        import Cookies from "js-cookie";
+        function checkAuth() {
+          const token = Cookies.get("token");
+
+          if (!token) {
+            window.location.href = "/login";
+          }
+        }
+        checkAuth();
+      </script>
+    </html>
+  </BaseLayout>
 </html>
-

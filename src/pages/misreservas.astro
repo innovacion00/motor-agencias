@@ -1,45 +1,40 @@
 ---
-import { fetchWithAuth } from '../utils/fetchWithAuth';
-
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
-import BaseLayout from "../layouts/BaseLayout.astro"
-import Tabla from '../components/GestionarReservas/Tabla';
-import CurrencySelector from '../components/Cambiardivisas';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Tabla from "../components/GestionarReservas/Tabla";
 ---
 
 <BaseLayout title="Mis reservas - BookingConnect">
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-
-
-    <html lang = "es">
-
-</head>
-<body>
-    <Tabla client:load/>
+  <html lang="es"></html>
+  <body>
+    <Tabla client:load />
     <script>
-        function checkAuth() {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      window.location.href = "/login"; // Redirige al login si no hay token
-    }
-  }
+      import Cookies from "js-cookie";
+      function checkAuth() {
+        const token = Cookies.get("token");
 
-  checkAuth(); // Llamamos a esta función al cargar la página
+        if (!token) {
+          window.location.href = "/login";
+        }
+      }
+      checkAuth();
     </script>
-</body>
-</html>
+  </body>
+</BaseLayout>
 
 <style>
-    body {
-        font-family: 'Roboto', sans-serif;
-        background-color: #f5f5f5;
-        margin: 0;
-        padding: 0;
-    }
-    
+  body {
+    font-family: "Roboto", sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+  }
 </style>
