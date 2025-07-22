@@ -1,12 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import DropdownSearch from "../components/DropdownSearch";
 import Componentesearch from "../components/Componentesearch";
-import CurrencySelector from '../components/Cambiardivisas';
 ---
 
-<html lang = "es">
-  
+<html lang="es">
   <BaseLayout title="Resultados Cartagena - BookingConnect">
     <head>
       <title>Resultados Cartagena de Indias</title>
@@ -22,28 +19,25 @@ import CurrencySelector from '../components/Cambiardivisas';
     </head>
 
     <body>
-        
       <Componentesearch client:load />
-
-      
     </body>
     <script>
+      import Cookies from "js-cookie";
       function checkAuth() {
-        const token = localStorage.getItem("authToken");
+        const token = Cookies.get("token");
         if (!token) {
-          window.location.href = "/login"; // Redirige al login si no hay token
+          window.location.href = "/login";
         }
       }
       checkAuth(); // Llamamos a esta función al cargar la página
     </script>
-  
-</html>
-
-<style>
-  body {
-      font-family: 'Roboto', sans-serif;
+  </BaseLayout>
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
       background-color: #f5f5f5;
       margin: 0;
-      
     }
-</style>
+  </style>
+
+</html>

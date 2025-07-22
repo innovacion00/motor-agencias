@@ -1,24 +1,14 @@
 ---
-import { fetchWithAuth } from "../utils/fetchWithAuth";
-
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
-
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SwiperSliderEventos from "../components/SwiperSliderEventos.jsx";
-import DropdownSearch from "../components/DropdownSearch.jsx";
 import DropdownSearchEventos from "../components/DropdownSearchEventos.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 ---
 
-
 <BaseLayout>
-<html>
+  <html>
     <head>
-
-        <link rel="stylesheet" href="public/styles/Swipper.css" />
+      <link rel="stylesheet" href="public/styles/Swipper.css" />
       <link
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
         rel="stylesheet"
@@ -29,146 +19,165 @@ import "bootstrap/dist/css/bootstrap.min.css";
       />
       <link rel="icon" href="./public/favicon.png" type="image/x-icon" />
     </head>
-<body>
-    <SwiperSliderEventos client:load/>
-    <div class="search-form-wrapper">
+    <body>
+      <SwiperSliderEventos client:load />
+      <div class="search-form-wrapper">
         <DropdownSearchEventos client:load />
       </div>
-    <div class="container">
-     <h1>
-      Descubre la solución perfecta para tus reuniones y eventos
-     </h1>
-     <p>
-      En nuestro portal, conectamos a organizaciones con hoteles diseñados para ofrecer experiencias excepcionales en eventos. Desde espacios adaptables hasta un servicio enfocado en tus necesidades, hacemos que cada detalle cuente.
-     </p>
-     <div class="features">
-      <div class="feature">
-       <img alt="Icono de espacios versátiles" src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-espaciosversatiles.png"/>
-       <h3>
-        Espacios versátiles
-       </h3>
-       <p>
-        Salones diseñados para ajustarse a las necesidades de cualquier tipo de evento, desde reuniones corporativas hasta celebraciones especiales.
-       </p>
+      <div class="container">
+        <h1>Descubre la solución perfecta para tus reuniones y eventos</h1>
+        <p>
+          En nuestro portal, conectamos a organizaciones con hoteles diseñados
+          para ofrecer experiencias excepcionales en eventos. Desde espacios
+          adaptables hasta un servicio enfocado en tus necesidades, hacemos que
+          cada detalle cuente.
+        </p>
+        <div class="features">
+          <div class="feature">
+            <img
+              alt="Icono de espacios versátiles"
+              src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-espaciosversatiles.png"
+            />
+            <h3>Espacios versátiles</h3>
+            <p>
+              Salones diseñados para ajustarse a las necesidades de cualquier
+              tipo de evento, desde reuniones corporativas hasta celebraciones
+              especiales.
+            </p>
+          </div>
+          <div class="feature">
+            <img
+              alt="Icono de gestión simplificada"
+              src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-gestionsimplificada.png"
+            />
+            <h3>Gestión simplificada</h3>
+            <p>
+              Complete un formulario con preguntas clave sobre tu evento, para
+              obtener una cotización ajustada a tus necesidades.
+            </p>
+          </div>
+          <div class="feature">
+            <img
+              alt="Icono de calidad garantizada"
+              src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-qc.png"
+            />
+            <h3>Calidad garantizada</h3>
+            <p>
+              Procesos estandarizados y políticas claras para asegurar la mejor
+              experiencia.
+            </p>
+          </div>
+          <div class="feature">
+            <img
+              alt="Icono de soporte especializado"
+              src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-atencionAlCliente.png"
+            />
+            <h3>Soporte especializado</h3>
+            <p>
+              Equipos dedicados para asesorarte en cada etapa, ayudándote a
+              tomar decisiones informadas.
+            </p>
+          </div>
+          <div class="feature">
+            <img
+              alt="Icono de innovación tecnológica"
+              src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-tecnologia.png"
+            />
+            <h3>Innovación tecnológica</h3>
+            <p>
+              Soluciones confiables para que tu evento sea un éxito sin
+              complicaciones.
+            </p>
+          </div>
+        </div>
+        <a class="cta-button" href="/tableroeventos"> Ver cotizaciones </a>
       </div>
-      <div class="feature">
-       <img alt="Icono de gestión simplificada" src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-gestionsimplificada.png"/>
-       <h3>
-        Gestión simplificada
-       </h3>
-       <p>
-        Complete un formulario con preguntas clave sobre tu evento, para obtener una cotización ajustada a tus necesidades.
-       </p>
-      </div>
-      <div class="feature">
-       <img alt="Icono de calidad garantizada" src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-qc.png"/>
-       <h3>
-        Calidad garantizada
-       </h3>
-       <p>
-        Procesos estandarizados y políticas claras para asegurar la mejor experiencia.
-       </p>
-      </div>
-      <div class="feature">
-       <img alt="Icono de soporte especializado" src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-atencionAlCliente.png"/>
-       <h3>
-        Soporte especializado
-       </h3>
-       <p>
-        Equipos dedicados para asesorarte en cada etapa, ayudándote a tomar decisiones informadas.
-       </p>
-      </div>
-      <div class="feature">
-       <img alt="Icono de innovación tecnológica" src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icono-tecnologia.png"/>
-       <h3>
-        Innovación tecnológica
-       </h3>
-       <p>
-        Soluciones confiables para que tu evento sea un éxito sin complicaciones.   
-    </p>
-      </div>
-     </div>
-     <a class="cta-button" href="/tableroeventos">
-      Ver cotizaciones
-     </a>
-    </div>
-</body>
+    </body>
+  </html>
+  <script>
+    import Cookies from "js-cookie";
+    function checkAuth() {
+      const token = Cookies.get("token");
 
+      if (!token) {
+        window.location.href = "/login";
+      }
+    }
 
-</html>
-
-<style>
-body {
-            font-family: "Roboto", sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f9fa;
-            color: #333;
-        }
-        .container {
-            text-align: center;
-            padding: 50px 20px;
-        }
-        h1 {
-            color: #1a3d6d;
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-        p {
-            color: #666;
-            font-size: 1em;
-            margin-bottom: 40px;
-        }
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .feature {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            width: 250px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        .feature img {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 10px;
-        }
-        .feature h3 {
-            color: #1a3d6d;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-        .feature p {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .cta-button {
-            display: inline-block;
-            margin-top: 40px;
-            padding: 10px 20px;
-            background-color: #1a3d6d;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 1em;
-        }
-        @media (max-width: 768px) {
-            .features {
-                flex-direction: column;
-                align-items: center;
-            }
-            .feature {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-        .search-form-wrapper {
+    checkAuth(); // Llamamos a esta función al cargar la página
+  </script>
+  <style>
+    body {
+      font-family: "Roboto", sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    h1 {
+      color: #1a3d6d;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #666;
+      font-size: 1em;
+      margin-bottom: 40px;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .feature {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      width: 250px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .feature img {
+      width: 50px;
+      height: 50px;
+      margin-bottom: 10px;
+    }
+    .feature h3 {
+      color: #1a3d6d;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .feature p {
+      color: #666;
+      font-size: 0.9em;
+    }
+    .cta-button {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 10px 20px;
+      background-color: #1a3d6d;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    @media (max-width: 768px) {
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+      .feature {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+    .search-form-wrapper {
       background-color: #f29c38;
       padding: 20px;
       border-radius: 8px;
@@ -213,6 +222,5 @@ body {
       border-radius: 8px;
       padding: 50px;
     }
-</style>
+  </style>
 </BaseLayout>
-

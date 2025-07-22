@@ -127,6 +127,7 @@ const Estadisticas = () => {
         "Hotel Boquilla",
         "Hotel Sansiraka",
         "Hotel Abi",
+        "Hotel Marina",
         "Hotel 1525",
         "Hotel Windsor",
         "Hotel Madisson",
