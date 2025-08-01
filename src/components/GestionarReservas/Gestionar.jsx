@@ -803,15 +803,15 @@ const [userData, setUserData] = useState(null);
                     </div>
                     <div className={styles.infoHabitaciones}>
                       <p className={styles.titleHabi}>
-                        {habitaciones[dato.id].name}
+                        {dato.nombreHabitacion}
                       </p>
                       <p>
                         Check-in: {checkin} - Check-out: {checkout}
                       </p>
                       <p>
                         {reservas.reservation.nights} noches,{" "}
-                        {Number(dato.adults) + Number(dato.children)} huéspedes,
-                        1 habitación
+                         {Number(dato.adults) || 0} Adultos, {Number(dato.children) || 0} Niños, 1 habitación
+                        {/* {Number(dato.adults) + Number(dato.children)} huéspedes, */}
                       </p>
                     </div>
                   </div>
