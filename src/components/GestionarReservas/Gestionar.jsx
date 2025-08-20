@@ -16,7 +16,7 @@ import TablaDesglose from "../desglose/TablaDesglose";
 
 //UseState
 const Gestionar = ({ reservas }) => {
-  console.log(reservas); // Datos de la reserva
+  // console.log(reservas); // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
@@ -686,6 +686,14 @@ const [userData, setUserData] = useState(null);
         generarContenidoPDF();
       }
     });
+  };
+
+  // Agregar esta función para verificar si la fecha de check-in es futura
+  const isCancellationDisabled = () => {
+    const currentDate = new Date();
+    const checkinDate = new Date(reservas?.reservation.checkin);
+    currentDate.setHours(0, 0, 0, 0); // Resetear hora a medianoche para comparar solo fechas
+    return currentDate > checkinDate || reservas?.status == "4";
   };
 
   return (
@@ -1367,9 +1375,9 @@ const [userData, setUserData] = useState(null);
 
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
-                disabled={reservas?.status == "4"}
+                disabled={isCancellationDisabled()}
                 className={`${styles.cancelarButton} ${
-                  reservas?.status == "4" ? styles.disabledButtonc : ""
+                  isCancellationDisabled() ? styles.disabledButtonc : ""
                 }`}
               >
                 Cancelar reserva
