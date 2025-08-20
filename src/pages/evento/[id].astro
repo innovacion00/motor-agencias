@@ -20,8 +20,10 @@ const { id } = Astro.params;
 </style>
 
 <script>
+  import Cookies from "js-cookie";
   function checkAuth() {
-    const token = localStorage.getItem("authToken");
+    const token = Cookies.get("token");
+
     if (!token) {
       window.location.href = "/login";
     }

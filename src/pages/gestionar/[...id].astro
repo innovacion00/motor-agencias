@@ -8,14 +8,21 @@ export const prerender = false;
 
 const cook = Astro.cookies.get("token");
 const rol = Astro.cookies.get("datosUsuario");
+
+if (!cook || !rol) {
+  return Astro.redirect("/login");
+}
+
 const roles = JSON.parse(rol.value).role;
 const reservas = await getReservas(JSON.parse(cook.value), roles);
 
+if (!reservas) {
+  return Astro.redirect("/login");
+}
+
 console.log(roles);
 const { id } = Astro.params;
-
 const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
-// console.log(reservasNano.get())
 ---
 
 <BaseLayout title="Consultar y gestionar - BookingConnect ">

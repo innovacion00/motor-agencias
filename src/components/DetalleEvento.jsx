@@ -18,7 +18,7 @@ const DetalleEvento = ({ id }) => {
       
       setIsLoading(true);
       try {
-        const response = await fetch(`https://gehsuitesapps.com/agencias/v1/eventos/${id}`, {
+        const response = await fetch(`https://gehsuitesapps.com/agencias/v1/eventos`, {
           headers: {
             'Authorization': `Bearer ${usuarioDatos}`,
             'Content-Type': 'application/json'
@@ -30,6 +30,7 @@ const DetalleEvento = ({ id }) => {
         }
 
         const data = await response.json();
+        console.log(data)
         setEvento(data);
       } catch (err) {
         setError(err.message);
@@ -42,6 +43,9 @@ const DetalleEvento = ({ id }) => {
       obtenerDetalleEvento();
     }
   }, [id, usuarioDatos]);
+
+  const eventoData = evento?.find(data => data._id == id)
+  console.log(eventoData)
 
   const formatearFecha = (fechaString) => {
     const fecha = new Date(fechaString);
@@ -78,15 +82,15 @@ const DetalleEvento = ({ id }) => {
 
   if (isLoading) return <div className="loading">Cargando detalles del evento...</div>;
   if (error) return <div className="error">{error}</div>;
-  if (!evento) return <div className="error">No se encontró el evento</div>;
+  if (!eventoData) return <div className="error">No se encontró el evento</div>;
 
   return (
     <div className="detalle-evento-container">
       <div className="detalle-header">
-        <h1>{evento.nameEvento}</h1>
+        <h1>{eventoData?.nameEvento}</h1>
         <div className="evento-meta">
-          <span>Tipo: {obtenerTipoEvento(evento.tipoEvento)}</span>
-          <span>Fecha de creación: {formatearFecha(evento.createdAt)}</span>
+          <span>Tipo: {obtenerTipoEvento(eventoData?.tipoEvento)}</span>
+          <span>Fecha de creación: {formatearFecha(eventoData?.createdAt)}</span>
         </div>
       </div>
 
@@ -95,15 +99,15 @@ const DetalleEvento = ({ id }) => {
         <div className="info-grid">
           <div className="info-item">
             <label>Nombre:</label>
-            <span>{evento.nombreOrganizador}</span>
+            <span>{eventoData?.nombreOrganizador}</span>
           </div>
           <div className="info-item">
             <label>Teléfono:</label>
-            <span>{evento.telefonoOrganizador}</span>
+            <span>{eventoData?.telefonoOrganizador}</span>
           </div>
           <div className="info-item">
             <label>Email:</label>
-            <span>{evento.emailOrganizador}</span>
+            <span>{eventoData?.emailOrganizador}</span>
           </div>
         </div>
       </div>
@@ -113,23 +117,23 @@ const DetalleEvento = ({ id }) => {
         <div className="info-grid">
           <div className="info-item">
             <label>Fecha de inicio:</label>
-            <span>{formatearFecha(evento.fechaInicioEvento)}</span>
+            <span>{formatearFecha(eventoData?.fechaInicioEvento)}</span>
           </div>
           <div className="info-item">
             <label>Fecha de finalización:</label>
-            <span>{formatearFecha(evento.fechaFinalEvento)}</span>
+            <span>{formatearFecha(eventoData?.fechaFinalEvento)}</span>
           </div>
           <div className="info-item">
             <label>Cantidad de asistentes:</label>
-            <span>{evento.cantidadAsistentes}</span>
+            <span>{eventoData?.cantidadAsistentes}</span>
           </div>
           <div className="info-item">
             <label>Tipo de acomodación:</label>
-            <span>{obtenerTipoAcomodacion(evento.tipoAcomodacion)}</span>
+            <span>{obtenerTipoAcomodacion(eventoData?.tipoAcomodacion)}</span>
           </div>
           <div className="info-item">
             <label>Flexibilidad de evento:</label>
-            <span>{evento.flexibilidadEvento ? "Sí" : "No"}</span>
+            <span>{eventoData?.flexibilidadEvento ? "Sí" : "No"}</span>
           </div>
         </div>
       </div>
@@ -137,7 +141,7 @@ const DetalleEvento = ({ id }) => {
       <div className="detalle-seccion">
         <h2>Horarios del Evento</h2>
         <div className="horarios-lista">
-          {evento.horarioEvento.map((horario, index) => (
+          {eventoData?.horarioEvento.map((horario, index) => (
             <div key={index} className="horario-item">
               <h3>Día {index + 1}</h3>
               <p>Inicio: {formatearFecha(horario.fechaInicio)}</p>
@@ -148,56 +152,56 @@ const DetalleEvento = ({ id }) => {
         </div>
       </div>
 
-      {evento.alimentacion && (
+      {eventoData?.alimentacion && (
         <div className="detalle-seccion">
           <h2>Servicios de Alimentación</h2>
           <div className="servicios-grid">
             <div className="servicio-item">
               <label>Estación de café:</label>
-              <span>{evento.alimentosBebidas.estacionCafe ? "Sí" : "No"}</span>
+              <span>{eventoData?.alimentosBebidas.estacionCafe ? "Sí" : "No"}</span>
             </div>
             <div className="servicio-item">
               <label>Coffee Break:</label>
-              <span>{evento.alimentosBebidas.coffeBreak ? "Sí" : "No"}</span>
+              <span>{eventoData?.alimentosBebidas.coffeBreak ? "Sí" : "No"}</span>
             </div>
             <div className="servicio-item">
               <label>Desayuno:</label>
-              <span>{evento.alimentosBebidas.desayuno ? "Sí" : "No"}</span>
+              <span>{eventoData?.alimentosBebidas.desayuno ? "Sí" : "No"}</span>
             </div>
             <div className="servicio-item">
               <label>Almuerzo:</label>
-              <span>{evento.alimentosBebidas.almuerzo ? "Sí" : "No"}</span>
+              <span>{eventoData?.alimentosBebidas.almuerzo ? "Sí" : "No"}</span>
             </div>
             <div className="servicio-item">
               <label>Cena:</label>
-              <span>{evento.alimentosBebidas.cena ? "Sí" : "No"}</span>
+              <span>{eventoData?.alimentosBebidas.cena ? "Sí" : "No"}</span>
             </div>
           </div>
         </div>
       )}
 
-      {evento.audiovisuales && (
+      {eventoData?.audiovisuales && (
         <div className="detalle-seccion">
           <h2>Servicios Audiovisuales</h2>
           <ul className="audiovisuales-lista">
-            {evento.itemsAudiovisuales.map((item, index) => (
+            {eventoData?.itemsAudiovisuales.map((item, index) => (
               <li key={index}>{item}</li>
             ))}
           </ul>
         </div>
       )}
 
-      {evento.decoracion && (
+      {eventoData?.decoracion && (
         <div className="detalle-seccion">
           <h2>Decoración</h2>
-          <p>{evento.decoracionDescripcion}</p>
+          <p>{eventoData?.decoracionDescripcion}</p>
         </div>
       )}
 
-      {evento.observaciones && (
+      {eventoData?.observaciones && (
         <div className="detalle-seccion">
           <h2>Observaciones</h2>
-          <p>{evento.observaciones}</p>
+          <p>{eventoData?.observaciones}</p>
         </div>
       )}
 
