@@ -16,7 +16,7 @@ import TablaDesglose from "../desglose/TablaDesglose";
 
 //UseState
 const Gestionar = ({ reservas }) => {
-  // console.log(reservas); // Datos de la reserva
+  console.log(reservas); // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
@@ -28,7 +28,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
-const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
@@ -463,11 +463,10 @@ const [userData, setUserData] = useState(null);
           title: "¿Está seguro?",
           text: `Se procederá al pago con 'Mi saldo' que es ${formatCurrency(
             AvailableAmount
-          )}. ${
-            isPagoCompleto
+          )}. ${isPagoCompleto
               ? `Pagará el total del valor`
               : "Pagará el 50% del valor"
-          }`,
+            }`,
           icon: "warning",
           showCancelButton: true,
           confirmButtonColor: "#26547B",
@@ -639,10 +638,9 @@ const [userData, setUserData] = useState(null);
           reservas?.reservation.roomsData.forEach((dato) => {
             const precioIncrementado = dato.unitaryPrice * incremento;
             doc.text(
-              `${habitaciones[dato.id].name}: ${
-                reservas.reservation.currency == "USD"
-                  ? `$${Math.round(precioIncrementado)} USD`
-                  : `${formatCurrency(Math.round(precioIncrementado))} COP`
+              `${habitaciones[dato.id].name}: ${reservas.reservation.currency == "USD"
+                ? `$${Math.round(precioIncrementado)} USD`
+                : `${formatCurrency(Math.round(precioIncrementado))} COP`
               }`,
               margin,
               yPos
@@ -657,10 +655,9 @@ const [userData, setUserData] = useState(null);
           doc.rect(margin, yPos, 170, 10, "F");
           doc.setTextColor(255, 255, 255);
           doc.text(
-            `Total a pagar: ${
-              reservas.reservation.currency == "USD"
-                ? `$${Math.round(totalIncrementado)} USD`
-                : `${formatCurrency(Math.round(totalIncrementado))} COP`
+            `Total a pagar: ${reservas.reservation.currency == "USD"
+              ? `$${Math.round(totalIncrementado)} USD`
+              : `${formatCurrency(Math.round(totalIncrementado))} COP`
             }`,
             margin + 2,
             yPos + 7
@@ -747,13 +744,13 @@ const [userData, setUserData] = useState(null);
         <div className={styles.infoHabitaciones}>
           <p className={styles.idReserva}>
             Cod. Reserva: <span>
-  {reservas?.reservaChatbotId}  
-  {userData?.agencia?._id === "677d771d155954115cea20a3" && (
-    <span> || {reservas?.linkInfo.idLinkPago}</span>
-  )}
-</span>
+              {reservas?.reservaChatbotId}
+              {userData?.agencia?._id === "677d771d155954115cea20a3" && (
+                <span> || {reservas?.linkInfo.idLinkPago}</span>
+              )}
+            </span>
             <br />
-            
+
           </p>
           <div className={styles.infoHotelHabitaciones}>
             <p className={styles.NombreHotel}>{reservas?.hotel}</p>
@@ -807,7 +804,10 @@ const [userData, setUserData] = useState(null);
                 <div className={styles.cardHabi} key={index}>
                   <div className={styles.contenHabi}>
                     <div className={styles.imgHabi}>
-                      <img src={habitaciones[dato.id].url} alt="habita" />
+                      <img
+                        src={habitaciones[dato.id]?.url}
+                        alt='habita'
+                      />
                     </div>
                     <div className={styles.infoHabitaciones}>
                       <p className={styles.titleHabi}>
@@ -818,7 +818,7 @@ const [userData, setUserData] = useState(null);
                       </p>
                       <p>
                         {reservas.reservation.nights} noches,{" "}
-                         {Number(dato.adults) || 0} Adultos, {Number(dato.children) || 0} Niños, 1 habitación
+                        {Number(dato.adults) || 0} Adultos, {Number(dato.children) || 0} Niños, 1 habitación
                         {/* {Number(dato.adults) + Number(dato.children)} huéspedes, */}
                       </p>
                     </div>
@@ -864,8 +864,8 @@ const [userData, setUserData] = useState(null);
                       {reservas.infoTransporte.tipoRecogida == 0
                         ? "Aeropuerto - Hotel"
                         : reservas.infoTransporte.tipoRecogida == 1
-                        ? "Hotel - Aeropuerto"
-                        : "Aeropuerto - Hotel || Hotel - Aeropuerto"}
+                          ? "Hotel - Aeropuerto"
+                          : "Aeropuerto - Hotel || Hotel - Aeropuerto"}
                     </p>
                     <p>
                       Contacto: {reservas.infoTransporte.firstContactNumber}
@@ -1151,7 +1151,7 @@ const [userData, setUserData] = useState(null);
                 </tr>
               </tbody>
             </table>
-            
+
             {/* <TablaDesglose precio={reservas?.total}/> */}
             <br />
             {datosDelUsuario?.role.includes("super-admin") ? (
@@ -1209,7 +1209,7 @@ const [userData, setUserData] = useState(null);
               <div className={styles.cardHabitacionesPago} key={index}>
                 <p>Habitación {contador++}:</p>
                 {/* <p>{primerPlan}</p> */}
-                <p>{habitaciones[dato.id].name}</p>
+                <p>{dato?.nombreHabitacion}</p>
                 {/* <p>Medía pensión</p> */}
                 <p>
                   {checkin} - {checkout}
@@ -1223,7 +1223,7 @@ const [userData, setUserData] = useState(null);
             ))}
             <div className={styles.pagos}>
               {reservas.status == "0" &&
-              reservas.pagadoPrimeraMitad == false ? (
+                reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
                   <p className={styles.totalP}>
@@ -1296,13 +1296,12 @@ const [userData, setUserData] = useState(null);
                   reservas?.status == "4" ||
                   isLoading
                 }
-                className={`${styles.pagarButton} ${
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4"
+                className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4"
                     ? styles.disabledButtonp
                     : ""
-                }`}
+                  }`}
               >
                 {isLoading ? "Generando link..." : "Pagar el 50%"}
               </button>
@@ -1317,15 +1316,14 @@ const [userData, setUserData] = useState(null);
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
-                className={`${styles.pagarButton} ${
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "5" ||
-                  reservas?.pagadoPrimeraMitad
+                className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4" ||
+                    reservas?.status == "5" ||
+                    reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
-                }`}
+                  }`}
               >
                 {isLoading ? "Generando link..." : "Pagar Total"}
               </button>
@@ -1339,15 +1337,14 @@ const [userData, setUserData] = useState(null);
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
-                className={`${styles.pagarButton} ${
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "5" ||
-                  reservas?.pagadoPrimeraMitad
+                className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4" ||
+                    reservas?.status == "5" ||
+                    reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
-                }`}
+                  }`}
               >
                 {isLoading ? "Generando link..." : "Pagar con Mi saldo"}
               </button>
@@ -1376,9 +1373,8 @@ const [userData, setUserData] = useState(null);
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
                 disabled={isCancellationDisabled()}
-                className={`${styles.cancelarButton} ${
-                  isCancellationDisabled() ? styles.disabledButtonc : ""
-                }`}
+                className={`${styles.cancelarButton} ${isCancellationDisabled() ? styles.disabledButtonc : ""
+                  }`}
               >
                 Cancelar reserva
               </button>
