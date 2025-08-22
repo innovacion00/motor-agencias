@@ -728,15 +728,8 @@ import CarrouselA from "../components/Carrouseles/CarrouselWindsor";
     </body>
 
     <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth();
+      import { validarToken } from "../stores/authtoken";
+      validarToken();
       // Seleccionamos los botones y las secciones
       const generalBtn = document.getElementById("generalBtn");
       const roomsBtn = document.getElementById("roomsBtn");

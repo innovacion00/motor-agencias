@@ -666,14 +666,8 @@ import CarrouselA from "../components/Carrouseles/CarrouselAxis";
       </div>
 
       <script>
-        function checkAuth() {
-          const token = localStorage.getItem("authToken");
-          if (!token) {
-            window.location.href = "/login";
-          }
-        }
-
-        checkAuth();
+        import { validarToken } from "../stores/authtoken";
+        validarToken();
 
         // Seleccionamos los botones y las secciones
         const generalBtn = document.getElementById("generalBtn");

@@ -17,15 +17,8 @@ import Tabla from "../components/GestionarReservas/Tabla";
   <body>
     <Tabla client:load />
     <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth();
+      import { validarToken } from "../stores/authtoken";
+      validarToken();
     </script>
   </body>
 </BaseLayout>

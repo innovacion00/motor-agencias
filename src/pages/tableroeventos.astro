@@ -38,15 +38,9 @@ import UserDashboardEventos from "../components/UserDashboardEventos.jsx";
       </body>
 
       <script>
-        import Cookies from "js-cookie";
-        function checkAuth() {
-          const token = Cookies.get("token");
-
-          if (!token) {
-            window.location.href = "/login";
-          }
-        }
-        checkAuth();
+        import { validarToken } from "../stores/authtoken";
+        validarToken();
       </script>
-    </html></BaseLayout>
+    </html></BaseLayout
+  >
 </html>

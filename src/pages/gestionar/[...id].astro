@@ -9,7 +9,7 @@ export const prerender = false;
 const cook = Astro.cookies.get("token");
 const rol = Astro.cookies.get("datosUsuario");
 
-if (!cook || !rol) {
+if ((!cook  || cook == undefined) && (!rol || rol == undefined)) {
   return Astro.redirect("/login");
 }
 
@@ -29,13 +29,6 @@ const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
   <Gestionar reservas={reserva} client:load />
 </BaseLayout>
 <script>
-  import Cookies from "js-cookie";
-  function checkAuth() {
-    const token = Cookies.get("token");
-
-    if (!token) {
-      window.location.href = "/login";
-    }
-  }
-  checkAuth();
+  import { validarToken } from "../../stores/authtoken";
+  validarToken();
 </script>

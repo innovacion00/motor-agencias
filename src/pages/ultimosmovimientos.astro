@@ -31,15 +31,8 @@ import Movimientos from "../components/Movimientos";
     </body>
 
     <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth();
+      import { validarToken } from "../stores/authtoken";
+      validarToken();
     </script>
   </Baselayout>
 </html>

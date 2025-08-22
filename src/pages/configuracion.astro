@@ -29,16 +29,8 @@ import ConfiguracionC from "../components/Configuracion.jsx";
     </body>
 
     <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-
-      checkAuth(); // Llamamos a esta función al cargar la página
+      import { validarToken } from "../stores/authtoken";
+      validarToken();
     </script>
   </BaseLayout>
 </html>

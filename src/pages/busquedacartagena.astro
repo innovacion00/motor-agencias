@@ -22,14 +22,8 @@ import Componentesearch from "../components/Componentesearch";
       <Componentesearch client:load />
     </body>
     <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth(); // Llamamos a esta función al cargar la página
+      import { validarToken } from "../stores/authtoken";
+      validarToken();
     </script>
   </BaseLayout>
   <style>
@@ -39,5 +33,6 @@ import Componentesearch from "../components/Componentesearch";
       margin: 0;
     }
   </style>
+
 
 </html>
