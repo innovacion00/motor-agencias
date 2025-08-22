@@ -71,11 +71,6 @@ export const getdisponibility = async (objetohotel) => {
 
 export const reservasNano = atom([])
 export const getReservas = async (token, datosUsuario) => {
-    // console.log(datosUsuario)
-    // const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    // console.log(datosUsuario.role[0])
-    //const url = datosUsuario.role[0] == "super-admin" ? ("/agencias/v1/reservas") : ("agencias/v1/reservas/reservas-by-user")
-    // console.log(url)
     const rol = () => {
 
         if (datosUsuario.includes("super-admin")) {
