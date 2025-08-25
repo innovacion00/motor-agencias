@@ -1,122 +1,148 @@
-import {
-    atom
-} from "nanostores";
+import { atom } from "nanostores";
 import Swal from "sweetalert2";
-
+import Cookies from "js-cookie";
+import { refreshToken } from "./authtoken";
+const token = Cookies.get("accessToken");
 // Crear una store para almacenar la disponibilidad
 export const disponibilidad = atom([]);
+export const reservasNano = atom([]);
 
 // Store para almacenar las noches
 export const nightsStore = atom(0);
-const URL = 'https://gehsuitesapps.com/'
-// const URL = 'https://gehsuitesapps.com/agencias/v1/reservas/671fbd6125d14fb460f617c2'
+const URL = import.meta.env.PUBLIC_API_URL;
 export const getdisponibility = async (objetohotel) => {
-    const objetoprueba = JSON.stringify({
-        checkingDate: objetohotel.checkin,
-        ciudad: objetohotel.city,
-        nights: objetohotel.nights,
-        layout: objetohotel.layout,
-    })
-    console.log(objetoprueba)
+  const objetoprueba = JSON.stringify({
+    checkingDate: objetohotel.checkin,
+    ciudad: objetohotel.city,
+    nights: objetohotel.nights,
+    layout: objetohotel.layout,
+  });
 
-    const token = localStorage.getItem("authToken");
+  const fetchDisponibilidad = async (accessToken) => {
+    const url = `${URL}/agencias/v1/reservas/disponibilidad`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: objetoprueba,
+    });
+    return response;
+  };
 
+  try {
+    let response = await fetchDisponibilidad(token);
 
-
-    try {
-
-        const url =
-            `${URL}agencias/v1/reservas/disponibilidad`;
-
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: objetoprueba,
-        });
-        console.log(response)
-        if (response.ok) {
-            const data = await response.json();
-
-            // Guardar los datos en la store
-            disponibilidad.set(data);
-
-            localStorage.setItem("data", JSON.stringify(data))
-
-
-
-            // Notificación de éxito
-            // Swal.fire({
-            //     icon: "success",
-            //     title: "Búsqueda exitosa",
-            //     text: "Los datos de disponibilidad se han obtenido correctamente.",
-            // });
-
-            console.log("Disponibilidad obtenida:", disponibilidad.get());
-        } else {
-            throw new Error("Error al consultar la API");
-        }
-    } catch (error) {
-        // Manejo de errores con SweetAlert
-        Swal.fire({
-            icon: "error",
-            title: "Error en la búsqueda",
-            text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente más tarde.",
-        });
-        console.error("Error al obtener disponibilidad:", error);
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetchDisponibilidad(newToken);
+      }
     }
+
+    if (response.ok) {
+      const data = await response.json();
+      disponibilidad.set(data);
+      localStorage.setItem("data", JSON.stringify(data));
+      console.log("Disponibilidad obtenida:", disponibilidad.get());
+    } else {
+      throw new Error("Error al consultar la API");
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error en la búsqueda",
+      text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente más tarde.",
+    });
+    console.error("Error al obtener disponibilidad:", error);
+  }
 };
 
-export const reservasNano = atom([])
-export const getReservas = async (token, datosUsuario) => {
-    // console.log(datosUsuario)
-    // const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    // console.log(datosUsuario.role[0])
-    //const url = datosUsuario.role[0] == "super-admin" ? ("/agencias/v1/reservas") : ("agencias/v1/reservas/reservas-by-user")
-    // console.log(url)
-    const rol = () => {
-
-        if (datosUsuario.includes("super-admin")) {
-            return `${URL}agencias/v1/reservas`
-        } else if (datosUsuario.includes("admin")) {
-            return `${URL}agencias/v1/reservas/reservas-by-agencia`
-        } else {
-            return `${URL}agencias/v1/reservas/reservas-by-user`
-        }
+export const getReservas = async ( datosUsuario) => {
+  const rol = () => {
+    if (datosUsuario.includes("super-admin")) {
+      return `${URL}/agencias/v1/reservas`;
+    } else if (datosUsuario.includes("admin")) {
+      return `${URL}/agencias/v1/reservas/reservas-by-agencia`;
+    } else {
+      return `${URL}/agencias/v1/reservas/reservas-by-user`;
     }
-    //console.log(rol())
+  };
 
-    const urlrol = rol()
-    //console.log(urlrol)
+  const urlrol = rol();
+  const fetchReservas = async (accessToken) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
 
-    try {
-        const myHeaders = new Headers();
-        myHeaders.append("Authorization", `Bearer ${token}`);
+    const response = await fetch(urlrol, {
+      method: "GET",
+      headers: myHeaders,
+    });
+    return response;
+  };
 
-        const requestOptions = {
-            method: "GET",
-            headers: myHeaders,
-        };
-        const response = await fetch(urlrol, requestOptions)
+  try {
+    console.log(token);
+    let response = await fetchReservas((token));
 
-        if (response.ok) {
-            const data = await response.json()
-            if (data.reservas) {
-                reservasNano.set(data.reservas)
-            } else {
-                reservasNano.set(data)
-            }
-            // console.log(data)
-            return data
-        } else {
-            console.log('error al obtener los datos de la reserva')
-        }
-
-
-    } catch (error) {
-        console.log('erro en la peticion:', error)
+    if (response.status === 401) {
+      // Intentar renovar el token
+      const newToken = await refreshToken();
+      if (newToken) {
+        // Reintentar la petición con el nuevo token
+        response = await fetchReservas(newToken);
+      }
+      // Si newToken es null, refreshToken ya se encargó de la redirección
     }
 
-}
+    if (response.ok) {
+      const data = await response.json();
+      if (data.reservas) {
+        reservasNano.set(data.reservas);
+      } else {
+        reservasNano.set(data);
+      }
+      return data;
+    } else {
+      console.log("Error al obtener los datos de la reserva");
+      return null;
+    }
+  } catch (error) {
+    console.log("Error en la peticion obtener reservas:", error);
+    return null;
+  }
+};
+
+export const getReservasServer = async (token, role) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  
+  const getUrl = (role) => {
+    if (role.includes("super-admin")) {
+      return `${URL}/agencias/v1/reservas`;
+    } else if (role.includes("admin")) {
+      return `${URL}/agencias/v1/reservas/reservas-by-agencia`;
+    }
+    return `${URL}/agencias/v1/reservas/reservas-by-user`;
+  };
+
+  try {
+    const response = await fetch(getUrl(role), {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data.reservas || data;
+  } catch (error) {
+    console.error("Error servidor:", error);
+    return null;
+  }
+};

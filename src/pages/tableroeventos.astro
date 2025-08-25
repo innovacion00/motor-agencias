@@ -9,10 +9,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import DropdownSearch from "../components/DropdownSearch";
 import Componentesearch from "../components/Componentesearch";
 import UserDashboardEventos from "../components/UserDashboardEventos.jsx";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html lang="es">
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    <RouteProtection />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"
@@ -36,11 +38,6 @@ import UserDashboardEventos from "../components/UserDashboardEventos.jsx";
       <body>
         <UserDashboardEventos client:load />
       </body>
-
-      <script>
-        import { validarToken } from "../stores/authtoken";
-        validarToken();
-      </script>
     </html></BaseLayout
   >
 </html>

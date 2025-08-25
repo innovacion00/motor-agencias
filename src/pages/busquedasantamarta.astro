@@ -2,6 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Componentesearch from "../components/Componentesearch";
 import CurrencySelector from "../components/Cambiardivisas";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <title>Resultados Santa Marta</title>
@@ -25,11 +26,8 @@ import CurrencySelector from "../components/Cambiardivisas";
     </head>
 
     <body>
+      <RouteProtection />
       <Componentesearch client:load />
     </body>
-    <script>
-      import { validarToken } from "../stores/authtoken";
-      validarToken();
-    </script>
   </html>
 </BaseLayout>

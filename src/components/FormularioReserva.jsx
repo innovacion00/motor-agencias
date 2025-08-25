@@ -8,6 +8,8 @@ import TablaDesglose from "./desglose/TablaDesglose";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
 import ToursCs from "./ToursCs";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -221,6 +223,33 @@ const FormularioReserva = () => {
     });
   };
 
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
@@ -374,18 +403,12 @@ const FormularioReserva = () => {
       try {
         // error409
         setbotondesactivado(true);
-        const url = `https://gehsuitesapps.com/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
+        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
 
-        const response = await fetch(url, {
+        const response = await fetchWithToken(url, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${agencia.token}`,
-          },
           body: informacionD,
         });
-
-        console.log(response);
 
         if (response.ok) {
           const data = await response.json();
@@ -395,7 +418,7 @@ const FormularioReserva = () => {
           Swal.fire({
             icon: "success",
             title: "Reserva realizada",
-            text: "Se ha confirmado su reserva con exito.",
+            text: "Se ha confirmado su reserva con éxito.",
           });
           setTimeout(() => {
             window.location.href = "/misreservas"; //REDIRECCION HACIA LA PAGINA DE RESERVA PAGADA

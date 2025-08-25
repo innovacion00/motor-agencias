@@ -3,6 +3,8 @@ import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este arch
 import { getReservas, reservasNano } from "../stores/disponibilidad";
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryPie } from "victory";
 import { useHover } from "@uidotdev/usehooks";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 import Swal from "sweetalert2";
 
@@ -47,13 +49,40 @@ const UserDashboard = () => {
 
   //#region Reservas obtenidas
   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(token, nombreAgencia);
+    await getReservas(nombreAgencia);
     const reservasObtenidas = reservasNano.get();
     setReservas(reservasObtenidas);
   };
 
   const handleClick = () => {
     fileInputRef.current.click();
+  };
+
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
   };
 
   const handleImageUpload = async (event) => {
@@ -64,14 +93,11 @@ const UserDashboard = () => {
     formData.append("file", file); // Adjunta el archivo
     //#region Envio de imagen
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/files/user-profile",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/files/user-profile`,
         {
           method: "POST",
           body: formData,
-          headers: {
-            Authorization: `Bearer ${userData.token}`, // Se envía el token para autenticación
-          },
         }
       );
 
@@ -97,17 +123,10 @@ const UserDashboard = () => {
   };
 
   //#region Obtener saldo
-  const obtenerSaldo = async (token) => {
+  const obtenerSaldo = async () => {
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/obtener-saldo`
       );
 
       if (!response.ok) {
@@ -188,14 +207,10 @@ const UserDashboard = () => {
 
     //#region Recargar saldo
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/recharge-wallet",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/recharge-wallet`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userData.token}`,
-          },
           body: JSON.stringify({
             amount: amountInt,
             currency: "COP",
@@ -232,7 +247,12 @@ const UserDashboard = () => {
       }
     } catch (error) {
       console.error("Error en la recarga:", error);
-      alert("Hubo un problema con la recarga.");
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema con la recarga.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
     }
   };
 

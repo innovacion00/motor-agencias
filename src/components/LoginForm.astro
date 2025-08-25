@@ -74,9 +74,9 @@
               </label>
             </div>
             <div class="form-group">
-              <button type="submit" class="submit-btn" id="submit-btn" disabled>
-                Iniciar sesión</button
-              >
+              <button type="submit" class="submit-btn" id="submit-btn">
+                Iniciar sesión
+              </button>
             </div>
 
             <!-- Indicador de carga -->
@@ -122,62 +122,63 @@
   </body>
 </html>
 <script>
-  // Función para verificar si los campos están llenos y el checkbox está marcado
   import Swal from "sweetalert2";
-  import Cookies from 'js-cookie'
+  import Cookies from 'js-cookie';
+  // const url = 'https://gehsuitesapps.com';
+  const url = import.meta.env.PUBLIC_API_URL;
   function validateForm() {
-    const email = (
-      document.getElementById("email") as HTMLInputElement
-    ).value.trim();
-    const password = (
-      document.getElementById("password") as HTMLInputElement
-    ).value.trim();
-    const termsAccepted = (document.getElementById("terms") as HTMLInputElement)
-      .checked;
-    const submitBtn = document.getElementById(
-      "submit-btn"
-    ) as HTMLButtonElement;
-
-    submitBtn.disabled = !(email && password && termsAccepted);
+    const email = (document.getElementById("email") as HTMLInputElement).value.trim();
+    const password = (document.getElementById("password") as HTMLInputElement).value.trim();
+    const termsAccepted = (document.getElementById("terms") as HTMLInputElement).checked;
+    return { email, password, termsAccepted };
   }
-
-  document.getElementById("email").addEventListener("input", validateForm);
-  document.getElementById("password").addEventListener("input", validateForm);
-  document.getElementById("terms").addEventListener("change", validateForm);
-  document.querySelector(".toggle-password")
-  .addEventListener("click", function () {
-      const passwordInput = document.getElementById(
-        "password"
-      ) as HTMLInputElement;
-      const type =
-        passwordInput.getAttribute("type") === "password" ? "text" : "password";
-      passwordInput.setAttribute("type", type);
-      this.classList.toggle("fa-eye-slash");
-    });
 
   //Manejo inicio de sesion
   async function handleLogin() {
-    const email = (
-      document.getElementById("email") as HTMLInputElement
-    ).value.trim();
-    const password = (
-      document.getElementById("password") as HTMLInputElement
-    ).value.trim();
+    const { email, password, termsAccepted } = validateForm();
     
-    const submitBtn = document.getElementById(
-      "submit-btn"
-    ) as HTMLButtonElement;
-    const loadingIndicator = document.getElementById(
-      "loading-indicator"
-    ) as HTMLElement;
+    if (!email) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo requerido',
+        text: 'Por favor ingrese su correo electrónico',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      return;
+    }
+
+    if (!password) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Campo requerido',
+        text: 'Por favor ingrese su contraseña',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      return;
+    }
+
+    if (!termsAccepted) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Términos y condiciones',
+        text: 'Debe aceptar los términos y condiciones para continuar',
+        timer: 3000,
+        showConfirmButton: false
+      });
+      return;
+    }
+
+    const submitBtn = document.getElementById("submit-btn") as HTMLButtonElement;
+    const loadingIndicator = document.getElementById("loading-indicator") as HTMLElement;
 
     //// Deshabilitar el botón de inicio de sesión para evitar múltiples clics
     submitBtn.disabled = true;
     loadingIndicator.style.display = "block";
-
     try {
       const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/auth/sign-in",
+        `${url}/agencias/v1/auth/sign-in`,
         {
           method: "POST",
           headers: {
@@ -241,7 +242,7 @@
 
     try {
       const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/auth/validate-otp",
+         `${url}/agencias/v1/auth/validate-otp`,
         {
           method: "POST",
           headers: {
@@ -262,7 +263,8 @@
         // Guardamos el token en localStorage para futuras solicitudes
         localStorage.setItem("authToken", dataT.token);
         localStorage.setItem("datosUsuario", JSON.stringify(dataT));
-        Cookies.set('token', JSON.stringify(dataT.token), { expires: 7, path: "/"});
+        Cookies.set('accessToken', (dataT.accessToken), { expires: 7, path: "/"});
+        Cookies.set('refreshToken', (dataT.refreshToken), { expires: 7, path: "/"});
         Cookies.set('datosUsuario', JSON.stringify(dataT), { expires: 7, path: "/"});
         // Redirigir al usuario a la página de inicio
         window.location.href = "/";
@@ -492,6 +494,29 @@
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  #loading-indicator {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+    color: #555;
+    font-size: 14px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #1c3d5a;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #004494;
   }
 
   #loading-indicator {

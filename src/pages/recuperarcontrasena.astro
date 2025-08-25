@@ -190,7 +190,7 @@
 
             try {
               const response = await fetch(
-                "https://gehsuitesapps.com/agencias/v1/auth/request-password-change",
+                `${import.meta.env.PUBLIC_API_URL}/agencias/v1/auth/request-password-change`,
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -261,7 +261,7 @@
                   showSpinner(); // Mostrar spinner
             try {
               const response = await fetch(
-                "https://gehsuitesapps.com/agencias/v1/auth/validate-otp",
+                `${import.meta.env.PUBLIC_API_URL}/agencias/v1/auth/validate-otp`,
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -271,7 +271,7 @@
 
               if (response.ok) {
                 const data = await response.json();
-                const token = data.token;
+                const token = data.accessToken;
                 tokenglobal.set(token);
 
                 Swal.fire({
@@ -331,7 +331,7 @@
 
             try {
               const response = await fetch(
-                "https://gehsuitesapps.com/agencias/v1/auth/new-credentials",
+                `${import.meta.env.PUBLIC_API_URL}/agencias/v1/auth/new-credentials`,
                 {
                   method: "PATCH",
                   headers: {
@@ -345,28 +345,47 @@
               if (response.ok) {
                 Swal.fire({
                   icon: "success",
-                  title: "Aprobado",
+                  title: "¡Éxito!",
                   text: "Contraseña actualizada correctamente.",
                   showConfirmButton: false,
                   timer: 3600,
                 });
                 window.location.href = "/login"; // Redirige al inicio de sesión
               } else {
-                console.error("Hubo un error en la solicitud.");
-                console.error("Código de estado:", response.status);
-                const errorMessage = await response.text();
-                console.error("Respuesta:", errorMessage);
+                const errorData = await response.json();
+                
+                // Manejar diferentes tipos de errores
+                let errorMessage = "Hubo un error al actualizar la contraseña.";
+                
+                if (response.status === 400) {
+                  if (errorData.message?.includes("same")) {
+                    errorMessage = "La nueva contraseña no puede ser igual a la anterior.";
+                  } else if (errorData.message?.includes("requirements")) {
+                    errorMessage = "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números.";
+                  }
+                } else if (response.status === 401) {
+                  errorMessage = "Token inválido o expirado. Por favor, solicita un nuevo código.";
+                } else if (response.status === 404) {
+                  errorMessage = "Usuario no encontrado.";
+                }
+
                 Swal.fire({
-                icon: "error",
-                title: "Ingrese una contraseña diferente.",
-                text: "La contraseña no puede ser igual a la anterior.",
-                showConfirmButton: false,
-                timer: 3600,
-              });
+                  icon: "error",
+                  title: "Error",
+                  text: errorMessage,
+                  showConfirmButton: true,
+                  confirmButtonColor: "#26547B",
+                });
               }
             } catch (error) {
               console.error("Error:", error);
-              alert("Hubo un error al actualizar tu contraseña.");
+              Swal.fire({
+                icon: "error",
+                title: "Error de conexión",
+                text: "No se pudo conectar con el servidor. Por favor, verifica tu conexión e intenta nuevamente.",
+                showConfirmButton: true,
+                confirmButtonColor: "#26547B",
+              });
             }
           });
         </script>

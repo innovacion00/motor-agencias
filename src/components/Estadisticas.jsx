@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 import "./styles/Estadisticas.css"; // Asegúrate de tener este archivo CSS con los estilos adecuados
 import { getReservas, reservasNano } from "../stores/disponibilidad";
 import {
@@ -25,7 +27,7 @@ const Estadisticas = () => {
   const [availableAmount, setAvailableAmount] = useState(null);
   const [profileImage, setprofileImage] = useState(
     userData?.imageUrl ||
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png"
   );
   const [ref, hovering] = useHover();
   const fileInputRef = useRef(null);
@@ -199,18 +201,38 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
 
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
   useEffect(() => {
     const obtenerAgencias = async () => {
       try {
-        const response = await fetch(
-          "https://gehsuitesapps.com/agencias/v1/agencias/",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${userData?.token}`,
-            },
-          }
+        const response = await fetchWithToken(
+          `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/`
         );
 
         if (!response.ok) {
@@ -235,10 +257,8 @@ const Estadisticas = () => {
       }
     };
 
-    if (userData?.token) {
-      obtenerAgencias();
-    }
-  }, [userData]);
+    obtenerAgencias();
+  }, []);
 
   useEffect(() => {
     const reservasObtenidas = reservasNano.get();
@@ -427,7 +447,7 @@ const Estadisticas = () => {
   // Nuevo useEffect para procesar reservas de los últimos 30 días
   useEffect(() => {
     const reservasObtenidas = reservasNano.get();
-    
+
     if (reservasObtenidas?.length > 0) {
       const ahora = new Date();
       const hace30Dias = new Date(ahora.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -460,7 +480,7 @@ const Estadisticas = () => {
 
   useEffect(() => {
     const reservasObtenidas = reservasNano.get();
-    
+
     if (reservasObtenidas?.length > 0) {
       // Filtrar solo las reservas con status 3 (aprobadas)
       const reservasAprobadasFiltradas = reservasObtenidas.filter(
@@ -490,7 +510,7 @@ const Estadisticas = () => {
   // Nuevo useEffect para procesar reservas canceladas por agencia
   useEffect(() => {
     const reservasObtenidas = reservasNano.get();
-    
+
     if (reservasObtenidas?.length > 0) {
       // Filtrar solo las reservas canceladas (status 4)
       const reservasCanceladasFiltradas = reservasObtenidas.filter(
@@ -548,7 +568,7 @@ const Estadisticas = () => {
 
   //#region Reservas obtenidas
   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(token, nombreAgencia);
+    await getReservas(nombreAgencia);
     const reservasObtenidas = reservasNano.get();
     setReservas(reservasObtenidas);
   };
@@ -565,8 +585,8 @@ const Estadisticas = () => {
     formData.append("file", file); // Adjunta el archivo
     //#region Envio de imagen
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/files/user-profile",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/files/user-profile`,
         {
           method: "POST",
           body: formData,
@@ -598,17 +618,10 @@ const Estadisticas = () => {
   };
 
   //#region Obtener saldo
-  const obtenerSaldo = async (token) => {
+  const obtenerSaldo = async () => {
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/obtener-saldo`
       );
 
       if (!response.ok) {
@@ -689,14 +702,10 @@ const Estadisticas = () => {
 
     //#region Recargar saldo
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/recharge-wallet",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/recharge-wallet`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userData.token}`,
-          },
           body: JSON.stringify({
             amount: amountInt,
             currency: "COP",
@@ -726,14 +735,19 @@ const Estadisticas = () => {
       } else {
         Swal.fire({
           title: "Error",
-          text: "Error en la recarga. Intentalo nuevamente (Internal Back error)",
+          text: "Error en la recarga. Intentalo nuevamente",
           icon: "error",
           confirmButtonColor: "#26547B",
         });
       }
     } catch (error) {
       console.error("Error en la recarga:", error);
-      alert("Hubo un problema con la recarga.");
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema con la recarga.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
     }
   };
 
@@ -939,114 +953,111 @@ const Estadisticas = () => {
           />
         </div>
       </div>
-            
-                  <div className="tables-grid">
-                    <div className="agencies-table-container">
-                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-                        Reservas por Agencia
-                      </h2>
-                      <div className="agencies-table">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Posición</th>
-                              <th>Nombre de Agencia</th>
-                              <th>Número de Reservas</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {reservasPorAgencia.map((item, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.agencia}</td>
-                                <td>{item.reservas}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-            
-                    <div className="agencies-table-container">
-                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-                        Reservas por agencias 30 días
-                      </h2>
-                      <div className="agencies-table">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Posición</th>
-                              <th>Nombre de agencias</th>
-                              <th>Número de reservas</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {reservasUltimos30Dias.map((item, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.agencia}</td>
-                                <td>{item.reservas}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-            
-                    <div className="agencies-table-container">
-                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-                        Reservas garantizadas por agencia
-                      </h2>
-                      <div className="agencies-table">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Posición</th>
-                              <th>Nombre de Agencia</th>
-                              <th>Reservas Aprobadas</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {reservasAprobadas.map((item, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.agencia}</td>
-                                <td>{item.reservas}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
 
-                    <div className="agencies-table-container">
-                      <h2 style={{ textAlign: "center", marginBottom: "15px", fontSize: "16px" }}>
-                        Reservas Canceladas por Agencia
-                      </h2>
-                      <div className="agencies-table">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>Posición</th>
-                              <th>Nombre de Agencia</th>
-                              <th>Reservas Canceladas</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {reservasCanceladasPorAgencia.map((item, index) => (
-                              <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.agencia}</td>
-                                <td>{item.reservas}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
+      <div className="tables-grid">
+        {/* Tabla de Reservas por Agencia */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas por Agencia</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Número de Reservas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasPorAgencia.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Tabla de Reservas últimos 30 días */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas por agencias 30 días</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de agencias</th>
+                  <th>Número de reservas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasUltimos30Dias.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Tabla de Reservas garantizadas */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas garantizadas por agencia</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Reservas Aprobadas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasAprobadas.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Tabla de Reservas Canceladas */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas Canceladas por Agencia</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Reservas Canceladas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasCanceladasPorAgencia.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Estadisticas;
+

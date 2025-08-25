@@ -1,20 +1,16 @@
 ---
 import FormularioReserva from '../components/FormularioReserva';
+import RouteProtection from '../components/RouteProtection.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 ---
 <html lang = "es">
 <BaseLayout title="Datos de mi reserva - BookingConnect ">
- 
+ <RouteProtection />
   
   <body>
     <FormularioReserva client:load>  
   </body> 
-  
-    <script>
-        import { validarToken } from "../stores/authtoken";
-        validarToken()
-    </script>
 </html>
 
 <style>

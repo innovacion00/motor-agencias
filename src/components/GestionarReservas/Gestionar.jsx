@@ -13,14 +13,15 @@ import {
 import Swal from "sweetalert2";
 import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
+import { refreshToken } from "../../stores/authtoken";
 
 //UseState
 const Gestionar = ({ reservas }) => {
-  console.log(reservas); // Datos de la reserva
+  // console.log(reservas); // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
-  const [nota, setNota] = useState(reservas.notasSuperAdmin || "");
+  const [nota, setNota] = useState(reservas?.notasSuperAdmin || "");
   const [mostrarnota1, setmostrarnota1] = useState(false);
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
@@ -91,17 +92,10 @@ const Gestionar = ({ reservas }) => {
         },
       });
 
-      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-      const token = datosUsuario.token;
-
-      const response = await fetch(
-        `https://gehsuitesapps.com/agencias/v1/reservas/editar-reserva/${reservas._id}`,
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/editar-reserva/${reservas._id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             documento: titularData.documento,
             firstName: titularData.firstName,
@@ -195,17 +189,37 @@ const Gestionar = ({ reservas }) => {
   };
 
   //#region Obtener MI Saldo
-  const obtenerSaldo = async (token) => {
-    try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
-        {
-          method: "GET",
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
+  const obtenerSaldo = async () => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/obtener-saldo`
       );
 
       if (!response.ok) {
@@ -321,24 +335,19 @@ const Gestionar = ({ reservas }) => {
 
   //#region editar reserva(nota)
 
-  const editarnota = async (reservas) => {
+  const editarnota = async (reservaId) => {
     try {
-      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-      const token = datosUsuario.token;
-
-      const response = await fetch(
-        `https://gehsuitesapps.com/agencias/v1/reservas/editar-reserva/${reservas}`,
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/editar-reserva/${reservaId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             notasSuperAdmin: nota,
           }),
         }
-      ); //#region Noti erro editar reserva
+      );
+
+      // //#region Noti erro editar reserva
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error al cancelar la reserva:", errorData);
@@ -379,25 +388,14 @@ const Gestionar = ({ reservas }) => {
             Authorization: `Bearer ${token}`,*/
 
   //#region Cancelar reservas
-  const cancelarReserva = async (reservas) => {
+  const cancelarReserva = async (reservaId) => {
     try {
-      // Obtener los datos del usuario desde localStorage
-      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-
-      // Extraer el token
-      const token = datosUsuario.token;
-
-      // Hacer la solicitud DELETE
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/reservas/cancelar-reserva",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Incluir el token en el encabezado
-          },
           body: JSON.stringify({
-            reservaId: reservas, // Pasar el ID de la reserva
+            reservaId: reservaId,
           }),
         }
       );
@@ -697,35 +695,35 @@ const Gestionar = ({ reservas }) => {
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
 
-      {reservas.status == 0 && reservas.pagadoPrimeraMitad == false ? (
+      {reservas?.status == 0 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.pending}`}>
           Pago pendiente
         </p>
-      ) : reservas.status == 1 && reservas.pagadoPrimeraMitad == false ? (
+      ) : reservas?.status == 1 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago en proceso
         </p>
-      ) : reservas.status == 2 && reservas.pagadoPrimeraMitad == false ? (
+      ) : reservas?.status == 2 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago rechazado primer abono
         </p>
-      ) : reservas.status == 3 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 3 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.clomplete}`}>
           Pago aprobado
         </p>
-      ) : reservas.status == 4 ? (
+      ) : reservas?.status == 4 ? (
         <p className={`${styles.estadoPago} ${styles.cancel}`}>
           Reserva cancelada
         </p>
-      ) : reservas.status == 2 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 2 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago total rechazado
         </p>
-      ) : reservas.status == 5 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 5 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
           Abonado primera mitad
         </p>
-      ) : reservas.status == 1 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 1 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago total en proceso
         </p>
@@ -876,7 +874,7 @@ const Gestionar = ({ reservas }) => {
                     </p>
                   </div>
                 )}
-                {reservas.mascotasNumber > 0 && (
+                {reservas?.mascotasNumber > 0 && (
                   <div>
                     <b>
                       El huésped llevará {reservas.mascotasNumber}
@@ -901,12 +899,12 @@ const Gestionar = ({ reservas }) => {
                 )}
 
                 <p className={styles.plazoPago}>
-                  Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
+                  Tienes plazo de pagar hasta el {reservas?.fechaLimitePago}
                 </p>
               </div>
 
               <p className={styles.total}>
-                {reservas.reservation.currency == "USD"
+                {reservas?.reservation.currency == "USD"
                   ? `$${reservas?.total} USD`
                   : `${formatCurrency(reservas?.total)} COP`}
               </p>
@@ -1222,7 +1220,7 @@ const Gestionar = ({ reservas }) => {
               </div>
             ))}
             <div className={styles.pagos}>
-              {reservas.status == "0" &&
+              {reservas?.status == "0" &&
                 reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -1230,7 +1228,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "1" &&
+              ) : reservas?.status == "1" &&
                 reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -1238,7 +1236,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "2" &&
+              ) : reservas?.status == "2" &&
                 reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -1246,7 +1244,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "3" &&
+              ) : reservas?.status == "3" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Total + impuestos</p>
@@ -1254,14 +1252,14 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.total)}
                   </p>
                 </div>
-              ) : reservas.status == "4" ? (
+              ) : reservas?.status == "4" ? (
                 <div className={styles.totalPago}>
                   <p>Total + impuestos</p>
                   <p className={styles.totalP}>
                     {formatCurrency(reservas?.total)}
                   </p>
                 </div>
-              ) : reservas.status == "2" &&
+              ) : reservas?.status == "2" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -1269,7 +1267,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "5" &&
+              ) : reservas?.status == "5" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -1277,7 +1275,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "1" &&
+              ) : reservas?.status == "1" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>

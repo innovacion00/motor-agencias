@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Componentesearch from "../components/Componentesearch";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html>
+  <RouteProtection />
   <BaseLayout title="Resultados Bogotá ">
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -24,11 +26,6 @@ import Componentesearch from "../components/Componentesearch";
 
       <body>
         <Componentesearch client:load />
-
-        <script>
-          import { validarToken } from "../stores/authtoken";
-          validarToken();
-        </script>
       </body>
     </html>
   </BaseLayout>

@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BusquedaeventosB from "../components/BusquedaeventosB";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html>
+  <RouteProtection />
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -24,11 +26,6 @@ import BusquedaeventosB from "../components/BusquedaeventosB";
 
     <body>
       <BusquedaeventosB client:load />
-
-      <script>
-        import { validarToken } from "../stores/authtoken";
-        validarToken();
-      </script>
     </body>
   </BaseLayout>
 </html>

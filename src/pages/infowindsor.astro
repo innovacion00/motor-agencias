@@ -2,9 +2,11 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DropdownSearch from "../components/DropdownSearch";
 import CarrouselA from "../components/Carrouseles/CarrouselWindsor";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+  <RouteProtection />
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     rel="stylesheet"
@@ -728,8 +730,6 @@ import CarrouselA from "../components/Carrouseles/CarrouselWindsor";
     </body>
 
     <script>
-      import { validarToken } from "../stores/authtoken";
-      validarToken();
       // Seleccionamos los botones y las secciones
       const generalBtn = document.getElementById("generalBtn");
       const roomsBtn = document.getElementById("roomsBtn");

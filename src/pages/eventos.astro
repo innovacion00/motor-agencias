@@ -3,9 +3,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import SwiperSliderEventos from "../components/SwiperSliderEventos.jsx";
 import DropdownSearchEventos from "../components/DropdownSearchEventos.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <BaseLayout>
+  <RouteProtection />
   <html>
     <head>
       <link rel="stylesheet" href="public/styles/Swipper.css" />
@@ -94,10 +96,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
       </div>
     </body>
   </html>
-  <script>
-    import { validarToken } from "../stores/authtoken";
-    validarToken();
-  </script>
   <style>
     body {
       font-family: "Roboto", sans-serif;

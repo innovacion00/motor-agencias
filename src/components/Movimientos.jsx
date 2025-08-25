@@ -44,7 +44,7 @@ const Movimientos = () => {
   const ObtenerReservas = async (token, nombreAgencia) => {
     setIsLoading(true);
     try {
-      await getReservas(token, nombreAgencia);
+      await getReservas(nombreAgencia);
       const reservasObtenidas = reservasNano.get();
       
       const reservasOrdenadas = [...reservasObtenidas].sort((a, b) => 
