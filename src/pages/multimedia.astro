@@ -1,9 +1,11 @@
 ---
+import RouteProtection from "../components/RouteProtection.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "bootstrap/dist/css/bootstrap.min.css";
 ---
 
 <BaseLayout>
+  <RouteProtection />
   <html lang="es">
     <link rel="stylesheet" href="public/styles/Swipper.css" />
     <link
@@ -985,15 +987,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
   <!-- Script para manejar la visibilidad de las secciones -->
   <script>
-    import Cookies from "js-cookie";
-    function checkAuth() {
-      const token = Cookies.get("token");
-
-      if (!token) {
-        window.location.href = "/login";
-      }
-    }
-    checkAuth();
+    
     document.addEventListener("DOMContentLoaded", () => {
       const buttons = document.querySelectorAll(".nav button");
       const hideAllSections = () => {

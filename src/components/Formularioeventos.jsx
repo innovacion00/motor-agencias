@@ -6,6 +6,8 @@ import { format, differenceInDays, addDays } from "date-fns";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 //#region useState
 const SolicitudPresupuesto = () => {
@@ -379,10 +381,35 @@ const SolicitudPresupuesto = () => {
     },
   ];
 
-  const enviarSolicitud = async () => {
-    const tipoAcomodacionId =
-      accommodation.find((type) => type.name === tipoAcomodacion)?.id || 1;
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
+  const enviarSolicitud = async () => {
+    const tipoAcomodacionId = accommodation.find((type) => type.name === tipoAcomodacion)?.id || 1;
     const informacionE = JSON.stringify({
       nameEvento: nombreEvento,
       tipoEvento: tipoEvento,
@@ -414,16 +441,12 @@ const SolicitudPresupuesto = () => {
 
     try {
       setbotondesactivado(true);
-      const url = `https://gehsuitesapps.com/agencias/v1/eventos/create`;
-      const response = await fetch(url, {
+      const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/eventos/create`;
+      const response = await fetchWithToken(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userData.token}`,
-        },
         body: informacionE,
       });
-      console.log(response);
+
       if (response.ok) {
         const data = await response.json();
         console.log(data);
@@ -432,6 +455,8 @@ const SolicitudPresupuesto = () => {
           title: "Solicitud enviada",
           text: "Tu solicitud de presupuesto ha sido enviada con éxito. Pronto recibirás una respuesta de nuestro equipo de ventas.",
         });
+      } else {
+        throw new Error("Error en la respuesta del servidor");
       }
     } catch (error) {
       Swal.fire({
@@ -439,10 +464,7 @@ const SolicitudPresupuesto = () => {
         title: "Error al enviar la solicitud",
         text: "No se pudo realizar la cotizacion del evento. Porfavor verifique los datos ingresados e intente nuevamente mas tarde",
       });
-      console.error(
-        "Error al realizar la cotizacion/solicitud del evento:",
-        error
-      );
+      console.error("Error al realizar la cotizacion/solicitud del evento:", error);
     } finally {
       setbotondesactivado(false);
     }

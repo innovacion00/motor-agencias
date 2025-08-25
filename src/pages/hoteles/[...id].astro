@@ -4,6 +4,7 @@ import { getdisponibility, disponibilidad } from "../../stores/disponibilidad";
 import DisponibilidadH from "../../components/DisponibilidadH.jsx";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CurrencySelector from "../../components/Cambiardivisas";
+import RouteProtection from "../../components/RouteProtection.astro";
 export const prerender = true;
 
 // const localS =  localStorage.getItem("dato")
@@ -33,6 +34,7 @@ const habitaciones = disponibilidad.get().find((vaina) => vaina.hotel.id == id);
 ---
 
 <BaseLayout title="Habitaciones Diponibles - BookingConnect">
+  <RouteProtection />
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     rel="stylesheet"
@@ -52,14 +54,7 @@ const habitaciones = disponibilidad.get().find((vaina) => vaina.hotel.id == id);
     </body>
 
     <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth(); // Llamamos a esta función al cargar la página
+     
 
       document.addEventListener("DOMContentLoaded", () => {
         const selectButtons = document.querySelectorAll(".select-room");

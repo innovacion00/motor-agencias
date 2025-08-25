@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import BusquedaeventosB from "../components/BusquedaeventosB";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html>
+  <RouteProtection />
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -24,19 +26,6 @@ import BusquedaeventosB from "../components/BusquedaeventosB";
 
     <body>
       <BusquedaeventosB client:load />
-
-      <script>
-        import Cookies from "js-cookie";
-        function checkAuth() {
-          const token = Cookies.get("token");
-
-          if (!token) {
-            window.location.href = "/login";
-          }
-        }
-
-        checkAuth(); // Llamamos a esta función al cargar la página
-      </script>
     </body>
   </BaseLayout>
 </html>

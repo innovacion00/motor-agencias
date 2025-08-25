@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 import "../../public/styles/Header.css"; // Importa el archivo CSS
 
-const  Header = () => {
+const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [userData, setUserData] = useState()
   const [profileImage, setprofileImage] = useState(userData?.imageUrl || "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
@@ -21,7 +23,31 @@ const  Header = () => {
     
   }, [])
 
-  
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`
+          }
+        });
+      }
+    }
+    return response;
+  };
+
   const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -31,13 +57,13 @@ const  Header = () => {
 
  //#region Envio de imagen 
     try {
-      const response = await fetch("https://gehsuitesapps.com/agencias/v1/files/user-profile", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${userData.token}`, // Se envía el token para autenticación
-        },
-      });
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/files/user-profile`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Error al subir la imagen");

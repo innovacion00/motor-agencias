@@ -125,7 +125,7 @@
   import Swal from "sweetalert2";
   import Cookies from 'js-cookie';
   // const url = 'https://gehsuitesapps.com';
-  const url = 'http://localhost:3000';
+  const url = import.meta.env.PUBLIC_API_URL;
   function validateForm() {
     const email = (document.getElementById("email") as HTMLInputElement).value.trim();
     const password = (document.getElementById("password") as HTMLInputElement).value.trim();
@@ -263,8 +263,8 @@
         // Guardamos el token en localStorage para futuras solicitudes
         localStorage.setItem("authToken", dataT.token);
         localStorage.setItem("datosUsuario", JSON.stringify(dataT));
-        Cookies.set('accessToken', JSON.stringify(dataT.accessToken), { expires: 7, path: "/"});
-        Cookies.set('refreshToken', JSON.stringify(dataT.refreshToken), { expires: 7, path: "/"});
+        Cookies.set('accessToken', (dataT.accessToken), { expires: 7, path: "/"});
+        Cookies.set('refreshToken', (dataT.refreshToken), { expires: 7, path: "/"});
         Cookies.set('datosUsuario', JSON.stringify(dataT), { expires: 7, path: "/"});
         // Redirigir al usuario a la página de inicio
         window.location.href = "/";

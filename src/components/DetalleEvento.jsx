@@ -1,29 +1,38 @@
 import React, { useEffect, useState } from "react";
 import "../../public/styles/UserDashboardEventos.css";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 const DetalleEvento = ({ id }) => {
   const [evento, setEvento] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [usuarioDatos, setUsuarioDatos] = useState(null);
 
-  useEffect(() => {
-    const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    setUsuarioDatos(datosdelusuario.token);
-  }, []);
+  const fetchEventos = async (token) => {
+    const response = await fetch(`${import.meta.env.PUBLIC_API_URL}/agencias/v1/eventos`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    return response;
+  };
 
   useEffect(() => {
     const obtenerDetalleEvento = async () => {
-      if (!usuarioDatos) return;
-      
       setIsLoading(true);
       try {
-        const response = await fetch(`https://gehsuitesapps.com/agencias/v1/eventos`, {
-          headers: {
-            'Authorization': `Bearer ${usuarioDatos}`,
-            'Content-Type': 'application/json'
+        let token = Cookies.get('accessToken');
+        let response = await fetchEventos(token);
+
+        if (response.status === 401) {
+          // Intentar renovar el token
+          const newToken = await refreshToken();
+          if (newToken) {
+            // Reintentar la petición con el nuevo token
+            response = await fetchEventos(newToken);
           }
-        });
+        }
 
         if (!response.ok) {
           throw new Error('Error al obtener los detalles del evento');
@@ -39,10 +48,10 @@ const DetalleEvento = ({ id }) => {
       }
     };
 
-    if (id && usuarioDatos) {
+    if (id) {
       obtenerDetalleEvento();
     }
-  }, [id, usuarioDatos]);
+  }, [id]);
 
   const eventoData = evento?.find(data => data._id == id)
   console.log(eventoData)

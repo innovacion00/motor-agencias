@@ -1,82 +1,86 @@
 import Cookies from "js-cookie";
-import { parse } from 'cookie'
-import {
-    atom
-} from "nanostores";
-export const linkPago = atom({})
-export const generarLinkPago = async (id, booleano) => {
-    console.log(id)
-    try {
-        const userFromCookie = Cookies.get("token");
-        const parsedUser = userFromCookie ? JSON.parse(userFromCookie) : null;
-        console.log(parsedUser)
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", `Bearer ${parsedUser}`);
+import { atom } from "nanostores";
+import { refreshToken } from "./authtoken";
 
-        const raw = JSON.stringify({
-            reservaId: id,
-            pagoTotal: booleano
-        });
+export const linkPago = atom({});
 
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-        };
+const fetchWithToken = async (url, options = {}) => {
+  let token = Cookies.get("accessToken");
+  let response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 
-        const response = await fetch("https://gehsuitesapps.com/agencias/v1/reservas/generate-link", requestOptions)
-
-        if (response.ok) {
-            const data = await response.json();
-            // console.log(data.linkInfo)
-            linkPago.set(data.linkInfo)
-            return data.linkInfo
-        } else {
-            console.log('error al generar link')
-        }
-
-    } catch (error) {
-        console.log('erro en la peticion', error)
+  if (response.status === 401) {
+    const newToken = await refreshToken();
+    if (newToken) {
+      response = await fetch(url, {
+        ...options,
+        headers: {
+          ...options.headers,
+          Authorization: `Bearer ${newToken}`,
+          "Content-Type": "application/json",
+        },
+      });
     }
+  }
+  return response;
+};
 
-}
+export const generarLinkPago = async (id, booleano) => {
+  try {
+    const response = await fetchWithToken(
+      `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/generate-link`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          reservaId: id,
+          pagoTotal: booleano,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      linkPago.set(data.linkInfo);
+      return data.linkInfo;
+    } else {
+      throw new Error("Error al generar link");
+    }
+  } catch (error) {
+    console.error("Error en la petición:", error);
+    return null;
+  }
+};
 
 export const generarLinkPagoBilletera = async (id, booleano) => {
-    console.log(id)
-    try {
-        const userFromCookie = Cookies.get("token");
-        const parsedUser = userFromCookie ? JSON.parse(userFromCookie) : null;
-        console.log(parsedUser)
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        myHeaders.append("Authorization", `Bearer ${parsedUser}`);
+  try {
+    const response = await fetchWithToken(
+      `${
+        import.meta.env.PUBLIC_API_URL
+      }/agencias/v1/reservas/pago-billetera-compuesto`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          reservaId: id,
+          pagoTotal: booleano,
+        }),
+      }
+    );
 
-        const raw = JSON.stringify({
-            reservaId: id,
-            pagoTotal: booleano
-        });
-
-        const requestOptions = {
-            method: "POST",
-            headers: myHeaders,
-            body: raw,
-        };
-
-        const response = await fetch("https://gehsuitesapps.com/agencias/v1/reservas/pago-billetera-compuesto", requestOptions)
-
-        if (response.ok) {
-            const data = await response.json();
-            // console.log(data.linkInfo)
-            linkPago.set(data.linkInfo)
-            return data.linkInfo
-        } else {
-            console.log('error al generar link')
-        }
-
-    } catch (error) {
-        console.log('erro en la peticion', error)
+    if (response.ok) {
+      const data = await response.json();
+      linkPago.set(data.linkInfo);
+      return data.linkInfo;
+    } else {
+      throw new Error("Error al generar link");
     }
-
-}
-
+  } catch (error) {
+    console.error("Error en la petición:", error);
+    return null;
+  }
+};

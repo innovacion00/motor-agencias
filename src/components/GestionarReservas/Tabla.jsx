@@ -15,8 +15,8 @@ const Tabla = () => {
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
-    setTokenUrl(datosUsuario.token);
+    ObtenerReservas(datosUsuario.accessToken, datosUsuario.role[0]);
+    setTokenUrl(datosUsuario.accessToken);
   }, []);
 
   const SkeletonRow = () => (
@@ -40,7 +40,7 @@ const Tabla = () => {
   const ObtenerReservas = async (token, nombreAgencia) => {
     setIsLoading(true);
     try {
-      await getReservas(token, nombreAgencia);
+      await getReservas(nombreAgencia);
       const reservasObtenidas = reservasNano.get();
       setReservas(reservasObtenidas);
       setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas

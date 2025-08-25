@@ -6,11 +6,13 @@ async function fetchProtectedData() {
   console.log(data);
 }
 import BaseLayout from "../layouts/BaseLayout.astro";
+import RouteProtection from "../components/RouteProtection.astro";
 import BusquedaeventosS from "../components/BusquedaeventosS";
 ---
 
 <html>
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    <RouteProtection />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"

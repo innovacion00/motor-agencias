@@ -1,27 +1,18 @@
 ---
 import FormularioReserva from '../components/FormularioReserva';
+import RouteProtection from '../components/RouteProtection.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 ---
 <html lang = "es">
 <BaseLayout title="Datos de mi reserva - BookingConnect ">
- 
+ <RouteProtection />
   
   <body>
     <FormularioReserva client:load>  
   </body> 
   
-    <script>
-     import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth();
-    </script>
+   
 </html>
 
 <style>

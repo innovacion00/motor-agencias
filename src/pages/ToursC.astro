@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ToursCs from "../components/ToursCs.jsx";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html lang="es">
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    <RouteProtection />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
       rel="stylesheet"
@@ -29,16 +31,6 @@ import ToursCs from "../components/ToursCs.jsx";
         <ToursCs client:load />
       </body>
 
-      <script>
-        import Cookies from "js-cookie";
-        function checkAuth() {
-          const token = Cookies.get("token");
-
-          if (!token) {
-            window.location.href = "/login";
-          }
-        }
-        checkAuth();
-      </script>
+      
     </html></BaseLayout>
 </html>

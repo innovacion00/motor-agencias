@@ -214,6 +214,24 @@
   background-color: #f5f5f5;
 }
 
+.table-title {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.agencies-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.agencies-table th,
+.agencies-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
 @media (max-width: 768px) {
   .stats-navigation {
     flex-direction: column;

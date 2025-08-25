@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Componentesearch from "../components/Componentesearch";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html lang="es">
+  <RouteProtection />
   <BaseLayout title="Resultados Cartagena - BookingConnect">
     <head>
       <title>Resultados Cartagena de Indias</title>
@@ -21,16 +23,6 @@ import Componentesearch from "../components/Componentesearch";
     <body>
       <Componentesearch client:load />
     </body>
-    <script>
-      import Cookies from "js-cookie";
-      function checkAuth() {
-        const token = Cookies.get("token");
-        if (!token) {
-          window.location.href = "/login";
-        }
-      }
-      checkAuth(); // Llamamos a esta función al cargar la página
-    </script>
   </BaseLayout>
   <style>
     body {
