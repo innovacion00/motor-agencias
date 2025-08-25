@@ -1005,8 +1005,6 @@ import RouteProtection from "../components/RouteProtection.astro";
 
       <!-- Script para manejar la visibilidad de las secciones -->
       <script>
-        import { validarToken } from "../stores/authtoken";
-        validarToken()
         document.addEventListener("DOMContentLoaded", () => {
           const buttons = document.querySelectorAll(".nav button");
           const hideAllSections = () => {
