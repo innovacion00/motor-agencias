@@ -1,443 +1,465 @@
 ---
-import { fetchWithAuth } from "../utils/fetchWithAuth";
-
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
-
+import RouteProtection from "../components/RouteProtection.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import "bootstrap/dist/css/bootstrap.min.css";
-import CurrencySelector from '../components/Cambiardivisas';
 ---
 
-
 <BaseLayout>
-    <html lang = "es">  
-      <link rel="stylesheet" href="public/styles/Swipper.css" />
-      <link
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        rel="stylesheet"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-        rel="stylesheet"
-      />
-      <link rel="icon" href="./public/favicon.png" type="image/x-icon" />
-    </head>
+  <RouteProtection />
+  <html lang="es">
+    <link rel="stylesheet" href="public/styles/Swipper.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="./public/favicon.png" type="image/x-icon" />
+  </html>
 
-    <div class="container">
-        <div class="header">
-          <h1>Descargar Todo el contenido multimedia que necesitas</h1>
-          <p>
-            Presionando el boton que esta en cada tarjeta por hotel, puedes descargar todos los archivos multimedias del hotel mismo
-          </p>
-        </div>
-        <div class="nav">
-          <button class="active">Cartagena de Indias</button>
-          <!-- <button>Monteria</button> -->
-          <button>Bogota</button>
-          <button>Santa Marta</button>
-          <!-- <button>Cartago valle del cauca</button>
+  <div class="container">
+    <div class="header">
+      <h1>Descargar Todo el contenido multimedia que necesitas</h1>
+      <p>
+        Presionando el boton que esta en cada tarjeta por hotel, puedes
+        descargar todos los archivos multimedias del hotel mismo
+      </p>
+    </div>
+    <div class="nav">
+      <button class="active">Cartagena de Indias</button>
+      <!-- <button>Monteria</button> -->
+      <button>Bogota</button>
+      <button>Santa Marta</button>
+      <!-- <button>Cartago valle del cauca</button>
         <button>Mompox</button> -->
+    </div>
+
+    <!-- Sección Cartagena de Indias -->
+    <div id="cartagenadeindias" class="content active">
+      <h2>Cartagena de Indias</h2>
+      <p>
+        Si deseas conocer a Cartagena y disfrutar de su máximo esplendor, no
+        dejes de visitar nuestros hoteles y la calidez de sus colaboradores.
+      </p>
+      <div class="hotels">
+        <div class="hotel">
+          <img
+            alt="Hotel Avexi Suites"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada_avexi.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoavexi.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Avexi Suites</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+            </div>
+
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/HotelAvexi.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
         </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Azuán Suites"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada-azuan.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoazuan.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Azuán Suites</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Azuan.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Abi Inn"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoabi.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Abi Inn</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                alt="icon_pool"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Abi.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Marina Suites"
+            height="200"
+            src="https://www.gehsuites.com/images/portada_marian_suites.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomarina.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Marina Suites</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Marina.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Aixo Suites"
+            height="200"
+            src="https://www.gehsuites.com/images/galeria_11_aixo.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaixo.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Aixo Suites</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                alt="icon_pool"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png"
+                alt="icon_gym"
+                width="24"
+                height="24"
+              />
 
-        <!-- Sección Cartagena de Indias -->
-        <div id="cartagenadeindias" class="content active">
-          <h2>Cartagena de Indias</h2>
-          <p>
-            Si deseas conocer a Cartagena y disfrutar de su máximo esplendor, no
-            dejes de visitar nuestros hoteles y la calidez de sus colaboradores.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
               <img
-                alt="Hotel Avexi Suites"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_avexi.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoavexi.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Avexi Suites</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/HotelAvexi.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
             </div>
-            <div class="hotel">
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Aixo.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Bocagrande Suites"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
               <img
-                alt="Hotel Azuán Suites"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada-azuan.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logobocagrande.png"
+                alt="logo_hotel"
+                class="hotel-logo"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoazuan.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Azuán Suites</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Azuan.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
+              <h3>Hotel Bocagrande Suites</h3>
             </div>
-            <div class="hotel">
+            <div class="icons">
               <img
-                alt="Hotel Abi Inn"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoabi.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Abi Inn</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Abi.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <div class="hotel">
               <img
-                alt="Hotel Marina Suites"
-                height="200"
-                src="https://www.gehsuites.com/images/portada_marian_suites.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomarina.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Marina Suites</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Marina.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <div class="hotel">
               <img
-                alt="Hotel Aixo Suites"
-                height="200"
-                src="https://www.gehsuites.com/images/galeria_11_aixo.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaixo.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Aixo Suites</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png"
-                    alt="icon_gym"
-                    width="24"
-                    height="24"
-                  />
-
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Aixo.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <div class="hotel">
               <img
-                alt="Hotel Bocagrande Suites"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logobocagrande.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Bocagrande Suites</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Bocagrande.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-
-            <!-- AÑADIR HOTEL BOQUILLA EN CASO DE QUE DEVUELVA DISPONIBILIDAD -->
-
-            <div class="hotel">
               <img
-                alt="Hotel Boquilla Suites"
-                height="200"
-                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/BOQUILLA%20SUITES%20LOGO.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Boquilla Suites</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Boquilla.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
             </div>
-            <!-- Repite las tarjetas de hotel para Cartagena aquí -->
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Bocagrande.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
           </div>
         </div>
 
-        <!-- Sección Montería -->
-        <!-- <div id="monteria" class="content active">
+        <!-- AÑADIR HOTEL BOQUILLA EN CASO DE QUE DEVUELVA DISPONIBILIDAD -->
+
+        <div class="hotel">
+          <img
+            alt="Hotel Boquilla Suites"
+            height="200"
+            src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/BOQUILLA%20SUITES%20LOGO.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Boquilla Suites</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Boquilla.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Repite las tarjetas de hotel para Cartagena aquí -->
+      </div>
+    </div>
+
+    <!-- Sección Montería -->
+    <!-- <div id="monteria" class="content active">
         <h2>Montería</h2>
         <p>Conocida como la perla del Sinú ya que se encuentra en las orillas del río Sinú.</p>
         <div class="hotels">
@@ -460,131 +482,139 @@ import CurrencySelector from '../components/Cambiardivisas';
               </div>
             </div>
           </div> -->
-        <!-- Repite las tarjetas de hotel para Montería aquí -->
-        <!-- </div> -->
-        <!-- </div> -->
+    <!-- Repite las tarjetas de hotel para Montería aquí -->
+    <!-- </div> -->
+    <!-- </div> -->
 
-        <!-- Sección Bogotá -->
-        <div id="bogota" class="content active">
-          <h2>Bogotá</h2>
-          <p>
-            Un destino ideal para todo tipo de actividades turísticas,
-            corporativas e históricas.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
+    <!-- Sección Bogotá -->
+    <div id="bogota" class="content active">
+      <h2>Bogotá</h2>
+      <p>
+        Un destino ideal para todo tipo de actividades turísticas, corporativas
+        e históricas.
+      </p>
+      <div class="hotels">
+        <div class="hotel">
+          <img
+            alt="Madisson Inn"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada-madison.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
               <img
-                alt="Madisson Inn"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada-madison.jpg"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomadisson.png"
+                alt="logo_hotel"
+                class="hotel-logo"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomadisson.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Madisson Inn</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png"
-                    alt="icon_gym"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Madisson.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
+              <h3>Madisson Inn</h3>
             </div>
-            <div class="hotel">
+            <div class="icons">
               <img
-                alt="Hotel Windsor House"
-                height="200"
-                src="https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill"
-                width="300"
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
               />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logowindsor.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Windsor House</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Windsor.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png"
+                alt="icon_gym"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
             </div>
-            <!-- <div class="hotel">
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Madisson.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Windsor House"
+            height="200"
+            src="https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logowindsor.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Windsor House</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Windsor.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- <div class="hotel">
               <img
                 alt="Zulita Inn"
                 height="200"
@@ -631,687 +661,636 @@ import CurrencySelector from '../components/Cambiardivisas';
                 </div>
               </div>
             </div>Repite las tarjetas de hotel para Bogotá aquí -->
-          </div>
-        </div>
-
-        <!-- Sección Santa Marta -->
-        <div id="santamarta" class="content active">
-          <h2>Santa Marta</h2>
-          <p>
-            Destino ideal para los amantes de la cultura, la aventura y el
-            ecoturismo.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
-              <img
-                alt="Hotel Rodadero Inn"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logorodadero.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Rodadero Inn</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Rodadero.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <div class="hotel">
-              <img
-                alt="Hotel 1525"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_1525.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logo1525.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel 1525</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%201525.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <div class="hotel">
-              <img
-                alt="Hotel Axis  Inn"
-                height="200"
-                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaxis.jpg"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Axis Inn</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Axis.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <div class="hotel">
-              <img
-                alt="Hotel Sansiraka"
-                height="200"
-                src="https://www.gehsuites.com/multimedia/galerias/galeria20695.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://vipclub.com.co/upload_images/promotion/1552405903LogoSansiraka.jpeg"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Sansiraka</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="icon_playa"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Sansiraka.zip"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <!-- Repite las tarjetas de hotel para Santa Marta aquí -->
-          </div>
-        </div>
-
-        <!-- Sección Cartago, Valle del Cauca -->
-        <div id="cartagovalledelcauca" class="content active">
-          <h2>Cartago, Valle del Cauca</h2>
-          <p>
-            Ubicada en el departamento del Valle del Cauca, conocida como la
-            villa del roble.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
-              <img
-                alt="Hotel Danubio"
-                height="200"
-                src="https://www.gehsuites.com/images/10.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logodanubio.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Danubio</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="/infodanubio"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <!-- Repite las tarjetas de hotel para Cartago aquí -->
-          </div>
-        </div>
-
-        <!-- Sección Mompox -->
-        <div id="mompox" class="content active">
-          <h2>Mompox</h2>
-          <p>
-            Ubicada en el departamento de Bolívar, es considerada una magna Isla
-            rodeada por el Rio Magdalena.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
-              <img
-                alt="Hotel Jardines Evans"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_jardines_eva.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logojardines.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Jardines Evans</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="/infojardines"> <button>Descargar contenido</button></a>
-                </div>
-              </div>
-            </div>
-            <!-- Repite las tarjetas de hotel para Mompox aquí -->
-          </div>
-        </div>
       </div>
+    </div>
 
-      <!-- Script para manejar la visibilidad de las secciones -->
-      <script>
-        function checkAuth() {
-          const token = localStorage.getItem("authToken");
-          if (!token) {
-            window.location.href = "/login"; // Redirige al login si no hay token
-          }
-        }
+    <!-- Sección Santa Marta -->
+    <div id="santamarta" class="content active">
+      <h2>Santa Marta</h2>
+      <p>
+        Destino ideal para los amantes de la cultura, la aventura y el
+        ecoturismo.
+      </p>
+      <div class="hotels">
+        <div class="hotel">
+          <img
+            alt="Hotel Rodadero Inn"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada_rodadero_1.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logorodadero.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Rodadero Inn</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Rodadero.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
 
-        checkAuth(); // Llamamos a esta función al cargar la página
-        document.addEventListener("DOMContentLoaded", () => {
-          const buttons = document.querySelectorAll(".nav button");
-          const hideAllSections = () => {
-            const sections = document.querySelectorAll(".content");
+        <div class="hotel">
+          <img
+            alt="Hotel Axis  Inn"
+            height="200"
+            src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaxis.jpg"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Axis Inn</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                alt="icon_pool"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Axis.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hotel">
+          <img
+            alt="Hotel Sansiraka"
+            height="200"
+            src="https://www.gehsuites.com/multimedia/galerias/galeria20695.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://vipclub.com.co/upload_images/promotion/1552405903LogoSansiraka.jpeg"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Sansiraka</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
+                alt="icon_playa"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                alt="icon_pool"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Multimedia/Hotel%20Sansiraka.zip"
+              >
+                <button>Descargar contenido</button></a
+              >
+            </div>
+          </div>
+        </div>
+        <!-- Repite las tarjetas de hotel para Santa Marta aquí -->
+      </div>
+    </div>
 
-            sections.forEach((section) => {
-              (section as HTMLElement).style.display = "none";
-            });
-          };
+    <!-- Sección Cartago, Valle del Cauca -->
+    <div id="cartagovalledelcauca" class="content active">
+      <h2>Cartago, Valle del Cauca</h2>
+      <p>
+        Ubicada en el departamento del Valle del Cauca, conocida como la villa
+        del roble.
+      </p>
+      <div class="hotels">
+        <div class="hotel">
+          <img
+            alt="Hotel Danubio"
+            height="200"
+            src="https://www.gehsuites.com/images/10.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logodanubio.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Danubio</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                alt="icon_pool"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                alt="icon_parking"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                alt="icon_wind"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a href="/infodanubio"> <button>Descargar contenido</button></a>
+            </div>
+          </div>
+        </div>
+        <!-- Repite las tarjetas de hotel para Cartago aquí -->
+      </div>
+    </div>
 
-          const showSection = (sectionId) => {
-            const section = document.getElementById(sectionId);
-            if (section) {
-              (section as HTMLElement).style.display = "block";
-            }
-          };
+    <!-- Sección Mompox -->
+    <div id="mompox" class="content active">
+      <h2>Mompox</h2>
+      <p>
+        Ubicada en el departamento de Bolívar, es considerada una magna Isla
+        rodeada por el Rio Magdalena.
+      </p>
+      <div class="hotels">
+        <div class="hotel">
+          <img
+            alt="Hotel Jardines Evans"
+            height="200"
+            src="https://www.gehsuites.com/images/fachada_jardines_eva.jpg"
+            width="300"
+          />
+          <div class="info">
+            <div class="hotel-header">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logojardines.png"
+                alt="logo_hotel"
+                class="hotel-logo"
+              />
+              <h3>Hotel Jardines Evans</h3>
+            </div>
+            <div class="icons">
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                alt="icon_coffee"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
+                alt="icon_buffet"
+                width="24"
+                height="24"
+              />
+              <img
+                src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                alt="icon_van"
+                width="24"
+                height="24"
+              />
+            </div>
+            <div class="button">
+              <a href="/infojardines"> <button>Descargar contenido</button></a>
+            </div>
+          </div>
+        </div>
+        <!-- Repite las tarjetas de hotel para Mompox aquí -->
+      </div>
+    </div>
+  </div>
 
-          buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-              hideAllSections();
+  <!-- Script para manejar la visibilidad de las secciones -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const buttons = document.querySelectorAll(".nav button");
+      const hideAllSections = () => {
+        const sections = document.querySelectorAll(".content");
 
-              buttons.forEach((btn) => btn.classList.remove("active"));
-              button.classList.add("active");
-
-              const sectionId = button.textContent
-                .trim()
-                .toLowerCase()
-                .replace(/\s+/g, "");
-              showSection(sectionId);
-            });
-          });
-
-          // Inicializar mostrando la primera sección
-          hideAllSections();
-          showSection("cartagenadeindias");
+        sections.forEach((section) => {
+          (section as HTMLElement).style.display = "none";
         });
-      </script>
-    </body>
-  </html>
+      };
 
-  <style>
-    body {
-      font-family: "Roboto", sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-    }
+      const showSection = (sectionId) => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          (section as HTMLElement).style.display = "block";
+        }
+      };
 
-    .container {
-      max-width: 1200px;
-      background-color: #e6e4e4;
-      margin: 0 auto;
-      padding: 20px;
-      border-radius: 10px;
-    }
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          hideAllSections();
 
-    .header {
-      text-align: center;
-      color: #000;
-      padding: 20px 0;
-    }
+          buttons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
 
-    .header h1 {
-      margin: 0;
-      font-size: 30px;
-      color: #1c3d5a;
-    }
+          const sectionId = button.textContent
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "");
+          showSection(sectionId);
+        });
+      });
 
-    .header p {
-      margin: 5px 0 20px;
-      font-size: 15px;
-      color: #1c3d5a;
-    }
+      // Inicializar mostrando la primera sección
+      hideAllSections();
+      showSection("cartagenadeindias");
+    });
+  </script>
+</BaseLayout>
 
-    .nav {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
+<style>
+  body {
+    font-family: "Roboto", sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+  }
 
-    .nav button {
-      color: #ffffff;
-      background-color: #1c3d5a;
-      border: #26537b;
-      border-radius: 10px;
-      border-bottom: #924f23;
-      margin-right: 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      position: static;
-      font-size: 14px;
-      transition:
-        background-color 0.3s,
-        border-color 0.3s;
-      color: #ffffff;
-      font-weight: 800;
-    }
+  .container {
+    max-width: 1200px;
+    background-color: #e6e4e4;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+  }
 
-    .nav button.active {
-      color: #c4c4c4f6;
-      position: static;
-    }
-    .nav button:hover {
-      color: #979797f6;
-      position: static;
-    }
+  .header {
+    text-align: center;
+    color: #000;
+    padding: 20px 0;
+  }
 
-    .content {
-      display: none;
-      /* Oculta todas las secciones por defecto */
-    }
+  .header h1 {
+    margin: 0;
+    font-size: 30px;
+    color: #1c3d5a;
+  }
 
-    .content.active {
-      display: block;
-      /* Muestra la sección activa */
-      background-color: #f4f4f4;
-      padding-top: 50px;
-      padding-bottom: 50px;
-    }
+  .header p {
+    margin: 5px 0 20px;
+    font-size: 15px;
+    color: #1c3d5a;
+  }
 
+  .nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .nav button {
+    color: #ffffff;
+    background-color: #1c3d5a;
+    border: #26537b;
+    border-radius: 10px;
+    border-bottom: #924f23;
+    margin-right: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: static;
+    font-size: 14px;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+    color: #ffffff;
+    font-weight: 800;
+  }
+
+  .nav button.active {
+    color: #c4c4c4f6;
+    position: static;
+  }
+  .nav button:hover {
+    color: #979797f6;
+    position: static;
+  }
+
+  .content {
+    display: none;
+    /* Oculta todas las secciones por defecto */
+  }
+
+  .content.active {
+    display: block;
+    /* Muestra la sección activa */
+    background-color: #f4f4f4;
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .content h2 {
+    text-align: center;
+    background-color: #1c3d5a;
+    color: #ffffff;
+    padding: 10px;
+    margin: 0 435px 20px;
+    border-radius: 4px;
+    width: 29%;
+    height: 80;
+  }
+
+  .content p {
+    text-align: center;
+    margin: 0px 29px 20px;
+    font-size: 16px;
+    color: #1c3d5a;
+    padding: 20px;
+    background-color: #ffffff;
+  }
+
+  .hotels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .hotel {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: static;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  .hotel:hover {
+    transform: translateY(-5px);
+  }
+
+  .hotel img {
+    width: 100%;
+    height: auto;
+  }
+
+  .hotel .info {
+    padding: 10px;
+  }
+  .hotel .hotel-header {
+    display: flex;
+    align-items: center; /* Alinea el logo y el nombre del hotel verticalmente */
+    margin-bottom: 10px; /* Añade espacio debajo del nombre del hotel */
+  }
+  .hotel .hotel-logo {
+    width: 50px; /* Ajusta el tamaño del logo */
+    height: auto; /* Mantén la proporción del logo */
+    margin-right: 15px; /* Espacio entre el logo y el nombre del hotel */
+  }
+
+  .hotel .info h3 {
+    font-weight: bold;
+    margin: 0;
+    font-size: 18px;
+    color: #1c3d5a;
+  }
+  .hotel .icons {
+    display: flex;
+    gap: 4px; /* Espacio entre los íconos */
+    margin-bottom: 15px; /* Espacio debajo de los íconos */
+  }
+
+  .hotel .info .icons {
+    padding: 10px;
+    margin: 10px 0;
+    color: #1c3d5a;
+  }
+
+  .hotel .info .button {
+    font-family: "Roboto";
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  .hotel .info .button button {
+    background-color: #ffffff;
+    border-style: solid;
+    border-width: 3px;
+    color: #26547b;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    border-color: #1c3d5a;
+    width: 280px;
+  }
+
+  .hotel .info .button button:hover {
+    background-color: #a8a8a8c2;
+  }
+
+  .discount {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #f5d7b4;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 768px) {
     .content h2 {
-      text-align: center;
-      background-color: #1c3d5a;
-      color: #ffffff;
-      padding: 10px;
-      margin: 0 435px 20px;
-      border-radius: 4px;
-      width: 29%;
-      height: 80;
-    }
-
-    .content p {
-      text-align: center;
-      margin: 0px 29px 20px;
-      font-size: 16px;
-      color: #1c3d5a;
-      padding: 20px;
-      background-color: #ffffff;
-    }
-
-    .hotels {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
+      margin: 0 20px 20px;
     }
 
     .hotel {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      position: static;
-      border-radius: 8px;
-      overflow: hidden;
-      transition: transform 0.3s;
-    }
-
-    .hotel:hover {
-      transform: translateY(-5px);
-    }
-
-    .hotel img {
       width: 100%;
-      height: auto;
     }
 
-    .hotel .info {
-      padding: 10px;
-    }
-    .hotel .hotel-header {
-      display: flex;
-      align-items: center; /* Alinea el logo y el nombre del hotel verticalmente */
-      margin-bottom: 10px; /* Añade espacio debajo del nombre del hotel */
-    }
-    .hotel .hotel-logo {
-      width: 50px; /* Ajusta el tamaño del logo */
-      height: auto; /* Mantén la proporción del logo */
-      margin-right: 15px; /* Espacio entre el logo y el nombre del hotel */
-    }
-
-    .hotel .info h3 {
-      font-weight: bold;
-      margin: 0;
-      font-size: 18px;
-      color: #1c3d5a;
-    }
-    .hotel .icons {
-      display: flex;
-      gap: 4px; /* Espacio entre los íconos */
-      margin-bottom: 15px; /* Espacio debajo de los íconos */
-    }
-
-    .hotel .info .icons {
-      padding: 10px;
-      margin: 10px 0;
-      color: #1c3d5a;
-    }
-
-    .hotel .info .button {
-      font-family: "Roboto";
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .hotel .info .button button {
-      background-color: #ffffff;
-      border-style: solid;
-      border-width: 3px;
-      color: #26547b;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: 4px;
-      transition: background-color 0.3s;
-      border-color: #1c3d5a;
-      width: 280px;
-    }
-
-    .hotel .info .button button:hover {
-      background-color: #a8a8a8c2;
-    }
-
-    .discount {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #f5d7b4;
-      padding: 5px 10px;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 4px;
-    }
-
-    @media (max-width: 768px) {
-      .content h2 {
-        margin: 0 20px 20px;
-      }
-
-      .hotel {
-        width: 100%;
-      }
-
-      .nav {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .nav button {
-        width: 100%;
-        max-width: 300px;
-      }
-    }
-
-    .search-form-wrapper {
-      background-color: #f29c38;
-      padding: 20px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .search-form-container {
-      display: flex;
+    .nav {
       flex-direction: column;
-      gap: 20px;
-      align-items: flex-start;
+      align-items: center;
     }
 
-    .dropdown select,
-    .people-counter input,
-    .date-picker input {
-      width: max-content;
-      padding-bottom: 5px;
-      padding-top: 5px;
-      padding-left: 4px;
-      padding-right: 4px;
-      border-radius: 4px;
-      background-color: white;
-      font-size: 16px;
-      color: #1c3d5a;
+    .nav button {
+      width: 100%;
+      max-width: 300px;
     }
+  }
 
-    .date-picker {
-      position: relative;
-    }
+  .search-form-wrapper {
+    background-color: #f29c38;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
 
-    .date-range-picker {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      z-index: 1000px;
-      background-color: white;
-      box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
-      border-radius: 8px;
-      padding: 50px;
-    }
+  .search-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
 
-    .icons img {
-      width: 26px;
-      height: 26px;
-      margin-right: 10px;
-    }
-  </style>
+  .dropdown select,
+  .people-counter input,
+  .date-picker input {
+    width: max-content;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 16px;
+    color: #1c3d5a;
+  }
 
-    </html>
+  .date-picker {
+    position: relative;
+  }
+
+  .date-range-picker {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000px;
+    background-color: white;
+    box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
+    border-radius: 8px;
+    padding: 50px;
+  }
+
+  .icons img {
+    width: 26px;
+    height: 26px;
+    margin-right: 10px;
+  }
+</style>

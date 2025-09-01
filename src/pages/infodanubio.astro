@@ -1,173 +1,241 @@
 ---
-import { fetchWithAuth } from '../utils/fetchWithAuth';
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 async function fetchProtectedData() {
   const data = await fetchWithAuth("URL_PROTEGIDA");
   console.log(data);
 }
-import BaseLayout from "../layouts/BaseLayout.astro"
-import DropdownSearch from "../components/DropdownSearch"
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DropdownSearch from "../components/DropdownSearch";
 ---
 
-<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
-</html>
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS" />
 
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  rel="stylesheet"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+  rel="stylesheet"
+/>
 
-  
+<body>
+  <div class="search-form-wrapper">
+    <DropdownSearch client:visible />
+  </div>
 
-  <body>
-    <div class="search-form-wrapper">
-      <DropdownSearch client:visible />
+  <div class="container">
+    <!-- Menú de botones General y Habitaciones -->
+    <div class="nav-tabs">
+      <button id="generalBtn" class="active">General</button>
+      <!-- <button id="roomsBtn">Habitaciones</button>-->
     </div>
 
-    <div class="container">
-      <!-- Menú de botones General y Habitaciones -->
-      <div class="nav-tabs">
-        <button id="generalBtn" class="active">General</button>
-       <!-- <button id="roomsBtn">Habitaciones</button>--> 
-      </div>
+    <!-- Sección General -->
 
-      <!-- Sección General -->
-
-      <div id="generalSection" class="section active">
-        <div class="gallery">
-          <img alt="Hotel lobby with reception desk and seating area" class="main-image" 
-            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/400623142.jpg?k=765aeb08b0623378dd0918ec299df7dc25266afb5b30ade37a2decd1ed71cd9c&o=&hp=1"  />
-          <div class="side-images">
-            <img alt="Hotel dining area with tables and chairs" height="150"
-              src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/400622593.jpg?k=a052643af88e5ff473b91a935baaa0b4b23eddabc104f7c5a8dad6e1e967e3fa&o=&hp=1" width="250" />
-            <img alt="Close-up of a breakfast dish with eggs and toast" height="150"
-              src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/400623393.jpg?k=3fd8a07ed9528f5764801c0df1670b7a4d75ea6e95321218688bfd23a6a4ea82&o=&hp=1" width="250" />
-          </div>
+    <div id="generalSection" class="section active">
+      <div class="gallery">
+        <img
+          alt="Hotel lobby with reception desk and seating area"
+          class="main-image"
+          src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/400623142.jpg?k=765aeb08b0623378dd0918ec299df7dc25266afb5b30ade37a2decd1ed71cd9c&o=&hp=1"
+        />
+        <div class="side-images">
+          <img
+            alt="Hotel dining area with tables and chairs"
+            height="150"
+            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/400622593.jpg?k=a052643af88e5ff473b91a935baaa0b4b23eddabc104f7c5a8dad6e1e967e3fa&o=&hp=1"
+            width="250"
+          />
+          <img
+            alt="Close-up of a breakfast dish with eggs and toast"
+            height="150"
+            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/400623393.jpg?k=3fd8a07ed9528f5764801c0df1670b7a4d75ea6e95321218688bfd23a6a4ea82&o=&hp=1"
+            width="250"
+          />
         </div>
-        <h2>
-          Hotel Campestre El Danubio
-        </h2>
-        <br>
-        <p>
-            Danubio es un hotel campestre ubicado a 6 km de la ciudad de Cartago, un sitio ideal para descansar, rodeado de una majestuosa naturaleza, amplias zonas verdes y una impresionante casona vallecaucana, 
-            que les abre las puertas con un personal amable para brindarles la mejor atención a todo su grupo familiar o corporativo.
-          <br><br>
-          El Hotel campestre El Danubio es el lugar ideal para realizar sus reuniones de trabajo empresariales o eventos sociales; nuestros amplios salones de conferencias y reuniones esperan por usted en un ambiente natural por excelencia que nos convierten en líderes del mejor servicio de la región; con opciones adicionales para su salud y descanso; espacio para la tertulia, meditación, y para disfrutar de un hermoso atardecer.
-        <br>
-        <hr>
+      </div>
+      <h2>Hotel Campestre El Danubio</h2>
+      <br />
+      <p>
+        Danubio es un hotel campestre ubicado a 6 km de la ciudad de Cartago, un
+        sitio ideal para descansar, rodeado de una majestuosa naturaleza,
+        amplias zonas verdes y una impresionante casona vallecaucana, que les
+        abre las puertas con un personal amable para brindarles la mejor
+        atención a todo su grupo familiar o corporativo.
+        <br /><br />
+        El Hotel campestre El Danubio es el lugar ideal para realizar sus reuniones
+        de trabajo empresariales o eventos sociales; nuestros amplios salones de
+        conferencias y reuniones esperan por usted en un ambiente natural por excelencia
+        que nos convierten en líderes del mejor servicio de la región; con opciones
+        adicionales para su salud y descanso; espacio para la tertulia, meditación,
+        y para disfrutar de un hermoso atardecer.
+        <br />
+        <hr />
         <div class="services">
-          <h3>
-            Servicios destacados
-          </h3>
+          <h3>Servicios destacados</h3>
           <div class="service-list">
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                  alt="check icon"
+                />
                 Estación de agua y café (incluido)
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                  alt="check icon"
+                />
                 Transporte del aereopuerto al hotel
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                  alt="check icon"
+                />
                 Aire acondicionado
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                  alt="check icon"
+                />
                 Piscina
               </span>
             </div>
             <div class="service-item">
-                <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png" alt="check icon">
-                  Zona de Estacionamiento
-                </span>
-              </div>
-              <div class="service-item">
-                <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png" alt="check icon"> 
-                  Pet friendly(maximo 8kg. 1 por habitacion)                                                      
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                  alt="check icon"
+                />
+                Zona de Estacionamiento
               </span>
-              </div> 
+            </div>
+            <div class="service-item">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+                  alt="check icon"
+                />
+                Pet friendly(maximo 8kg. 1 por habitacion)
+              </span>
+            </div>
           </div>
         </div>
         <div class="servicess">
-
-          <br>
-          <hr>
-          <br>
-          <h3>
-            Servicios generales
-          </h3>
+          <br />
+          <hr />
+          <br />
+          <h3>Servicios generales</h3>
           <div class="service-list">
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
                 Cancha de Fútbol con medidas profesionales
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Recepción 24 horas
-
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Wifi gratuito
-
               </span>
-
             </div>
 
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Servicio diario de limpieza
-
               </span>
-
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Estacionamiento gratuito (Sujeto a disponibilidad)
-
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Wifi en todas las areas del hotel
-
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Servicio de despertador
-
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Aire acondicionado
-
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Servicio de guarda equipaje
-
               </span>
             </div>
             <div class="service-item">
-              <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png" alt="check icon">
+              <span
+                ><img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                  alt="check icon"
+                />
 
                 Restaurante
-
               </span>
             </div>
           </div>
@@ -175,451 +243,420 @@ import DropdownSearch from "../components/DropdownSearch"
         <!-- Botones en la parte inferior -->
         <div class="info-box">
           <div class="contact-info">
-            <i class="fas fa-phone-alt">
-            </i>
+            <i class="fas fa-phone-alt"> </i>
             +57 333 602 50 21
-            <i class="fas fa-map-marker-alt" style="margin-left: 20px;">
-            </i>
+            <i class="fas fa-map-marker-alt" style="margin-left: 20px;"> </i>
             Cl. 36 #1c - 24, centro, Montería, Córdoba
-            <a href="https://www.google.com/maps/place/Hotel+Sabana+del+Sin%C3%BA/@8.7612577,-75.8854817,17z/data=!4m10!3m9!1s0x8e5a2f715bcdceff:0x5359dc00e2fe10da!5m3!1s2024-12-01!4m1!1i2!8m2!3d8.7612577!4d-75.8829068!16s%2Fg%2F11l5q2hg91?entry=ttu&g_ep=EgoyMDI0MDkyMy4wIKXMDSoASAFQAw%3D%3D"
-              target="_blank" rel="noopener noreferrer">Ver mapa</a>
-          </div>
-         
+            <a
+              href="https://www.google.com/maps/place/Hotel+Sabana+del+Sin%C3%BA/@8.7612577,-75.8854817,17z/data=!4m10!3m9!1s0x8e5a2f715bcdceff:0x5359dc00e2fe10da!5m3!1s2024-12-01!4m1!1i2!8m2!3d8.7612577!4d-75.8829068!16s%2Fg%2F11l5q2hg91?entry=ttu&g_ep=EgoyMDI0MDkyMy4wIKXMDSoASAFQAw%3D%3D"
+              target="_blank"
+              rel="noopener noreferrer">Ver mapa</a
+            >
           </div>
         </div>
-      </div>
-
-      <br>
-      </div>
-
-
+      </p>
     </div>
 
-    <script>
-      function checkAuth(){
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          window.location.href = "/";
-        }
-      }
-      checkAuth();
-      // Seleccionamos los botones y las secciones
-      const generalBtn = document.getElementById('generalBtn');
-      const roomsBtn = document.getElementById('roomsBtn');
-      const generalSection = document.getElementById('generalSection');
-      const roomsSection = document.getElementById('roomsSection');
-
-      // Funciones para mostrar/ocultar secciones
-      generalBtn.addEventListener('click', () => {
-        generalSection.classList.add('active');
-        roomsSection.classList.remove('active');
-        generalBtn.classList.add('active');
-        roomsBtn.classList.remove('active');
-      });
-
-      roomsBtn.addEventListener('click', () => {
-        roomsSection.classList.add('active');
-        generalSection.classList.remove('active');
-        roomsBtn.classList.add('active');
-        generalBtn.classList.remove('active');
-      });
-    </script>
-  </body>
-
-
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #fff;
-      color: #1C3D5A;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container {
-      max-width: 65%;
-      margin: 0 auto;
-      padding: 20px 0;
-
-    }
-
-    .tabs {
-      display: flex;
-      justify-content: flex-start;
-      margin-bottom: 20px;
-    }
-
-
-    /* Menú de navegación */
-    .nav-tabs {
-      display: flex;
-
-      margin-bottom: 20px;
-    }
-
-    .nav-tabs button {
-      padding: 10px 20px;
-      margin-right: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #1C3D5A;
-      border-bottom: 2px solid transparent;
-      transition: border-bottom 0.1s ease;
-    }
-
-    .nav-tabs button.active {
-      border-bottom: 4px solid #8B4513;
-      font-weight: bold;
-    }
-
-    .nav-tabs button:hover {
-      border-bottom: 2px solid #8B4513;
-    }
-
-    /* Secciones ocultables */
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .gallery {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    .main-image {
-      width: 60%;
-      height: auto;
-      padding-bottom: 20px;
-
-    }
-
-    .side-images {
-      width: 38%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
-    }
-
-    .side-images img {
-      width: 100%;
-      height: auto;
-      margin-bottom: 10px;
-      border-radius: 5px;
-
-    }
-
-    .description {
-      margin-top: 20px;
-
-
-    }
-
-    .description h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-
-    }
-
-    .description p {
-      font-size: 16px;
-      line-height: 1.5;
-
-
-    }
-
-    .services {
-      margin-top: 20px;
-
-    }
-
-    .services h3 {
-      font-size: 20px;
-      margin-bottom: 10px;
-    }
-
-    .services .service-list {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .services .service-item {
-      width: 25%;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-    }
-
-    .services .service-item i {
-      margin-right: 10px;
-    }
-    .services .service-item img {
-      margin-right: 10px;
-      height: 25px;
-      width: 25px;
-    }
-
-    .footer {
-      margin-top: 20px;
-      padding: 20px 0;
-      border-top: 1px solid #444;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer .contact-info {
-      display: flex;
-      align-items: center;
-    }
-
-    .footer .contact-info i {
-      margin-right: 10px;
-    }
-
-    .footer .buttons {
-      display: flex;
-    }
-
-    .footer .buttons button {
-      background-color: #fff;
-      color: #1C3D5A;
-      padding: 10px 20px;
-      margin-left: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .info-box {
-      background-color: #f0f0f0;
-      padding: 20px;
-      margin-top: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 5px;
-    }
-
-    .info-box .contact-info {
-      display: flex;
-      align-items: center;
-    }
-
-    .info-box .contact-info i {
-      margin-right: 10px;
-    }
-
-    .info-box .contact-info a {
-      color: #1C3D5A;
-      text-decoration: none;
-      margin-left: 10px;
-    }
-
-    .info-box .buttons {
-      display: flex;
-    }
-
-    .info-box .buttons button {
-      background-color: #1C3D5A;
-      color: #fff;
-      padding: 10px 20px;
-      margin-left: 10px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-
-    .highlighted-services,
-    .general-services {
-      margin-bottom: 20px;
-    }
-
-    .highlighted-services img {
-      width: 50px;
-      margin-right: 10px;
-    }
-
-    .highlighted-services {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .general-services ul {
-      list-style-type: none;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .general-services ul li {
-      width: 45%;
-      margin-bottom: 10px;
-    }
-
-    /* Botones en la parte inferior */
-    .bottom-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 30px;
-    }
-
-    .bottom-buttons button {
-      background-color: #007BFF;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .bottom-buttons button:hover {
-      background-color: #0056b3;
-    }
-
-    .bottom-buttons a {
-      text-decoration: none;
-      color: white;
-    }
-
-
-
-
-    .search-form-wrapper {
-      background-color: #1C3D5A;
-      padding: 20px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .dropdownSearchContainer {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background-color: #F29C38;
-      /* Cambia el color del fondo */
-      border-radius: 8px;
-    }
-
-    hr {
-      height: auto;
-      width: 100%;
-      opacity: 0.5;
-
-    }
-
-    .room h3 {
-      padding: 20px;
-    }
-
-
-
-    .room p {
-      padding-left: 20px;
-      padding-bottom: 8px;
-      padding-top: 8px
-    }
-
-    .room {
-      margin-bottom: 30px;
-      border: 1px solid #eaeaea;
-      border-radius: 10px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      background-color: #f5f5f5;
-    }
-
-    .room-header {
-      display: flex;
-    }
-
-    .room-gallery {
-      width: 60%;
-    }
-
-    .room-main-image-container {
-      margin-bottom: 10px;
-      padding-right: 20px;
-      display: flex;
-    }
-
-    .room-main-image {
-      width: 100%;
-      border-radius: 1px;
-
-    }
-
-    .room-small-images-container {
-      display: flex;
-      justify-content: space-between;
-      padding-right: 20px;
-    }
-
-    .room-small-image {
-      width: 49%;
-      border-radius: 1px;
-    }
-
-    .room-details {
-      width: 55%;
-    }
-
-    .room-icons {
-      padding-left: 20px;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      font-size: 16px;
-    }
-
-    .room-icons span {
-      display: flex;
-      align-items: center;
-    }
-
-    .room h4 {
-      padding-left: 20px;
-    }
-
-    .room-services ul {
-      list-style-type: none;
-      padding-left: 20px;
-      padding-top: 13px;
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    .room-services ul li {
-      padding-left: 20px;
-      padding-top: 20px;
-      width: 45%;
-      margin-bottom: 5px;
-    }
-
-    .availability-button {
-      margin-top: 10px;
-      padding: 20px 20px;
-      background-color: #033f97;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    
-  </style>
+    <br />
+  </div>
+</body>
+
+<script>
+  
+  // Seleccionamos los botones y las secciones
+  const generalBtn = document.getElementById("generalBtn");
+  const roomsBtn = document.getElementById("roomsBtn");
+  const generalSection = document.getElementById("generalSection");
+  const roomsSection = document.getElementById("roomsSection");
+
+  // Funciones para mostrar/ocultar secciones
+  generalBtn.addEventListener("click", () => {
+    generalSection.classList.add("active");
+    roomsSection.classList.remove("active");
+    generalBtn.classList.add("active");
+    roomsBtn.classList.remove("active");
+  });
+
+  roomsBtn.addEventListener("click", () => {
+    roomsSection.classList.add("active");
+    generalSection.classList.remove("active");
+    roomsBtn.classList.add("active");
+    generalBtn.classList.remove("active");
+  });
+</script>
+
+<style>
+  body {
+    font-family: "Roboto", sans-serif;
+    background-color: #fff;
+    color: #1c3d5a;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 65%;
+    margin: 0 auto;
+    padding: 20px 0;
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+  }
+
+  /* Menú de navegación */
+  .nav-tabs {
+    display: flex;
+
+    margin-bottom: 20px;
+  }
+
+  .nav-tabs button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #1c3d5a;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.1s ease;
+  }
+
+  .nav-tabs button.active {
+    border-bottom: 4px solid #8b4513;
+    font-weight: bold;
+  }
+
+  .nav-tabs button:hover {
+    border-bottom: 2px solid #8b4513;
+  }
+
+  /* Secciones ocultables */
+  .section {
+    display: none;
+  }
+
+  .section.active {
+    display: block;
+  }
+
+  .gallery {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .main-image {
+    width: 60%;
+    height: auto;
+    padding-bottom: 20px;
+  }
+
+  .side-images {
+    width: 38%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .side-images img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+
+  .description {
+    margin-top: 20px;
+  }
+
+  .description h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .description p {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .services {
+    margin-top: 20px;
+  }
+
+  .services h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .services .service-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .services .service-item {
+    width: 25%;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .services .service-item i {
+    margin-right: 10px;
+  }
+  .services .service-item img {
+    margin-right: 10px;
+    height: 25px;
+    width: 25px;
+  }
+
+  .footer {
+    margin-top: 20px;
+    padding: 20px 0;
+    border-top: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer .contact-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .footer .contact-info i {
+    margin-right: 10px;
+  }
+
+  .footer .buttons {
+    display: flex;
+  }
+
+  .footer .buttons button {
+    background-color: #fff;
+    color: #1c3d5a;
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .info-box {
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+  }
+
+  .info-box .contact-info {
+    display: flex;
+    align-items: center;
+  }
+
+  .info-box .contact-info i {
+    margin-right: 10px;
+  }
+
+  .info-box .contact-info a {
+    color: #1c3d5a;
+    text-decoration: none;
+    margin-left: 10px;
+  }
+
+  .info-box .buttons {
+    display: flex;
+  }
+
+  .info-box .buttons button {
+    background-color: #1c3d5a;
+    color: #fff;
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .highlighted-services,
+  .general-services {
+    margin-bottom: 20px;
+  }
+
+  .highlighted-services img {
+    width: 50px;
+    margin-right: 10px;
+  }
+
+  .highlighted-services {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .general-services ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .general-services ul li {
+    width: 45%;
+    margin-bottom: 10px;
+  }
+
+  /* Botones en la parte inferior */
+  .bottom-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+
+  .bottom-buttons button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .bottom-buttons button:hover {
+    background-color: #0056b3;
+  }
+
+  .bottom-buttons a {
+    text-decoration: none;
+    color: white;
+  }
+
+  .search-form-wrapper {
+    background-color: #1c3d5a;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .dropdownSearchContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: #f29c38;
+    /* Cambia el color del fondo */
+    border-radius: 8px;
+  }
+
+  hr {
+    height: auto;
+    width: 100%;
+    opacity: 0.5;
+  }
+
+  .room h3 {
+    padding: 20px;
+  }
+
+  .room p {
+    padding-left: 20px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+
+  .room {
+    margin-bottom: 30px;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #f5f5f5;
+  }
+
+  .room-header {
+    display: flex;
+  }
+
+  .room-gallery {
+    width: 60%;
+  }
+
+  .room-main-image-container {
+    margin-bottom: 10px;
+    padding-right: 20px;
+    display: flex;
+  }
+
+  .room-main-image {
+    width: 100%;
+    border-radius: 1px;
+  }
+
+  .room-small-images-container {
+    display: flex;
+    justify-content: space-between;
+    padding-right: 20px;
+  }
+
+  .room-small-image {
+    width: 49%;
+    border-radius: 1px;
+  }
+
+  .room-details {
+    width: 55%;
+  }
+
+  .room-icons {
+    padding-left: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+
+  .room-icons span {
+    display: flex;
+    align-items: center;
+  }
+
+  .room h4 {
+    padding-left: 20px;
+  }
+
+  .room-services ul {
+    list-style-type: none;
+    padding-left: 20px;
+    padding-top: 13px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .room-services ul li {
+    padding-left: 20px;
+    padding-top: 20px;
+    width: 45%;
+    margin-bottom: 5px;
+  }
+
+  .availability-button {
+    margin-top: 10px;
+    padding: 20px 20px;
+    background-color: #033f97;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>

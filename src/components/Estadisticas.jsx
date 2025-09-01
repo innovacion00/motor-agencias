@@ -1,13 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este archivo CSS con los estilos adecuados
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
+import "./styles/Estadisticas.css"; // Asegúrate de tener este archivo CSS con los estilos adecuados
 import { getReservas, reservasNano } from "../stores/disponibilidad";
-import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryPie } from "victory";
+import {
+  VictoryBar,
+  VictoryChart,
+  VictoryAxis,
+  VictoryTheme,
+  VictoryPie,
+  VictoryLabel,
+} from "victory";
 import { useHover } from "@uidotdev/usehooks";
 
 import Swal from "sweetalert2";
 
 const Estadisticas = () => {
-  const [reservasPorHotel, setReservasPorHotel] = useState()
+  const [reservasPorHotel, setReservasPorHotel] = useState();
   const [reservasPorMes, setReservasPorMes] = useState([]);
   const [reservasPorCiudad, setReservasPorCiudad] = useState();
   const [reservasCanceladas, setReservasCanceladas] = useState();
@@ -18,7 +27,7 @@ const Estadisticas = () => {
   const [availableAmount, setAvailableAmount] = useState(null);
   const [profileImage, setprofileImage] = useState(
     userData?.imageUrl ||
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png"
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png"
   );
   const [ref, hovering] = useHover();
   const fileInputRef = useRef(null);
@@ -27,8 +36,20 @@ const Estadisticas = () => {
     { month: "Enero", reservas: 30 },
     { month: "Febrero", reservas: 45 },
     { month: "Marzo", reservas: 50 },
-   
   ];
+  const [agenciasRegistradas, setAgenciasRegistradas] = useState(0);
+  const [estadosPago, setEstadosPago] = useState([]);
+  const [agenciasNuevas, setAgenciasNuevas] = useState(0);
+  const [reservasCompletadas24h, setReservasCompletadas24h] = useState(0);
+  const [reservasUltimas24h, setReservasUltimas24h] = useState(0);
+  const [promedioHuespedes, setPromedioHuespedes] = useState(0);
+  const [tasaConversion, setTasaConversion] = useState(0);
+  const [promedioEstadia, setPromedioEstadia] = useState(0);
+  const [bookingWindow, setBookingWindow] = useState(0);
+  const [reservasPorAgencia, setReservasPorAgencia] = useState([]);
+  const [reservasUltimos30Dias, setReservasUltimos30Dias] = useState([]); // Nuevo estado para reservas de últimos 30 días
+  const [reservasAprobadas, setReservasAprobadas] = useState([]);
+  const [reservasCanceladasPorAgencia, setReservasCanceladasPorAgencia] = useState([]);
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -46,21 +67,31 @@ const Estadisticas = () => {
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
       const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000); // Resta 24h
-  
+
       // Filtrar reservas canceladas en las últimas 24h
       const canceladasUltimas24h = reservasObtenidas.filter((reserva) => {
         const fechaReserva = new Date(reserva.createdAt);
         return reserva.status === 4 && fechaReserva >= hace24Horas;
       });
-  
+
       setReservasCanceladas(canceladasUltimas24h.length);
     }
 
     if (reservasObtenidas.length > 0) {
       // Mapeo de meses en orden correcto
       const mesesOrdenados = [
-        "Ene", "Feb", "Mar", "Abril", "May", "Jun",
-        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abril",
+        "May",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dic",
       ];
 
       // Contar reservas por mes
@@ -74,7 +105,7 @@ const Estadisticas = () => {
 
       // Convertir a formato compatible con Victory y ordenar por meses
       const datosFormateados = mesesOrdenados.map((mes, index) => ({
-        mes ,
+        mes,
         reservas: conteoPorMes[index] || 0, // Si no hay reservas en un mes, poner 0
       }));
 
@@ -82,81 +113,451 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
 
-    //#region reservas por hotel
-    useEffect(() => {
-      const reservasObtenidas = reservasNano.get();
-    
+  //#region reservas por hotel
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      // Lista de hoteles en orden
+      const hotelesOrdenados = [
+        "Hotel Azuan",
+        "Hotel Avexi",
+        "Hotel Axis",
+        "Hotel Aixo",
+        "Hotel Bocagrande",
+        "Hotel Rodadero",
+        "Hotel Boquilla",
+        "Hotel Sansiraka",
+        "Hotel Abi",
+        "Hotel Marina",
+        "Hotel 1525",
+        "Hotel Windsor",
+        "Hotel Madisson",
+      ];
+
+      // Contar reservas por hotel
+      const conteoPorHotel = reservasObtenidas.reduce((acc, reserva) => {
+        const nombreHotel = reserva.hotel;
+        acc[nombreHotel] = (acc[nombreHotel] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir datos a formato de Victory
+      const datosFormateados = hotelesOrdenados.map((hotel) => ({
+        hotel,
+        reservas: conteoPorHotel[hotel] || 0,
+      }));
+
+      setReservasPorHotel(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  // #region Reservas por ciudad
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      // Mapeo para normalizar los nombres de las ciudades
+      const ciudadFormato = {
+        CARTAGENA: "Cartagena",
+        BOGOTA: "Bogotá",
+        SANTA_MARTA: "Santa Marta",
+      };
+
+      // Inicializar conteo de reservas por ciudad
+      const conteoPorCiudad = { Cartagena: 0, Bogotá: 0, "Santa Marta": 0 };
+
+      // Contar reservas por ciudad
+      reservasObtenidas.forEach((reserva) => {
+        const ciudad = reserva.reservation.city.toUpperCase(); // Normalizar a mayúsculas
+        const ciudadFormateada = ciudadFormato[ciudad] || ciudad; // Convertir a formato correcto
+        if (conteoPorCiudad[ciudadFormateada] !== undefined) {
+          conteoPorCiudad[ciudadFormateada] += 1;
+        }
+      });
+
+      // Convertir datos a formato compatible con VictoryPie
+      const datosFormateados = Object.entries(conteoPorCiudad).map(
+        ([ciudad, reservas]) => ({
+          x: ciudad,
+          y: reservas,
+        })
+      );
+
       if (reservasObtenidas.length > 0) {
-        // Lista de hoteles en orden
-        const hotelesOrdenados = [
-         "Hotel Azuan", "Hotel Avexi","Hotel Axis","Hotel Aixo", "Hotel Bocagrande","Hotel Rodadero",
-          "Hotel Boquilla", "Hotel Sansiraka", "Hotel Abi",   "Hotel 1525", "Hotel Windsor", "Hotel Madisson", 
-        ];
-    
-        // Contar reservas por hotel
-        const conteoPorHotel = reservasObtenidas.reduce((acc, reserva) => {
-          const nombreHotel = reserva.hotel;
-          acc[nombreHotel] = (acc[nombreHotel] || 0) + 1;
-          return acc;
-        }, {});
-    
-        // Convertir datos a formato de Victory
-        const datosFormateados = hotelesOrdenados.map((hotel) => ({
-          hotel,
-          reservas: conteoPorHotel[hotel] || 0,
-        }));
-    
-        setReservasPorHotel(datosFormateados);
+        const ahora = new Date();
+        const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000); // Resta 24h
+
+        // Filtrar reservas canceladas en las últimas 24h
+        const canceladasUltimas24h = reservasObtenidas.filter((reserva) => {
+          const fechaReserva = new Date(reserva.createdAt);
+          return reserva.status === 4 && fechaReserva >= hace24Horas;
+        });
+
+        setReservasCanceladas(canceladasUltimas24h.length);
       }
-    }, [reservasNano.get()]);
-    
-// #region Reservas por ciudad
+      setReservasPorCiudad(datosFormateados);
+    }
+  }, [reservasNano.get()]);
 
-useEffect(() => {
-  const reservasObtenidas = reservasNano.get();
-
-  if (reservasObtenidas.length > 0) {
-    // Mapeo para normalizar los nombres de las ciudades
-    const ciudadFormato = {
-      CARTAGENA: "Cartagena",
-      BOGOTA: "Bogotá",
-      SANTA_MARTA: "Santa Marta",
-    };
-
-    // Inicializar conteo de reservas por ciudad
-    const conteoPorCiudad = { Cartagena: 0, Bogotá: 0, "Santa Marta": 0 };
-
-    // Contar reservas por ciudad
-    reservasObtenidas.forEach((reserva) => {
-      const ciudad = reserva.reservation.city.toUpperCase(); // Normalizar a mayúsculas
-      const ciudadFormateada = ciudadFormato[ciudad] || ciudad; // Convertir a formato correcto
-      if (conteoPorCiudad[ciudadFormateada] !== undefined) {
-        conteoPorCiudad[ciudadFormateada] += 1;
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     });
 
-    // Convertir datos a formato compatible con VictoryPie
-    const datosFormateados = Object.entries(conteoPorCiudad).map(([ciudad, reservas]) => ({
-      x: ciudad,
-      y: reservas,
-    }));
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
+  useEffect(() => {
+    const obtenerAgencias = async () => {
+      try {
+        const response = await fetchWithToken(
+          `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/`
+        );
+
+        if (!response.ok) {
+          throw new Error("Error al obtener agencias");
+        }
+
+        const data = await response.json();
+        setAgenciasRegistradas(data.length);
+
+        // Calcular agencias nuevas en las últimas 24h
+        const ahora = new Date();
+        const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000);
+
+        const agenciasRecientes = data.filter((agencia) => {
+          const fechaCreacion = new Date(agencia.createdAt);
+          return fechaCreacion >= hace24Horas;
+        });
+
+        setAgenciasNuevas(agenciasRecientes.length);
+      } catch (error) {
+        console.error("Error obteniendo agencias:", error);
+      }
+    };
+
+    obtenerAgencias();
+  }, []);
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const estadosLabel = {
+        0: "Pendiente de pago",
+        1: "En proceso",
+        2: "Pago rechazado", // Changed from "Pago recibido" to "Pago rechazado"
+        3: "Pago aprobado",
+        4: "Cancelado",
+        5: "Pagado primera mitad",
+      };
+
+      // Inicializar conteo
+      const conteoEstados = reservasObtenidas.reduce((acc, reserva) => {
+        const estado = reserva.status;
+        acc[estado] = (acc[estado] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Formatear datos para Victory
+      const datosFormateados = Object.entries(conteoEstados).map(
+        ([estado, cantidad]) => ({
+          x: estadosLabel[estado],
+          y: cantidad,
+          label: `${estadosLabel[estado]}: ${cantidad}`,
+        })
+      );
+
+      setEstadosPago(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
-      const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000); // Resta 24h
-  
-      // Filtrar reservas canceladas en las últimas 24h
-      const canceladasUltimas24h = reservasObtenidas.filter((reserva) => {
+      const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000);
+
+      // Filtrar reservas completadas (status 3) en las últimas 24h
+      const completadasUltimas24h = reservasObtenidas.filter((reserva) => {
         const fechaReserva = new Date(reserva.createdAt);
-        return reserva.status === 4 && fechaReserva >= hace24Horas;
+        return reserva.status === 3 && fechaReserva >= hace24Horas;
       });
-  
-      setReservasCanceladas(canceladasUltimas24h.length);
+
+      setReservasCompletadas24h(completadasUltimas24h.length);
     }
-    setReservasPorCiudad(datosFormateados);
-  }
-}, [reservasNano.get()]);
-    
+  }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const ahora = new Date();
+      const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000);
+
+      const reservasRecientes = reservasObtenidas.filter((reserva) => {
+        const fechaReserva = new Date(reserva.createdAt);
+        return fechaReserva >= hace24Horas;
+      });
+
+      setReservasUltimas24h(reservasRecientes.length);
+    }
+  }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const totalHuespedes = reservasObtenidas.reduce((acc, reserva) => {
+        return (
+          acc +
+          (Number(reserva.reservation.adults) +
+            Number(reserva.reservation.children))
+        );
+      }, 0);
+
+      const promedio = (totalHuespedes / reservasObtenidas.length).toFixed(1);
+      setPromedioHuespedes(promedio);
+    }
+  }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const reservasCompletadas = reservasObtenidas.filter(
+        (reserva) => reserva.status === 3
+      ).length;
+
+      const tasa = (
+        (reservasCompletadas / reservasObtenidas.length) *
+        100
+      ).toFixed(1);
+      setTasaConversion(tasa);
+    }
+  }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const totalNoches = reservasObtenidas.reduce((acc, reserva) => {
+        return acc + Number(reserva.reservation.nights);
+      }, 0);
+
+      const promedio = (totalNoches / reservasObtenidas.length).toFixed(1);
+      setPromedioEstadia(promedio);
+    }
+  }, [reservasNano.get()]);
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas.length > 0) {
+      const totalDias = reservasObtenidas.reduce((acc, reserva) => {
+        const fechaCreacion = new Date(reserva.createdAt);
+        const fechaCheckin = new Date(reserva.reservation.checkin);
+        const diferenciaDias = Math.ceil(
+          (fechaCheckin - fechaCreacion) / (1000 * 60 * 60 * 24)
+        );
+        return acc + diferenciaDias;
+      }, 0);
+
+      const promedio = (totalDias / reservasObtenidas.length).toFixed(1);
+      setBookingWindow(promedio);
+    }
+  }, [reservasNano.get()]);
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    console.log("Reservas obtenidas:", reservasObtenidas); // Debug
+
+    if (reservasObtenidas && reservasObtenidas.length > 0) {
+      // Contar reservas por agencia
+      const conteoAgencias = reservasObtenidas.reduce((acc, reserva) => {
+        // Acceder al nombre de la agencia desde reservation.agencyData
+        const nombreAgencia =
+          reserva.reservation?.agencyData?.name || "Sin agencia";
+        console.log("Nombre agencia encontrado:", nombreAgencia); // Debug
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log("Conteo de agencias:", conteoAgencias); // Debug
+
+      // Convertir a array y filtrar agencias con reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad,
+        }));
+
+      console.log("Datos formateados finales:", datosFormateados); // Debug
+      setReservasPorAgencia(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+    console.log("Reservas obtenidas:", reservasObtenidas);
+
+    if (reservasObtenidas?.length > 0) {
+      // Contar reservas por agencia
+      const conteoAgencias = reservasObtenidas.reduce((acc, reserva) => {
+        // Acceder al nombre correcto de la agencia desde agenciaId.fullName
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      console.log("Conteo de agencias:", conteoAgencias);
+
+      // Convertir a array y filtrar agencias con reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad,
+        }));
+
+      console.log("Datos formateados finales:", datosFormateados);
+      setReservasPorAgencia(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  // Nuevo useEffect para procesar reservas de los últimos 30 días
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas?.length > 0) {
+      const ahora = new Date();
+      const hace30Dias = new Date(ahora.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      // Filtrar reservas de los últimos 30 días
+      const reservasRecientes = reservasObtenidas.filter(reserva => {
+        const fechaReserva = new Date(reserva.createdAt);
+        return fechaReserva >= hace30Dias;
+      });
+
+      // Contar reservas por agencia
+      const conteoAgencias = reservasRecientes.reduce((acc, reserva) => {
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir a array y ordenar por cantidad de reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad
+        }));
+
+      setReservasUltimos30Dias(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas?.length > 0) {
+      // Filtrar solo las reservas con status 3 (aprobadas)
+      const reservasAprobadasFiltradas = reservasObtenidas.filter(
+        reserva => reserva.status === 3
+      );
+
+      // Contar reservas por agencia
+      const conteoAgencias = reservasAprobadasFiltradas.reduce((acc, reserva) => {
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir a array y ordenar por cantidad de reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad
+        }));
+
+      setReservasAprobadas(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  // Nuevo useEffect para procesar reservas canceladas por agencia
+  useEffect(() => {
+    const reservasObtenidas = reservasNano.get();
+
+    if (reservasObtenidas?.length > 0) {
+      // Filtrar solo las reservas canceladas (status 4)
+      const reservasCanceladasFiltradas = reservasObtenidas.filter(
+        reserva => reserva.status === 4
+      );
+
+      // Contar reservas por agencia
+      const conteoAgencias = reservasCanceladasFiltradas.reduce((acc, reserva) => {
+        const nombreAgencia = reserva.agenciaId?.fullName || "Sin agencia";
+        acc[nombreAgencia] = (acc[nombreAgencia] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convertir a array y ordenar por cantidad de reservas
+      const datosFormateados = Object.entries(conteoAgencias)
+        .filter(([agencia]) => agencia !== "Sin agencia")
+        .sort(([, cantidadA], [, cantidadB]) => cantidadB - cantidadA)
+        .map(([agencia, cantidad]) => ({
+          agencia,
+          reservas: cantidad
+        }));
+
+      setReservasCanceladasPorAgencia(datosFormateados);
+    }
+  }, [reservasNano.get()]);
+
+  const formatBookingWindow = (dias) => {
+    if (!dias) return "0 días";
+
+    const diasNum = parseFloat(dias);
+
+    if (diasNum < 30) {
+      return `${diasNum} días`;
+    } else {
+      const meses = Math.floor(diasNum / 30);
+      const diasRestantes = Math.round(diasNum % 30);
+
+      if (diasRestantes === 0) {
+        return meses === 1 ? "1 mes" : `${meses} meses`;
+      } else {
+        return meses === 1
+          ? `1 mes y ${diasRestantes} días`
+          : `${meses} meses y ${diasRestantes} días`;
+      }
+    }
+  };
+
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -167,7 +568,7 @@ useEffect(() => {
 
   //#region Reservas obtenidas
   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(token, nombreAgencia);
+    await getReservas(nombreAgencia);
     const reservasObtenidas = reservasNano.get();
     setReservas(reservasObtenidas);
   };
@@ -184,8 +585,8 @@ useEffect(() => {
     formData.append("file", file); // Adjunta el archivo
     //#region Envio de imagen
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/files/user-profile",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/files/user-profile`,
         {
           method: "POST",
           body: formData,
@@ -217,17 +618,10 @@ useEffect(() => {
   };
 
   //#region Obtener saldo
-  const obtenerSaldo = async (token) => {
+  const obtenerSaldo = async () => {
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/obtener-saldo`
       );
 
       if (!response.ok) {
@@ -308,14 +702,10 @@ useEffect(() => {
 
     //#region Recargar saldo
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/recharge-wallet",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/recharge-wallet`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userData.token}`,
-          },
           body: JSON.stringify({
             amount: amountInt,
             currency: "COP",
@@ -345,131 +735,329 @@ useEffect(() => {
       } else {
         Swal.fire({
           title: "Error",
-          text: "Error en la recarga. Intentalo nuevamente (Internal Back error)",
+          text: "Error en la recarga. Intentalo nuevamente",
           icon: "error",
           confirmButtonColor: "#26547B",
         });
       }
     } catch (error) {
       console.error("Error en la recarga:", error);
-      alert("Hubo un problema con la recarga.");
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema con la recarga.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
     }
   };
 
   return (
-    <div className="container">
-    <h1 style={{fontSize:"20px"}}>Tablero de usuario</h1>
-    <br />
-  <div className="header">
-    
-  <h1 style={{fontSize:"18px", paddingBottom:"10px", fontFamily:"Roboto"}}>Análisis de datos</h1>
-  </div>
-  <div className="nav-tabs">
-    <a className="active" href="/tablerousuario"> Mi perfíl </a>
-    <a href="/misreservas">Gestionar reservas</a>
-    <a href="/estadisticas">Análisis de datos</a> 
-    <a href="/configuracion">Configuración</a>
-    <button onClick={handleLogout}>
-      Cerrar sesión
-    </button>
-  </div>
-      <div className="content">
-      <div style={{ width: "80%", maxWidth: "600px", margin: "0 auto" }}>
-      <h2 style={{ textAlign: "center" }}>Reservas por Mes</h2>
-      <VictoryChart theme={VictoryTheme.material} domainPadding={20} width={500} height={350}  padding={{ left: 100, right: 20, top: 20, bottom: 50 }}>
-  {/* Eje X con nombres de meses */}
-  <VictoryAxis tickFormat={reservasPorMes?.map((d) => d.mes)} style={{ 
-        tickLabels: { fontSize: 11, padding: 5, fontFamily:"Roboto" } // Reducimos tamaño y ajustamos padding
-      }} />
+    <div className="stats-container">
+      <div className="stats-header">
+        <h1 style={{ fontSize: "20px" }}>Tablero de usuario</h1>
+        <h1
+          style={{
+            fontSize: "18px",
+            paddingBottom: "10px",
+            fontFamily: "Roboto",
+          }}
+        >
+          Análisis de datos
+        </h1>
+      </div>
+      <div className="stats-navigation">
+        <a className="active" href="/tablerousuario">
+          Mi perfíl
+        </a>
+        <a href="/misreservas">Gestionar reservas</a>
+        <a href="/estadisticas">Análisis de datos</a>
+        <a href="/configuracion">Configuración</a>
+        <button onClick={handleLogout}>Cerrar sesión</button>
+      </div>
 
-  {/* Eje Y con valores numéricos seguidos de "reservas" */}
-  <VictoryAxis dependentAxis tickFormat={(x) => `${x} reservas`} style={{ 
-        tickLabels: { fontSize: 11, padding: 5, fontFamily:"Roboto" } // Reducimos tamaño y ajustamos padding
-      }} />
+      {/* Indicadores numéricos - Movidos fuera de stats-content */}
+      <div className="indicators-grid">
+        <div className="stats-indicator">
+          <h2>Numero de reservas realizadas</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+            {reservas.length}
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Agencias Registradas</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+            {agenciasRegistradas}
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Reservas Canceladas en las Últimas 24h</h2>
+          <p style={{ color: "#4CAF50" }}>{reservasCanceladas}</p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Agencias Nuevas (Últimas 24h)</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+            {agenciasNuevas}
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Reservas garantizadas en las Últimas 24h</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2ECC71" }}>
+            {reservasCompletadas24h}
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Reservas Realizadas (Últimas 24h)</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#3498DB" }}>
+            {reservasUltimas24h}
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Promedio de Huéspedes por Reserva</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#9B59B6" }}>
+            {promedioHuespedes}
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Tasa de reservas garantizadas </h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E67E22" }}>
+            {tasaConversion}%
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Travel Window</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#16A085" }}>
+            {promedioEstadia} noches
+          </p>
+        </div>
+        <div className="stats-indicator">
+          <h2>Booking Window</h2>
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2980B9" }}>
+            {formatBookingWindow(bookingWindow)}
+          </p>
+        </div>
+      </div>
 
-  {/* Gráfico de barras */}
-  <VictoryBar
-    data={reservasPorMes}
-    x="mes"
-    y="reservas"
-    style={{ data: { fill: "#4CAF50" } }}
-    labels={({ datum }) => `${datum.reservas}`} // Muestra las etiquetas en las barras
-  />
-</VictoryChart>
-    </div>
+      <div className="stats-content">
+        {/* ----------Gráficas--------- */}
+        <div className="chart-wrapper">
+          {/* -------------------- Gráfico de reservas por mes ------------------------ */}
+          <h2 style={{ textAlign: "center" }}>Reservas por Mes</h2>
+          <VictoryChart
+            theme={VictoryTheme.material}
+            domainPadding={20}
+            width={480} // Reducido de 400
+            height={300} // Reducido de 300
+            padding={{ left: 80, right: 20, top: 20, bottom: 50 }}
+          >
+            <VictoryAxis
+              tickFormat={reservasPorMes?.map((d) => d.mes)}
+              style={{
+                tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
+              }}
+            />
+            <VictoryAxis
+              dependentAxis
+              tickFormat={(x) => `${x} reservas`}
+              style={{
+                tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
+              }}
+            />
+            <VictoryBar
+              data={reservasPorMes}
+              x="mes"
+              y="reservas"
+              style={{ data: { fill: "#4CAF50" } }}
+              labels={({ datum }) => `${datum.reservas}`}
+            />
+          </VictoryChart>
+        </div>
 
-    {/* ------------ NUMERO DE RESERVAS POR HOTEL ------------ */}
-    <div style={{ width: "80%", maxWidth: "750px", margin: "0 auto" }}>
-    <h2 style={{ textAlign: "center" }}>Reservas por hotel</h2>
-  <VictoryChart 
-    theme={VictoryTheme.material} 
-    domainPadding={20} 
-    width={700} 
-    height={400}
-    padding={{ left: 100, right: 30, top: 20, bottom: 100 }} // Más espacio para nombres largos
-  >
-    {/* Eje X con nombres de hoteles */}
-    <VictoryAxis 
-      tickFormat={reservasPorHotel?.map((d) => d.hotel)}
-      style={{
-        tickLabels: { angle: -45, fontSize: 12, textAnchor: "end" } // Rotar nombres para mejor visibilidad
-      }}
-    />
+        {/* ------------------- Gráfica de Reservas por Hotel ----------------------*/}
+        <div className="chart-wrapper">
+          <h2 style={{ textAlign: "center" }}>Reservas por hotel</h2>
+          <VictoryChart
+            theme={VictoryTheme.material}
+            domainPadding={20}
+            width={600}
+            height={400}
+            padding={{ left: 100, right: 30, top: 20, bottom: 100 }}
+          >
+            <VictoryAxis
+              tickFormat={reservasPorHotel?.map((d) => d.hotel)}
+              style={{
+                tickLabels: { angle: -45, fontSize: 12, textAnchor: "end" },
+              }}
+            />
+            <VictoryAxis
+              dependentAxis
+              tickFormat={(x) => `${x} reservas`}
+              style={{ tickLabels: { fontSize: 12 } }}
+            />
+            <VictoryBar
+              data={reservasPorHotel}
+              x="hotel"
+              y="reservas"
+              style={{ data: { fill: "#FF5733" } }}
+              labels={({ datum }) => `${datum.reservas}`}
+            />
+          </VictoryChart>
+        </div>
 
-    {/* Eje Y con número de reservas */}
-    <VictoryAxis 
-      dependentAxis 
-      tickFormat={(x) => `${x} reservas`}
-      style={{ tickLabels: { fontSize: 12 } }}
-    />
+        {/* Gráfica de Reservas por Ciudad */}
+        <div className="chart-wrapper">
+          <h2 style={{ textAlign: "center" }}>Número de reservas por Ciudad</h2>
+          <VictoryPie
+            data={reservasPorCiudad}
+            colorScale={["#85c1e9", "#a2d9ce", "#d7bde2"]}
+            labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
+            style={{
+              labels: {
+                fontSize: 10,
+                fontWeight: "bold",
+                fill: "#333",
+                fontFamily: "Roboto",
+              },
+            }}
+            innerRadius={80}
+            labelRadius={80}
+          />
+        </div>
 
-    {/* Barras con número de reservas por hotel */}
-    <VictoryBar
-      data={reservasPorHotel}
-      x="hotel"
-      y="reservas"
-      style={{ data: { fill: "#FF5733" } }}
-      labels={({ datum }) => `${datum.reservas} `}
-    />
-  </VictoryChart>
-</div>
+        {/*#region  Gráfica de Estados de Pago */}
+        <div className="chart-wrapper">
+          <h2 style={{ textAlign: "center" }}>
+            Estados de pago en tiempo real
+          </h2>
+          <VictoryPie
+            data={estadosPago}
+            colorScale={[
+              "#f39c12",
+              "#36a3c4",
+              "#e0577a",
+              "#3a963f",
+              "#bd1f1f",
+              "#b58a2d",
+            ]}
+            style={{
+              labels: {
+                fontWeight: "bolder",
+                fontSize: 9,
+                fill: "#232222",
+                fontFamily: "Roboto",
+              },
+            }}
+            labelRadius={({ innerRadius }) => innerRadius + 70}
+            innerRadius={50}
+            padAngle={2}
+            animate={{ duration: 1000 }}
+          />
+        </div>
+      </div>
 
-{/* ------------ NUMERO DE RESERVAS POR CIUDAD ------------ */}
-<div style={{ width: "80%", maxWidth: "500px", margin: "0 auto" }}>
-  <h2 style={{ textAlign:"center" }}>Número de reservas por Ciudad</h2>
-  <VictoryPie
-    data={reservasPorCiudad}
-    colorScale={["#85c1e9", "#a2d9ce", "#d7bde2"]} // Colores personalizados
-    labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
-    style={{
-      labels: { fontSize: 13, fontWeight: "bold", fill: "#333" }, // Estilos de etiquetas
-    }}
-    innerRadius={80} // Hace la torta tipo "dona"
-    labelRadius={80} // Ubica mejor los textos fuera del centro
-  />
-</div>
-<div style={{ textAlign: "center", margin: "20px" }}>
-  <h2 style={{fontSize:"15px"}}>Reservas Canceladas en las Últimas 24h</h2>
-  <p style={{ fontSize: "20px", fontWeight: "bold", color: "#E74C3C" }}>
-    {reservasCanceladas}
-  </p>
-  <div style={{ textAlign: "center", margin: "20px" }}>
-<h2 style={{fontSize:"15px"}}>Numero de reservas realizadas</h2>
-  <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E74C3C" }}>
-    
-    {reservas.length}
-  </p>
-</div>
-</div>
+      <div className="tables-grid">
+        {/* Tabla de Reservas por Agencia */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas por Agencia</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Número de Reservas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasPorAgencia.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
+        {/* Tabla de Reservas últimos 30 días */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas por agencias 30 días</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de agencias</th>
+                  <th>Número de reservas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasUltimos30Dias.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
+        {/* Tabla de Reservas garantizadas */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas garantizadas por agencia</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Reservas Aprobadas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasAprobadas.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
 
+        {/* Tabla de Reservas Canceladas */}
+        <div className="agencies-table-container">
+          <h2 className="table-title">Reservas Canceladas por Agencia</h2>
+          <div className="agencies-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Posición</th>
+                  <th>Nombre de Agencia</th>
+                  <th>Reservas Canceladas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {reservasCanceladasPorAgencia.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{item.agencia}</td>
+                    <td>{item.reservas}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
-    
   );
 };
 
 export default Estadisticas;
-
 

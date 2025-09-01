@@ -3,6 +3,8 @@ import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este arch
 import { getReservas, reservasNano } from "../stores/disponibilidad";
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryPie } from "victory";
 import { useHover } from "@uidotdev/usehooks";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 import Swal from "sweetalert2";
 
@@ -35,128 +37,52 @@ const UserDashboard = () => {
     // settokenusuario(token)
   }, []);
 
-  //#region reservas por mes
-  // useEffect(() => {
-  //   const reservasObtenidas = reservasNano.get();
 
-  //   if (reservasObtenidas.length > 0) {
-  //     // Mapeo de meses en orden correcto
-  //     const mesesOrdenados = [
-  //       "Ene", "Feb", "Mar", "Abril", "May", "Jun",
-  //       "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
-  //     ];
-
-  //     // Contar reservas por mes
-  //     const conteoPorMes = reservasObtenidas.reduce((acc, reserva) => {
-  //       const fecha = new Date(reserva.createdAt);
-  //       const mes = fecha.getMonth(); // Devuelve un número de 0 (enero) a 11 (diciembre)
-
-  //       acc[mes] = (acc[mes] || 0) + 1;
-  //       return acc;
-  //     }, {});
-
-  //     // Convertir a formato compatible con Victory y ordenar por meses
-  //     const datosFormateados = mesesOrdenados.map((mes, index) => ({
-  //       mes ,
-  //       reservas: conteoPorMes[index] || 0, // Si no hay reservas en un mes, poner 0
-  //     }));
-
-  //     setReservasPorMes(datosFormateados);
-  //   }
-  // }, [reservasNano.get()]);
-
-    // //#region reservas por hotel
-    // useEffect(() => {
-    //   const reservasObtenidas = reservasNano.get();
-    
-    //   if (reservasObtenidas.length > 0) {
-    //     // Lista de hoteles en orden
-    //     const hotelesOrdenados = [
-    //      "Hotel Azuan", "Hotel Avexi","Hotel Axis","Hotel Aixo", "Hotel Bocagrande","Hotel Rodadero",
-    //       "Hotel Boquilla", "Hotel Sansiraka", "Hotel Abi",   "Hotel 1525", "Hotel Windsor", "Hotel Madisson", 
-    //     ];
-    
-    //     // Contar reservas por hotel
-    //     const conteoPorHotel = reservasObtenidas.reduce((acc, reserva) => {
-    //       const nombreHotel = reserva.hotel;
-    //       acc[nombreHotel] = (acc[nombreHotel] || 0) + 1;
-    //       return acc;
-    //     }, {});
-    
-    //     // Convertir datos a formato de Victory
-    //     const datosFormateados = hotelesOrdenados.map((hotel) => ({
-    //       hotel,
-    //       reservas: conteoPorHotel[hotel] || 0,
-    //     }));
-    
-    //     setReservasPorHotel(datosFormateados);
-    //   }
-    // }, [reservasNano.get()]);
-    
-// #region Reservas por ciudad
-
-// useEffect(() => {
-//   const reservasObtenidas = reservasNano.get();
-
-//   if (reservasObtenidas.length > 0) {
-//     // Mapeo para normalizar los nombres de las ciudades
-//     const ciudadFormato = {
-//       CARTAGENA: "Cartagena",
-//       BOGOTA: "Bogotá",
-//       SANTA_MARTA: "Santa Marta",
-//     };
-
-//     // Inicializar conteo de reservas por ciudad
-//     const conteoPorCiudad = { Cartagena: 0, Bogotá: 0, "Santa Marta": 0 };
-
-//     // Contar reservas por ciudad
-//     reservasObtenidas.forEach((reserva) => {
-//       const ciudad = reserva.reservation.city.toUpperCase(); // Normalizar a mayúsculas
-//       const ciudadFormateada = ciudadFormato[ciudad] || ciudad; // Convertir a formato correcto
-//       if (conteoPorCiudad[ciudadFormateada] !== undefined) {
-//         conteoPorCiudad[ciudadFormateada] += 1;
-//       }
-//     });
-
-//     // Convertir datos a formato compatible con VictoryPie
-//     const datosFormateados = Object.entries(conteoPorCiudad).map(([ciudad, reservas]) => ({
-//       x: ciudad,
-//       y: reservas,
-//     }));
-
-//     if (reservasObtenidas.length > 0) {
-//       const ahora = new Date();
-//       const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000); // Resta 24h
-  
-//       // Filtrar reservas canceladas en las últimas 24h
-//       const canceladasUltimas24h = reservasObtenidas.filter((reserva) => {
-//         const fechaReserva = new Date(reserva.createdAt);
-//         return reserva.status === 4 && fechaReserva >= hace24Horas;
-//       });
-  
-//       setReservasCanceladas(canceladasUltimas24h.length);
-//     }
-//     setReservasPorCiudad(datosFormateados);
-//   }
-// }, [reservasNano.get()]);
     
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
 
     // Redirigir al usuario a la página de login
-    window.location.href = "https://www.gehsuites.com/es";
+    window.location.href = "/login";
   };
 
   //#region Reservas obtenidas
   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(token, nombreAgencia);
+    await getReservas(nombreAgencia);
     const reservasObtenidas = reservasNano.get();
     setReservas(reservasObtenidas);
   };
 
   const handleClick = () => {
     fileInputRef.current.click();
+  };
+
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
   };
 
   const handleImageUpload = async (event) => {
@@ -167,14 +93,11 @@ const UserDashboard = () => {
     formData.append("file", file); // Adjunta el archivo
     //#region Envio de imagen
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/files/user-profile",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/files/user-profile`,
         {
           method: "POST",
           body: formData,
-          headers: {
-            Authorization: `Bearer ${userData.token}`, // Se envía el token para autenticación
-          },
         }
       );
 
@@ -200,17 +123,10 @@ const UserDashboard = () => {
   };
 
   //#region Obtener saldo
-  const obtenerSaldo = async (token) => {
+  const obtenerSaldo = async () => {
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/obtener-saldo`
       );
 
       if (!response.ok) {
@@ -218,7 +134,7 @@ const UserDashboard = () => {
       }
 
       const data = await response.json();
-      setAvailableAmount(data.available_amount);
+      setAvailableAmount(data.total_available_amount);
     } catch (error) {
       console.error("Error obteniendo saldo:", error);
       Swal.fire({
@@ -291,14 +207,10 @@ const UserDashboard = () => {
 
     //#region Recargar saldo
     try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/recharge-wallet",
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/recharge-wallet`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${userData.token}`,
-          },
           body: JSON.stringify({
             amount: amountInt,
             currency: "COP",
@@ -335,7 +247,12 @@ const UserDashboard = () => {
       }
     } catch (error) {
       console.error("Error en la recarga:", error);
-      alert("Hubo un problema con la recarga.");
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema con la recarga.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
     }
   };
 
@@ -359,6 +276,8 @@ const UserDashboard = () => {
         {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
         <a href="/configuracion">Configuración</a>
       )}
+      
+      <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         <button onClick={handleLogout}>
           Cerrar sesión
         </button>
@@ -438,8 +357,7 @@ const UserDashboard = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              términos y condiciones
-            </a>
+              Términos y condiciones</a>
           </label>
         </div>
 
@@ -452,7 +370,7 @@ const UserDashboard = () => {
           </div>
         </div> */}
         <div className="card pending-payments-card">
-          <h3 className="Ultimasreservas">Ultimas reservas</h3>
+          <h3 className="Ultimasreservas">Ultimos movimientos</h3>
 
           <div className="pending-payments-list">
             <div className="pending-payment-item">

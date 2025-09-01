@@ -419,7 +419,6 @@ const idRooms = {
     104979:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-twin-sansiraka1.jpeg", //Twin
   },
-  //Zulita
   41: {},
 
   //Boquilla
@@ -434,15 +433,15 @@ const idRooms = {
 };
 
 const quintuple = {
-  9: false, //marina
-  1: false, //azuan
-  6: false, //avexi
+  9: true, //marina
+  1: true, //azuan
+  6: true, //avexi
   7: true, //bocagrande
   4: false, //aixo
   5: true, //abi
   3: false, //madison
   10: false, //windsor
-  8: false, //rodadero
+  8: true, //rodadero
   2: false, //1525
   48: true, //axis
   44: true, //sansiraka
@@ -451,30 +450,41 @@ const quintuple = {
 };
 
 const trasladosCartagenaPesos = {
-  0: "33500",
-  1: "67000",
+  0: "38000",
+  1: "76000",
 };
 
 const trasladosCartagenaDolares = {
-  0: "15",
-  1: "30",
+  0: "12",
+  1: "21",
 };
 
 const trasladosSantamartaPesos = {
-  0: "17200",
-  1: "34400",
+  0: "70000",
+  1: "140000",
 };
 
 const trasladosSantamartaDolares = {
-  0: "5",
-  1: "10",
+  0: "17",
+  1: "34",
+};
+
+// Agregar los nuevos objetos para Bogotá
+const trasladosBogotaPesos = {
+  0: "73200",
+  1: "146200",
+};
+
+const trasladosBogotaDolares = {
+  0: "17.7",
+  1: "35.4",
 };
 
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
   6: false, //avexi
-  7: false, //bocagrande (proximamente)
+  7: true, //bocagrande (proximamente)
   4: true, //aixo
   5: true, //abi
   3: true, //madison
@@ -484,8 +494,13 @@ const plan_alimentacion = {
   48: true, //axis
   44: true, //sansiraka
   41: false, //Zulita
-  56: true, // Boquilla,
+  56: false, // Boquilla,
 };
+
+// Add these constants near the top with other price constants
+const MASCOTA_PRECIO_COP = 50000;
+const MASCOTA_PRECIO_USD = 10;
+
 // UseState
 
 export const Cid = ({ id }) => {
@@ -511,22 +526,8 @@ export const Cid = ({ id }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredTours, setFilteredTours] = useState([]);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  
-  const handleReservarClick = () => {
-    // Solo mostrar el modal para hoteles específicos en Cartagena
-    if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
-      setShowUpgradeModal(true);
-    } else {
-      enviardatos();
-      window.location.href = "/reservas";
-    }
-  };
-
-  const handleUpgradeSelect = (newHotelId) => {
-    // Redirigir a la página del nuevo hotel
-    window.location.href = `/hoteles/${newHotelId}`;
-  };
+  const [mostrarMascotas, setMostrarMascotas] = useState(false);
+  const [cantidadMascotas, setCantidadMascotas] = useState(0);
 
   function openModal(tour) {
     setIsOpen(true);
@@ -547,6 +548,9 @@ export const Cid = ({ id }) => {
     "QUINTUPLE",
     "Habitacion Sextuple",
     "Quíntuple",
+    "Habitacion Cuadruple Standard",
+    "Cuadruple estandar ",
+    "Cuádruple"
   ];
 
   //console.log("numero de camas:"camas)
@@ -570,14 +574,9 @@ export const Cid = ({ id }) => {
     if (!transferType) return 0;
 
     const precios = {
-      CARTAGENA:
-        currency === "USD"
-          ? trasladosCartagenaDolares
-          : trasladosCartagenaPesos,
-      SANTA_MARTA:
-        currency === "USD"
-          ? trasladosSantamartaDolares
-          : trasladosSantamartaPesos,
+      CARTAGENA: currency === 'USD' ? trasladosCartagenaDolares : trasladosCartagenaPesos,
+      SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos,
+      BOGOTA: currency === 'USD' ? trasladosBogotaDolares : trasladosBogotaPesos
     };
 
     // Determinar el índice basado en el tipo de traslado
@@ -591,14 +590,8 @@ export const Cid = ({ id }) => {
     return parseFloat(precioBase) * vehiculosNecesarios;
   };
 
-  const calculateTotalPrice = (
-    basePrice,
-    tours,
-    currency,
-    totalGuests,
-    city,
-    tipoTraslado
-  ) => {
+  // Modify the calculateTotalPrice function
+  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado, numMascotas = 0) => {
     const toursPrice = tours.reduce((total, tour) => {
       const tourPrice =
         currency === "USD"
@@ -606,15 +599,15 @@ export const Cid = ({ id }) => {
           : parseFloat(tour.preciocol);
       return total + tourPrice * totalGuests;
     }, 0);
-
-    const transferPrice = calculateTransferPrice(
-      city,
-      currency,
-      tipoTraslado,
-      totalGuests
-    );
-
-    return parseFloat(basePrice) + toursPrice + transferPrice;
+  
+    const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests);
+    
+    // Add pet price calculation
+    const mascotasPrice = currency === 'USD' 
+      ? (numMascotas * MASCOTA_PRECIO_USD)
+      : (numMascotas * MASCOTA_PRECIO_COP);
+  
+    return parseFloat(basePrice) + toursPrice + transferPrice + mascotasPrice;
   };
 
   //Enviar datos de reserva
@@ -669,7 +662,9 @@ export const Cid = ({ id }) => {
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
     const disponibilidad = JSON.parse(localStorage.getItem("data"));
     const rangosdefechas = JSON.parse(localStorage.getItem("nochesyedades"));
-    //console.log("Datos de disponibilidad" , disponibilidad)
+    // Obtener el número real de habitaciones del layout
+    rangosdefechas.numRooms = rangosdefechas.layout ? rangosdefechas.layout.length : 1;
+    
     const resultado = disponibilidad.find((vaina) => vaina.hotel.id == id);
     const adultos = Number(localStorage.getItem("cantNinos"));
     const ninos = Number(localStorage.getItem("cantAdultos"));
@@ -713,6 +708,25 @@ export const Cid = ({ id }) => {
     }
   };
 
+  const valorDelRadioMascotas = (event) => {
+    const seleccionSi = event.target.value === "si";
+    setMostrarMascotas(seleccionSi);
+    if (seleccionSi) {
+      setCantidadMascotas(1); // Iniciar en 1 cuando se selecciona "si"
+    } else {
+      setCantidadMascotas(0);
+    }
+  };
+
+  const handleCantidadMascotas = (operacion) => {
+    const numHabitaciones = rangosfechas.layout ? rangosfechas.layout.length : 1;
+    if (operacion === "incremento" && cantidadMascotas < numHabitaciones) {
+      setCantidadMascotas(prev => prev + 1);
+    } else if (operacion === "decremento" && cantidadMascotas > 1) { // Cambiado de 0 a 1
+      setCantidadMascotas(prev => prev - 1);
+    }
+  };
+
   console.log("Plan de alimentación:", planDeAlimentacionFormateado);
   // console.log(planDeAlimentacion)
 
@@ -736,6 +750,7 @@ export const Cid = ({ id }) => {
       ? regexminoristas[planDeAlimentacion]
       : regexMayorista[planDeAlimentacion];
 
+      
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
@@ -929,9 +944,73 @@ export const Cid = ({ id }) => {
 
         <div className={styles.plan_alimentacion}>
           <div className={styles.planes}>
-            {/* Mostrar traslados y tours solo para CARTAGENA o SANTA_MARTA */}
-            {(selectedCity === "CARTAGENA" ||
-              selectedCity === "SANTA_MARTA") && (
+            <h3>¿Desea añadir mascotas a su reserva?</h3>
+            <p>Puede añadir máximo 1 mascota por habitación</p>
+            <input
+              type="radio"
+              name="mascotas"
+              value="si"
+              className={styles.radioInput}
+              onChange={valorDelRadioMascotas}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> Si</span>
+            <input
+              type="radio"
+              name="mascotas"
+              value="no"
+              defaultChecked
+              className={styles.radioInput}
+              onChange={valorDelRadioMascotas}
+            />{" "}
+            <span style={{ paddingRight: "10px" }}> No</span>
+
+            {mostrarMascotas && (
+              <div className={styles.mascotasSection} style={{ marginTop: "15px" }}>
+                <h4 style={{ color: "#1f3b64", marginBottom: "10px" }}>
+                  Seleccione la cantidad de mascotas:
+                </h4>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <button 
+                    onClick={() => handleCantidadMascotas("decremento")}
+                    style={{
+                      padding: "5px 10px",
+                      backgroundColor: "#26547B",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                  >
+                    -
+                  </button>
+                  <span>{cantidadMascotas}</span>
+                  <button 
+                    onClick={() => handleCantidadMascotas("incremento")}
+                    style={{
+                      padding: "5px 10px",
+                      backgroundColor: "#26547B",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer"
+                    }}
+                    disabled={cantidadMascotas >= (rangosfechas.layout?.length || 1)}
+                  >
+                    +
+                  </button>
+                  <span style={{ marginLeft: "10px" }}>
+                    (Máximo {rangosfechas.layout?.length || 1} {(rangosfechas.layout?.length || 1) === 1 ? 'mascota' : 'mascotas'})
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.plan_alimentacion}>
+          <div className={styles.planes}>
+            {/* Mostrar trasladoss y tours solo para CARTAGENA o SANTA_MARTA */}
+            {(selectedCity === 'CARTAGENA' || selectedCity === 'SANTA_MARTA' ) && (
               <>
                 {/* --------------------------- TRASLADOS --------------------------- */}
                 <h3>¿Desea añadir traslados a su reserva?</h3>
@@ -969,7 +1048,26 @@ export const Cid = ({ id }) => {
                           handleSeleccionTraslado("aeropuerto_hotel")
                         }
                       />
-                      <label htmlFor="A a H"> Aereopuerto al hotel</label>
+                       <label htmlFor="A a H">
+                        {" "}
+                        {/* datos de persona en traslados bogota ah/ha */}
+                        Aeropuerto al hotel {" "}
+                        {selectedCity === 'CARTAGENA' 
+                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          : selectedCity === 'SANTA_MARTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          : selectedCity === 'BOGOTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
+                          : ''
+                        } cada 4 personas) <span style={{ 
+                         color: 'gray',  
+                          fontSize: '0.85em', 
+                          display: 'block',
+                          marginTop: '5px'
+                        }}>
+                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                        </span>
+                      </label>
                     </div>
                     <div className={styles.tour_item}>
                       <input
@@ -980,7 +1078,26 @@ export const Cid = ({ id }) => {
                           handleSeleccionTraslado("hotel_aeropuerto")
                         }
                       />
-                      <label htmlFor="H a A"> Hotel al Aereopuerto</label>
+                      <label htmlFor="H a A">
+                        {" "}
+                         {/* datos de persona en traslados bogota ah/ha */}
+                        Hotel al Aeropuerto {" "}
+                        {selectedCity === 'CARTAGENA' 
+                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          : selectedCity === 'SANTA_MARTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
+                          : selectedCity === 'BOGOTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
+                          : ''
+                        } cada 4 personas) <span style={{ 
+                          color: 'gray', 
+                          fontSize: '0.85em', 
+                          display: 'block',
+                          marginTop: '5px'
+                        }}>
+                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                        </span>
+                      </label>
                     </div>
                     <div className={styles.tour_item}>
                       <input
@@ -991,7 +1108,23 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
-                        Aereopuerto al hotel | Hotel al aereopuerto{" "}
+                         {/* datos de persona en traslados bogota ahYha */}
+                        Aeropuerto al hotel | Hotel al aeropuerto {" "} 
+                        {selectedCity === 'CARTAGENA' 
+                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
+                          : selectedCity === 'SANTA_MARTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
+                          : selectedCity === 'BOGOTA'
+                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[1] : trasladosBogotaPesos[1]} ${currentCurrency}`
+                          : ''
+                        } cada 4 personas) <span style={{ 
+                         color: 'gray', 
+                          fontSize: '0.85em', 
+                          display: 'block',
+                          marginTop: '5px'
+                        }}>
+                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -1016,6 +1149,7 @@ export const Cid = ({ id }) => {
                   onChange={valorDelRadioToures}
                 />{" "}
                 <span style={{ paddingRight: "10px" }}> No</span>
+                
                 {mostrarToures && (
                   <div className={styles.touresSection}>
                     <br />
@@ -1069,6 +1203,7 @@ export const Cid = ({ id }) => {
             )}
           </div>
         </div>
+        
         {/* habitaciones?.availability?.map((cam)=>
   cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
@@ -1176,7 +1311,8 @@ export const Cid = ({ id }) => {
                                   currentCurrency,
                                   ninos + adultos,
                                   habitaciones?.hotel?.city,
-                                  tipoTraslado
+                                  tipoTraslado,
+                                  cantidadMascotas // Add this parameter
                                 ),
                                 precioBase:
                                   dato.products?.find((product) =>
@@ -1194,6 +1330,7 @@ export const Cid = ({ id }) => {
                                 rateId: dato.products?.find((product) =>
                                   regexSeleccionado.test(product.roomName)
                                 )?.rateId,
+                                mascotas: mostrarMascotas ? cantidadMascotas : 0,
                               },
                             ]);
                             setcontadorHabitaciones(
@@ -1284,6 +1421,7 @@ export const Cid = ({ id }) => {
                       </span>
                     ))}
                   </h5>
+                  <h5>Numero de mascotas: {cantidadMascotas}</h5>
                   <h2>
                     {formatCurrency(
                       calculateTotalPrice(
@@ -1292,7 +1430,8 @@ export const Cid = ({ id }) => {
                         currentCurrency,
                         ninos + adultos,
                         habitaciones?.hotel?.city,
-                        tipoTraslado
+                        tipoTraslado,
+                        cantidadMascotas // Add this parameter
                       )
                     )}{" "}
                     {currentCurrency == "USD" ? "USD" : "COP"}

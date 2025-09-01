@@ -2,14 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import intlTelInput from 'intl-tel-input';
 import 'intl-tel-input/build/css/intlTelInput.css';
 import DropdownSearch from "./DropdownSearch";
-import FormularioRetenciones from "./FormularioRetenciones";
+import FormularioRetenciones from "./desglose/FormularioRetenciones";
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
-import TablaDesglose from "./TablaDesglose";
+import TablaDesglose from "./desglose/TablaDesglose";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
 import ToursCs from "./ToursCs";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -29,21 +31,20 @@ const plan_alimentacion = {
 };
 
 //#region UseState
-const FormularioReserva = ({ id }) => {
-  const phoneInputRef = useRef(null);
-  const [phone, setPhone] = useState("");
+const FormularioReserva = () => {
   const [reserva, setReserva] = useState([]);
   const [agencia, setagencia] = useState();
+
   const [cena, setCena] = useState(false);
   const [almuerzo, setAlmuerzo] = useState(false);
   const hotelIdsPermitidos = [
-    "13633", //Aixo
-    "17644", //Abi
-    "13677", //Boquilla
+    // "13633", //Aixo
+    // "17644", //Abi
+    // "13677", //Boquilla
     // "18004", //Windsor
     // "16255", //Madisson
-    "19629", //Axis
-    "15740", //Sansiraka
+    // "19629", //Axis
+    // "15740", //Sansiraka
   ];
 
   const [datosreserva, setDatosreserva] = useState([]);
@@ -72,6 +73,7 @@ const FormularioReserva = ({ id }) => {
     telefonoF: "",
     telefonotraslado: "",
     numeroVuelo: "",
+    numeroVueloSalida: "",
     aereolinea: "",
 
     // esExtranjero:false
@@ -190,11 +192,10 @@ const FormularioReserva = ({ id }) => {
 
   //#region tipo de translado
   const tipodetraslado = (() => {
-   
     const tipoTraslado = reserva[0]?.tipoTraslado;
 
-    if (tipoTraslado === "aereopuerto_hotel") return 0;
-    if (tipoTraslado === "hotel_aereopuerto") return 1;
+    if (tipoTraslado === "aeropuerto_hotel") return 0;
+    if (tipoTraslado === "hotel_aeropuerto") return 1;
     if (tipoTraslado === "ambos") return 2;
     return null;
   })();
@@ -205,8 +206,7 @@ const FormularioReserva = ({ id }) => {
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA =
-    esExtranjero == true ? totalPrecio * 0 : totalPrecio * tasaIVA; //totalPrecio * tasaIVA;
+  const valorIVA = esExtranjero || reserva[0]?.hotelidAutocore === 56 ? 0 : totalPrecio * tasaIVA;
   const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
   // console.log(totalConIVA);
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
@@ -235,13 +235,6 @@ const FormularioReserva = ({ id }) => {
     apellidos,
     email,
     celular,
-    telefonotraslado,
-    numeroVuelo,
-    aereolinea,
-    nombreEmpresa,
-    nit,
-    emailEmpresa,
-    telefonoF,
   } = formData;
 
   const enviartraslado = reserva[0]?.incluirTraslado === true;
@@ -252,6 +245,33 @@ const FormularioReserva = ({ id }) => {
       ...formData,
       [id]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
   };
 
   const handleSubmit = (e) => {
@@ -284,8 +304,9 @@ const FormularioReserva = ({ id }) => {
         );
       };
       const informacionD = JSON.stringify({
-        total: Math.round(totalRetenciones), //VALOR TOTAL
-        adicionAlmuerzo: almuerzo, // VALOR DE CHECKBOX DE ALMUERZO
+        total: Math.round(totalRetenciones),
+        mascotasNumber: reserva[0]?.mascotas || null, // Changed from mascotas to mascotasNumber
+        adicionAlmuerzo: almuerzo,
         adicionCena: cena,
         titularInfo: {
           firstName: formData.nombreCompleto,
@@ -298,12 +319,25 @@ const FormularioReserva = ({ id }) => {
         infoTransporte:
           reserva[0].incluirTraslado === true
             ? {
-                numeroVuelo: formData.numeroVuelo,
-                firstContactNumber: formData.telefonotraslado,
-                aerolinea: formData.aereolinea,
-                tipoRecogida: tipodetraslado || 2,
-                cantidadPersonas: totalHuespedes,
-              }
+              numeroVuelo: formData.numeroVuelo,
+              ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
+                reserva[0].tipoTraslado === "ambos") && {
+                numeroVueloSalida: formData.numeroVueloSalida,
+              }),
+              firstContactNumber: formData.telefonotraslado,
+              aerolinea: formData.aereolinea,
+              tipoRecogida: tipodetraslado,
+              cantidadPersonas: totalHuespedes,
+            }
+            : null,
+        infoToures:
+          reserva[0].tourSeleccionado?.length > 0
+            ? {
+              nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
+              firstContactNumber: formData.celular,
+              secondContacNumber:
+                formData.telefonotraslado || formData.celular
+            }
             : null,
         ...filtrarRetenciones({
           reteFuente: {
@@ -342,42 +376,30 @@ const FormularioReserva = ({ id }) => {
             nights: noches, //N° DE NOCHES
             notes:
               DatosRetenciones == null
-                ? `Creada por la agencia: ${
-                    agencia.agencia.fullName
-                  }. Reserva de ${noches} noches a nombre de ${
-                    formData.nombreCompleto
-                  } ${formData.apellidos}. ${
-                    valorextranjero == "es extranjero"
-                      ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                        : ""
-                    } Tipo de traslado:  ${reserva[0].tipoTraslado} ${
-                    cena ? "El huésped ha solicitado cena." : ""
-                  } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${
-                    facturaE
-                      ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                      : ""
-                  }  `
-                : `Creada por la agencia: ${
-                    agencia.agencia.fullName
-                  }. Reserva de ${noches} noches a nombre de ${
-                    formData.nombreCompleto
-                  } ${
-                    formData.apellidos
-                  }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${
-                    valorextranjero == "es extranjero"
-                      ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                      : ""
-                  } Tipo de traslado: ${reserva[0].tipoTraslado} ${
-                    cena ? "La agencia marco la casilla de solicitar cena." : ""
-                  } ${
-                    almuerzo
-                      ? "La agencia marco la casilla de solicitar almuerzo."
-                      : ""
-                  }${
-                    facturaE
-                      ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                      : ""
-                  }`,
+                ? `Creada por la agencia: ${agencia.agencia.fullName
+                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+                } ${formData.apellidos}. ${valorextranjero == "es extranjero"
+                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                  : ""
+                } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
+                } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
+                  ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                  : ""
+                }  `
+                : `Creada por la agencia: ${agencia.agencia.fullName
+                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+                } ${formData.apellidos
+                }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
+                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+                  : ""
+                } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
+                } ${almuerzo
+                  ? "La agencia marco la casilla de solicitar almuerzo."
+                  : ""
+                }${facturaE
+                  ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                  : ""
+                }`,
             rooms: habitaciones, // TIPO DE HABITACIONES
             roomsData: reserva.map((dato, index) => {
               const roomConfig = fechasreserva.layout[index] || {}; // ASEGÚRATE DE OBTENER EL LAYOUT CORRESPONDIENTE A LA HABITACIÓN.
@@ -405,18 +427,12 @@ const FormularioReserva = ({ id }) => {
       try {
         // error409
         setbotondesactivado(true);
-        const url = `https://gehsuitesapps.com/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
+        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
 
-        const response = await fetch(url, {
+        const response = await fetchWithToken(url, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${agencia.token}`,
-          },
           body: informacionD,
         });
-
-        console.log(response);
 
         if (response.ok) {
           const data = await response.json();
@@ -426,7 +442,7 @@ const FormularioReserva = ({ id }) => {
           Swal.fire({
             icon: "success",
             title: "Reserva realizada",
-            text: "Se ha confirmado su reserva con exito.",
+            text: "Se ha confirmado su reserva con éxito.",
           });
           setTimeout(() => {
             window.location.href = "/misreservas"; //REDIRECCION HACIA LA PAGINA DE RESERVA PAGADA
@@ -559,11 +575,26 @@ const FormularioReserva = ({ id }) => {
               {data.tipoTraslado === "aeropuerto_hotel"
                 ? "Aeropuerto al hotel"
                 : data.tipoTraslado === "hotel_aeropuerto"
-                ? "Hotel al aeropuerto"
-                : data.tipoTraslado === "ambos"
-                ? "Aeropuerto al hotel y Hotel al aeropuerto"
-                : "No se seleccionó traslado"}
+                  ? "Hotel al aeropuerto"
+                  : data.tipoTraslado === "ambos"
+                    ? "Aeropuerto al hotel y Hotel al aeropuerto"
+                    : "No se seleccionó traslado"}
             </p>
+
+            {data.tourSeleccionado && data.tourSeleccionado.length > 0 && (
+              <p>
+                <strong>Tours seleccionados: </strong>
+                {data.tourSeleccionado.map((tour, index) => (
+                  <span key={tour.id}>
+                    {index > 0 ? ", " : ""}
+                    {tour.title}
+                  </span>
+                ))}
+              </p>
+            )}
+
+            <p><strong>Numero de mascotas:</strong> {data.mascotas}</p>
+
             <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
               <strong>Total a pagar:</strong>{" "}
               {divisaSelec == "USD"
@@ -644,29 +675,24 @@ const FormularioReserva = ({ id }) => {
                   : `${formatCurrency(totalRetenciones)} COP `}
               </strong>
             </p>
-            <p>(Hospedaje + A&B + Impuestos incluidos)</p>
-            <strong>
-              Nota: En caso de que el titular de la reserva sea de nacionalidad
-              colombiana{" "}
-              {/*y cumpla con los requisitos de migración colombia,*/} se debe
-              asumir el impuesto del iva del 19%.{" "}
-            </strong>
+            <p>
+              (Hospedaje + A&B {reserva[0]?.hotelidAutocore !== 56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
+              adicionales)
+            </p>
+            {/* {reserva[0]?.hotelidAutocore !== 56 && (
+            )} */}
+            {/* formuario desglose */}
+            <TablaDesglose precio={totalConIVA} adults={cantadultos} ninos={cantninos} fechasreserva={fechasreserva} totalRetenciones={totalRetenciones} />
           </div>
-          {divisaSelec == "USD" ? (
+          {divisaSelec == "USD" ||
+            totalRetenciones < 199000 ? (
             ""
           ) : (
-            <div>
-              <h3>Detallado</h3>
-              <TablaDesglose
-                precio={totalConIVA}
-                adults={adults}
-                ninos={ninos}
-                fechasreserva={fechasreserva}
-              />
-            </div>
+            ""
           )}
         </div>
-        {divisaSelec == "USD" ? null : (
+        {divisaSelec == "USD" ||
+          totalRetenciones < 199000 ? null : (
           <div>
             <FormularioRetenciones
               precio={totalConIVA}
@@ -718,7 +744,11 @@ const FormularioReserva = ({ id }) => {
                   checked={esExtranjero}
                   onChange={(e) => setesExtranjero(e.target.checked)}
                 />
+
               </div>
+              <strong>
+                Nota: <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" target="_blank" className="migracion">Condiciones para estar exento del iva.</a>{" "}
+              </strong>
               {/*-------------- INPUT TIPO DE DOCUMENTO -------------- */}
               <label htmlFor="tipoDocumento">
                 Tipo de documento <span style={{ color: "red" }}>*</span>
@@ -869,9 +899,9 @@ const FormularioReserva = ({ id }) => {
               {/*-------------- LABEL IDENTIFICADOR -------------- */}
               <label
                 htmlFor="identificador"
-                style={{ fontWeight: "light", fontSize: "12px" }}
+                style={{ color: "red", fontWeight: "light", fontSize: "12px" }}
               >
-                Se debe escribir el identificador(+)
+                Incluir código de área (+57,+55, etc.) eje:+573002215487
               </label>
             </div>
 
@@ -914,6 +944,12 @@ const FormularioReserva = ({ id }) => {
                         }}
                       />
                     </div>
+                    <label
+                      htmlFor="identificador"
+                      style={{ fontWeight: "light", fontSize: "12px" }}
+                    >
+                      Se debe escribir el identificador(+)
+                    </label>
                     {/*-------------- INPUT NUMERO DE VUELO -------------- */}
                     <div>
                       <label htmlFor="numeroVuelo">
@@ -937,6 +973,34 @@ const FormularioReserva = ({ id }) => {
                         }}
                       />
                     </div>
+
+                    {/* Mostrar número de vuelo de salida solo si es traslado al aeropuerto o ambos */}
+                    {reserva[0]?.incluirTraslado &&
+                      (reserva[0]?.tipoTraslado === "hotel_aeropuerto" ||
+                        reserva[0]?.tipoTraslado === "ambos") && (
+                        <div>
+                          <label htmlFor="numeroVueloSalida">
+                            Número del vuelo Salida :{" "}
+                            <span style={{ color: "red" }}>*</span>
+                          </label>
+                          <input
+                            id="numeroVueloSalida"
+                            type="text"
+                            placeholder="Ingrese el numero de vuelo de regreso"
+                            maxLength={30}
+                            value={formData.numeroVueloSalida}
+                            onChange={handleChange}
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              padding: "8px",
+                              marginBottom: "10px",
+                              borderRadius: "5px",
+                              border: "1px solid #ccc",
+                            }}
+                          />
+                        </div>
+                      )}
 
                     {/*-------------- INPUT AEREOLINIA FACTURA -------------- */}
                     <div>

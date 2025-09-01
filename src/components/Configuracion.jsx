@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este archivo CSS con los estilos adecuados
 import Swal from "sweetalert2";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 const Configuracion = () => {
   const [userData, setUserData] = useState(null);
@@ -17,8 +19,8 @@ const Configuracion = () => {
 
   //#region Use effect general
   useEffect(() => {
-  const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
-   
+    const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+
     setUserData(datosdelusuario);
 
     // Determinar el límite según la categoría
@@ -26,7 +28,6 @@ const Configuracion = () => {
       if (datosdelusuario.agencia.category == 0) {
         setLimiteUsuarios(10);
       } else {
-
         setLimiteUsuarios(20);
       }
     }
@@ -73,27 +74,40 @@ const Configuracion = () => {
     }
 
     setIsLoading(true);
-
-    // Preparamos el payload para el endpoint con adminRole como booleano
     const payload = {
       email: formData.email,
       fullName: formData.fullName,
       password: formData.password,
       telefono: formData.telefono,
-      adminRole: formData.adminRole, // Enviamos directamente el booleano
+      adminRole: formData.adminRole,
     };
-    try {
+
+    const fetchRegister = async (token) => {
       const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/auth/register-user",
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/auth/register-user`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${userData.token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         }
       );
+      return response;
+    };
+
+    try {
+      let response = await fetchRegister(Cookies.get("accessToken"));
+
+      if (response.status === 401) {
+        // Intentar renovar el token
+        const newToken = await refreshToken();
+        if (newToken) {
+          // Reintentar la petición con el nuevo token
+          response = await fetchRegister(newToken);
+        }
+      }
 
       const data = await response.json();
 

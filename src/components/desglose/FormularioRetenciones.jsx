@@ -88,7 +88,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
             // Bocagrande
             case 7:
                 return {
-                    valor: 30000
+                    valor: 35000
                 }
             // 1525
             case 2:
@@ -127,7 +127,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                 }
             // Boquilla
             case 56:
-                return{
+                return {
                     valor: 30000
                 }
             default:
@@ -140,12 +140,46 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
     const hotelId = DatosReserva[0]?.hotelidAutocore
     const valorDesayuno = precioDesyunos(hotelId)
 
-    const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
-    const desayunoBase = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor) / 1.08
-    const hospedajeBase = (DatosPrecio - desayunos) / 1.19
-    const hospedaje = (DatosPrecio - desayunos)
-    const ivaHospedaje = (hospedajeBase * 19) / 100
-    const impoconsumo = (desayunoBase * 8) / 100
+    let desayunos = 0
+    let desayunoBase = 0
+    let hospedajeBase = 0
+    let hospedaje = 0
+    let ivaHospedaje = 0
+    let impoconsumo = 0
+
+    if (DatosReserva[0]?.plandealimentacion == 'Solo desayuno') {
+        desayunos = DatosPrecio * 0.4
+        // const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
+        desayunoBase = desayunos / 1.08
+        hospedajeBase = (DatosPrecio - desayunos) / 1.19
+        hospedaje = (DatosPrecio - desayunos)
+        ivaHospedaje = (hospedajeBase * 19) / 100
+        impoconsumo = (desayunoBase * 8) / 100
+    } else if (DatosReserva[0]?.plandealimentacion == 'Media Pension') {
+        desayunos = DatosPrecio * 0.5
+        // const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
+        desayunoBase = desayunos / 1.08
+        hospedajeBase = (DatosPrecio - desayunos) / 1.19
+        hospedaje = (DatosPrecio - desayunos)
+        ivaHospedaje = (hospedajeBase * 19) / 100
+        impoconsumo = (desayunoBase * 8) / 100
+    } else if (DatosReserva[0]?.plandealimentacion == 'Pension completa') {
+        desayunos = DatosPrecio * 0.6
+        // const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
+        desayunoBase = desayunos / 1.08
+        hospedajeBase = (DatosPrecio - desayunos) / 1.19
+        hospedaje = (DatosPrecio - desayunos)
+        ivaHospedaje = (hospedajeBase * 19) / 100
+        impoconsumo = (desayunoBase * 8) / 100
+    } else {
+        desayunos = DatosPrecio * 0.4
+        // const desayunos = (((Number(DatosAdultos) + Number(DatosNinos)) * Noches) * valorDesayuno.valor)
+        desayunoBase = desayunos / 1.08
+        hospedajeBase = (DatosPrecio - desayunos) / 1.19
+        hospedaje = (DatosPrecio - desayunos)
+        ivaHospedaje = (hospedajeBase * 19) / 100
+        impoconsumo = (desayunoBase * 8) / 100
+    }
 
 
     const calcularRetenciones = (rteFte, rteIca, rteIva, hospedaje, desayunoBase, iva) => {
@@ -188,9 +222,11 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
 
     return (
         <>
+
             <h3>Retenciones</h3>
             <div className="contenRetenciones">
-                <label>Marque la casilla si su agencia aplica retenciones</label>
+                <label>Marque la casilla si su agencia aplica retenciones </label>
+
                 <input
                     style={{
                         width: "15px", // Tamaño más claro y consistente

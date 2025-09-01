@@ -1,0 +1,24 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DetalleEvento from "../../components/DetalleEvento";
+import RouteProtection from "../../components/RouteProtection.astro";
+
+const { id } = Astro.params;
+---
+
+<BaseLayout title="Detalle del Evento - BookingConnect">
+  <RouteProtection />
+  <div class="container">
+    <DetalleEvento client:load id={id} />
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+</style>
+
+</script>

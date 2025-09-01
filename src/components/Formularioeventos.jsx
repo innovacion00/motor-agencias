@@ -6,6 +6,8 @@ import { format, differenceInDays, addDays } from "date-fns";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 
 //#region useState
 const SolicitudPresupuesto = () => {
@@ -164,6 +166,9 @@ const SolicitudPresupuesto = () => {
           {
             nombre: "Bond Club",
             imagen: "https://via.placeholder.com/200",
+            ancho: "94m²",
+            largo: "94m²",
+            altura: "230m",
             espacio: "200m²",
             piso: "2",
             capacidad: "100 personas",
@@ -171,21 +176,30 @@ const SolicitudPresupuesto = () => {
           {
             nombre: "Cambridge",
             imagen: "https://via.placeholder.com/200",
+            ancho: "140m²",
+            largo: "140m²",
+            altura: "220m",
             espacio: "300m²",
             piso: "3",
-            capacidad: "150 personas",
+            capacidad: "120 personas",
           },
           {
             nombre: "New Castle",
             imagen: "https://via.placeholder.com/200",
-            espacio: "300m²",
+            ancho: "94m²",
+            largo: "94m²",
+            altura: "230m",
+            espacio: "200m²",
             piso: "3",
-            capacidad: "150 personas",
+            capacidad: "120 personas",
           },
           {
             nombre: "Manchester",
             imagen: "https://via.placeholder.com/200",
-            espacio: "300m²",
+            ancho: "40m²",
+            largo: "40m²",
+            altura: "230m",
+            espacio: "200m²",
             piso: "3",
             capacidad: "150 personas",
           },
@@ -199,20 +213,29 @@ const SolicitudPresupuesto = () => {
           {
             nombre: "Gales",
             imagen: "https://via.placeholder.com/200",
-            espacio: "300m²",
+            ancho: "77m²",
+            largo: "77m²",
+            altura: "240m",
+            espacio: "200m²",
             piso: "3",
-            capacidad: "150 personas",
+            capacidad: "40 personas",
           },
           {
             nombre: "London",
             imagen: "https://via.placeholder.com/200",
+            ancho: "100m²",
+            largo: "100m²",
+            altura: "240m",
             espacio: "300m²",
             piso: "3",
-            capacidad: "150 personas",
+            capacidad: "100 personas",
           },
           {
             nombre: "Oxford",
             imagen: "https://via.placeholder.com/200",
+            ancho: "56m²",
+            largo: "56m²",
+            altura: "230m",
             espacio: "300m²",
             piso: "3",
             capacidad: "150 personas",
@@ -220,9 +243,12 @@ const SolicitudPresupuesto = () => {
           {
             nombre: "Sala Windsor",
             imagen: "https://via.placeholder.com/200",
+            ancho: "56m²",
+            largo: "56m²",
+            altura: "240m",
             espacio: "300m²",
             piso: "3",
-            capacidad: "150 personas",
+            capacidad: "100 personas",
           },
         ]);
       } else if (infohotel.nombrehotel === "Hotel Madisson Inn") {
@@ -355,10 +381,35 @@ const SolicitudPresupuesto = () => {
     },
   ];
 
-  const enviarSolicitud = async () => {
-    const tipoAcomodacionId =
-      accommodation.find((type) => type.name === tipoAcomodacion)?.id || 1;
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
+  const enviarSolicitud = async () => {
+    const tipoAcomodacionId = accommodation.find((type) => type.name === tipoAcomodacion)?.id || 1;
     const informacionE = JSON.stringify({
       nameEvento: nombreEvento,
       tipoEvento: tipoEvento,
@@ -390,16 +441,12 @@ const SolicitudPresupuesto = () => {
 
     try {
       setbotondesactivado(true);
-      const url = `https://gehsuitesapps.com/agencias/v1/eventos/create`;
-      const response = await fetch(url, {
+      const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/eventos/create`;
+      const response = await fetchWithToken(url, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userData.token}`,
-        },
         body: informacionE,
       });
-      console.log(response);
+
       if (response.ok) {
         const data = await response.json();
         console.log(data);
@@ -408,6 +455,8 @@ const SolicitudPresupuesto = () => {
           title: "Solicitud enviada",
           text: "Tu solicitud de presupuesto ha sido enviada con éxito. Pronto recibirás una respuesta de nuestro equipo de ventas.",
         });
+      } else {
+        throw new Error("Error en la respuesta del servidor");
       }
     } catch (error) {
       Swal.fire({
@@ -415,10 +464,7 @@ const SolicitudPresupuesto = () => {
         title: "Error al enviar la solicitud",
         text: "No se pudo realizar la cotizacion del evento. Porfavor verifique los datos ingresados e intente nuevamente mas tarde",
       });
-      console.error(
-        "Error al realizar la cotizacion/solicitud del evento:",
-        error
-      );
+      console.error("Error al realizar la cotizacion/solicitud del evento:", error);
     } finally {
       setbotondesactivado(false);
     }

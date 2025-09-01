@@ -1,0 +1,112 @@
+export const infoHotelGeneral = () => {
+  const hoteles = [
+    {
+      id: 6,
+      nombre: "Hotel Avexi Suites",
+      nombre_corto: "avexi",
+      img_hotel: "https://www.gehsuites.com/images/fachada_avexi.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoavexi.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+    {
+      id: 1,
+      nombre: "Hotel Azuan Suites",
+      nombre_corto: "azuan",
+      img_hotel: "https://www.gehsuites.com/images/fachada-azuan.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoazuan.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+    {
+      id: 5,
+      nombre: "Hotel Abi Inn",
+      nombre_corto: "abi",
+      img_hotel: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoabi.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+    {
+      id: 9,
+      nombre: "Hotel Marina Suites",
+      nombre_corto: "marina",
+      img_hotel: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomarina.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+    {
+      id: 4,
+      nombre: "Hotel Aixo Suites",
+      nombre_corto: "aixo",
+      img_hotel: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaixo.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+    {
+      id: 7,
+      nombre: "Hotel Bocagrande Suites",
+      nombre_corto: "bocagrande",
+      img_hotel: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logobocagrande.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+    {
+      id: 56,
+      nombre: "Hotel Boquilla Suites",
+      nombre_corto: "boquilla",
+      img_hotel:
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
+      logo: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/BOQUILLA%20SUITES%20LOGO.png",
+      iconos: [
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+        "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+      ],
+    },
+  ];
+
+  return hoteles
+};

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { refreshToken } from "../stores/authtoken";
+import Cookies from "js-cookie";
 import "../../public/styles/UserDashboardEventos.css";
 
 const UserDashboard = () => {
@@ -19,36 +21,60 @@ const UserDashboard = () => {
     setUsuarioDatos(datosdelusuario.token);
     setDatosHotel(data);
   }, []);
-
   // Función para consultar las cotizaciones
-  const obtenerCotizaciones = async (token) => {
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
+  const obtenerCotizaciones = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("https://gehsuitesapps.com/agencias/v1/eventos",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      // console.log(usuarioDatos.token)
+      if (!Cookies.get('accessToken')) {
+        throw new Error('No hay token de autorización');
+      }
+
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/eventos`
+      );
+
       if (!response.ok) {
         throw new Error(`Error al obtener datos: ${response.status}`);
       }
+
       const data = await response.json();
-      
-       setCotizaciones(data);
-       setCotizacionesFiltradas(data);
-      setIsLoading(false);
+      setCotizaciones(data);
+      setCotizacionesFiltradas(data);
     } catch (err) {
       console.error("Error al obtener cotizaciones:", err);
       setError("No se pudieron cargar las cotizaciones. Por favor, intente más tarde.");
+    } finally {
       setIsLoading(false);
     }
   };
-
-  // Consultar API al cargar el componente
+  // Consultar API al cargar el componente y cuando el token esté disponible
   useEffect(() => {
     obtenerCotizaciones();
   }, []);
@@ -176,13 +202,12 @@ const UserDashboard = () => {
                   <td>{cotizacion.nombreOrganizador}</td>
                   <td>{cotizacion.cantidadAsistentes}</td>
                   <td>{formatearFecha(cotizacion.fechaInicioEvento)}</td>
-                  <td>
-                    <button
-                      className="btn-action view"
-                      onClick={() => verDetalles(cotizacion)}
-                    >
-                      <i className="fas fa-eye"></i>
-                    </button>
+                  <td>                    <a
+                    href={`/evento/${cotizacion._id}`}
+                    className="btn-action view"
+                  >
+                    <i className="fas fa-eye"></i>
+                  </a>
                   </td>
                 </tr>
               ))}
@@ -276,7 +301,7 @@ const UserDashboard = () => {
                   {cotizacionSeleccionada.horarioEvento.map((horario, index) => (
                     <div key={index} className="horario-item">
                       <p>
-                        <strong>Día {index + 1}:</strong> {formatearFecha(horario.fechaInicio)} - 
+                        <strong>Día {index + 1}:</strong> {formatearFecha(horario.fechaInicio)} -
                         Asistentes: {horario.cantidadAsistenteDia}
                       </p>
                     </div>

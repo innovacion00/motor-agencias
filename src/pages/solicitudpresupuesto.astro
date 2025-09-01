@@ -1,17 +1,12 @@
 ---
-import { fetchWithAuth } from "../utils/fetchWithAuth";
-
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
 import BaseLayout from "../layouts/BaseLayout.astro";
-import BusquedaeventosB from "../components/BusquedaeventosB";
 import Formularioeventos from "../components/Formularioeventos";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <html lang="es">
   <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+    <RouteProtection />
     <head>
       <meta charset="utf-8" />
       <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -26,10 +21,8 @@ import Formularioeventos from "../components/Formularioeventos";
       />
     </head>
     <body>
-        <Formularioeventos client:load/>
-        
+      <Formularioeventos client:load />
     </body>
-
     <style>
       body {
         font-family: "Roboto", sans-serif;

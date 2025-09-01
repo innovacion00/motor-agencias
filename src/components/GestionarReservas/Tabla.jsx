@@ -11,18 +11,42 @@ const Tabla = () => {
   const [currentPage, setCurrentPage] = useState(1); // Página actual
   const [itemsPerPage] = useState(15); // Número de elementos por página
   const [selectedStatus, setselectedStatus] = useState("all"); //Filtro por estado
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    ObtenerReservas(datosUsuario.token, datosUsuario.role[0]);
-    setTokenUrl(datosUsuario.token);
+    ObtenerReservas(datosUsuario.accessToken, datosUsuario.role[0]);
+    setTokenUrl(datosUsuario.accessToken);
   }, []);
 
+  const SkeletonRow = () => (
+    <tr style={{ borderBottom: "1px solid #eee" }}>
+      {[...Array(12)].map((_, index) => (
+        <td key={index} style={{ padding: "12px" }}>
+          <div
+            style={{
+              height: "20px",
+              backgroundColor: "#f0f0f0",
+              borderRadius: "4px",
+              animation: "pulse 1.5s infinite",
+              width: index === 11 ? "150px" : "100%", // Ancho especial para la columna de acciones
+            }}
+          ></div>
+        </td>
+      ))}
+    </tr>
+  );
+
   const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(token, nombreAgencia);
-    const reservasObtenidas = reservasNano.get();
-    setReservas(reservasObtenidas);
-    setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
+    setIsLoading(true);
+    try {
+      await getReservas(nombreAgencia);
+      const reservasObtenidas = reservasNano.get();
+      setReservas(reservasObtenidas);
+      setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
+    } finally {
+      setIsLoading(false);
+    }
   };
   console.log(filteredReservas);
   // Calcular la suma total de "Valor a pagar"
@@ -94,6 +118,15 @@ const Tabla = () => {
   // console.log(reservas)
   return (
     <div className={styles.container}>
+      <style>
+        {`
+          @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+          }
+        `}
+      </style>
       <h1>Consultar mis reservas</h1>
       <br />
       {/* Filtro de búsqueda */}
@@ -169,201 +202,221 @@ const Tabla = () => {
           </tr>
         </thead>
         <tbody>
-          {currentItems.map((dato, index) => (
-            <tr key={index}>
-              <td>{format(dato.createdAt, "h:mm a DD/MM/YYYY ", "es")}</td> {/*Fecha de creacion*/}
-              <td>{dato.reservaChatbotId}</td> {/*ID de la reserva*/}
-              <td>{dato.hotel}</td> {/*Nombre del hotel*/}
-              <td>{format(dato.reservation.checkin, "DD/MM/YYYY", "es")}</td> {/*Fecha de check-in*/}
-              <td>{format(dato.reservation.checkout, "DD/MM/YYYY", "es")}</td> {/*Fecha de check-out*/}
-              <td>{dato?.agenciaId?.fullName}</td> {/*Nombre de la agencia*/}
-              <td>{dato?.userId?.fullName}</td> {/*Nombre del agente*/}
-              <td>{`${dato.reservation.firstName} ${dato.reservation.lastName}`}</td> {/*Nombre del huésped*/}
-              
-              {/*Fechas limite de pago*/}
-              <td>
-                {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                  format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
-                ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                  format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
-                ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                  format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
-                ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                  format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
-                ) : dato.status == "4" ? (
-                  format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
-                ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                  format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
-                ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                  format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
-                ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                  format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
-                ) : (
-                  <p>En proceso</p>
-                )}
-              </td>
+          {isLoading ? (
+            // Mostrar 15 filas de skeleton loader
+            [...Array(15)].map((_, index) => <SkeletonRow key={index} />)
+          ) : (
+            <>
+              {currentItems.map((dato, index) => (
+                <tr key={index}>
+                  <td>
+                    {format(dato.createdAt, "h:mm a DD/MM/YYYY ", "es")}
+                  </td>{" "}
+                  {/*Fecha de creacion*/}
+                  <td>{dato.reservaChatbotId}</td> {/*ID de la reserva*/}
+                  <td>{dato.hotel}</td> {/*Nombre del hotel*/}
+                  <td>
+                    {format(dato.reservation.checkin, "DD/MM/YYYY", "es")}
+                  </td>{" "}
+                  {/*Fecha de check-in*/}
+                  <td>
+                    {format(dato.reservation.checkout, "DD/MM/YYYY", "es")}
+                  </td>{" "}
+                  {/*Fecha de check-out*/}
+                  <td>{dato?.agenciaId?.fullName}</td> {/*Nombre de la agencia*/}
+                  <td>{dato?.userId?.fullName}</td> {/*Nombre del agente*/}
+                  <td>
+                    {`${dato.reservation.firstName} ${dato.reservation.lastName}`}
+                  </td>{" "}
+                  {/*Nombre del huésped*/}
 
-              {/*Valor a pagar dolares*/}
-              {dato.reservation.currency == "USD" ? (
-                <td>
-                  {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} USD`
-                  ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} USD`
-                  ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} USD`
-                  ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.total)} USD`
-                  ) : dato.status == "4" ? (
-                    `${formatCurrency(dato.total)} USD`
-                  ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} USD`
-                  ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} USD`
-                  ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} USD`
+                  {/*Fechas limite de pago*/}
+                  <td>
+                    {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
+                      format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
+                    ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
+                      format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
+                    ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
+                      format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
+                    ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
+                      format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                    ) : dato.status == "4" ? (
+                      format(dato.fechaLimitePago, "DD/MM/YYYY", "es")
+                    ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
+                      format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                    ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
+                      format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                    ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
+                      format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                    ) : (
+                      <p>En proceso</p>
+                    )}
+                  </td>
+
+                  {/*Valor a pagar dolares*/}
+                  {dato.reservation.currency == "USD" ? (
+                    <td>
+                      {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
+                        `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
+                        `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
+                        `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.total)} USD`
+                      ) : dato.status == "4" ? (
+                        `${formatCurrency(dato.total)} USD`
+                      ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.totalMitad)} USD`
+                      ) : (
+                        <p>En proceso </p>
+                      )}
+                    </td>
                   ) : (
-                    <p>En proceso </p>
+                    //Valor a pagar pesos
+                    <td>
+                      {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
+                        `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
+                        `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
+                        `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.total)} COP`
+                      ) : dato.status == "4" ? (
+                        `${formatCurrency(dato.total)} COP`
+                      ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
+                        `${formatCurrency(dato.totalMitad)} COP`
+                      ) : (
+                        <p>En proceso </p>
+                      )}
+                    </td>
                   )}
+
+                  {/*Estado de la reserva*/}
+                  <td>
+                    {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
+                      <span className={`${styles.status} ${styles.pending}`}>
+                        Pago pendiente
+                      </span>
+                    ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
+                      <span className={`${styles.status} ${styles.proces}`}>
+                        Pago en proceso
+                      </span>
+                    ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
+                      <span className={`${styles.status} ${styles.denied}`}>
+                        Pago rechazado primer abono
+                      </span>
+                    ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
+                      <span className={`${styles.status} ${styles.clomplete}`}>
+                        Pago aprobado
+                      </span>
+                    ) : dato.status == "4" ? (
+                      <span className={`${styles.status} ${styles.cancel}`}>
+                        Reserva cancelada
+                      </span>
+                    ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
+                      <span className={`${styles.status} ${styles.denied}`}>
+                        Pago rechazado segundo abono
+                      </span>
+                    ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
+                      <span className={`${styles.status} ${styles.abonado}`}>
+                        Abonado primera mitad
+                      </span>
+                    ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
+                      <span className={`${styles.status} ${styles.proces}`}>
+                        Pago total en proceso
+                      </span>
+                    ) : (
+                      <p>Estado en proceso</p>
+                    )}
+                  </td>
+                  <td>
+                    <a
+                      href={`/gestionar/${dato.reservaChatbotId}`}
+                      className={styles.link}
+                    >
+                      Consultar y gestionar
+                    </a>
+                  </td>
+                </tr>
+              ))}
+
+              {/*----------------------- Fila para el total ---------------------------*/}
+
+              <tr className={styles.totalRow}>
+                <td colSpan="1" style={{ textAlign: "left", fontWeight: "bold" }}>
+                  Total de reservas realizadas:
                 </td>
-              ) : (
-
-                //Valor a pagar pesos
-                <td>
-                  {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
-                  ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
-                  ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
-                  ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.total)} COP`
-                  ) : dato.status == "4" ? (
-                    `${formatCurrency(dato.total)} COP`
-                  ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
-                  ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
-                  ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                    `${formatCurrency(dato.totalMitad)} COP`
-                  ) : (
-                    <p>En proceso </p>
-                  )}
+                <td style={{ fontWeight: "bold" }}>{filteredReservas.length}</td>
+                <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
+                  Total:
                 </td>
-              )}
-              
-                {/*Estado de la reserva*/}
-              <td>
-                {dato.status == "0" && dato.pagadoPrimeraMitad == false ? (
-                  <span className={`${styles.status} ${styles.pending}`}>
-                    Pago pendiente
-                  </span>
-                ) : dato.status == "1" && dato.pagadoPrimeraMitad == false ? (
-                  <span className={`${styles.status} ${styles.proces}`}>
-                    Pago en proceso
-                  </span>
-                ) : dato.status == "2" && dato.pagadoPrimeraMitad == false ? (
-                  <span className={`${styles.status} ${styles.denied}`}>
-                    Pago rechazado primer abono
-                  </span>
-                ) : dato.status == "3" && dato.pagadoPrimeraMitad == true ? (
-                  <span className={`${styles.status} ${styles.clomplete}`}>
-                    Pago aprobado
-                  </span>
-                ) : dato.status == "4" ? (
-                  <span className={`${styles.status} ${styles.cancel}`}>
-                    Reserva cancelada
-                  </span>
-                ) : dato.status == "2" && dato.pagadoPrimeraMitad == true ? (
-                  <span className={`${styles.status} ${styles.denied}`}>
-                    Pago rechazado segundo abono
-                  </span>
-                ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
-                  <span className={`${styles.status} ${styles.abonado}`}>
-                    Abonado primera mitad
-                  </span>
-                ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
-                  <span className={`${styles.status} ${styles.proces}`}>
-                    Pago total en proceso
-                  </span>
-                ) : (
-                  <p>Estado en proceso</p>
-                )}
-              </td>
-              <td>
-                <a
-                  href={`/gestionar/${dato.reservaChatbotId}`}
-                  className={styles.link}
-                >
-                  Consultar y gestionar
-                </a>
-              </td>
-            </tr>
-          ))}
-
-          {/*----------------------- Fila para el total ---------------------------*/}
-
-          <tr className={styles.totalRow}>
-            <td colSpan="1" style={{ textAlign: "left", fontWeight: "bold" }}>
-              Total de reservas realizadas:
-            </td>
-            <td style={{ fontWeight: "bold" }}>{filteredReservas.length}</td>
-            <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
-              Total:
-            </td>
-            <td style={{ fontWeight: "bold" }}>
-              {formatCurrency(totalAmount)}
-            </td>
-            <td colSpan="2"></td>
-          </tr>
+                <td style={{ fontWeight: "bold" }}>
+                  {formatCurrency(totalAmount)}
+                </td>
+                <td colSpan="2"></td>
+              </tr>
+            </>
+          )}
         </tbody>
       </table>
 
-      {/* Paginación */}
-      <div className={styles.pagination}>
-        <button
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          className={styles.pageNav}
-        >
-          &laquo; {/* Símbolo para "anterior" */}
-        </button>
+      {/* Mostrar paginación solo cuando no está cargando */}
+      {!isLoading && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={styles.pageNav}
+          >
+            &laquo; {/* Símbolo para "anterior" */}
+          </button>
 
-        {pageNumbers
-          .filter(
-            (number) =>
-              number === 1 || // Siempre muestra la primera página
-              number === totalPages || // Siempre muestra la última página
-              (number >= currentPage - 2 && number <= currentPage + 2) // Muestra un rango de 5 páginas alrededor de la actual
-          )
-          .map((number, index, filtered) => (
-            <>
-              {/* Agrega "..." para indicar páginas omitidas */}
-              {index > 0 && filtered[index - 1] + 1 !== number && (
-                <span className={styles.ellipsis} key={`ellipsis-${number}`}>
-                  ...
-                </span>
-              )}
-              <button
-                key={number}
-                onClick={() => paginate(number)}
-                className={`${styles.pageItem} ${
-                  currentPage === number ? styles.active : ""
-                }`}
-              >
-                {number}
-              </button>
-            </>
-          ))}
+          {pageNumbers
+            .filter(
+              (number) =>
+                number === 1 || // Siempre muestra la primera página
+                number === totalPages || // Siempre muestra la última página
+                (number >= currentPage - 2 && number <= currentPage + 2) // Muestra un rango de 5 páginas alrededor de la actual
+            )
+            .map((number, index, filtered) => (
+              <>
+                {/* Agrega "..." para indicar páginas omitidas */}
+                {index > 0 && filtered[index - 1] + 1 !== number && (
+                  <span className={styles.ellipsis} key={`ellipsis-${number}`}>
+                    ...
+                  </span>
+                )}
+                <button
+                  key={number}
+                  onClick={() => paginate(number)}
+                  className={`${styles.pageItem} ${
+                    currentPage === number ? styles.active : ""
+                  }`}
+                >
+                  {number}
+                </button>
+              </>
+            ))}
 
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className={styles.pageNav}
-        >
-          &raquo; {/* Símbolo para "siguiente" */}
-        </button>
-      </div>
+          <button
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={styles.pageNav}
+          >
+            &raquo; {/* Símbolo para "siguiente" */}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

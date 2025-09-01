@@ -1,23 +1,61 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Gestionar from "../../components/GestionarReservas/Gestionar";
-import CurrencySelector from '../../components/Cambiardivisas';
-import { getReservas, reservasNano } from "../../stores/disponibilidad";
+import CurrencySelector from "../../components/Cambiardivisas";
+import { getReservasServer } from "../../stores/disponibilidad";
 
 export const prerender = false;
 
-const cook = Astro.cookies.get("token");
-const rol = Astro.cookies.get("datosUsuario");
-const roles = JSON.parse(rol.value).role;
-const reservas = await getReservas(JSON.parse(cook.value), roles);
+const cookieToken = Astro.cookies.get("accessToken");
+const cookieUser = Astro.cookies.get("datosUsuario");
 
-console.log(roles);
+
+// Verificar autenticación
+if (!cookieToken || !cookieUser) {
+  return Astro.redirect("/login");
+}
+
+const userData = JSON.parse(cookieUser.value);
+const reservas = await getReservasServer(cookieToken.value, userData.role);
+
+// Si no hay reservas o hubo error, redirigir
+if (!reservas) {
+  return Astro.redirect("/login");
+}
+
 const { id } = Astro.params;
-
 const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
-// console.log(reservasNano.get())
+
+// Si no se encuentra la reserva específica, redirigir
+if (!reserva) {
+  return Astro.redirect("/misreservas");
+}
 ---
+
 <BaseLayout title="Consultar y gestionar - BookingConnect ">
-    
-    <Gestionar reservas={reserva} client:load />
+  <Gestionar reservas={reserva} client:load />
 </BaseLayout>
+
+
+<script>
+  import { refreshToken } from "../../stores/authtoken";
+  import Cookies from "js-cookie";
+
+  // La validación del lado del cliente ahora puede usar refreshToken
+  async function checkAuth() {
+    const token = Cookies.get("accessToken");
+    if (!token) {
+      window.location.href = "/login";
+      return;
+    }
+    
+    // Intentar refresh token si es necesario
+    try {
+      await refreshToken();
+    } catch (error) {
+      window.location.href = "/login";
+    }
+  }
+  
+  checkAuth();
+</script>

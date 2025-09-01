@@ -1,37 +1,15 @@
 ---
-import { fetchWithAuth } from '../utils/fetchWithAuth';
 import FormularioReserva from '../components/FormularioReserva';
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-}
+import RouteProtection from '../components/RouteProtection.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import DropdownSearch from '../components/DropdownSearch';
 
 ---
 <html lang = "es">
-<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
- 
-<FormularioReserva client:load>  
-  
-   <head>
-    
-  </head>
+<BaseLayout title="Datos de mi reserva - BookingConnect ">
+ <RouteProtection />
   
   <body>
-    
-
-
-    <script>
-      function checkAuth() {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      window.location.href = "/login"; // Redirige al login si no hay token
-    }
-  }
-
-  checkAuth(); // Llamamos a esta función al cargar la página
-    </script>
+    <FormularioReserva client:load>  
   </body> 
 </html>
 

@@ -4,9 +4,9 @@ export const toursData = [
      title: "Tour 1: Isla playa blanca barú por bus ",
      city:"CARTAGENA",
      description: "Viaja por Tierra a Nuestra Isla Playa Blanca Barú y Disfruta de una experiencia inolvidable ¡Prepárate para vivir un día lleno de sol, mar y arena! Súbete a nuestro cómodo bus turístico rumbo a la paradisíaca Isla Barú, ubicada en el hermoso departamento de Bolívar, Colombia. Este tour está diseñado para grupos de 25 a 30 personas, lo que garantiza un ambiente ameno, divertido y seguro.",
-     price: "$ 55.000 por persona",
-     preciocol:"55000",
-     preciousd:"12.76",
+     price: "$ 60.000 por persona",
+     preciocol:"60000",
+     preciousd:"16",
      schedule: "Horario: 7:45 a.m a 3:00 p.m",
      duration: "8 horas",
      meetingPoint: "Muelle Todomar, San Martín 1-5, Cartagena",
@@ -46,9 +46,9 @@ export const toursData = [
      title: "Tour 2: Isla playa blanca barú por lancha ",
      city:"CARTAGENA",
      description: "Disfruta de un día completo en Playa Blanca, una de las playas más hermosas de Cartagena conocida por su arena blanca y aguas cristalinas. Saldrás desde el muelle de Cartagena y navegarás aproximadamente 45 minutos hasta llegar a esta maravillosa playa ubicada en la Isla de Barú. Tendrás tiempo libre para nadar, tomar el sol y disfrutar de actividades acuáticas opcionales. Incluye almuerzo típico y bebidas refrescantes.",
-     price: "110.000 por persona",
-     preciocol:"110000",
-     preciousd:"25.25",
+     price: "130.000 por persona",
+     preciocol:"135000",
+     preciousd:"37",
      schedule: "Horario: 7:45 a.m a 3:00 p.m",
      duration: "8 horas",
      meetingPoint: "Muelle de la Bodeguita, Centro Histórico, Cartagena",
@@ -90,9 +90,9 @@ export const toursData = [
      title: "Tour 3: City tour en chiva ",
      city:"CARTAGENA",
      description: "¡Vive la magia de Cartagena en un increíble City Tour lleno de historia, cultura y tradición! Súbete a una auténtica Chiva rumbera y déjate llevar por los encantos de la city heroica. Te recogemos directamente en tu hotel y comenzamos una ruta inolvidable por los lugares más emblemáticos de Cartagena.",
-     price: "$ 55.000 por persona",
-     preciocol:"55000",
-     preciousd:"12.76",
+     price: "$ 70.000 por persona",
+     preciocol:"70000",
+     preciousd:"19.44",
      schedule: "Horario: Mañana 09:00 AM - 01:00 PM / Tarde 02:00 PM - 06:00 PM",
      duration: "4 horas",
      meetingPoint: "Te recogemos a tu Hotel en Chiva",
@@ -124,9 +124,9 @@ export const toursData = [
        title: "Tour 4: Rumba en chiva ",
        city:"CARTAGENA",
        description: "🎉 ¡Vive la fiesta cartagenera sobre ruedas con nuestro Tour de Rumba en Chiva! Si buscas diversión, música y buena vibra, este tour es perfecto para ti. Súbete a una tradicional Chiva rumbera y disfruta de una noche inolvidable recorriendo Cartagena al ritmo de la música y los tambores.",
-       price: "$ 33.000 por persona",
-       preciocol:"33000",
-       preciousd:"7.66",
+       price: "$ 55.000 por persona",
+       preciocol:"55000",
+       preciousd:"15.27",
        schedule: "Horario: 8:00 p.m a 11:00 p.m",
        duration: "3 horas",
        meetingPoint: "Te recogemos a tu Hotel en Chiva",
@@ -158,9 +158,9 @@ export const toursData = [
        title: "Tour 5: Palmarito Beach  ",
        city:"CARTAGENA",
        description: "Disfruta de un día inolvidable en Palmarito Beach, un exclusivo club de playa ubicado en Cartagena, ideal para familias, parejas o grupos de amigos que buscan relajarse frente al mar. El tour incluye transporte en lancha ida y regreso con salida desde la Playa del Nuevo Hospital de Bocagrande, un coctel de bienvenida al llegar, un almuerzo tipo buffet con diversas opciones, y el uso completo de las instalaciones del club. Podrás disfrutar de camas, sillas asoleadoras o kioskos de palma (asignados según disponibilidad), acceso a la piscina, parque infantil para los más pequeños, y una zona de hamacas para descansar cómodamente. Palmarito Beach ofrece un ambiente tranquilo y natural, perfecto para desconectarse de la rutina y disfrutar de un día de sol, playa y descanso en el Caribe colombiano.",
-       price: "$ 187.000 por persona",
-       preciocol:"187000",
-       preciousd:"43.39",
+       price: "$ 230.000 por persona",
+       preciocol:"230000",
+       preciousd:"63.88",
        schedule: "Horario: 8:00 a.m a 3:30 p.m",
        duration: "7 horas",
        meetingPoint: "A Playa del Nuevo Hospital de Bocagrande",
@@ -201,9 +201,9 @@ export const toursData = [
        title: "Tour 6: Tour de las 4 islas",
        city:"CARTAGENA",
        description: "Vive una experiencia inolvidable con el Tour 4 Islas, una aventura única por el Caribe colombiano. El recorrido comienza con transporte terrestre desde tu hotel hasta Playa Blanca, en Barú, donde abordarás una lancha que te llevará a conocer cuatro islas paradisíacas. Durante el tour disfrutarás de un almuerzo típico con opción de pescado o pollo, en un entorno natural y relajado. La experiencia incluye los impuestos de zarpe requeridos y, al finalizar el recorrido, contarás con transporte terrestre desde Barú de regreso a tu hotel. Es una excelente opción para quienes desean explorar varias islas en un solo día, con comodidad y organización.",
-       price: "$ 165.000 por persona",
-       preciocol:"165000",
-       preciousd:"38.28",
+       price: "$ 200.000 por persona",
+       preciocol:"200000",
+       preciousd:"55.55",
        schedule: "Horario: 7:45 a.m a 3:00 p.m",
        duration: "7 horas",
        meetingPoint: "Muelle de la Bodeguita, Centro Histórico, Cartagena",
@@ -257,14 +257,16 @@ export const toursData = [
          "Transporte terrestre",
          "Conductor guía",
          "Seguro de viaje",
-         "Entradas a la Quinta de San Pedro Alejandrino"
+         "Entradas a la Quinta de San Pedro Alejandrino",
+         ""
        ],
        toBring: [
          "Gafas de sol",   
          "Dinero extra para consumos adicionales",
        ],
        notIncludes: [
-         "Gastos no especificados"
+         "Gastos no especificados",
+         
        ],
        restrictions: "Está prohibido fumar o consumir alcohol dentro de los vehículos,El pasajero será responsable por cualquier daño ocasionado al vehículo durante el traslado. ",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -301,7 +303,8 @@ export const toursData = [
         ],
         notIncludes: [
           "Gastos no especificados",
-          "No incluye carpas , sillas, hamacas"
+          "No incluye carpas , sillas, hamacas",
+          "No incluye almuerzo (valor adicional con almuerzo: 90.000 )"
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia.",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -335,11 +338,12 @@ export const toursData = [
           "Gafas de sol", 
           "Sombrero", 
           "Cámara acuática (opcional)", 
-          "Dinero extra para consumos adicionales"
+          "Dinero extra para consumos adicionales",
         ],
         notIncludes: [
           "Gastos no especificados",
-          "No incluye carpas , sillas, hamacas"
+          "No incluye carpas , sillas, hamacas",
+          "No incluye almuerzo (valor adicional con almuerzo: 90.000 )",
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -377,7 +381,8 @@ export const toursData = [
         ],
         notIncludes: [
           "Gastos no especificados",
-          "No incluye carpas , sillas, hamacas"
+          "No incluye carpas , sillas, hamacas",
+          "No incluye almuerzo (valor adicional con almuerzo: 160.000 )"
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",
        cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
@@ -446,6 +451,7 @@ export const toursData = [
         ],
         notIncludes: [
           "Gastos no especificados",
+          "No incluye almuerzo"
           
         ],
         restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",

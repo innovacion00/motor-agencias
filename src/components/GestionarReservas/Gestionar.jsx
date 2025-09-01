@@ -11,15 +11,17 @@ import {
   linkPago,
 } from "../../stores/pagos";
 import Swal from "sweetalert2";
-import jsPDF from 'jspdf';
+import jsPDF from "jspdf";
+import TablaDesglose from "../desglose/TablaDesglose";
+import { refreshToken } from "../../stores/authtoken";
 
 //UseState
 const Gestionar = ({ reservas }) => {
-  console.log(reservas); // Datos de la reserva
+  // console.log(reservas); // Datos de la reserva
   const checkin = format(reservas?.reservation.checkin, "D MMM", "es");
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
-  const [nota, setNota] = useState(reservas.notasSuperAdmin || "");
+  const [nota, setNota] = useState(reservas?.notasSuperAdmin || "");
   const [mostrarnota1, setmostrarnota1] = useState(false);
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
@@ -27,7 +29,8 @@ const Gestionar = ({ reservas }) => {
   const [mostrarExtranjero, setmostrarExtranjero] = useState(false);
   const [mostrarAdicionalA, setmostrarAdicionalA] = useState(false);
   const [mostrarAdicionalC, setmostrarAdicionalC] = useState(false);
-
+  const [userData, setUserData] = useState(null);
+  const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
@@ -36,10 +39,113 @@ const Gestionar = ({ reservas }) => {
 
   let contador = 1;
 
+  const [isEditingTitular, setIsEditingTitular] = useState(false);
+  const [titularData, setTitularData] = useState({
+    documento: "",
+    firstName: "",
+    lastName: "",
+    fechaNacimiento: "",
+    email: "",
+    telephone: "",
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+    setUserData(datosdelusuario);
+    if (reservas?.titularInfo && reservas?.reservation) {
+      setTitularData({
+        documento: reservas.titularInfo.documento || "",
+        firstName: reservas.reservation.firstName || "",
+        lastName: reservas.reservation.lastName || "",
+        fechaNacimiento: reservas.titularInfo.fechaNacimiento || "",
+        email: reservas.reservation.email || "",
+        telephone: reservas.reservation.telephone || "",
+      });
+    }
+  }, [reservas]);
+
+  const handleTitularChange = (e) => {
+    const { name, value } = e.target;
+    setTitularData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  //#region Editar datos titular
+
+  const guardarCambiosTitular = async () => {
+    try {
+      setIsSaving(true);
+
+      // Show loading state with Swal
+      Swal.fire({
+        title: "Guardando cambios...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/editar-reserva/${reservas._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            documento: titularData.documento,
+            firstName: titularData.firstName,
+            lastName: titularData.lastName,
+            email: titularData.email,
+            telephone: titularData.telephone,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al actualizar datos");
+      }
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Datos del titular actualizados correctamente",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.reload();
+      });
+
+      setIsEditingTitular(false);
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        title: "Error",
+        text: "No se pudieron actualizar los datos del titular",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  //#region UseEffect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
+
+    if (reservas?.mascotas) {
+      setMostrarMascotas(true);
+    } else {
+      setMostrarMascotas(false);
+    }
 
     if (reservas?.exentoIva) {
       setmostrarExtranjero(true);
@@ -83,17 +189,37 @@ const Gestionar = ({ reservas }) => {
   };
 
   //#region Obtener MI Saldo
-  const obtenerSaldo = async (token) => {
-    try {
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/agencias/obtener-saldo",
-        {
-          method: "GET",
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    let response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetch(url, {
+          ...options,
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
+            ...options.headers,
+            'Authorization': `Bearer ${newToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+      }
+    }
+    return response;
+  };
+
+  const obtenerSaldo = async () => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/obtener-saldo`
       );
 
       if (!response.ok) {
@@ -101,7 +227,7 @@ const Gestionar = ({ reservas }) => {
       }
 
       const data = await response.json();
-      setAvailableAmount(data.available_amount);
+      setAvailableAmount(data.total_available_amount);
     } catch (error) {
       console.error("Error obteniendo saldo:", error);
       Swal.fire({
@@ -158,7 +284,7 @@ const Gestionar = ({ reservas }) => {
     }
   };
 
-  //#region boton pagar mitad
+  //#region Boton pagar mitad
   const onClick = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -169,7 +295,7 @@ const Gestionar = ({ reservas }) => {
     }
     await generarLink(id, booleano);
   };
-  //#region boton pagar total
+  //#region Boton pagar total
   const onClickTotal = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -182,7 +308,7 @@ const Gestionar = ({ reservas }) => {
     await generarLink(id, booleano);
   };
 
-  //#region boton pagar billetera
+  //#region Boton pagar billetera
   const onClickBilletera = async (id, booleano) => {
     if (
       reservas?.status == "1" ||
@@ -195,7 +321,7 @@ const Gestionar = ({ reservas }) => {
     await generarLinkBilletera(id, booleano);
   };
 
-  //#region formatear valores de dinero
+  //#region Formatear dinero
   const formatCurrency = (value) => {
     if (value === undefined || value === null || isNaN(value)) {
       return "Sin Disponibilidad";
@@ -209,24 +335,19 @@ const Gestionar = ({ reservas }) => {
 
   //#region editar reserva(nota)
 
-  const editarnota = async (reservas) => {
+  const editarnota = async (reservaId) => {
     try {
-      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-      const token = datosUsuario.token;
-
-      const response = await fetch(
-        `https://gehsuitesapps.com/agencias/v1/reservas/editar-reserva/${reservas}`,
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/editar-reserva/${reservaId}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify({
             notasSuperAdmin: nota,
           }),
         }
-      ); //#region Noti erro editar reserva
+      );
+
+      // //#region Noti erro editar reserva
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error al cancelar la reserva:", errorData);
@@ -238,7 +359,7 @@ const Gestionar = ({ reservas }) => {
         return;
       }
 
-      //#region Noti exito editar reserva
+      //#region Exito editar reserva
       const data = await response.json();
       console.log("Nota guardada exitosamente:", data);
       Swal.fire({
@@ -247,7 +368,7 @@ const Gestionar = ({ reservas }) => {
         icon: "success",
         timer: 1000, // La alerta se cierra automáticamente en 2 segundos
         showConfirmButton: false, // Ocultar botón de confirmación
-        confirmButtonColor:"#26547B" 
+        confirmButtonColor: "#26547B",
       }).then(() => {
         window.location.reload(); // Recargar la página
       });
@@ -261,32 +382,25 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
-
-  //#region Peticion cancelar reservas
-  const cancelarReserva = async (reservas) => {
-    try {
-      // Obtener los datos del usuario desde localStorage
-      const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-
-      // Extraer el token
-      const token = datosUsuario.token;
-
-      // Hacer la solicitud DELETE
-      const response = await fetch(
-        "https://gehsuitesapps.com/agencias/v1/reservas/cancelar-reserva",
-        {
-          method: "DELETE",
+  /*method: "DELETE",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Incluir el token en el encabezado
-          },
+            Authorization: `Bearer ${token}`,*/
+
+  //#region Cancelar reservas
+  const cancelarReserva = async (reservaId) => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
+        {
+          method: "DELETE",
           body: JSON.stringify({
-            reservaId: reservas, // Pasar el ID de la reserva
+            reservaId: reservaId,
           }),
         }
       );
 
-      //#region Noti Validar la respuesta de la API
+      //#region Validar respuesta api
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error al cancelar la reserva:", errorData);
@@ -312,7 +426,7 @@ const Gestionar = ({ reservas }) => {
       });
     } catch (error) {
       console.error("Error al cancelar la reserva:", error);
-      //#region Noti fallo en la api de cancelar reserva
+
       Swal.fire(
         "Error",
         "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
@@ -321,27 +435,58 @@ const Gestionar = ({ reservas }) => {
     }
   };
 
-  //#region Noti pago mi saldo
+  //#region Modal Pago mi saldo
+
   const confirmarPago = (id) => {
     Swal.fire({
-      title: "¿Está seguro?",
-      text: `Se procederá al pago con 'Mi saldo' que es ${formatCurrency(
-        AvailableAmount
-      )}. ¿Estas seguro que deseas realizarlo?`,
-      icon: "warning",
-      showCancelButton: true,
+      title: "Seleccione el tipo de pago",
+      text: "¿Qué porcentaje del valor total desea pagar?",
+      icon: "question",
+      showDenyButton: true,
+      confirmButtonText: "Pagar Total",
+      denyButtonText: "Pagar 50%",
       confirmButtonColor: "#26547B",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sí, pagar",
-      cancelButtonText: "Cancelar",
+      denyButtonColor: "#4B70B2",
+      showClass: {
+        popup: "animate__animated animate__fadeInDown animate__faster",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutUp animate__faster",
+      },
     }).then((result) => {
-      if (result.isConfirmed) {
-        onClickBilletera(id, true);
+      if (result.isConfirmed || result.isDenied) {
+        const isPagoCompleto = result.isConfirmed;
+
+        Swal.fire({
+          title: "¿Está seguro?",
+          text: `Se procederá al pago con 'Mi saldo' que es ${formatCurrency(
+            AvailableAmount
+          )}. ${isPagoCompleto
+              ? `Pagará el total del valor`
+              : "Pagará el 50% del valor"
+            }`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#26547B",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, pagar",
+          cancelButtonText: "Cancelar",
+          showClass: {
+            popup: "animate__animated animate__fadeInDown animate__faster",
+          },
+          hideClass: {
+            popup: "animate__animated animate__fadeOutUp animate__faster",
+          },
+        }).then((confirmResult) => {
+          if (confirmResult.isConfirmed) {
+            onClickBilletera(id, isPagoCompleto);
+          }
+        });
       }
     });
   };
 
-  //#region Noti cancelar reservas
+  //#region Modal cancelar reservas
   const confirmarCancelacion = (reservaId) => {
     Swal.fire({
       title: "¿Estás seguro?",
@@ -360,110 +505,225 @@ const Gestionar = ({ reservas }) => {
   };
 
   const imprimirVoucher = () => {
-    const doc = new jsPDF();
-    const margin = 20;
-    let yPos = margin;
-    
-    // Configuración de estilos
-    doc.setFontSize(20);
-    doc.text("Voucher de Reserva", margin, yPos);
-    
-    // Información básica
-    doc.setFontSize(12);
-    yPos += 20;
-    doc.text(`Código de Reserva: ${reservas?.reservaChatbotId}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Hotel: ${reservas?.hotel}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Check-in: ${checkin}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Check-out: ${checkout}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Noches: ${reservas?.reservation.nights}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Huéspedes: ${sumaHuespe}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Habitaciones: ${reservas?.cantidadHabitaciones}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Plan de alimentación: ${reservas?.planAlimentario}`, margin, yPos);
-    
-    // Información del titular
-    yPos += 20;
-    doc.setFontSize(14);
-    doc.text("Información del Titular", margin, yPos);
-    
-    doc.setFontSize(12);
-    yPos += 10;
-    doc.text(`Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Documento: ${reservas?.titularInfo?.documento}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Email: ${reservas?.reservation.email}`, margin, yPos);
-    
-    yPos += 10;
-    doc.text(`Teléfono: ${reservas?.reservation.telephone}`, margin, yPos);
-    
-    // Valor total
-    yPos += 20;
-    doc.setFontSize(14);
-    doc.text("Valor Total", margin, yPos);
-    
-    doc.setFontSize(12);
-    yPos += 10;
-    doc.text(
-      `Total: ${reservas.reservation.currency == "USD" 
-        ? `$${reservas?.total} USD` 
-        : `${formatCurrency(reservas?.total)} COP`}`,
-      margin, 
-      yPos
-    );
+    Swal.fire({
+      title: "Porcentaje de incremento",
+      text: "Ingrese el porcentaje a incrementar en los valores (0-100):",
+      input: "number",
+      inputAttributes: {
+        min: 0,
+        max: 100,
+        step: 1,
+      },
+      showCancelButton: true,
+      confirmButtonColor: "#26547B",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Imprimir",
+      cancelButtonText: "Cancelar",
+      inputValidator: (value) => {
+        if (!value || value < 0 || value > 100) {
+          return "Por favor ingrese un número válido entre 0 y 100";
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Mostrar loading mientras se genera el PDF
+        Swal.fire({
+          title: "Generando PDF",
+          text: "Por favor espere...",
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
 
-    // Guardar PDF
-    doc.save(`voucher-${reservas?.reservaChatbotId}.pdf`);
+        const incremento = 1 + Number(result.value) / 100;
+        const doc = new jsPDF();
+        const margin = 20;
+        let yPos = margin;
+
+        // Función para crear el contenido del PDF
+        const generarContenidoPDF = () => {
+          // Título principal
+          doc.setFontSize(20);
+          doc.setTextColor(38, 84, 124);
+          doc.text("VOUCHER DE RESERVA", margin, yPos);
+
+          // Línea decorativa
+          yPos += 5;
+          doc.setDrawColor(38, 84, 124);
+          doc.line(margin, yPos, 190, yPos);
+          yPos += 15;
+
+          // Información básica
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.text(
+            `Código de Reserva: ${reservas?.reservaChatbotId}`,
+            margin,
+            yPos
+          );
+          yPos += 10;
+          doc.text(`Hotel: ${reservas?.hotel}`, margin, yPos);
+          yPos += 10;
+          doc.text(
+            `Check-in: ${checkin} - Check-out: ${checkout}`,
+            margin,
+            yPos
+          );
+          yPos += 10;
+          doc.text(`Noches: ${reservas?.reservation.nights}`, margin, yPos);
+          yPos += 10;
+          doc.text(`Huéspedes totales: ${sumaHuespe}`, margin, yPos);
+          yPos += 10;
+          doc.text(
+            `Habitaciones: ${reservas?.cantidadHabitaciones}`,
+            margin,
+            yPos
+          );
+          yPos += 10;
+          doc.text(
+            `Plan de alimentación: ${reservas?.planAlimentario}`,
+            margin,
+            yPos
+          );
+
+          // Separador
+          yPos += 15;
+          doc.line(margin, yPos, 190, yPos);
+          yPos += 15;
+
+          // Información del titular
+          doc.setFontSize(14);
+          doc.setTextColor(38, 84, 124);
+          doc.text("INFORMACIÓN DEL TITULAR", margin, yPos);
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+          doc.text(
+            `Nombre: ${reservas?.reservation.firstName} ${reservas?.reservation.lastName}`,
+            margin,
+            yPos
+          );
+          yPos += 10;
+          doc.text(
+            `Documento: ${reservas?.titularInfo?.documento}`,
+            margin,
+            yPos
+          );
+          yPos += 10;
+          doc.text(`Email: ${reservas?.reservation.email}`, margin, yPos);
+          yPos += 10;
+          doc.text(
+            `Teléfono: ${reservas?.reservation.telephone}`,
+            margin,
+            yPos
+          );
+
+          // Separador
+          yPos += 15;
+          doc.line(margin, yPos, 190, yPos);
+          yPos += 15;
+
+          // Detalle de valores
+          doc.setFontSize(14);
+          doc.setTextColor(38, 84, 124);
+          doc.text("DETALLE DE VALORES", margin, yPos);
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setTextColor(0, 0, 0);
+
+          // Valores de habitaciones
+          reservas?.reservation.roomsData.forEach((dato) => {
+            const precioIncrementado = dato.unitaryPrice * incremento;
+            doc.text(
+              `${habitaciones[dato.id].name}: ${reservas.reservation.currency == "USD"
+                ? `$${Math.round(precioIncrementado)} USD`
+                : `${formatCurrency(Math.round(precioIncrementado))} COP`
+              }`,
+              margin,
+              yPos
+            );
+            yPos += 10;
+          });
+
+          // Total
+          yPos += 10;
+          const totalIncrementado = reservas.total * incremento;
+          doc.setFillColor(38, 84, 124);
+          doc.rect(margin, yPos, 170, 10, "F");
+          doc.setTextColor(255, 255, 255);
+          doc.text(
+            `Total a pagar: ${reservas.reservation.currency == "USD"
+              ? `$${Math.round(totalIncrementado)} USD`
+              : `${formatCurrency(Math.round(totalIncrementado))} COP`
+            }`,
+            margin + 2,
+            yPos + 7
+          );
+
+          // Pie de página
+          doc.setFontSize(8);
+          doc.setTextColor(128, 128, 128);
+          doc.text(
+            "Este documento es un comprobante de reserva. Preséntelo al momento del check-in.",
+            margin,
+            280
+          );
+
+          // Guardar PDF
+          doc.save(`voucher-${reservas?.reservaChatbotId}.pdf`);
+
+          // Cerrar el loading
+          Swal.close();
+        };
+
+        // Generar el PDF
+        generarContenidoPDF();
+      }
+    });
+  };
+
+  // Agregar esta función para verificar si la fecha de check-in es futura
+  const isCancellationDisabled = () => {
+    const currentDate = new Date();
+    const checkinDate = new Date(reservas?.reservation.checkin);
+    currentDate.setHours(0, 0, 0, 0); // Resetear hora a medianoche para comparar solo fechas
+    return currentDate > checkinDate || reservas?.status == "4";
   };
 
   return (
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
 
-      {reservas.status == 0 && reservas.pagadoPrimeraMitad == false ? (
+      {reservas?.status == 0 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.pending}`}>
           Pago pendiente
         </p>
-      ) : reservas.status == 1 && reservas.pagadoPrimeraMitad == false ? (
+      ) : reservas?.status == 1 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago en proceso
         </p>
-      ) : reservas.status == 2 && reservas.pagadoPrimeraMitad == false ? (
+      ) : reservas?.status == 2 && reservas.pagadoPrimeraMitad == false ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago rechazado primer abono
         </p>
-      ) : reservas.status == 3 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 3 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.clomplete}`}>
           Pago aprobado
         </p>
-      ) : reservas.status == 4 ? (
+      ) : reservas?.status == 4 ? (
         <p className={`${styles.estadoPago} ${styles.cancel}`}>
           Reserva cancelada
         </p>
-      ) : reservas.status == 2 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 2 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago total rechazado
         </p>
-      ) : reservas.status == 5 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 5 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
           Abonado primera mitad
         </p>
-      ) : reservas.status == 1 && reservas.pagadoPrimeraMitad == true ? (
+      ) : reservas?.status == 1 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago total en proceso
         </p>
@@ -481,7 +741,14 @@ const Gestionar = ({ reservas }) => {
 
         <div className={styles.infoHabitaciones}>
           <p className={styles.idReserva}>
-            Cod. Reserva: <span>{reservas?.reservaChatbotId}</span>
+            Cod. Reserva: <span>
+              {reservas?.reservaChatbotId}
+              {userData?.agencia?._id === "677d771d155954115cea20a3" && (
+                <span> || {reservas?.linkInfo.idLinkPago}</span>
+              )}
+            </span>
+            <br />
+
           </p>
           <div className={styles.infoHotelHabitaciones}>
             <p className={styles.NombreHotel}>{reservas?.hotel}</p>
@@ -535,19 +802,22 @@ const Gestionar = ({ reservas }) => {
                 <div className={styles.cardHabi} key={index}>
                   <div className={styles.contenHabi}>
                     <div className={styles.imgHabi}>
-                      <img src={habitaciones[dato.id].url} alt="habita" />
+                      <img
+                        src={habitaciones[dato.id]?.url}
+                        alt='habita'
+                      />
                     </div>
                     <div className={styles.infoHabitaciones}>
                       <p className={styles.titleHabi}>
-                        {habitaciones[dato.id].name}
+                        {dato.nombreHabitacion}
                       </p>
                       <p>
                         Check-in: {checkin} - Check-out: {checkout}
                       </p>
                       <p>
                         {reservas.reservation.nights} noches,{" "}
-                        {Number(dato.adults) + Number(dato.children)} huéspedes,
-                        1 habitación
+                        {Number(dato.adults) || 0} Adultos, {Number(dato.children) || 0} Niños, 1 habitación
+                        {/* {Number(dato.adults) + Number(dato.children)} huéspedes, */}
                       </p>
                     </div>
                   </div>
@@ -564,6 +834,54 @@ const Gestionar = ({ reservas }) => {
               <div className={styles.titleTotal}>
                 <p>Valor a pagar + impuestos</p>
 
+                {reservas?.infoToures && (
+                  <div className={styles.tourInfo}>
+                    <h4>Información del Tour</h4>
+                    {reservas.infoToures.nombres && (
+                      <p>
+                        Tours seleccionados:{" "}
+                        {reservas.infoToures.nombres.join(", ")}
+                      </p>
+                    )}
+                    <p>
+                      Contacto principal:{" "}
+                      {reservas.infoToures.firstContactNumber}
+                    </p>
+                  </div>
+                )}
+
+                {reservas?.infoTransporte && (
+                  <div className={styles.transportInfo}>
+                    <h4>Información del Transporte</h4>
+                    <p>
+                      Número de vuelo: {reservas.infoTransporte.numeroVuelo}
+                    </p>
+                    <p>Aerolínea: {reservas.infoTransporte.aerolinea}</p>
+                    <p>
+                      Tipo de recogida:{" "}
+                      {reservas.infoTransporte.tipoRecogida == 0
+                        ? "Aeropuerto - Hotel"
+                        : reservas.infoTransporte.tipoRecogida == 1
+                          ? "Hotel - Aeropuerto"
+                          : "Aeropuerto - Hotel || Hotel - Aeropuerto"}
+                    </p>
+                    <p>
+                      Contacto: {reservas.infoTransporte.firstContactNumber}
+                    </p>
+                    <p>
+                      Cantidad de personas:{" "}
+                      {reservas.infoTransporte.cantidadPersonas}
+                    </p>
+                  </div>
+                )}
+                {reservas?.mascotasNumber > 0 && (
+                  <div>
+                    <b>
+                      El huésped llevará {reservas.mascotasNumber}
+                      {reservas.mascotasNumber === 1 ? " mascota" : " mascotas"}
+                    </b>
+                  </div>
+                )}
                 {mostrarExtranjero && (
                   <div>
                     <b>El huesped es extranjero </b>
@@ -579,13 +897,14 @@ const Gestionar = ({ reservas }) => {
                     <b>Se adicionó cena</b>
                   </div>
                 )}
+
                 <p className={styles.plazoPago}>
-                  Tienes plazo de pagar hasta el {reservas.fechaLimitePago}
+                  Tienes plazo de pagar hasta el {reservas?.fechaLimitePago}
                 </p>
               </div>
 
               <p className={styles.total}>
-                {reservas.reservation.currency == "USD"
+                {reservas?.reservation.currency == "USD"
                   ? `$${reservas?.total} USD`
                   : `${formatCurrency(reservas?.total)} COP`}
               </p>
@@ -603,30 +922,132 @@ const Gestionar = ({ reservas }) => {
             </p>
             <p className={styles.checkin}>Check-in: {checkin}</p>
             <div className={styles.cardHuesped}>
-              <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Cédula de ciudadanía:</p>
-                <p>{reservas?.titularInfo?.documento}</p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <p className={styles.titleTitular}>Huésped 1 (Titular)</p>
+                <button
+                  onClick={() => setIsEditingTitular(!isEditingTitular)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "20px",
+                  }}
+                >
+                  ✎
+                </button>
               </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Nombre completo:</p>
-                <p>
-                  {reservas?.reservation.firstName}{" "}
-                  {reservas?.reservation.lastName}
-                </p>
-              </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Fecha de nacimiento:</p>
-                <p>{reservas?.titularInfo?.fechaNacimiento}</p>
-              </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Correo electrónico:</p>
-                <p>{reservas?.reservation.email}</p>
-              </div>
-              <div className={styles.flexHuespe}>
-                <p className={styles.infoH}>Celular:</p>
-                <p>{reservas?.reservation.telephone}</p>
-              </div>
+
+              {!isEditingTitular ? (
+                <>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Cédula de ciudadanía:</p>
+                    <p>{reservas?.titularInfo?.documento}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Nombre completo:</p>
+                    <p>
+                      {reservas?.reservation.firstName}{" "}
+                      {reservas?.reservation.lastName}
+                    </p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Fecha de nacimiento:</p>
+                    <p>{reservas?.titularInfo?.fechaNacimiento}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Correo electrónico:</p>
+                    <p>{reservas?.reservation.email}</p>
+                  </div>
+                  <div className={styles.flexHuespe}>
+                    <p className={styles.infoH}>Celular:</p>
+                    <p>{reservas?.reservation.telephone}</p>
+                  </div>
+                </>
+              ) : (
+                <div className={styles.editForm}>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Cédula de ciudadanía:</p>
+                    <input
+                      type="text"
+                      name="documento"
+                      value={titularData.documento}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Nombres:</p>
+                    <input
+                      type="text"
+                      name="firstName"
+                      value={titularData.firstName}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Apellidos:</p>
+                    <input
+                      type="text"
+                      name="lastName"
+                      value={titularData.lastName}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Fecha de nacimiento:</p>
+                    <input
+                      type="date"
+                      name="fechaNacimiento"
+                      value={titularData.fechaNacimiento}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Correo electrónico:</p>
+                    <input
+                      type="email"
+                      name="email"
+                      value={titularData.email}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.inputGroup}>
+                    <p className={styles.infoH}>Celular:</p>
+                    <input
+                      type="tel"
+                      name="telephone"
+                      value={titularData.telephone}
+                      onChange={handleTitularChange}
+                      className={styles.editInput}
+                    />
+                  </div>
+                  <div className={styles.editButtons}>
+                    <button
+                      onClick={() => setIsEditingTitular(false)}
+                      className={styles.cancelButton}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={guardarCambiosTitular}
+                      className={styles.saveButton}
+                      disabled={isSaving}
+                    >
+                      {isSaving ? "Guardando..." : "Guardar"}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <br />
             <div className={styles.acuerdos}>
@@ -669,6 +1090,33 @@ const Gestionar = ({ reservas }) => {
                 representan deben contar con un permiso de los padres,
                 autenticado en una notaría.
               </p>
+              <br />
+              {/* <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
+              <p style={{fontFamily:"Roboto"}}>
+                <br />
+                Las facturas serán emitidas a su empresa Reservas sin garantías
+                o con garantías vencidas serán canceladas .
+                En caso de ser viajeros con nacionalidad colombiana o extranjeros con
+                residencia en Colombia, o en su defecto, si han pasado más de 3
+                meses en el país, deberán abonar adicional el IVA del 19% en la
+                recepción al momento de su check-in. PDT: No- shows: Todo
+                pasajero que por cualquier motivo no se presente el día de su
+                viaje será considerado como “NO SHOW” y se le aplicará
+                penalidad, valor 1 noche. No dude en contactarnos a través de
+                llamadas y WhatsApp a la línea +57 3336025021.
+              </p> */}
+              <br />
+              <p>
+                <b>Política de mascotas: </b>
+                <br />
+                {"º"} Se permite el ingreso de mascotas con un peso máximo de 8
+                kg.
+                <br />
+                {"º"} Solo se permite una mascota por habitación.
+                <br />
+                {"º"} No se permite dejar a la mascota sola en la habitación en
+                ningún momento.
+              </p>
             </div>
           </div>
           <div className={styles.Retenciones}>
@@ -701,6 +1149,8 @@ const Gestionar = ({ reservas }) => {
                 </tr>
               </tbody>
             </table>
+
+            {/* <TablaDesglose precio={reservas?.total}/> */}
             <br />
             {datosDelUsuario?.role.includes("super-admin") ? (
               <div className={styles.textAreaNotas}>
@@ -757,7 +1207,7 @@ const Gestionar = ({ reservas }) => {
               <div className={styles.cardHabitacionesPago} key={index}>
                 <p>Habitación {contador++}:</p>
                 {/* <p>{primerPlan}</p> */}
-                <p>{habitaciones[dato.id].name}</p>
+                <p>{dato?.nombreHabitacion}</p>
                 {/* <p>Medía pensión</p> */}
                 <p>
                   {checkin} - {checkout}
@@ -770,15 +1220,7 @@ const Gestionar = ({ reservas }) => {
               </div>
             ))}
             <div className={styles.pagos}>
-              {reservas.status == "0" &&
-              reservas.pagadoPrimeraMitad == false ? (
-                <div className={styles.totalPago}>
-                  <p>Pago del 50%</p>
-                  <p className={styles.totalP}>
-                    {formatCurrency(reservas?.totalMitad)}
-                  </p>
-                </div>
-              ) : reservas.status == "1" &&
+              {reservas?.status == "0" &&
                 reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -786,7 +1228,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "2" &&
+              ) : reservas?.status == "1" &&
                 reservas.pagadoPrimeraMitad == false ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -794,7 +1236,15 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "3" &&
+              ) : reservas?.status == "2" &&
+                reservas.pagadoPrimeraMitad == false ? (
+                <div className={styles.totalPago}>
+                  <p>Pago del 50%</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.totalMitad)}
+                  </p>
+                </div>
+              ) : reservas?.status == "3" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Total + impuestos</p>
@@ -802,14 +1252,14 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.total)}
                   </p>
                 </div>
-              ) : reservas.status == "4" ? (
+              ) : reservas?.status == "4" ? (
                 <div className={styles.totalPago}>
                   <p>Total + impuestos</p>
                   <p className={styles.totalP}>
                     {formatCurrency(reservas?.total)}
                   </p>
                 </div>
-              ) : reservas.status == "2" &&
+              ) : reservas?.status == "2" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -817,7 +1267,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "5" &&
+              ) : reservas?.status == "5" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -825,7 +1275,7 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
-              ) : reservas.status == "1" &&
+              ) : reservas?.status == "1" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
                   <p>Pago del 50%</p>
@@ -844,13 +1294,12 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "4" ||
                   isLoading
                 }
-                className={`${styles.pagarButton} ${
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4"
+                className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4"
                     ? styles.disabledButtonp
                     : ""
-                }`}
+                  }`}
               >
                 {isLoading ? "Generando link..." : "Pagar el 50%"}
               </button>
@@ -865,15 +1314,14 @@ const Gestionar = ({ reservas }) => {
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
-                className={`${styles.pagarButton} ${
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "5" ||
-                  reservas?.pagadoPrimeraMitad
+                className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4" ||
+                    reservas?.status == "5" ||
+                    reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
-                }`}
+                  }`}
               >
                 {isLoading ? "Generando link..." : "Pagar Total"}
               </button>
@@ -887,15 +1335,14 @@ const Gestionar = ({ reservas }) => {
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
-                className={`${styles.pagarButton} ${
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "5" ||
-                  reservas?.pagadoPrimeraMitad
+                className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4" ||
+                    reservas?.status == "5" ||
+                    reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
-                }`}
+                  }`}
               >
                 {isLoading ? "Generando link..." : "Pagar con Mi saldo"}
               </button>
@@ -923,15 +1370,21 @@ const Gestionar = ({ reservas }) => {
 
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
+                disabled={isCancellationDisabled()}
+                className={`${styles.cancelarButton} ${isCancellationDisabled() ? styles.disabledButtonc : ""
+                  }`}
+              >
+                Cancelar reserva
+              </button>
+              {/* <button
+                onClick={imprimirVoucher}
                 disabled={reservas?.status == "4"}
                 className={`${styles.cancelarButton} ${
                   reservas?.status == "4" ? styles.disabledButtonc : ""
                 }`}
               >
-                Cancelar reserva
-              </button>
-              <button onClick={imprimirVoucher}>Imprimir voucher</button>
-              
+                Imprimir voucher
+              </button> */}
             </div>
           </div>
         </div>

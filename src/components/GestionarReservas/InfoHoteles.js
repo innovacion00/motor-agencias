@@ -297,4 +297,8 @@ export const habitaciones = {
         url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg', //Doble
         name:'Habitación Cuadruple', //Cuadruple
     },
+    '109507':{
+         url:'https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334103.webp?k=2ab38772d7efc02a82af9ecdbb30fe80e426884ba1921673816001a052fcef5f&o=', //Doble
+        name:'SUITE BUSINESS', //Cuadruple
+    }
 }

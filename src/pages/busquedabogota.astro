@@ -1,43 +1,32 @@
 ---
-import { fetchWithAuth } from '../utils/fetchWithAuth';
-
-async function fetchProtectedData() {
-  const data = await fetchWithAuth("URL_PROTEGIDA");
-  console.log(data);
-} 
-import BaseLayout from '../layouts/BaseLayout.astro';
-import DropdownSearch from '../components/DropdownSearch';
+import BaseLayout from "../layouts/BaseLayout.astro";
 import Componentesearch from "../components/Componentesearch";
-import CurrencySelector from '../components/Cambiardivisas';
---- 
+import RouteProtection from "../components/RouteProtection.astro";
+---
+
 <html>
-  
-<BaseLayout title="Resultados Bogotá ">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-    <html lang = "es">
+  <RouteProtection />
+  <BaseLayout title="Resultados Bogotá ">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <html lang="es">
+      <head>
+        <title>Resultados Bogotá</title>
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+          rel="stylesheet"
+        />
+      </head>
 
-    <head>
-      <title>Resultados Bogotá </title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-    </head>
-
-    <body>
-
+      <body>
         <Componentesearch client:load />
-        
-        
-        <script>
-            function checkAuth() {
-    const token = localStorage.getItem("authToken");
-    if (!token) {
-      window.location.href = "/login"; // Redirige al login si no hay token
-    }
-  }
-
-  checkAuth(); // Llamamos a esta función al cargar la página
-        </script>
-    </body>
-
+      </body>
     </html>
-    
+  </BaseLayout>
+</html>

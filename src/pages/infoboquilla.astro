@@ -8,9 +8,11 @@ async function fetchProtectedData() {
 
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DropdownSearch from "../components/DropdownSearch";
+import RouteProtection from "../components/RouteProtection.astro";
 ---
 
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+  <RouteProtection />
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     rel="stylesheet"
@@ -20,7 +22,7 @@ import DropdownSearch from "../components/DropdownSearch";
     rel="stylesheet"
   />
 
-  <html lang = "es">
+  <html lang="es">
     <body>
       <div class="search-form-wrapper">
         <DropdownSearch client:visible />
@@ -59,7 +61,8 @@ import DropdownSearch from "../components/DropdownSearch";
               />
             </div>
           </div>
-          <h2>Hotel Boquilla Suites</h2>
+          <br />
+          <h2 style={{ fontSize: "18px" }}>Hotel Boquilla Suites ⭐⭐</h2>
           <br />
           <p>
             Hotel Boquilla Suites By Gh Suites, es un acogedor hotel, ubicado en
@@ -125,10 +128,14 @@ import DropdownSearch from "../components/DropdownSearch";
                 </span>
               </div>
               <div class="service-item">
-                <span><img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png" alt="check icon"> 
-                  Pet friendly(maximo 8kg. 1 por habitacion)                                                      
-              </span>
-              </div> 
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+                    alt="check icon"
+                  />
+                  Pet friendly(maximo 8kg. 1 por habitacion)
+                </span>
+              </div>
             </div>
           </div>
           <div class="servicess">
@@ -539,14 +546,6 @@ import DropdownSearch from "../components/DropdownSearch";
       </div>
 
       <script>
-        function checkAuth() {
-          const token = localStorage.getItem("authToken");
-          if (!token) {
-            window.location.href = "/login";
-          }
-        }
-
-        checkAuth();
         // Seleccionamos los botones y las secciones
         const generalBtn = document.getElementById("generalBtn");
         const roomsBtn = document.getElementById("roomsBtn");
