@@ -1467,7 +1467,7 @@ export const Cid = ({ id }) => {
             {/* Reemplazar el anchor tag y modificar el botón */}
             <button
               
-              onClick={handleReservarClick}
+            // onClick={handleReservarClick}
               disabled={datohabitacion.length === 0}
               style={{
                 width: '100%',
@@ -1487,10 +1487,10 @@ export const Cid = ({ id }) => {
               Reservar ahora
             </button>
             <UpgradeModal 
-              isOpen={showUpgradeModal}
+              // isOpen={showUpgradeModal}
               onClose={() => setShowUpgradeModal(false)}
               currentHotelId={Number(id)}
-              onSelectUpgrade={handleUpgradeSelect}
+              // onSelectUpgrade={handleUpgradeSelect}
               onContinue={() => {
                 enviardatos();
                 window.location.href = "/reservas";

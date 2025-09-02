@@ -60,25 +60,41 @@ const UserDashboard = () => {
 
   const fetchWithToken = async (url, options = {}) => {
     let token = Cookies.get('accessToken');
+    
+    // Determinar si es FormData para no establecer Content-Type
+    const isFormData = options.body instanceof FormData;
+    
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+    };
+    
+    // Solo establecer Content-Type si no es FormData
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+    
     let response = await fetch(url, {
       ...options,
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+      headers,
     });
 
     if (response.status === 401) {
       const newToken = await refreshToken();
       if (newToken) {
+        const retryHeaders = {
+          ...options.headers,
+          'Authorization': `Bearer ${newToken}`,
+        };
+        
+        // Solo establecer Content-Type si no es FormData
+        if (!isFormData) {
+          retryHeaders['Content-Type'] = 'application/json';
+        }
+        
         response = await fetch(url, {
           ...options,
-          headers: {
-            ...options.headers,
-            'Authorization': `Bearer ${newToken}`,
-            'Content-Type': 'application/json'
-          }
+          headers: retryHeaders,
         });
       }
     }
@@ -102,7 +118,9 @@ const UserDashboard = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Error al subir la imagen");
+        const data = await response.json();
+        console.log(data)
+        throw new Error(data.message);
       }
 
       const data = await response.json();

@@ -108,6 +108,8 @@ const DropdownSearch = () => {
     );
     setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 40 });
     setbotonactivado("group");
+    setIncludesFlight(false);
+    setOrigin("");
     mostrarTooltip(
       "Reserva para grupos seleccionado. (Beneficio tourconductor)"
     );
@@ -123,8 +125,26 @@ const DropdownSearch = () => {
     );
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("single");
+    setIncludesFlight(false);
+    setOrigin("");
     mostrarTooltip(
       "Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)"
+    );
+  };
+
+  const handleFlightReservation = () => {
+    setRooms(
+      Array.from({ length: 1 }, () => ({
+        adults: 2,
+        children0to4: 0,
+        children5to17: 0,
+      }))
+    );
+    setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
+    setbotonactivado("flight");
+    setIncludesFlight(true);
+    mostrarTooltip(
+      "Reserva para vuelo + hotel seleccionado"
     );
   };
 
@@ -224,6 +244,14 @@ const DropdownSearch = () => {
         >
           Reserva para grupos
         </button>
+        <button
+          className={`${styles.button} ${
+            botonactivado == "flight" ? styles.active : ""
+          }`}
+          onClick={handleFlightReservation}
+        >
+          Vuelo + Hotel
+        </button>
       </div>
       <br />
 
@@ -231,12 +259,15 @@ const DropdownSearch = () => {
 
       {includesFlight && (
         <div className={styles.dropdown}>
-          <input
-            type="text"
+          <select
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
-            placeholder="Ciudad de origen"
-          />
+          >
+            <option value="">Selecciona ciudad de origen</option>
+            <option value="BOGOTA">Bogotá</option>
+            <option value="CARTAGENA">Cartagena de Indias</option>
+            <option value="SANTA_MARTA">Santa Marta</option>
+          </select>
         </div>
       )}
 
@@ -417,16 +448,7 @@ const DropdownSearch = () => {
       >
         {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
       </button>
-      <div className={styles.flightOption}>
-        <label>
-          <input
-            type="checkbox"
-            checked={includesFlight}
-            onChange={(e) => setIncludesFlight(e.target.checked)}
-          />
-          Incluir vuelo
-        </label>
-      </div>
+      
       {/* Modal de carga */}
       <Modal
         isOpen={isLoading}
