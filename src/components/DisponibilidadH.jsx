@@ -528,6 +528,21 @@ export const Cid = ({ id }) => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);  
+  
+  const handleReservarClick = () => {
+    // Solo mostrar el modal para hoteles específicos en Cartagena
+    if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
+      setShowUpgradeModal(true);
+    } else {
+      enviardatos();
+      window.location.href = "/reservas";
+    }
+  };
+  const handleUpgradeSelect = (newHotelId) => {
+    // Redirigir a la página del nuevo hotel
+    window.location.href = `/hoteles/${newHotelId}`;
+  };
 
   function openModal(tour) {
     setIsOpen(true);
@@ -1467,7 +1482,7 @@ export const Cid = ({ id }) => {
             {/* Reemplazar el anchor tag y modificar el botón */}
             <button
               
-            // onClick={handleReservarClick}
+             onClick={handleReservarClick}
               disabled={datohabitacion.length === 0}
               style={{
                 width: '100%',
@@ -1487,10 +1502,10 @@ export const Cid = ({ id }) => {
               Reservar ahora
             </button>
             <UpgradeModal 
-              // isOpen={showUpgradeModal}
+              isOpen={showUpgradeModal}
               onClose={() => setShowUpgradeModal(false)}
               currentHotelId={Number(id)}
-              // onSelectUpgrade={handleUpgradeSelect}
+               onSelectUpgrade={handleUpgradeSelect}
               onContinue={() => {
                 enviardatos();
                 window.location.href = "/reservas";
