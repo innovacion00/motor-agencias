@@ -113,28 +113,9 @@ const FormularioReserva = () => {
     setcantninos(ninos);
     setfechasreserva(fechas);
     setagencia(token);
-  }, []);
+  
 
-  useEffect(() => {
-    // Inicializar el input de teléfono
-    if (phoneInputRef.current) {
-      const iti = intlTelInput(phoneInputRef.current, {
-        initialCountry: "co",
-        preferredCountries: ["co", "us", "gb"],
-        separateDialCode: true,
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-      });
-
-      // Guardar el número completo cuando cambie
-      phoneInputRef.current.addEventListener('change', () => {
-        setPhone(iti.getNumber());
-      });
-
-      // Limpiar al desmontar
-      return () => {
-        iti.destroy();
-      };
-    }
+    
   }, []);
 
   const mostrarCheckboxes =
@@ -283,7 +264,7 @@ const FormularioReserva = () => {
       nombreCompleto.trim() == "" ||
       apellidos.trim() == "" ||
       email.trim() == "" ||
-      !phone
+      celular.trim() == ""
     ) {
       Swal.fire({
         //Alerta de datos de incio de sesion incorrectos
@@ -438,7 +419,7 @@ const FormularioReserva = () => {
           const data = await response.json();
 
           // NOTIFICACIÓN DE ÉXITO
-          console.log(data);
+          (data);
           Swal.fire({
             icon: "success",
             title: "Reserva realizada",
@@ -883,16 +864,19 @@ const FormularioReserva = () => {
                 Celular <span style={{ color: "red" }}>*</span>
               </label>
               <input
-                ref={phoneInputRef}
+                // ref={phoneInputRef}
                 type="tel"
                 id="celular"
+                placeholder="Ingrese el numero de celular"
+                value={formData.celular}
+                onChange={handleChange}
                 style={{
                   display: "block",
                   width: "100%",
                   padding: "8px",
                   marginBottom: "10px",
                   borderRadius: "5px",
-                  border: "1px solid #ccc"
+                  border: "1px solid #ccc",
                 }}
               />
 

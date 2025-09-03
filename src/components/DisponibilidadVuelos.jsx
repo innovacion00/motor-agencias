@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DropdownSearch from "./DropdownSearch";
 import styles from '../../public/styles/DisponibilidadVuelos.module.css';
 
 
@@ -44,8 +45,10 @@ const DisponibilidadVuelos = () => {
       }
     ]
   };
-
+      
+      
   const renderFlight = (flight, type, selectedFlight, setSelectedFlight) => (
+    
     <div className={styles.flightCard}>
       <div className={styles.flightHeader}>
         <div className={styles.tripType}>

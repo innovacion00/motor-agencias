@@ -1508,7 +1508,7 @@ export const Cid = ({ id }) => {
                onSelectUpgrade={handleUpgradeSelect}
               onContinue={() => {
                 enviardatos();
-                window.location.href = "/reservas";
+                window.location.href = "/disponibilidadVuelos";
               }}
             />
           </div>

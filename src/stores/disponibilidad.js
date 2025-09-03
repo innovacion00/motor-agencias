@@ -83,7 +83,7 @@ export const getReservas = async ( datosUsuario) => {
   };
 
   try {
-    console.log(token);
+    // console.log(token);
     let response = await fetchReservas((token));
 
     if (response.status === 401) {
