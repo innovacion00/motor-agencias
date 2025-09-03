@@ -5,7 +5,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-border-radius: 8px;
+    border-radius: 8px;
 
   }
 
@@ -40,7 +40,7 @@ border-radius: 8px;
   
   
   /* Estilo de los selectores y campos */
-  .dropdown select,
+  
   .datePicker input,
   .dropdownToggle {
     width: max-content;
@@ -56,7 +56,7 @@ border-radius: 8px;
   
   /* Ancho específico para los elementos */
   .dropdown select {
-    width: 260px;
+    width: 200px;
     height: 40px;
   }
   
@@ -118,6 +118,7 @@ border-radius: 8px;
     
   }
   
+  /* Dropdown de habitaciones */
   .dropdownMenu {
     position: absolute;
     background-color: white;
@@ -129,26 +130,27 @@ border-radius: 8px;
     width: 250px;
   }
   
+  /* Dropdown de personas */
   .peopleCounter {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 9rem;
   }
   
-  .childAgeWarning {
+  /* .childAgeWarning {
     color: rgb(39, 64, 117);
     font-size: 14px;
     background-color: #5996cb93;
     padding: 12px;
     border-radius:3px ;
     
-  }
+  } */
   
-  .childAgeSelector {
+  /* .childAgeSelector {
     display: flex;
     flex-direction: column;
   }
-  
+   */
   /* Modificaciones para el estilo del dropdown del selector de ciudad */
   .dropdown {
     position: relative;
@@ -157,8 +159,8 @@ border-radius: 8px;
   }
   
   .dropdown select {
-    width: 100%;
-    padding: 0.6rem 1.5rem 0.6rem 1rem;
+    width: 98%;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
@@ -185,7 +187,7 @@ border-radius: 8px;
   }
   
   .dropdown select:focus {
-    outline: none;
+    outline:none;
     color: #1C3D5A;
     border-color: #2A9D8F;
     box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
@@ -446,6 +448,7 @@ input:checked + .slider::before {
   margin-bottom: 10px;
 }
 
+/* Dropdown de habitaciones (Listado de habitaciones) */
 .dropdownMenu {
   padding: 10px;
   background-color: #f9f9f9;
@@ -539,17 +542,6 @@ input:checked + .slider::before {
   align-items: center;
   gap: 8px;
   cursor: pointer;
-}
-
-.flightOption input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.originInput {
-  /* margin-bottom: 15px; */
-  /* width: 100%; */
 }
 
 .textInput {
