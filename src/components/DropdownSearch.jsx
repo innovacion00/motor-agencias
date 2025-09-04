@@ -110,6 +110,10 @@ const DropdownSearch = () => {
     setbotonactivado("group");
     setIncludesFlight(false);
     setOrigin("");
+    
+    // Limpiar datos del vuelo del localStorage
+    localStorage.removeItem("datosDelVuelo");
+    
     mostrarTooltip(
       "Reserva para grupos seleccionado. (Beneficio tourconductor)"
     );
@@ -127,6 +131,10 @@ const DropdownSearch = () => {
     setbotonactivado("single");
     setIncludesFlight(false);
     setOrigin("");
+    
+    // Limpiar datos del vuelo del localStorage
+    localStorage.removeItem("datosDelVuelo");
+    
     mostrarTooltip(
       "Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)"
     );
@@ -143,6 +151,15 @@ const DropdownSearch = () => {
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("flight");
     setIncludesFlight(true);
+    
+    // Guardar datos del vuelo en localStorage
+    const datosDelVuelo = {
+      tipoReserva: "flight",
+      activado: true,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
+    
     mostrarTooltip(
       "Reserva para vuelo + hotel seleccionado"
     );
@@ -197,6 +214,21 @@ const DropdownSearch = () => {
     };
 
     localStorage.setItem("nochesyedades", JSON.stringify(nochesyedades));
+    
+    // Si es vuelo + hotel, guardar datos completos del vuelo
+    if (includesFlight) {
+      const datosDelVuelo = {
+        tipoReserva: "flight",
+        activado: true,
+        origin: origin,
+        destination: destination,
+        dateRange: dateRange,
+        nights: nights,
+        layout: layout,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
+    }
 
     try {
       const objetohotel = {
@@ -259,15 +291,13 @@ const DropdownSearch = () => {
 
       {includesFlight && (
         <div className={styles.dropdown}>
-          <select
+          <input
+            type="text"
             value={origin}
             onChange={(e) => setOrigin(e.target.value)}
-          >
-            <option value="">Selecciona ciudad de origen</option>
-            <option value="BOGOTA">Bogotá</option>
-            <option value="CARTAGENA">Cartagena de Indias</option>
-            <option value="SANTA_MARTA">Santa Marta</option>
-          </select>
+            placeholder="Buscar ciudad de origen..."
+            className={styles.searchInput}
+          />
         </div>
       )}
 
