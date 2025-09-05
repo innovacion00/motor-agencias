@@ -184,11 +184,11 @@ button:active{
     color: #fff;
     padding: 10px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 16px;    
 }
 
 .search_form_wrapper {
-    background-color: #F29C38;
+    background-color: #ff9e2f;
     padding: 20px;
     border-radius: 8px;
     display: flexbox; 

@@ -1,0 +1,635 @@
+
+.dropdownSearchContainer {
+    background-color: #b36b00;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-radius: 8px;
+
+  }
+/* Wrapper del formulario de búsqueda */
+.search_form_wrapper {
+  background-color: #b36b00;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+}
+
+/* Contenedor principal */
+.container {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  font-family: 'Roboto', sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.sidebar {
+  width: 400px;
+  background-color: white;
+  border-left: 1px solid #e0e0e0;
+  padding: 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  margin-left: auto;
+}
+
+/* Sección de vuelos */
+.flightsSection {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.flightOption {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.flightSegment {
+  margin-bottom: 15px;
+}
+
+.segmentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.segmentLabel {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.segmentDate {
+  color: #666;
+  font-size: 14px;
+}
+
+.flightDetails {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.airlineInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+}
+
+.airlineLogo {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+
+.airlineName {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.routeInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.origin, .destination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.cityCode {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.cityName {
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+.flightTime {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.departureTime, .arrivalTime {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.flightType {
+  background-color: #28a745;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.flightDuration {
+  color: #666;
+  font-size: 12px;
+  min-width: 60px;
+  text-align: center;
+}
+
+.baggageInfo {
+  display: flex;
+  gap: 8px;
+  color: #666;
+}
+
+.baggageInfo i {
+  font-size: 14px;
+}
+
+/* Opción de equipaje */
+.baggageUpgrade {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.baggageUpgradeContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.baggageUpgradeContent i {
+  color: #666;
+  font-size: 16px;
+}
+
+.baggageUpgradeContent span {
+  flex: 1;
+  font-size: 14px;
+  color: #666;
+}
+
+.addBaggageBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.addBaggageBtn:hover {
+  background-color: #0056b3;
+}
+
+/* Precios */
+.pricing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.pricePerPerson, .totalPrice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.priceLabel, .totalLabel {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.priceValue {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.totalValue {
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+}
+
+.taxesInfo {
+  font-size: 12px;
+  color: #28a745;
+}
+
+/* Botón de selección */
+.selectionButton {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.selectBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.selectBtn:hover {
+  background-color: #0056b3;
+}
+
+.selectBtn.selected {
+  background-color: #28a745;
+}
+
+.selectBtn.selected:hover {
+  background-color: #218838;
+}
+
+/* Separador */
+.separator {
+  text-align: center;
+  margin: 30px 0;
+  padding: 20px 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.separator h3 {
+  color: #333;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Navegación */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.exitBtn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.exitBtn:hover {
+  background-color: #5a6268;
+}
+
+.pagination {
+  display: flex;
+  gap: 10px;
+}
+
+.pageBtn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.pageBtn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.pageBtn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+/* Sidebar - Resumen de reserva */
+.reservationSummary {
+  height: 100%;
+}
+
+.reservationTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Información del hotel */
+.hotelInfo {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.hotelHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.hotelHeader i {
+  color: #007bff;
+  font-size: 16px;
+}
+
+.hotelName {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.hotelDates {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.roomInfo {
+  margin-bottom: 15px;
+}
+
+.roomTitle {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.roomDetails div {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.hotelPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hotelPrice .priceValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.taxesLabel {
+  font-size: 12px;
+  color: #28a745;
+}
+
+/* Información del vuelo */
+.flightInfo {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.flightHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.flightHeader i {
+  color: #007bff;
+  font-size: 16px;
+}
+
+.flightRoute {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.flightPassengers {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.flightSegmentSummary {
+  margin-bottom: 15px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.segmentTitle {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.segmentDate {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.segmentDetails div {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.airlineName {
+  font-weight: 500;
+  color: #333;
+}
+
+.route {
+  font-weight: 500;
+}
+
+.times {
+  color: #333;
+}
+
+.duration {
+  color: #666;
+}
+
+.baggageIcons {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.baggageIcons i {
+  font-size: 12px;
+  color: #666;
+}
+
+.flightPricing {
+  margin-top: 15px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.flightPricing .pricePerPerson,
+.flightPricing .totalPrice {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.flightPricing .pricePerPerson span,
+.flightPricing .totalPrice span {
+  font-size: 12px;
+  color: #666;
+}
+
+.flightPricing .totalPrice span {
+  font-weight: 600;
+  color: #333;
+}
+
+.flightPricing .taxesInfo {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.flightPricing .taxesInfo span {
+  font-size: 12px;
+  color: #28a745;
+}
+
+/* Total */
+.totalSummary {
+  margin-bottom: 25px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.totalLabel {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.totalAmount {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.totalTaxes {
+  font-size: 12px;
+  color: #28a745;
+}
+
+/* Botón de acción */
+.actionButton {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.actionButton:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    position: static;
+    height: auto;
+  }
+  
+  .mainContent {
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .flightDetails {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .routeInfo {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .pricing {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .navigation {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

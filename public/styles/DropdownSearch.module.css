@@ -583,3 +583,4 @@ input:checked + .slider::before {
  border-radius: 4px;
  position: relative;
 }
+

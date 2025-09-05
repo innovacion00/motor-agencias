@@ -12,8 +12,9 @@ import CurrencySelector from "./Cambiardivisas";
 const BusquedaCartagena = () => {
   
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
-   const currentCurrency = useStore(currency); // COP o USD
+  const currentCurrency = useStore(currency); // COP o USD
   const [nochesyedades1, setnochesyedades] = useState({});
+  const [infoVuelo, setinfoVuelo] = useState()
   const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
   
@@ -240,7 +241,8 @@ const BusquedaCartagena = () => {
       const transformedCity = cityMap[storedCity] || "Ciudad desconocida";
       setCiudad(transformedCity);
     }
-
+    const datosVuelo = JSON.parse(localStorage.getItem("datosDelVuelo"));
+    setinfoVuelo(datosVuelo);
     const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));
     const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
     setnochesyedades(nochesyedades);
@@ -258,8 +260,6 @@ const BusquedaCartagena = () => {
 
   return (
     <>
-     
-
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
@@ -269,6 +269,7 @@ const BusquedaCartagena = () => {
           <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
         </div>
 
+      {(infoVuelo?.active === true || infoVuelo?.activado === true) && (
       <div className={styles.stepper}>
   <div className={styles.step}>
     <div className={styles.stepnumberActive}>1</div>
@@ -282,7 +283,7 @@ const BusquedaCartagena = () => {
     <div className={styles.stepnumber}>2</div>
     <div className={styles.steptitle}>Vuelo</div>
     <div className={styles.stepcontent}>
-      Origen ⇆ Destino final<br/>
+      {infoVuelo?.origin} ⇆ {infoVuelo?.destinationName}<br/>
       {nochesyedades1?.dateRange ? 
         `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
         'Fechas no seleccionadas'}
@@ -297,6 +298,7 @@ const BusquedaCartagena = () => {
     </div>
   </div>
 </div>
+      )}
 <br />
         <div className={styles.title}>Resultados {Ciudad}</div>
         <div className={styles.filter}>

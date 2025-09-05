@@ -1,0 +1,34 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DropdownSearch from "../components/DropdownSearch";
+import VuelosDisponibles from "../components/Vuelosdisponibles";
+
+---
+
+<html>
+  
+  <BaseLayout title="Vuelos disponibles ">
+    <DropdownSearch client:load />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <html lang="es">
+      <head>
+        <title>Vuelos disponibles</title>
+        <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+          rel="stylesheet"
+        />
+      </head>
+
+      <body>
+       <VuelosDisponibles client:only="react"/>
+      </body>
+    </html>
+  </BaseLayout>
+</html>

@@ -34,6 +34,41 @@ const DropdownSearch = () => {
 
   const [includesFlight, setIncludesFlight] = useState(false);
   const [origin, setOrigin] = useState("");
+  const [originSuggestions, setOriginSuggestions] = useState([]);
+  const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
+  const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
+  const [selectedOriginIata, setSelectedOriginIata] = useState("");
+  
+  // Función para generar fechas bloqueadas desde el 26 de diciembre de 2025 hasta el 12 de enero de 2026
+  const generateBlockedDates = () => {
+    const blockedDates = [];
+    const startBlockDate = new Date(2025, 11, 26); // Diciembre es mes 11 (0-indexado)
+    const endBlockDate = new Date(2026, 0, 12); // Enero es mes 0 (0-indexado)
+    
+    const currentDate = new Date(startBlockDate);
+    while (currentDate <= endBlockDate) {
+      blockedDates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return blockedDates;
+  };
+  
+  // Mapeo de destinos con sus códigos IATA y nombres
+  const destinationMapping = {
+    CARTAGENA: {
+      name: "Cartagena",
+      iataCode: "CTG"
+    },
+    BOGOTA: {
+      name: "Bogotá",
+      iataCode: "BOG"
+    },
+    SANTA_MARTA: {
+      name: "Santa Marta",
+      iataCode: "SMR"
+    }
+  };
 
   // Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
   const mostrarTooltip = (mensaje) => {
@@ -44,6 +79,7 @@ const DropdownSearch = () => {
   };
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
+  const originSuggestionsRef = useRef(null);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -56,11 +92,26 @@ const DropdownSearch = () => {
       ) {
         setShowDateRange(false);
       }
+      if (
+        originSuggestionsRef.current &&
+        !originSuggestionsRef.current.contains(event.target)
+      ) {
+        setShowOriginSuggestions(false);
+      }
     };
 
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debouncedSearch.current) {
+        clearTimeout(debouncedSearch.current);
+      }
     };
   }, []);
 
@@ -70,6 +121,86 @@ const DropdownSearch = () => {
       0,
       Math.round((endDate.getTime() - startDate.getTime()) / msInDay)
     );
+  };
+
+  // Función para buscar ciudades con debounce
+  const searchCities = async (keyword) => {
+    if (keyword.length < 3) {
+      setOriginSuggestions([]);
+      setShowOriginSuggestions(false);
+      return;
+    }
+
+    setIsSearchingOrigin(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/vuelos/ciudades/buscar?keyword=${encodeURIComponent(keyword)}&countryCode=`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const suggestions = data.data
+          .filter(city => city.iataCode) // Solo ciudades que tengan iataCode
+          .map(city => ({
+            name: city.name,
+            iataCode: city.iataCode,
+            countryCode: city.address?.countryCode || 'CO',
+            type: city.type,
+            subType: city.subType
+          }));
+        setOriginSuggestions(suggestions);
+        setShowOriginSuggestions(suggestions.length > 0);
+      } else {
+        setOriginSuggestions([]);
+        setShowOriginSuggestions(false);
+      }
+    } catch (error) {
+      console.error("Error buscando ciudades:", error);
+      setOriginSuggestions([]);
+      setShowOriginSuggestions(false);
+    } finally {
+      setIsSearchingOrigin(false);
+    }
+  };
+
+  // Debounce para la búsqueda de ciudades
+  const debouncedSearch = useRef(null);
+
+  const handleOriginChange = (e) => {
+    const value = e.target.value;
+    setOrigin(value);
+    setSelectedOriginIata(""); // Reset IATA code when typing
+
+    // Clear previous timeout
+    if (debouncedSearch.current) {
+      clearTimeout(debouncedSearch.current);
+    }
+
+    // Set new timeout for search
+    debouncedSearch.current = setTimeout(() => {
+      searchCities(value);
+    }, 300);
+  };
+
+  const handleOriginSelect = (city) => {
+    setOrigin(city.name);
+    setSelectedOriginIata(city.iataCode);
+    setShowOriginSuggestions(false);
+    
+    // Actualizar localStorage con los datos del vuelo
+    const datosDelVuelo = {
+      tipoReserva: "flight",
+      activado: true,
+      origin: city.name,
+      originIata: city.iataCode,
+      originCountryCode: city.countryCode,
+      destination: destination,
+      destinationName: destinationMapping[destination]?.name || destination,
+      destinationIata: destinationMapping[destination]?.iataCode || "",
+      destinationCountryCode: "CO",
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
   };
 
   const handleDateRangeChange = (ranges) => {
@@ -221,7 +352,12 @@ const DropdownSearch = () => {
         tipoReserva: "flight",
         activado: true,
         origin: origin,
+        originIata: selectedOriginIata,
+        originCountryCode: originSuggestions.find(city => city.name === origin)?.countryCode || 'CO',
         destination: destination,
+        destinationName: destinationMapping[destination]?.name || destination,
+        destinationIata: destinationMapping[destination]?.iataCode || "",
+        destinationCountryCode: "CO",
         dateRange: dateRange,
         nights: nights,
         layout: layout,
@@ -290,14 +426,85 @@ const DropdownSearch = () => {
       {tooltip && <div className={styles.tooltip}>{tooltip}</div>}
 
       {includesFlight && (
-        <div className={styles.dropdown}>
+        <div className={styles.dropdown} style={{ position: 'relative' }}>
           <input
             type="text"
             value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
+            onChange={handleOriginChange}
+            onFocus={() => {
+              if (origin.length >= 3 && originSuggestions.length > 0) {
+                setShowOriginSuggestions(true);
+              }
+            }}
             placeholder="Buscar ciudad de origen..."
             className={styles.searchInput}
           />
+          {isSearchingOrigin && (
+            <div style={{ 
+              position: 'absolute', 
+              top: '100%', 
+              left: 0, 
+              right: 0, 
+              background: 'white', 
+              border: '1px solid #ddd',
+              padding: '10px',
+              zIndex: 1000
+            }}>
+              Buscando...
+            </div>
+          )}
+          {showOriginSuggestions && originSuggestions.length > 0 && (
+            <div 
+              ref={originSuggestionsRef}
+              style={{ 
+                position: 'absolute', 
+                top: '100%', 
+                left: 0, 
+                right: 0, 
+                background: 'white', 
+                border: '1px solid #ddd',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                zIndex: 1000
+              }}
+            >
+              {originSuggestions.map((city, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleOriginSelect(city)}
+                  style={{
+                    padding: '10px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #eee',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#f5f5f5';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'white';
+                  }}
+                >
+                  <span>{city.name}</span>
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-end',
+                    textAlign: 'right'
+                  }}>
+                    <span style={{ color: '#666', fontSize: '12px' }}>
+                      {city.iataCode}
+                    </span>
+                    <span style={{ color: '#999', fontSize: '10px' }}>
+                      {city.countryCode}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -340,6 +547,7 @@ const DropdownSearch = () => {
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
               minDate={new Date()} //Limita la seleccion a partir de hoy
+              disabledDates={generateBlockedDates()} // Bloquea fechas desde 26 dic 2025 hasta 12 ene 2026
             />
             <button
               onClick={() => setShowDateRange(false)}
