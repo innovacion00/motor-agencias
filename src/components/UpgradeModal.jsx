@@ -51,6 +51,11 @@ const UpgradeModal = ({ isOpen, onClose, currentHotelId, onSelectUpgrade, onCont
 
   const upgrades = hotelUpgrades[currentHotelId] || [];
 
+  const handleContinue = async () => {
+    // Solo ejecutar la función onContinue que ya maneja la búsqueda de vuelos
+    onContinue();
+  };
+
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent}>
@@ -76,8 +81,9 @@ const UpgradeModal = ({ isOpen, onClose, currentHotelId, onSelectUpgrade, onCont
             Cancelar
           </button>
           <button 
+          name='siguientevuelos'
             className={styles.continueButton}
-            onClick={onContinue}
+            onClick={handleContinue}
             style={{color:"white", fontWeight:"lighter", fontFamily:"roboto"}}
           >
             Siguiente

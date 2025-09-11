@@ -9,6 +9,7 @@ import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
 import UpgradeModal from './UpgradeModal';
+import { searchFlights } from '../utils/flightSearch';
 
 const hotelesData = {
   9: {
@@ -528,15 +529,27 @@ export const Cid = ({ id }) => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);  
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [isSearchingFlights, setIsSearchingFlights] = useState(false);
   
-  const handleReservarClick = () => {
+  const handleReservarClick = async () => {
     // Solo mostrar el modal para hoteles específicos en Cartagena
     if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
       setShowUpgradeModal(true);
     } else {
-      enviardatos();
-      window.location.href = "/reservas";
+      // Realizar consulta de vuelos antes de continuar
+      setIsSearchingFlights(true);
+      try {
+        const success = await searchFlights();
+        if (success) {
+          enviardatos();
+          window.location.href = "/dispoVuelos";
+        }
+      } catch (error) {
+        console.error('Error en la búsqueda de vuelos:', error);
+      } finally {
+        setIsSearchingFlights(false);
+      }
     }
   };
   const handleUpgradeSelect = (newHotelId) => {
@@ -1481,34 +1494,58 @@ export const Cid = ({ id }) => {
 
             {/* Reemplazar el anchor tag y modificar el botón */}
             <button
-              
+             name="vuelos"
              onClick={handleReservarClick}
-              disabled={datohabitacion.length === 0}
+              disabled={datohabitacion.length === 0 || isSearchingFlights}
               style={{
                 width: '100%',
                 padding: '12px 20px',
                 fontSize: '16px',
                 fontWeight: '500',
-                backgroundColor: datohabitacion.length === 0 ? "#d3d3d3" : "#26547B",
+                backgroundColor: (datohabitacion.length === 0 || isSearchingFlights) ? "#d3d3d3" : "#26547B",
                 color: "white",
                 border: "none",
                 borderRadius: "5px",
-                cursor: datohabitacion.length === 0 ? "not-allowed" : "pointer",
+                cursor: (datohabitacion.length === 0 || isSearchingFlights) ? "not-allowed" : "pointer",
                 transition: "background-color 0.3s ease",
                 marginTop: "20px",
-                marginBottom: "20px"
+                marginBottom: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px"
               }}
             >
-              Reservar ahora
+              {isSearchingFlights && (
+                <div style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid #ffffff",
+                  borderTop: "2px solid transparent",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite"
+                }}></div>
+              )}
+              {isSearchingFlights ? "Buscando vuelos..." : "Reservar ahora"}
             </button>
             <UpgradeModal 
               isOpen={showUpgradeModal}
               onClose={() => setShowUpgradeModal(false)}
               currentHotelId={Number(id)}
                onSelectUpgrade={handleUpgradeSelect}
-              onContinue={() => {
-                enviardatos();
-                window.location.href = "/disponibilidadVuelos";
+              onContinue={async () => {
+                setIsSearchingFlights(true);
+                try {
+                  const success = await searchFlights();
+                  if (success) {
+                    enviardatos();
+                    window.location.href = "/dispoVuelos";
+                  }
+                } catch (error) {
+                  console.error('Error en la búsqueda de vuelos:', error);
+                } finally {
+                  setIsSearchingFlights(false);
+                }
               }}
             />
           </div>
