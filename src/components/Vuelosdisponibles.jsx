@@ -4,12 +4,12 @@ import DropdownSearch from "./DropdownSearch";
 
 
 const VuelosDisponibles = () => {
-  const [selectedFlight, setSelectedFlight] = useState(0);
+  const [selectedFlight, setSelectedFlight] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [flightData, setFlightData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dictionaries, setDictionaries] = useState(null);
-  const [datosVuelo, setDatosVuelo] = useState()
+  
 
   // Función para formatear duración ISO 8601 a formato legible
   const formatDuration = (isoDuration) => {
@@ -67,6 +67,21 @@ const VuelosDisponibles = () => {
     return dictionaries?.carriers?.[carrierCode] || carrierCode;
   };
 
+  // Función para obtener el logo de la aerolínea
+  const getAirlineLogo = (carrierCode) => {
+    const airlineLogos = {
+      'AV': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/AV.png?crop=false&width=108&height=92&fallback=default2.png&_v=9da891fb64018166c1a5228d9c46e5ef',
+      'LA': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/LA.png?crop=false&width=108&height=92&fallback=default1.png&_v=e2abb15ddcd9bf090836299b76d255e0',
+      'CM': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/CM.png?crop=false&width=108&height=92&fallback=default1.png&_v=a61544cffd06cf2178b9a97659b98650',
+      'UA': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/UA.png?crop=false&width=108&height=92&fallback=default1.png&_v=5549857010860b629834720579d831e5',
+      'B6':'https://s202.q4cdn.com/521076508/files/doc_downloads/logos/JetBlue-Logo_Blue.png',
+      // Agregar más aerolíneas aquí en el futuro
+      // 'XX': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/XX.png?crop=false&width=108&height=92&fallback=default1.png&_v=...',
+    };
+    
+    return airlineLogos[carrierCode] || `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${carrierCode}`;
+  };
+
   // Función para obtener el nombre de la ciudad
   const getCityName = (iataCode, dictionaries) => {
     const location = dictionaries?.locations?.[iataCode];
@@ -117,7 +132,7 @@ const VuelosDisponibles = () => {
             const outbound = itineraries[0];
             const returnFlight = itineraries[1];
             
-            const totalPrice = parseFloat(offer.price.total);
+            const totalPrice = parseFloat(offer.price.base);
             const passengers = offer.travelerPricings.length;
             const pricePerPerson = totalPrice / passengers;
 
@@ -129,7 +144,7 @@ const VuelosDisponibles = () => {
                 return {
                   date: formatDate(segment.departure.at),
                   airline: getAirlineName(segment.carrierCode, dictionariesData),
-                  logo: `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${segment.carrierCode}`,
+                  logo: getAirlineLogo(segment.carrierCode),
                   origin: segment.departure.iataCode,
                   originCity: getCityName(segment.departure.iataCode, dictionariesData),
                   destination: segment.arrival.iataCode,
@@ -162,7 +177,7 @@ const VuelosDisponibles = () => {
                 return {
                   date: formatDate(firstSegment.departure.at),
                   airline: getAirlineName(firstSegment.carrierCode, dictionariesData),
-                  logo: `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${firstSegment.carrierCode}`,
+                  logo: getAirlineLogo(firstSegment.carrierCode),
                   origin: firstSegment.departure.iataCode,
                   originCity: getCityName(firstSegment.departure.iataCode, dictionariesData),
                   destination: lastSegment.arrival.iataCode,
@@ -276,6 +291,8 @@ const VuelosDisponibles = () => {
     );
   }
 
+  const selectedFlightData = selectedFlight ? flightData.flights.find((f) => f.id === selectedFlight) : null;
+
   const handleFlightSelect = (flightId) => {
     setSelectedFlight(flightId);
   };
@@ -310,7 +327,7 @@ const VuelosDisponibles = () => {
                 {flight.outbound.segments.map((segment, segmentIndex) => (
                   <div key={segmentIndex} className={styles.flightDetails}>
                     <div className={styles.airlineInfo}>
-                      <img src={`https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${segment.carrierCode}`} alt={getAirlineName(segment.carrierCode, dictionaries)} className={styles.airlineLogo} />
+                      <img src={getAirlineLogo(segment.carrierCode)} alt={getAirlineName(segment.carrierCode, dictionaries)} className={styles.airlineLogo} />
                       <span className={styles.airlineName}>{getAirlineName(segment.carrierCode, dictionaries)}</span>
                     </div>
                     <div className={styles.routeInfo}>
@@ -380,7 +397,7 @@ const VuelosDisponibles = () => {
                 {flight.return.segments.map((segment, segmentIndex) => (
                   <div key={segmentIndex} className={styles.flightDetails}>
                     <div className={styles.airlineInfo}>
-                      <img src={`https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${segment.carrierCode}`} alt={getAirlineName(segment.carrierCode, dictionaries)} className={styles.airlineLogo} />
+                      <img src={getAirlineLogo(segment.carrierCode)} alt={getAirlineName(segment.carrierCode, dictionaries)} className={styles.airlineLogo} />
                       <span className={styles.airlineName}>{getAirlineName(segment.carrierCode, dictionaries)}</span>
                     </div>
                     <div className={styles.routeInfo}>
@@ -466,6 +483,7 @@ const VuelosDisponibles = () => {
               {/* Botón de selección */}
               <div className={styles.selectionButton}>
                 <button 
+                  name='confirmarvuelo'
                   className={`${styles.selectBtn} ${selectedFlight === flight.id ? styles.selected : ''}`}
                   onClick={() => handleFlightSelect(flight.id)}
                 >
@@ -528,77 +546,81 @@ const VuelosDisponibles = () => {
             </div>
           </div>
 
-          {/* Información del vuelo */}
-          <div className={styles.flightInfo}>
-            <div className={styles.flightHeader}>
-              <i className="fas fa-plane"></i>
-              <span className={styles.flightRoute}>
-                {flightData.flights[0]?.outbound.originCity} - {flightData.flights[0]?.outbound.destinationCity}
-              </span>
-            </div>
-            <div className={styles.flightPassengers}>
-              Ida y vuelta, {flightData.flights[0]?.pricing.passengers} adultos
-            </div>
-            
-            {/* Vuelo de ida */}
-            <div className={styles.flightSegmentSummary}>
-              <div className={styles.segmentTitle}>Ida</div>
-              <div className={styles.segmentDate}>{flightData.flights[0]?.outbound.date}</div>
-              <div className={styles.segmentDetails}>
-                <div className={styles.airlineName}>{flightData.flights[0]?.outbound.airline}</div>
-                <div className={styles.route}>
-                  {flightData.flights[0]?.outbound.origin} → {flightData.flights[0]?.outbound.destination}
-                </div>
-                <div className={styles.times}>
-                  {flightData.flights[0]?.outbound.departure} {flightData.flights[0]?.outbound.type} {flightData.flights[0]?.outbound.arrival}
-                </div>
-                <div className={styles.duration}>{flightData.flights[0]?.outbound.duration}</div>
-                <div className={styles.baggageIcons}>
-                  <i className="fas fa-suitcase-rolling"></i>
-                  <i className="fas fa-suitcase"></i>
+          {/* Información del vuelo (se muestra solo tras confirmar selección) */}
+          {selectedFlightData && (
+            <div className={styles.flightInfo}>
+              <div className={styles.flightHeader}>
+                <i className="fas fa-plane"></i>
+                <span className={styles.flightRoute}>
+                  {selectedFlightData.outbound.originCity} - {selectedFlightData.outbound.destinationCity}
+                </span>
+              </div>
+              <div className={styles.flightPassengers}>
+                Ida y vuelta, {selectedFlightData.pricing.passengers} adultos
+              </div>
+              
+              {/* Vuelo de ida */}
+              <div className={styles.flightSegmentSummary}>
+                <div className={styles.segmentTitle}>Ida</div>
+                <div className={styles.segmentDate}>{selectedFlightData.outbound.date}</div>
+                <div className={styles.segmentDetails}>
+                  <div className={styles.airlineName}>{selectedFlightData.outbound.airline}</div>
+                  <div className={styles.route}>
+                    {selectedFlightData.outbound.origin} → {selectedFlightData.outbound.destination}
+                  </div>
+                  <div className={styles.times}>
+                    {selectedFlightData.outbound.departure} {selectedFlightData.outbound.type} {selectedFlightData.outbound.arrival}
+                  </div>
+                  <div className={styles.duration}>{selectedFlightData.outbound.duration}</div>
+                  <div className={styles.baggageIcons}>
+                    <i className="fas fa-suitcase-rolling"></i>
+                    <i className="fas fa-suitcase"></i>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Vuelo de regreso */}
-            <div className={styles.flightSegmentSummary}>
-              <div className={styles.segmentTitle}>Vuelta</div>
-              <div className={styles.segmentDate}>{flightData.flights[0]?.return.date}</div>
-              <div className={styles.segmentDetails}>
-                <div className={styles.airlineName}>{flightData.flights[0]?.return.airline}</div>
-                <div className={styles.route}>
-                  {flightData.flights[0]?.return.origin} → {flightData.flights[0]?.return.destination}
+              {/* Vuelo de regreso */}
+              <div className={styles.flightSegmentSummary}>
+                <div className={styles.segmentTitle}>Vuelta</div>
+                <div className={styles.segmentDate}>{selectedFlightData.return.date}</div>
+                <div className={styles.segmentDetails}>
+                  <div className={styles.airlineName}>{selectedFlightData.return.airline}</div>
+                  <div className={styles.route}>
+                    {selectedFlightData.return.origin} → {selectedFlightData.return.destination}
+                  </div>
+                  <div className={styles.times}>
+                    {selectedFlightData.return.departure} {selectedFlightData.return.type} {selectedFlightData.return.arrival}
+                  </div>
+                  <div className={styles.duration}>{selectedFlightData.return.duration}</div>
+                  <div className={styles.baggageIcons}>
+                    <i className="fas fa-suitcase-rolling"></i>
+                    <i className="fas fa-suitcase"></i>
+                  </div>
                 </div>
-                <div className={styles.times}>
-                  {flightData.flights[0]?.return.departure} {flightData.flights[0]?.return.type} {flightData.flights[0]?.return.arrival}
+              </div>
+
+              <div className={styles.flightPricing}>
+                <div className={styles.pricePerPerson}>
+                  <span>Valor por persona: {selectedFlightData.pricing.perPerson}</span>
                 </div>
-                <div className={styles.duration}>{flightData.flights[0]?.return.duration}</div>
-                <div className={styles.baggageIcons}>
-                  <i className="fas fa-suitcase-rolling"></i>
-                  <i className="fas fa-suitcase"></i>
+                <div className={styles.totalPrice}>
+                  <span>Total {selectedFlightData.pricing.passengers} personas: {selectedFlightData.pricing.total}</span>
+                </div>
+                <div className={styles.taxesInfo}>
+                  <span>Incluye impuestos</span>
                 </div>
               </div>
             </div>
+          )}
 
-            <div className={styles.flightPricing}>
-              <div className={styles.pricePerPerson}>
-                <span>Valor por persona: {flightData.flights[0]?.pricing.perPerson}</span>
-              </div>
-              <div className={styles.totalPrice}>
-                <span>Total {flightData.flights[0]?.pricing.passengers} personas: {flightData.flights[0]?.pricing.total}</span>
-              </div>
-              <div className={styles.taxesInfo}>
-                <span>Incluye impuestos</span>
-              </div>
+          {/* Total (se muestra solo tras confirmar selección) */}
+          {selectedFlightData && (
+            <div className={styles.totalSummary}>
+              <div className={styles.totalLabel}>Total</div>
+              <div className={styles.totalAmount}>{selectedFlightData.pricing.total}</div>
+              <div className={styles.totalTaxes}>Incluye impuestos</div>
             </div>
-          </div>
-
-          {/* Total */}
-          <div className={styles.totalSummary}>
-            <div className={styles.totalLabel}>Total</div>
-            <div className={styles.totalAmount}>{flightData.flights[0]?.pricing.total}</div>
-            <div className={styles.totalTaxes}>Incluye impuestos</div>
-          </div>
+          )}
 
           {/* Botón de acción */}
           <button className={styles.actionButton}>Ver adicionales</button>

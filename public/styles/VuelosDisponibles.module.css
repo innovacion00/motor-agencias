@@ -28,6 +28,11 @@
   margin: 0 auto;
 }
 
+/* Aplicar Roboto a todos los elementos */
+.container * {
+  font-family: 'Roboto', sans-serif;
+}
+
 .mainContent {
   flex: 1;
   padding: 20px;

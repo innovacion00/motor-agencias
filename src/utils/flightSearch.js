@@ -94,7 +94,7 @@ export const searchFlights = async () => {
       travelers: travelers,
       sources: ["GDS"],
       searchCriteria: {
-        maxFlightOffers: 20,
+        maxFlightOffers: 120,
         flightFilters: {
           maxNumberOfConnections: 2
         }
