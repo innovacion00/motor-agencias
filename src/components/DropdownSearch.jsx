@@ -197,11 +197,7 @@ const DropdownSearch = () => {
       };
       window.location.href = destinations[destination];
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error en la búsqueda",
-        text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente mas tarde.",
-      });
+      // La alerta ya fue mostrada por getdisponibility; solo evitamos navegar
     } finally {
       setIsLoading(false);
     }
