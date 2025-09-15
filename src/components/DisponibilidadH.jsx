@@ -1366,6 +1366,16 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
+                  {tipoTraslado && (
+                    <h5>
+                      Traslado seleccionado: {" "}
+                      {tipoTraslado === 'aeropuerto_hotel'
+                        ? 'Aeropuerto al hotel'
+                        : tipoTraslado === 'hotel_aeropuerto'
+                        ? 'Hotel al aeropuerto'
+                        : 'Aeropuerto al hotel | Hotel al aeropuerto'}
+                    </h5>
+                  )}
                   <h5>
                     {selectedTours.length > 0 && ''} 
                     {selectedTours.map((tour, i) => (
