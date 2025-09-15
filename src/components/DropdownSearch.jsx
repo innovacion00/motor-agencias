@@ -241,6 +241,10 @@ const DropdownSearch = () => {
     setbotonactivado("group");
     setIncludesFlight(false);
     setOrigin("");
+    // Guardar tipo de búsqueda en localStorage: 2 = Reserva para grupos
+    try {
+      localStorage.setItem("tipoBusqueda", "2");
+    } catch (e) {}
     
     // Limpiar datos del vuelo del localStorage
     localStorage.removeItem("datosDelVuelo");
@@ -262,6 +266,10 @@ const DropdownSearch = () => {
     setbotonactivado("single");
     setIncludesFlight(false);
     setOrigin("");
+    // Guardar tipo de búsqueda en localStorage: 1 = Única fecha
+    try {
+      localStorage.setItem("tipoBusqueda", "1");
+    } catch (e) {}
     
     // Limpiar datos del vuelo del localStorage
     localStorage.removeItem("datosDelVuelo");
@@ -282,6 +290,10 @@ const DropdownSearch = () => {
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("flight");
     setIncludesFlight(true);
+    // Guardar tipo de búsqueda en localStorage: 3 = Vuelo + hotel
+    try {
+      localStorage.setItem("tipoBusqueda", "3");
+    } catch (e) {}
     
     // Guardar datos del vuelo en localStorage
     const datosDelVuelo = {

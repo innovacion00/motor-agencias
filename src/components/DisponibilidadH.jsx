@@ -537,7 +537,15 @@ export const Cid = ({ id }) => {
     if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
       setShowUpgradeModal(true);
     } else {
-      // Realizar consulta de vuelos antes de continuar
+      // Decidir destino según tipoBusqueda
+      const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+      if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+        enviardatos();
+        window.location.href = "/reservas";
+        return;
+      }
+
+      // Realizar consulta de vuelos cuando tipoBusqueda === 3
       setIsSearchingFlights(true);
       try {
         const success = await searchFlights();
@@ -1534,6 +1542,13 @@ export const Cid = ({ id }) => {
               currentHotelId={Number(id)}
                onSelectUpgrade={handleUpgradeSelect}
               onContinue={async () => {
+                const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+                if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+                  enviardatos();
+                  window.location.href = "/reservas";
+                  return;
+                }
+
                 setIsSearchingFlights(true);
                 try {
                   const success = await searchFlights();
