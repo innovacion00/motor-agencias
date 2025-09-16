@@ -531,6 +531,15 @@ export const Cid = ({ id }) => {
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isSearchingFlights, setIsSearchingFlights] = useState(false);
+  const [infoVuelo, setinfoVuelo] = useState();
+  const [nochesyedades1, setnochesyedades] = useState({});
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+  };
   
   const handleReservarClick = async () => {
     // Solo mostrar el modal para hoteles específicos en Cartagena
@@ -657,6 +666,12 @@ export const Cid = ({ id }) => {
     if (city) {
       setSelectedCity(city);
     }
+    
+    // Load flight and date data for stepper
+    const datosVuelo = JSON.parse(localStorage.getItem("datosDelVuelo"));
+    setinfoVuelo(datosVuelo);
+    const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
+    setnochesyedades(nochesyedades);
   }, []);
 
   // Filtrar tours cada vez que cambie la ciudad seleccionada
@@ -827,36 +842,37 @@ export const Cid = ({ id }) => {
           <a href="/">Inicio</a> / <a href="#">Resultados de búsqueda</a> /{" "}
           {habitaciones?.hotel?.name}
         </div>
+
+        {(infoVuelo?.active === true || infoVuelo?.activado === true) && (
         <div className={styles.stepper}>
           <div className={styles.step}>
             <div className={styles.stepnumberActive}>1</div>
             <div className={styles.steptitleActive}>Alojamiento</div>
             <div className={styles.stepcontentActive}>
               Seleccione el alojamiento <br />
-              {rangosfechas.nights} noches,{" "}
-              {/*{hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños */}
+              {nochesyedades1.nights} noches, {adultos} adultos, {ninos} niños
             </div>
           </div>
           <div className={styles.step}>
             <div className={styles.stepnumber}>2</div>
             <div className={styles.steptitle}>Vuelo</div>
             <div className={styles.stepcontent}>
-              Origen ⇆ Destino final
-              <br />
-              {/* {nochesyedades1?.dateRange ? 
-        `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
-        'Fechas no seleccionadas'} */}
+              {infoVuelo?.origin} ⇆ {infoVuelo?.destinationName}<br/>
+              {nochesyedades1?.dateRange ? 
+                `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
+                'Fechas no seleccionadas'}
             </div>
           </div>
           <div className={styles.step}>
             <div className={styles.stepnumber}>3</div>
             <div className={styles.steptitle}>Adicionales</div>
             <div className={styles.stepcontent}>
-              ¡Disfruta al máximo tu viaje! Incluye opciones de traslado, tours,
-              y planes de alimentación entre otros adicionales
+              ¡Disfruta al máximo tu viaje!
+              Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
             </div>
           </div>
         </div>
+        )}
         <br />
         <div className={styles.hotel_title}>
           {habitaciones?.hotel?.name || "Hotel no encontrado"}
@@ -1448,6 +1464,16 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
+                  {tipoTraslado && (
+                    <h5>
+                      Traslado seleccionado: {" "}
+                      {tipoTraslado === 'aeropuerto_hotel'
+                        ? 'Aeropuerto al hotel'
+                        : tipoTraslado === 'hotel_aeropuerto'
+                        ? 'Hotel al aeropuerto'
+                        : 'Aeropuerto al hotel | Hotel al aeropuerto'}
+                    </h5>
+                  )}
                   <h5>
                     {selectedTours.length > 0 && ""}
                     {selectedTours.map((tour, i) => (

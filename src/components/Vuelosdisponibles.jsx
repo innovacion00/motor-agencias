@@ -9,6 +9,7 @@ const VuelosDisponibles = () => {
   const [flightData, setFlightData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dictionaries, setDictionaries] = useState(null);
+  const ITEMS_PER_PAGE = 6;
   
 
   // Función para formatear duración ISO 8601 a formato legible
@@ -257,6 +258,20 @@ const VuelosDisponibles = () => {
     loadFlightData();
   }, []);
 
+  // Reiniciar a la primera página cuando cambie la cantidad de vuelos
+  useEffect(() => {
+    if (flightData?.flights) {
+      setCurrentPage(1);
+    }
+  }, [flightData?.flights?.length]);
+
+  // Hacer scroll al inicio cuando cambia la página
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentPage]);
+
   // Mostrar loading mientras se cargan los datos
   if (loading) {
     return (
@@ -291,6 +306,12 @@ const VuelosDisponibles = () => {
     );
   }
 
+  // Paginación
+  const totalFlights = flightData.flights.length;
+  const totalPages = Math.max(1, Math.ceil(totalFlights / ITEMS_PER_PAGE));
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const visibleFlights = flightData.flights.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   const selectedFlightData = selectedFlight ? flightData.flights.find((f) => f.id === selectedFlight) : null;
 
   const handleFlightSelect = (flightId) => {
@@ -304,7 +325,9 @@ const VuelosDisponibles = () => {
   };
 
   const handleNext= () => {
-    setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -314,7 +337,7 @@ const VuelosDisponibles = () => {
       <div className={styles.mainContent}>
         {/* Sección de vuelos disponibles */}
         <div className={styles.flightsSection}>
-          {flightData.flights.map((flight, index) => (
+          {visibleFlights.map((flight, index) => (
             <div key={flight.id} className={styles.flightOption}>
               {/* Ida */}
               <div className={styles.flightSegment}>
@@ -505,9 +528,11 @@ const VuelosDisponibles = () => {
               >
                 &lt; Anterior
               </button>
+              <span>{currentPage} / {totalPages}</span>
               <button 
                 className={styles.pageBtn} 
                 onClick={handleNext}
+                disabled={currentPage === totalPages}
               >
                 Siguiente &gt;
               </button>
