@@ -83,12 +83,12 @@
 
 .segmentLabel {
   font-weight: 600;
-  color: #333;
+  color: #1C3D5A;
   font-size: 14px;
 }
 
 .segmentDate {
-  color: #666;
+  color: #1C3D5A;
   font-size: 14px;
 }
 
@@ -114,8 +114,8 @@
 
 .airlineName {
   font-size: 14px;
-  color: #333;
-  font-weight: 500;
+  color: #1C3D5A;
+  font-weight: 100;
 }
 
 .routeInfo {
@@ -135,12 +135,12 @@
 .cityCode {
   font-weight: 600;
   font-size: 16px;
-  color: #333;
+  color: #1C3D5A;
 }
 
 .cityName {
   font-size: 12px;
-  color: #666;
+  color: #1C3D5A;
   text-align: center;
 }
 
@@ -154,16 +154,18 @@
 .departureTime, .arrivalTime {
   font-weight: 600;
   font-size: 16px;
-  color: #333;
+  color: #1C3D5A;
 }
 
 .flightType {
-  background-color: #28a745;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 10px;
+  background-color: transparent;
+  color: #2cac3d;
+  padding: 0;
+  border-radius: 0;
+  font-size: 12px;
   font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .flightDuration {
@@ -209,7 +211,7 @@
 }
 
 .addBaggageBtn {
-  background-color: #007bff;
+  background-color: #1C3D5A;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -219,7 +221,7 @@
 }
 
 .addBaggageBtn:hover {
-  background-color: #0056b3;
+  background-color: #1c3d5ac0;
 }
 
 /* Precios */
@@ -269,7 +271,7 @@
 }
 
 .selectBtn {
-  background-color: #007bff;
+  background-color: #1C3D5A;
   color: white;
   border: none;
   padding: 12px 30px;
@@ -281,7 +283,7 @@
 }
 
 .selectBtn:hover {
-  background-color: #0056b3;
+  background-color: #1c3d5ac0;
 }
 
 .selectBtn.selected {
@@ -336,9 +338,9 @@
 }
 
 .pageBtn {
-  background-color: #007bff;
-  color: white;
-  border: none;
+  background-color: #f8f8f8;
+  color: #1C3D5A;
+  border: 1px solid #cccbcb;
   padding: 10px 16px;
   border-radius: 6px;
   font-size: 14px;
@@ -346,11 +348,12 @@
 }
 
 .pageBtn:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #7476792a;
 }
 
 .pageBtn:disabled {
-  background-color: #6c757d;
+  background-color: #1C3D5A;
+  color: white;
   cursor: not-allowed;
 }
 
@@ -383,8 +386,13 @@
 }
 
 .hotelHeader i {
-  color: #007bff;
-  font-size: 16px;
+  display: none;
+}
+
+.hotelHeader img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .hotelName {
@@ -448,7 +456,7 @@
 }
 
 .flightHeader i {
-  color: #007bff;
+  color: #1C3D5A;
   font-size: 16px;
 }
 
@@ -583,7 +591,7 @@
 /* Botón de acción */
 .actionButton {
   width: 100%;
-  background-color: #007bff;
+  background-color: #1C3D5A;
   color: white;
   border: none;
   padding: 15px;
@@ -595,7 +603,7 @@
 }
 
 .actionButton:hover {
-  background-color: #0056b3;
+  background-color: #1c3d5ac0;
 }
 
 /* Estados de carga y error */
@@ -661,8 +669,15 @@
 }
 
 .connectionText i {
-  color: #007bff;
+  color: #1C3D5A;
   font-size: 14px;
+}
+
+/* Imagen de avión en conexión - tamaño pequeño como el icono */
+.connectionText img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 
 /* Resumen del vuelo */
@@ -671,7 +686,7 @@
   padding: 15px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  border-left: 4px solid #007bff;
+  border-left: 3px solid #1C3D5A;
 }
 
 .summaryInfo {
@@ -687,12 +702,12 @@
 }
 
 .summaryDuration {
-  color: #666;
+  color: #464646;
   font-size: 12px;
 }
 
 .summaryType {
-  color: #007bff;
+  color: #1C3D5A;
   font-size: 12px;
   font-weight: 500;
 }

@@ -10,6 +10,7 @@ const VuelosDisponibles = () => {
   const [loading, setLoading] = useState(true);
   const [dictionaries, setDictionaries] = useState(null);
   const ITEMS_PER_PAGE = 6;
+  const [selectedCarrier, setSelectedCarrier] = useState("");
   
 
   // Función para formatear duración ISO 8601 a formato legible
@@ -272,6 +273,11 @@ const VuelosDisponibles = () => {
     }
   }, [currentPage]);
 
+  // Reiniciar a la primera página cuando cambia el filtro de aerolínea
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCarrier]);
+
   // Mostrar loading mientras se cargan los datos
   if (loading) {
     return (
@@ -306,11 +312,26 @@ const VuelosDisponibles = () => {
     );
   }
 
-  // Paginación
-  const totalFlights = flightData.flights.length;
+  // Construir listado de aerolíneas presentes y filtrar por aerolínea seleccionada
+  const carriersInResultsSet = new Set();
+  flightData.flights.forEach((f) => {
+    f.outbound.segments.forEach((s) => carriersInResultsSet.add(s.carrierCode));
+    f.return.segments.forEach((s) => carriersInResultsSet.add(s.carrierCode));
+  });
+  const carriersInResults = Array.from(carriersInResultsSet);
+
+  const filteredFlights = selectedCarrier
+    ? flightData.flights.filter((f) =>
+        f.outbound.segments.some((s) => s.carrierCode === selectedCarrier) ||
+        f.return.segments.some((s) => s.carrierCode === selectedCarrier)
+      )
+    : flightData.flights;
+
+  // Paginación sobre la lista filtrada
+  const totalFlights = filteredFlights.length;
   const totalPages = Math.max(1, Math.ceil(totalFlights / ITEMS_PER_PAGE));
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const visibleFlights = flightData.flights.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const visibleFlights = filteredFlights.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const selectedFlightData = selectedFlight ? flightData.flights.find((f) => f.id === selectedFlight) : null;
 
@@ -337,6 +358,24 @@ const VuelosDisponibles = () => {
       <div className={styles.mainContent}>
         {/* Sección de vuelos disponibles */}
         <div className={styles.flightsSection}>
+          {/* Filtro de aerolínea */}
+          <div className={styles.pagination}>
+            <label htmlFor="carrierFilter">Aerolíneas disponibles:&nbsp;</label>
+            <select
+              id="carrierFilter"
+              className={styles.pageBtn}
+              value={selectedCarrier}
+              onChange={(e) => setSelectedCarrier(e.target.value)}
+            >
+              <option value="">Todas</option>
+              {carriersInResults.map((code) => (
+                <option key={code} value={code}>
+                  {getAirlineName(code, dictionaries)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <br />
           {visibleFlights.map((flight, index) => (
             <div key={flight.id} className={styles.flightOption}>
               {/* Ida */}
@@ -384,7 +423,7 @@ const VuelosDisponibles = () => {
                       <div className={styles.connectionInfo}>
                         <div className={styles.connectionLine}></div>
                         <div className={styles.connectionText}>
-                          <i className="fas fa-plane"></i>
+                          <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
                           <span>Escala en {segment.arrival.iataCode}</span>
                         </div>
                         <div className={styles.connectionLine}></div>
@@ -454,7 +493,7 @@ const VuelosDisponibles = () => {
                       <div className={styles.connectionInfo}>
                         <div className={styles.connectionLine}></div>
                         <div className={styles.connectionText}>
-                          <i className="fas fa-plane"></i>
+                        <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
                           <span>Escala en {segment.arrival.iataCode}</span>
                         </div>
                         <div className={styles.connectionLine}></div>
@@ -549,7 +588,7 @@ const VuelosDisponibles = () => {
           {/* Información del hotel */}
           <div className={styles.hotelInfo}>
             <div className={styles.hotelHeader}>
-              <i className="fas fa-hotel"></i>
+              <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/VectorHotel.png" alt="Hotel" />
               <span className={styles.hotelName}>{flightData.hotel.name}</span>
             </div>
             <div className={styles.hotelDates}>{flightData.hotel.dates}</div>
@@ -575,7 +614,7 @@ const VuelosDisponibles = () => {
           {selectedFlightData && (
             <div className={styles.flightInfo}>
               <div className={styles.flightHeader}>
-                <i className="fas fa-plane"></i>
+              <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
                 <span className={styles.flightRoute}>
                   {selectedFlightData.outbound.originCity} - {selectedFlightData.outbound.destinationCity}
                 </span>
