@@ -319,7 +319,7 @@
 }
 
 .exitBtn {
-  background-color: #6c757d;
+  background-color: #1C3D5A;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -329,7 +329,7 @@
 }
 
 .exitBtn:hover {
-  background-color: #5a6268;
+  background-color: #7476792a;
 }
 
 .pagination {

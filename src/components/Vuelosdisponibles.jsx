@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "../../public/styles/VuelosDisponibles.module.css";
 import DropdownSearch from "./DropdownSearch";
+import IATA_CITY_NAMES from "../utils/iataCityNames";
 
 
 const VuelosDisponibles = () => {
@@ -86,11 +87,14 @@ const VuelosDisponibles = () => {
 
   // Función para obtener el nombre de la ciudad
   const getCityName = (iataCode, dictionaries) => {
-    const location = dictionaries?.locations?.[iataCode];
-    if (location) {
-      return `${iataCode} - ${location.cityCode}`;
-    }
-    return iataCode;
+    const code = (iataCode || "").toUpperCase();
+    // 1) Primero intenta con el diccionario local editable
+    if (IATA_CITY_NAMES[code]) return IATA_CITY_NAMES[code];
+    // 2) Fallback con dictionaries: muestra al menos el cityCode si existe
+    const location = dictionaries?.locations?.[code];
+    if (location?.cityCode) return location.cityCode;
+    // 3) Último recurso: retorna el mismo IATA
+    return code;
   };
 
   // Cargar datos del localStorage al montar el componente
@@ -424,7 +428,7 @@ const VuelosDisponibles = () => {
                         <div className={styles.connectionLine}></div>
                         <div className={styles.connectionText}>
                           <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
-                          <span>Escala en {segment.arrival.iataCode}</span>
+                          <span>Escala en {getCityName(segment.arrival.iataCode, dictionaries)} ({segment.arrival.iataCode})</span>
                         </div>
                         <div className={styles.connectionLine}></div>
                       </div>
@@ -494,7 +498,7 @@ const VuelosDisponibles = () => {
                         <div className={styles.connectionLine}></div>
                         <div className={styles.connectionText}>
                         <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
-                          <span>Escala en {segment.arrival.iataCode}</span>
+                          <span>Escala en {getCityName(segment.arrival.iataCode, dictionaries)} ({segment.arrival.iataCode})</span>
                         </div>
                         <div className={styles.connectionLine}></div>
                       </div>
