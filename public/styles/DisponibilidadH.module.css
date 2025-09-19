@@ -1085,16 +1085,35 @@ flex-grow: 1;
 margin-right: 10px;
 }
 
-.detail_btn {
-background-color: #003f7f;
-color: white;
-border: none;
-border-radius: 4px;
-padding: 5px 10px;
-cursor: pointer;
-font-size: 14px;
+.btn_underline_anim {
+  position: relative;
+  color: #26547B;
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  cursor: pointer;
+  overflow: hidden;
 }
 
-.detail_btn:hover {
-background-color: #0069d9;
+.btn_underline_anim::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #26547B;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.btn_underline_anim:hover::after {
+  transform: scaleX(1);
+}
+
+.btn_underline_anim:focus-visible {
+  outline: 2px dashed #26547B;
+  outline-offset: 4px;
 }

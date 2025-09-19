@@ -1135,8 +1135,9 @@ export const Cid = ({ id }) => {
                                 {tour.title}
                               </label>
                               <button
-                                className="detail_btn"
+                                className={styles.btn_underline_anim}
                                 onClick={() => openModal(tour)}
+
                               >
                                 Ver detalle
                               </button>
