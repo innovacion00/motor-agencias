@@ -11,6 +11,7 @@ export const searchFlights = async () => {
     // Obtener datos del localStorage
     const datosDelVuelo = JSON.parse(localStorage.getItem('datosDelVuelo'));
     const cantAdultos = parseInt(localStorage.getItem('cantAdultos')) || 1;
+    const selectedCurrency = (localStorage.getItem('selectedCurrency') || 'COP').toUpperCase();
 
     // Validar que existan los datos necesarios
     if (!datosDelVuelo) {
@@ -72,7 +73,7 @@ export const searchFlights = async () => {
 
     // Construir el body de la consulta
     const requestBody = {
-      currencyCode: "COP",
+      currencyCode: selectedCurrency === "USD" ? "USD" : "COP",
       originDestinations: [
         {
           id: "1",

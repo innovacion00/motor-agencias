@@ -56,11 +56,14 @@ const VuelosDisponibles = () => {
     return `${dayName} ${day} ${month} ${year}`;
   };
 
-  // Función para formatear precio
+  // Función para formatear precio según divisa seleccionada
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CO', {
+    const selectedCurrency = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+    const currency = selectedCurrency === 'USD' ? 'USD' : 'COP';
+    const locale = currency === 'USD' ? 'en-US' : 'es-CO';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: 'COP',
+      currency,
       minimumFractionDigits: 0,
     }).format(parseFloat(price));
   };
@@ -138,7 +141,9 @@ const VuelosDisponibles = () => {
             const outbound = itineraries[0];
             const returnFlight = itineraries[1];
             
-            const totalPrice = parseFloat(offer.price.base);
+            // Seleccionar precio en divisa acorde a la búsqueda
+            const selectedCurrency = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+            const totalPrice = parseFloat(selectedCurrency === 'USD' ? (offer.price?.total || offer.price?.base) : (offer.price?.base));
             const passengers = offer.travelerPricings.length;
             const pricePerPerson = totalPrice / passengers;
 
@@ -339,6 +344,10 @@ const VuelosDisponibles = () => {
 
   const selectedFlightData = selectedFlight ? flightData.flights.find((f) => f.id === selectedFlight) : null;
 
+  // Divisa seleccionada para mostrar sufijo (COP/USD)
+  const selectedCurrencyDisplay = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+  const currencySuffix = selectedCurrencyDisplay === 'USD' ? 'USD' : 'COP';
+
   const handleFlightSelect = (flightId) => {
     setSelectedFlight(flightId);
   };
@@ -535,11 +544,11 @@ const VuelosDisponibles = () => {
               <div className={styles.pricing}>
                 <div className={styles.pricePerPerson}>
                   <span className={styles.priceLabel}>Valor por persona</span>
-                  <span className={styles.priceValue}>{flight.pricing.perPerson}</span>
+                  <span className={styles.priceValue}>{flight.pricing.perPerson} {currencySuffix}</span>
                 </div>
                 <div className={styles.totalPrice}>
                   <span className={styles.totalLabel}>Total {flight.pricing.passengers} personas</span>
-                  <span className={styles.totalValue}>{flight.pricing.total}</span>
+                  <span className={styles.totalValue}>{flight.pricing.total} {currencySuffix}</span>
                 </div>
                 <div className={styles.taxesInfo}>
                   <span>Incluye impuestos</span>
@@ -669,10 +678,10 @@ const VuelosDisponibles = () => {
 
               <div className={styles.flightPricing}>
                 <div className={styles.pricePerPerson}>
-                  <span>Valor por persona: {selectedFlightData.pricing.perPerson}</span>
+                  <span>Valor por persona: {selectedFlightData.pricing.perPerson} {currencySuffix}</span>
                 </div>
                 <div className={styles.totalPrice}>
-                  <span>Total {selectedFlightData.pricing.passengers} personas: {selectedFlightData.pricing.total}</span>
+                  <span>Total {selectedFlightData.pricing.passengers} personas: {selectedFlightData.pricing.total} {currencySuffix}</span>
                 </div>
                 <div className={styles.taxesInfo}>
                   <span>Incluye impuestos</span>
@@ -685,7 +694,7 @@ const VuelosDisponibles = () => {
           {selectedFlightData && (
             <div className={styles.totalSummary}>
               <div className={styles.totalLabel}>Total</div>
-              <div className={styles.totalAmount}>{selectedFlightData.pricing.total}</div>
+              <div className={styles.totalAmount}>{selectedFlightData.pricing.total} {currencySuffix}</div>
               <div className={styles.totalTaxes}>Incluye impuestos</div>
             </div>
           )}

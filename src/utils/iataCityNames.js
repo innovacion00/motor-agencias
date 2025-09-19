@@ -41,6 +41,10 @@ const IATA_CITY_NAMES = {
   SFO: "San Francisco",
   SEA: "Seattle",
   MIA: "Miami",
+  EWR: "Newark",
+  IAD: "Washington D.C.",
+  SAL: "El Salvador",
+  DCA: "Washington",
 };
 
 export default IATA_CITY_NAMES;
