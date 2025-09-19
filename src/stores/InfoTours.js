@@ -99,7 +99,7 @@ export const toursData = [
      images: {
        main: "https://www.baytours.com.co/wp-content/uploads/2021/11/chiva_3997139_20201216111803.jpg",
        side1: "https://vehitours.com/wp-content/uploads/2022/02/CITY-TOURS-CARTAGENA-tour-en-chiva-city-tour-en-cartagena-guia-cartagena-min.jpg",
-       side2: "https://tutourencartagena.com/wp-content/uploads/2019/11/City-tour-cartagena-en-chiva-1.jpg"
+       side2: "https://cdn-ilcfjhh.nitrocdn.com/AMsOVcaxJEBiDUJmLghgteLoXmGyZJhB/assets/images/optimized/rev-c7d5926/cartagena-tours.co/wp-content/uploads/2022/10/Torre-del-Reloj.jpg"
      },
      includes: [
        "Te recogemos a tu Hotel en Chiva",
@@ -131,7 +131,7 @@ export const toursData = [
        duration: "3 horas",
        meetingPoint: "Te recogemos a tu Hotel en Chiva",
        images: {
-         main: "https://cdn-ilcfjhh.nitrocdn.com/AMsOVcaxJEBiDUJmLghgteLoXmGyZJhB/assets/images/optimized/rev-80d4683/cartagena-tours.co/wp-content/uploads/2022/11/4-9.png",
+         main: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/36/54/34.jpg",
          side1: "https://chivarumbera.com/wp-content/uploads/2023/08/Planes-2.jpg",
          side2: "https://cloudfront-us-east-1.images.arcpublishing.com/infobae/MEZEURPSNNCGHB7KYSGHMYNZ2I.jpg"
        },

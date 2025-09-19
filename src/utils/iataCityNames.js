@@ -4,8 +4,8 @@
 
 const IATA_CITY_NAMES = {
   // Colombia
-  BOG: "Bogotá",
-  CTG: "Cartagena",
+  BOG: "Bogotá D.C.",
+  CTG: "Cartagena de Indias",
   CLO: "Cali",
   MDE: "Medellín",
   SMR: "Santa Marta",

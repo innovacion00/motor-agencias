@@ -12,7 +12,23 @@ const VuelosDisponibles = () => {
   const [dictionaries, setDictionaries] = useState(null);
   const ITEMS_PER_PAGE = 6;
   const [selectedCarrier, setSelectedCarrier] = useState("");
+  const [hotelReservationData, setHotelReservationData] = useState(null);
   
+  // Mapeo de IDs de hotel a nombres
+  const hotelNames = {
+    9: "Hotel Marina Suites",
+    5: "Hotel Abi Inn", 
+    6: "Hotel Avexi Suites",
+    1: "Hotel Azuan Suites",
+    4: "Hotel Aixo Suites",
+    56: "Hotel Boquilla Suites",
+    7: "Hotel Bocagrande Suites",
+    3: "Hotel Madisson Inn Luxury Suites",
+    10: "Hotel Windsor House",
+    48: "Hotel Axis Inn",
+    44: "Hotel Rodadero Inn",
+    8: "Hotel Sansiraka"
+  };
 
   // Función para formatear duración ISO 8601 a formato legible
   const formatDuration = (isoDuration) => {
@@ -106,6 +122,7 @@ const VuelosDisponibles = () => {
       try {
         const dataVuelo = JSON.parse(localStorage.getItem('dataVuelo'));
         const datosDelVuelo = JSON.parse(localStorage.getItem('datosDelVuelo'));
+        const datosReserva = JSON.parse(localStorage.getItem('datosreserva'));
         
         if (dataVuelo && dataVuelo.data && dataVuelo.data.length > 0) {
           const flightOffers = dataVuelo.data;
@@ -114,9 +131,26 @@ const VuelosDisponibles = () => {
           // Guardar dictionaries en el estado para usar en el renderizado
           setDictionaries(dictionariesData);
           
-          // Obtener información del hotel desde datosDelVuelo o usar datos por defecto
-          const hotelInfo = {
-            name: "Hotel Seleccionado", // Puedes obtener esto de datosDelVuelo si está disponible
+          // Guardar datos de reserva del hotel
+          if (datosReserva && datosReserva.length > 0) {
+            setHotelReservationData(datosReserva[0]); // Tomar la primera habitación
+          }
+          
+          // Obtener información del hotel desde datos de reserva o usar datos por defecto
+          const hotelInfo = hotelReservationData ? {
+            name: hotelNames[hotelReservationData.hotelidAutocore] || `Hotel ID: ${hotelReservationData.hotelidAutocore}`,
+            dates: `${hotelReservationData.checkin} -> ${hotelReservationData.checkout}`,
+            room: {
+              type: hotelReservationData.NombreH,
+              meal: hotelReservationData.plandealimentacion,
+              payment: "Pago: Inmediato",
+              dates: `${hotelReservationData.checkin} - ${hotelReservationData.checkout}`,
+              nights: `${hotelReservationData.nights} noches, ${hotelReservationData.huespedes} huéspedes`
+            },
+            price: formatPrice(hotelReservationData.precio),
+            includesTaxes: true
+          } : {
+            name: "Hotel Seleccionado",
             dates: datosDelVuelo?.dateRange ? 
               `${formatDate(datosDelVuelo.dateRange.startDate)} -> ${formatDate(datosDelVuelo.dateRange.endDate)}` : 
               "Fechas no disponibles",
@@ -131,7 +165,7 @@ const VuelosDisponibles = () => {
                 `${Math.ceil((new Date(datosDelVuelo.dateRange.endDate) - new Date(datosDelVuelo.dateRange.startDate)) / (1000 * 60 * 60 * 24))} noches` : 
                 "Noches no disponibles"
             },
-            price: "$0", // Se puede calcular desde los datos de reserva
+            price: "$0",
             includesTaxes: true
           };
 
