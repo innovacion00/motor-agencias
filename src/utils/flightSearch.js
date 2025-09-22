@@ -112,8 +112,8 @@ export const searchFlights = async () => {
         },
         {
           id: "2",
-          originLocationCode: "",
-          destinationLocationCode: "",
+          originLocationCode: datosDelVuelo.originIata,
+          destinationLocationCode: datosDelVuelo.destinationIata,
           departureDateTimeRange: {
             date: formatDate(datosDelVuelo.dateRange.endDate)
           }
