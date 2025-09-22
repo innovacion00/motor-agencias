@@ -131,23 +131,24 @@ const VuelosDisponibles = () => {
           // Guardar dictionaries en el estado para usar en el renderizado
           setDictionaries(dictionariesData);
           
-          // Guardar datos de reserva del hotel
-          if (datosReserva && datosReserva.length > 0) {
-            setHotelReservationData(datosReserva[0]); // Tomar la primera habitación
+          // Guardar datos de reserva del hotel en estado para usos futuros (opcional)
+          const hotelReservation = (datosReserva && datosReserva.length > 0) ? datosReserva[0] : null;
+          if (hotelReservation) {
+            setHotelReservationData(hotelReservation);
           }
-          
-          // Obtener información del hotel desde datos de reserva o usar datos por defecto
-          const hotelInfo = hotelReservationData ? {
-            name: hotelNames[hotelReservationData.hotelidAutocore] || `Hotel ID: ${hotelReservationData.hotelidAutocore}`,
-            dates: `${hotelReservationData.checkin} -> ${hotelReservationData.checkout}`,
+
+          // Obtener información del hotel desde los datos recien leídos (evita depender del estado asíncrono)
+          const hotelInfo = hotelReservation ? {
+            name: hotelNames[hotelReservation.hotelidAutocore] || `Hotel ID: ${hotelReservation.hotelidAutocore}`,
+            dates: `${hotelReservation.checkin} -> ${hotelReservation.checkout}`,
             room: {
-              type: hotelReservationData.NombreH,
-              meal: hotelReservationData.plandealimentacion,
+              type: hotelReservation.NombreH,
+              meal: hotelReservation.plandealimentacion,
               payment: "Pago: Inmediato",
-              dates: `${hotelReservationData.checkin} - ${hotelReservationData.checkout}`,
-              nights: `${hotelReservationData.nights} noches, ${hotelReservationData.huespedes} huéspedes`
+              dates: `${hotelReservation.checkin} - ${hotelReservation.checkout}`,
+              nights: `${hotelReservation.nights} noches, ${hotelReservation.huespedes} huéspedes`
             },
-            price: formatPrice(hotelReservationData.precio),
+            price: formatPrice(hotelReservation.precio),
             includesTaxes: true
           } : {
             name: "Hotel Seleccionado",

@@ -71,13 +71,40 @@ export const searchFlights = async () => {
       });
     }
 
-    // Construir el body de la consulta
+    // Body de la consulta (Con validacion)
+    const requestBodyvalid ={
+      currencyCode: selectedCurrency === "USD" ? "USD" : "COP",
+      originDestinations: [
+        {
+          id:"1",
+          originLocationCode: datosDelVuelo.originIata,
+          destinationLocationCode:datosDelVuelo.destinationIata,
+          departureDate: formatDate(datosDelVuelo.dateRange.startDate)
+        },
+        {
+          id:"2",
+          originLocationCode: datosDelVuelo.destinationIata,
+          destinationLocationCode:datosDelVuelo.originIata,
+          departureDate:formatDate(datosDelVuelo.dateRange.endDate)
+        }
+      ],
+      travelers: travelers,
+      sources:["GDS"],
+      searchCriteria:{
+        maxFlightOffers:60,
+        flightFilters:{
+          maxNumberOfConnections:2
+        }
+        }
+      };
+
+    // Body de la consulta (Sin validacion)
     const requestBody = {
       currencyCode: selectedCurrency === "USD" ? "USD" : "COP",
       originDestinations: [
         {
           id: "1",
-          originLocationCode: datosDelVuelo.originIata,
+          originLocationCode:datosDelVuelo.originIata,
           destinationLocationCode: datosDelVuelo.destinationIata,
           departureDateTimeRange: {
             date: formatDate(datosDelVuelo.dateRange.startDate)
@@ -85,8 +112,8 @@ export const searchFlights = async () => {
         },
         {
           id: "2",
-          originLocationCode: datosDelVuelo.destinationIata,
-          destinationLocationCode: datosDelVuelo.originIata,
+          originLocationCode: "",
+          destinationLocationCode: "",
           departureDateTimeRange: {
             date: formatDate(datosDelVuelo.dateRange.endDate)
           }
@@ -95,7 +122,7 @@ export const searchFlights = async () => {
       travelers: travelers,
       sources: ["GDS"],
       searchCriteria: {
-        maxFlightOffers: 120,
+        maxFlightOffers: 60,
         flightFilters: {
           maxNumberOfConnections: 2
         }
@@ -106,12 +133,12 @@ export const searchFlights = async () => {
 
     // Realizar la consulta usando variable de entorno como base URL
     const baseUrl = import.meta.env.PUBLIC_API_URL;
-    const response = await fetch(`${baseUrl}/agencias/v1/vuelos/disponibilidad-test`, {
+    const response = await fetch(`${baseUrl}/agencias/v1/vuelos/disponibilidad`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify(requestBodyvalid)
     });
 
     if (!response.ok) {
