@@ -55,7 +55,12 @@
                   id="password"
                   placeholder="Escribe la contraseña"
                 />
-                <i class="fas fa-eye toggle-password"></i>
+                <img
+                  src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Iconeye.png"
+                  alt="Mostrar/ocultar contraseña"
+                  class="toggle-password-icon"
+                  id="toggle-password-icon"
+                />
               </div>
             </div>
             <a class="forgot-password" href="/recuperarcontrasena"
@@ -291,6 +296,27 @@
   document.getElementById("submit-btn").addEventListener("click", handleLogin);
   // Añadir el evento de click al botón de verificación de código OTP
   document.getElementById("verify-btn").addEventListener("click", verifyCode);
+
+  // Alternar visibilidad de la contraseña
+  const passwordInput = document.getElementById("password") as HTMLInputElement;
+  const togglePasswordIcon = document.getElementById("toggle-password-icon") as HTMLImageElement;
+  if (passwordInput && togglePasswordIcon) {
+    const toggleVisibility = () => {
+      const isPassword = passwordInput.getAttribute("type") === "password";
+      passwordInput.setAttribute("type", isPassword ? "text" : "password");
+    };
+
+    togglePasswordIcon.addEventListener("click", toggleVisibility);
+    togglePasswordIcon.setAttribute("tabindex", "0");
+    togglePasswordIcon.setAttribute("role", "button");
+    togglePasswordIcon.setAttribute("aria-label", "Mostrar u ocultar contraseña");
+    togglePasswordIcon.addEventListener("keydown", (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleVisibility();
+      }
+    });
+  }
 </script>
 
 <style>
@@ -411,12 +437,15 @@
     border-radius: 4px;
   }
 
-  .form-group .input-wrapper .toggle-password {
+  .form-group .input-wrapper .toggle-password-icon {
     position: absolute;
     right: 10px;
     top: 55%;
     transform: translateY(-50%);
     cursor: pointer;
+    width: 20px;
+    height: 20px;
+    user-select: none;
   }
 
   .form-group .forgot-password a {

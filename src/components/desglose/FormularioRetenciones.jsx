@@ -220,7 +220,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
         }).format(value);
     };
 
-    const ocultarRteFuente = DatosReserva?.[0]?.hotelId ===13633 || DatosReserva?.[0]?.hotelid === "13633";
+    const ocultarRteFuente = DatosReserva?.[0]?.hotelId === 13633 || DatosReserva?.[0]?.hotelid === "13633";
 
     return (
         <>
