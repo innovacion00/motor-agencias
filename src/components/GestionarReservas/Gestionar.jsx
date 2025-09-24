@@ -313,8 +313,8 @@ const Gestionar = ({ reservas }) => {
     if (
       reservas?.status == "1" ||
       reservas?.status == "3" ||
-      reservas?.status == "4" ||
-      reservas?.status == "5"
+      reservas?.status == "4" 
+      
     ) {
       return;
     }
@@ -442,6 +442,7 @@ const Gestionar = ({ reservas }) => {
       title: "Seleccione el tipo de pago",
       text: "¿Qué porcentaje del valor total desea pagar?",
       icon: "question",
+      showConfirmButton: !(reservas?.status == 5 || reservas?.pagadoPrimeraMitad == true),
       showDenyButton: true,
       confirmButtonText: "Pagar Total",
       denyButtonText: "Pagar 50%",
@@ -1331,13 +1332,13 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
-                  reservas?.pagadoPrimeraMitad ||
+                  
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
-                    reservas?.status == "4" ||
-                    reservas?.pagadoPrimeraMitad
+                    reservas?.status == "4" 
+                    
                     ? styles.disabledButtonp
                     : ""
                   }`}
