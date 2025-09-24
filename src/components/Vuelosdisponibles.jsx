@@ -10,6 +10,7 @@ const VuelosDisponibles = () => {
   const [flightData, setFlightData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [dictionaries, setDictionaries] = useState(null);
+  const [originalFlightOffers, setOriginalFlightOffers] = useState([]);
   const ITEMS_PER_PAGE = 6;
   const [selectedCarrier, setSelectedCarrier] = useState("");
   const [hotelReservationData, setHotelReservationData] = useState(null);
@@ -130,6 +131,8 @@ const VuelosDisponibles = () => {
           
           // Guardar dictionaries en el estado para usar en el renderizado
           setDictionaries(dictionariesData);
+          // Mantener una copia de las ofertas originales para futuras referencias
+          setOriginalFlightOffers(flightOffers);
           
           // Guardar datos de reserva del hotel en estado para usos futuros (opcional)
           const hotelReservation = (datosReserva && datosReserva.length > 0) ? datosReserva[0] : null;
@@ -385,6 +388,15 @@ const VuelosDisponibles = () => {
 
   const handleFlightSelect = (flightId) => {
     setSelectedFlight(flightId);
+    try {
+      // flightId empieza en 1, el índice del array en 0
+      const selectedOffer = originalFlightOffers?.[flightId - 1];
+      if (selectedOffer) {
+        localStorage.setItem('datosReservaVuelos', JSON.stringify(selectedOffer));
+      }
+    } catch (e) {
+      console.error('No se pudo guardar la oferta seleccionada en localStorage', e);
+    }
   };
 
   const handlePrevious = () => {
