@@ -1331,14 +1331,12 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
-                  reservas?.status == "5" ||
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
                     reservas?.status == "4" ||
-                    reservas?.status == "5" ||
                     reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
