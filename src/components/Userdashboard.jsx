@@ -41,7 +41,7 @@ const UserDashboard = () => {
     
   const handleLogout = () => {
     // Eliminar el token de autenticación
-    localStorage.removeItem("authToken");
+      Cookies.remove('accessToken');
 
     // Redirigir al usuario a la página de login
     window.location.href = "/login";
