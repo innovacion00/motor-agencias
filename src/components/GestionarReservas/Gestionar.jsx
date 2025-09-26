@@ -448,10 +448,10 @@ const Gestionar = ({ reservas }) => {
       confirmButtonColor: "#26547B",
       denyButtonColor: "#4B70B2",
       showClass: {
-        popup: "animate__animated animate__fadeInDown animate__faster",
+        popup: "animate__animated animate__fadeInDown animate__slowest",
       },
       hideClass: {
-        popup: "animate__animated animate__fadeOutUp animate__faster",
+        popup: "animate__animated animate__fadeOutUp animate__slowest",
       },
     }).then((result) => {
       if (result.isConfirmed || result.isDenied) {
@@ -472,10 +472,10 @@ const Gestionar = ({ reservas }) => {
           confirmButtonText: "Sí, pagar",
           cancelButtonText: "Cancelar",
           showClass: {
-            popup: "animate__animated animate__fadeInDown animate__faster",
+            popup: "animate__animated animate__fadeInDown slowest",
           },
           hideClass: {
-            popup: "animate__animated animate__fadeOutUp animate__faster",
+            popup: "animate__animated animate__fadeOutUp animate__slowest",
           },
         }).then((confirmResult) => {
           if (confirmResult.isConfirmed) {

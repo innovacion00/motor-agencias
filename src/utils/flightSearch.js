@@ -19,7 +19,8 @@ export const searchFlights = async () => {
         icon: 'error',
         title: 'Error',
         text: 'No se encontraron los datos del vuelo. Por favor, complete la búsqueda de vuelos primero.',
-        confirmButtonText: 'Entendido'
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#26547B'
       });
       return false;
     }
@@ -29,7 +30,14 @@ export const searchFlights = async () => {
         icon: 'error',
         title: 'Error',
         text: 'Faltan datos de origen o destino del vuelo.',
-        confirmButtonText: 'Entendido'
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#26547B',
+        showClass: {
+          popup: "animate__animated animate__fadeInDown animate__faster",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp animate__faster",
+        },
       });
       return false;
     }
@@ -39,7 +47,14 @@ export const searchFlights = async () => {
         icon: 'error',
         title: 'Error',
         text: 'Faltan las fechas del vuelo.',
-        confirmButtonText: 'Entendido'
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#26547B',
+        showClass: {
+          popup: "animate__animated animate__fadeInDown animate__faster",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp animate__faster",
+        },
       });
       return false;
     }
@@ -160,8 +175,17 @@ export const searchFlights = async () => {
     await Swal.fire({
       icon: 'success',
       title: 'Éxito',
-      text: 'Consulta de vuelos realizada correctamente.',
-      confirmButtonText: 'Continuar'
+      text: 'Redirigiendo a los vuelos disponibles...',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      timerProgressBarColor: "#26547B",
+      showClass: {
+        popup: "animate__animated animate__fadeInDown animate__faster",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutUp animate__faster",
+      },
     });
 
     return true;
@@ -178,7 +202,15 @@ export const searchFlights = async () => {
       icon: 'error',
       title: 'Error en la consulta',
       text: `No se pudo realizar la consulta de vuelos: ${error.message}`,
-      confirmButtonText: 'Entendido'
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: "#26547B",
+      showClass: {
+        popup: "animate__animated animate__fadeInDown animate__faster",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutUp animate__faster",
+      },
+
     });
     
     return false;
