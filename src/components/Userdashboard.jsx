@@ -276,11 +276,11 @@ const UserDashboard = () => {
 
   return (
     <div className="container">
-        <h1 style={{fontSize:"20px"}}>Tablero de usuario</h1>
+        <h1 style={{fontSize:"25px"}}>Tablero de usuario</h1>
         <br />
       <div className="header">
         
-      <h1 style={{fontSize:"18px", paddingBottom:"10px"}}>Mi perfil</h1>
+      {/* <h1 style={{fontSize:"18px", paddingBottom:"10px"}}>Mi perfil</h1> */}
       </div>
       <div className="nav-tabs">
         <a className="active" href="/tablerousuario">
@@ -290,12 +290,12 @@ const UserDashboard = () => {
         {userData && userData?.role && userData?.role.includes("super-admin")&&(
         <a href="/estadisticas">Análisis de datos</a>
       )} 
+      
+      <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         {/* Mostrar el enlace de configuración solo si el usuario tiene rol de admin */}
         {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
         <a href="/configuracion">Configuración</a>
       )}
-      
-      <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         <button onClick={handleLogout}>
           Cerrar sesión
         </button>
@@ -388,7 +388,7 @@ const UserDashboard = () => {
           </div>
         </div> */}
         <div className="card pending-payments-card">
-          <h3 className="Ultimasreservas">Ultimos movimientos</h3>
+          <h3 className="Ultimasreservas">Ultimas reservas</h3>
 
           <div className="pending-payments-list">
             <div className="pending-payment-item">

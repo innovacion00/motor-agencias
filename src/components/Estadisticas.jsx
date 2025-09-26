@@ -766,11 +766,11 @@ const Estadisticas = () => {
         </h1>
       </div>
       <div className="stats-navigation">
-        <a className="active" href="/tablerousuario">
+        <a href="/tablerousuario">
           Mi perfíl
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-        <a href="/estadisticas">Análisis de datos</a>
+        <a className="active"href="/estadisticas">Análisis de datos</a>
         <a href="/configuracion">Configuración</a>
         <button onClick={handleLogout}>Cerrar sesión</button>
       </div>
