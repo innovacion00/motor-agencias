@@ -70,8 +70,9 @@
   .column {
     background: #F4F4F4;
     border-radius: 8px;
-    /* padding: 15px; */
-    min-height: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .column-header {
@@ -79,17 +80,18 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* margin: 10px ; */
     font-weight: bold;
     color: #333;
     background-color: #BAB8B8;
     padding: 10px;
     width: 100%;
     border-radius: 10px;
-    
-    
+    position: sticky;
+    top: 0;
+    z-index: 2;
   }
   .count {
+    font-family: "Roboto", sans-serif;
     background: #BAB8B8;
     color: rgb(0, 0, 0);
     border-radius: 50%;
@@ -122,17 +124,17 @@
   }
 
   .badge.blue {
-    background: #007bff;
+    background: #3B81BE;
     color: white;
   }
 
   .badge.green {
-    background: #28a745;
+    background: #4CAF50;
     color: white;
   }
 
   .badge.red {
-    background: #dc3545;
+    background: #D32F2F;
     color: white;
   }
 

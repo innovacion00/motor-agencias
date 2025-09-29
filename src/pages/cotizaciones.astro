@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import RouteProtection from "../components/RouteProtection.astro";
-import Cotizaciones from "../components/Cotizaciones.jsx";
-import EstadisticasC from "../components/Estadisticas.jsx";
+import Cotizacionesl from "../components/Cotizaciones.jsx";
+import CotizacionP from "../components/Cotizacion.jsx"
 ---
 
 <html lang="es">
@@ -28,7 +28,9 @@ import EstadisticasC from "../components/Estadisticas.jsx";
       />
     </head>
     <body>
-      <Cotizaciones client:load />
+      <CotizacionP client:load/>
+            <!-- <Cotizacionesl client:load /> -->
     </body>
   </BaseLayout>
 </html>
+

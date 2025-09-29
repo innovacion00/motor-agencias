@@ -31,26 +31,28 @@ const Cotizaciones = () => {
             <p className="date">Fecha de creación: 30 Ene 2026</p>
           </div>
 
-          {/* <div className="card">
+          <div className="card">
             <span className="badge blue">Recibida por chat</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de creación: 30 Ene 2025</p>
           </div>
 
           <div className="card">
             <span className="badge green">Aceptada por el cliente</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Bocagrande Suites</p>
             <p className="date">Fecha de aceptación: 30 Ene 2025</p>
           </div>
 
           <div className="card">
             <span className="badge red">Rechazada por el cliente</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Bocagrande Suites</p>
             <p className="date">Fecha de rechazo: 30 Ene 2025</p>
-          </div> */}
+          </div>
+         
+          
         </div>
 
         {/* Columna En proceso */}
@@ -63,14 +65,14 @@ const Cotizaciones = () => {
           {/* <div className="card">
             <span className="badge blue">Recibida por chat</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de creación: 30 Ene 2025</p>
           </div>
 
           <div className="card">
             <span className="badge blue">Recibida por chat</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de creación: 30 Ene 2025</p>
           </div> */}
         </div>
@@ -85,28 +87,28 @@ const Cotizaciones = () => {
           {/* <div className="card">
             <span className="badge blue">Recibida por chat</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de generación: 30 Ene 2025</p>
           </div>
 
           <div className="card">
             <span className="badge blue">Recibida por chat</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de generación: 30 Ene 2025</p>
           </div>
 
           <div className="card">
             <span className="badge blue">Recibida por chat</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de generación: 30 Ene 2025</p>
           </div>
 
           <div className="card">
             <span className="badge red">Rechazada por el cliente</span>
             <p className="client">Cliente: Nombre del cliente</p>
-            <p className="hotel">Hotel: Hotel Awai Suites</p>
+            <p className="hotel">Hotel: Hotel Avexi Suites</p>
             <p className="date">Fecha de generación: 30 Ene 2025</p>
           </div> */}
         </div>
