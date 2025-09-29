@@ -290,7 +290,7 @@ const UserDashboard = () => {
       {userData && userData?.role && userData?.role.includes("super-admin")&&(
         <a href="/estadisticas">Análisis de datos</a>
       )} 
-      <a href="Cotizaciones">Cotizaciones</a>
+      <a href="/cotizaciones">Cotizaciones</a>
       
       <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         {/* Mostrar el enlace de configuración solo si el usuario tiene rol de admin */}
