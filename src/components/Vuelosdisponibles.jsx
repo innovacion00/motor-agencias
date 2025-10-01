@@ -149,9 +149,20 @@ const VuelosDisponibles = () => {
             room: {
               type: hotelReservation.NombreH,
               meal: hotelReservation.plandealimentacion,
-              payment: "Pago: Inmediato",
+            // payment: "Pago: Inmediato",
               dates: `${hotelReservation.checkin} - ${hotelReservation.checkout}`,
-              nights: `${hotelReservation.nights} noches, ${hotelReservation.huespedes} huéspedes`
+              nights: `${hotelReservation.nights} noches, ${hotelReservation.huespedes} huéspedes`,
+              pets: typeof hotelReservation.mascotas === 'number' ? hotelReservation.mascotas : parseInt(hotelReservation.mascotas || 0, 10),
+              transferIncluded: !!hotelReservation.incluirTraslado,
+              transferText: hotelReservation.incluirTraslado
+                ? (hotelReservation.tipoTraslado === 'aeropuerto_hotel'
+                    ? 'Aeropuerto al hotel'
+                    : hotelReservation.tipoTraslado === 'hotel_aeropuerto'
+                      ? 'Hotel al aeropuerto'
+                      : hotelReservation.tipoTraslado === 'ambos'
+                        ? 'Aeropuerto al hotel y Hotel al aeropuerto'
+                        : 'Incluido')
+                : 'No incluido'
             },
             price: formatPrice(hotelReservation.precio),
             includesTaxes: true
@@ -169,7 +180,10 @@ const VuelosDisponibles = () => {
                 "Fechas no disponibles",
               nights: datosDelVuelo?.dateRange ? 
                 `${Math.ceil((new Date(datosDelVuelo.dateRange.endDate) - new Date(datosDelVuelo.dateRange.startDate)) / (1000 * 60 * 60 * 24))} noches` : 
-                "Noches no disponibles"
+                "Noches no disponibles",
+              pets: 0,
+              transferIncluded: false,
+              transferText: 'No incluido'
             },
             price: "$0",
             includesTaxes: true
@@ -659,7 +673,11 @@ const VuelosDisponibles = () => {
               <div className={styles.roomTitle}>Habitación 1</div>
               <div className={styles.roomDetails}>
                 <div>{flightData.hotel.room.type}</div>
-                <div>{flightData.hotel.room.meal}</div>
+                <div>Plan de alimentacion: {flightData.hotel.room.meal}</div>
+                {flightData.hotel.room && typeof flightData.hotel.room.pets === 'number' && flightData.hotel.room.pets > 0 && (
+                  <div>Mascotas: {flightData.hotel.room.pets}</div>
+                )}
+                <div>Tipo de traslado: {flightData.hotel.room.transferIncluded ? flightData.hotel.room.transferText : 'No incluido'}</div>
                 <div>{flightData.hotel.room.payment}</div>
                 <div>{flightData.hotel.room.dates}</div>
                 <div>{flightData.hotel.room.nights}</div>
@@ -747,9 +765,9 @@ const VuelosDisponibles = () => {
               <div className={styles.totalTaxes}>Incluye impuestos</div>
             </div>
           )}
-
+  
           {/* Botón de acción */}
-          <button className={styles.actionButton}>Ver adicionales</button>
+          <a href="/reservarVuelos"  rel="noopener noreferrer"><button className={styles.actionButton}>Continuar</button></a>
         </div>
       </div>
     </div>
