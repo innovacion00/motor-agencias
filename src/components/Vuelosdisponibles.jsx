@@ -767,7 +767,19 @@ const VuelosDisponibles = () => {
           )}
   
           {/* Botón de acción */}
-          <a href="/reservas"  rel="noopener noreferrer"><button className={styles.actionButton}>Continuar</button></a>
+          {selectedFlight ? (
+            <a href="/reservas" rel="noopener noreferrer">
+              <button className={styles.actionButton}>Continuar</button>
+            </a>
+          ) : (
+            <button 
+              className={styles.actionButton} 
+              disabled={true}
+              title="Debe seleccionar un vuelo para continuar"
+            >
+              Continuar
+            </button>
+          )}
         </div>
       </div>
     </div>

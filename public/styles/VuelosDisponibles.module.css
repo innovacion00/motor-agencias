@@ -606,6 +606,16 @@
   background-color: #1c3d5ac0;
 }
 
+.actionButton:disabled {
+  background-color: #cccccc;
+  color: #888888;
+  cursor: not-allowed;
+}
+
+.actionButton:disabled:hover {
+  background-color: #cccccc;
+}
+
 /* Estados de carga y error */
 .loading {
   display: flex;
