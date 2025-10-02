@@ -18,7 +18,7 @@ const Header = () => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     if(datosdelusuario){
 
-      setUserData(JSON.parse(datosdelusuario));
+      setUserData((datosdelusuario));
     }
     
   }, [])
@@ -95,6 +95,11 @@ const Header = () => {
     window.location.href = "/tablerousuario";
   };
 
+  const handleClick = () => {
+    localStorage.removeItem("datosDelVuelo");
+    // console.log("datos");
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".profile-menu")) {
@@ -111,7 +116,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <a href="/">
+        <a href="/" onClick={handleClick}>
           <img
             src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/gehlogo.png"
             alt="GH Suites Logo"
@@ -120,7 +125,7 @@ const Header = () => {
       </div>
       <nav className="nav">
       
-        <a href="/" className="reservations-link">Inicio</a>
+        <a href="/" className="reservations-link" onClick={handleClick}>Inicio</a>
         <a href="/misreservas" className="reservations-link">Gestionar reservas</a>
         <a href="/tablerousuario" className="reservations-link">Mi perfil</a>
         <a href="/eventos" className="reservations-link">Eventos</a>
@@ -132,7 +137,7 @@ const Header = () => {
               src={userData?.imageUrl || profileImage}
               alt="UserIcon"
               id="profile-img"
-              onClick={toggleDropdown}
+              // onClick={toggleDropdown}
             />
             </a>
             {dropdownVisible && (

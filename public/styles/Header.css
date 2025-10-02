@@ -1,11 +1,11 @@
-/* .header {
+ .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 85px;
     background-color: white;
     border-bottom: 1px solid #ddd;
-} */
+} 
 
 .logo {
     display: flex;
@@ -67,6 +67,11 @@
   position: sticky;
   display: inline-block;
   cursor:pointer
+}
+
+.profile-menu img{
+  max-height: 50px;
+  /* max-width: 10px; */
 }
 
 .dropdown-content {

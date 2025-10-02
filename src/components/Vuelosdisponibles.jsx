@@ -767,7 +767,7 @@ const VuelosDisponibles = () => {
           )}
   
           {/* Botón de acción */}
-          <a href="/reservarVuelos"  rel="noopener noreferrer"><button className={styles.actionButton}>Continuar</button></a>
+          <a href="/reservas"  rel="noopener noreferrer"><button className={styles.actionButton}>Continuar</button></a>
         </div>
       </div>
     </div>
