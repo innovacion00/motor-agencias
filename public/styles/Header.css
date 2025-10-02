@@ -69,6 +69,10 @@
   cursor:pointer
 }
 
+.profile-menu img{
+    max-height: 50px;
+  }
+
 .dropdown-content {
   position: absolute;
   top: 100%; /* Ajusta la posición bajo la imagen */
