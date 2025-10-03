@@ -97,6 +97,13 @@ const Header = () => {
 
   const handleClick = () => {
     localStorage.removeItem("datosDelVuelo");
+    localStorage.removeItem("dataVuelo");
+    localStorage.removeItem("datosReservaVuelos");
+    localStorage.removeItem("cantAdultos");
+    localStorage.removeItem("cantNinos");
+    localStorage.removeItem("nochesyedades");
+    localStorage.removeItem("datosreserva");
+    localStorage.removeItem("data");
     // console.log("datos");
   };
 

@@ -59,6 +59,24 @@ const FormularioReserva = () => {
   const [facturaE, setfacturaE] = useState(false);
   const [planDeAlimentacion, setplanDeAlimentacion] = useState();
   const [divisaSelec, setdivisaSelec] = useState("COP");
+  // Modo vuelo+hotel (formularios dinámicos por pasajero)
+  const [vuelosActivados, setVuelosActivados] = useState(false);
+  const [numPasajeros, setNumPasajeros] = useState(1);
+  const createEmptyPassenger = () => ({
+    tipoDocumento: "",
+    numeroDocumento: "",
+    nombreCompleto: "",
+    apellidos: "",
+    fechaNacimiento: "",
+    email: "",
+    celular: "",
+    telefonotraslado: "",
+    numeroVuelo: "",
+    numeroVueloSalida: "",
+    aereolinea: "",
+    esExtranjero: false,
+  });
+  const [formDataList, setFormDataList] = useState([createEmptyPassenger()]);
   const [formData, setFormData] = useState({
     tipoDocumento: "",
     numeroDocumento: "",
@@ -113,9 +131,38 @@ const FormularioReserva = () => {
     setcantninos(ninos);
     setfechasreserva(fechas);
     setagencia(token);
-  
+    // Activación formularios de pasajeros por vuelo
+    try {
+      const datosDelVuelo = JSON.parse(localStorage.getItem("datosDelVuelo"));
+      const activado = datosDelVuelo?.activado === true;
+      setVuelosActivados(activado);
 
-    
+      // Intentar obtener número de huéspedes desde datosreserva.huespedes o sumar adultos+ninos
+      const reservasLS = informacion || [];
+      let huespedesLS = 0;
+      if (Array.isArray(reservasLS) && reservasLS.length > 0) {
+        // Si huespedes es numérico, usar suma; si es string, intentar parsear dígitos
+        huespedesLS = reservasLS.reduce((acc, item) => {
+          if (typeof item?.huespedes === "number") return acc + item.huespedes;
+          if (typeof item?.huespedes === "string") {
+            const nums = item.huespedes.match(/\d+/g);
+            const suma = nums?.map(Number).reduce((a, b) => a + b, 0) || 0;
+            return acc + (suma || 0);
+          }
+          return acc;
+        }, 0);
+      }
+      const calculado = Number(huespedesLS) > 0 ? Number(huespedesLS) : (Number(adultos || 0) + Number(ninos || 0) || 1);
+      setNumPasajeros(calculado);
+      if (activado) {
+        setFormDataList(Array.from({ length: calculado }, () => createEmptyPassenger()));
+      }
+    } catch (e) {
+      // fallback seguro
+      const calculado = (Number(adultos || 0) + Number(ninos || 0) || 1);
+      setNumPasajeros(calculado);
+      setVuelosActivados(false);
+    }
   }, []);
 
   const mostrarCheckboxes =
@@ -225,6 +272,19 @@ const FormularioReserva = () => {
     setFormData({
       ...formData,
       [id]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  // Manejador por índice para formularios de pasajeros
+  const handleChangeIndexed = (index, e) => {
+    const { id, value, type, checked } = e.target;
+    setFormDataList((prev) => {
+      const next = [...prev];
+      next[index] = {
+        ...next[index],
+        [id]: type === "checkbox" ? checked : value,
+      };
+      return next;
     });
   };
 
@@ -452,6 +512,183 @@ const FormularioReserva = () => {
       console.log(informacionD); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
     };
     enviardatos(); //QUITAR CONSOLE.LOG CUANDO QUEDE LISTO
+  };
+
+  // Envío cuando hay múltiples pasajeros (vuelo activado)
+  const handleSubmitMulti = (e) => {
+    e.preventDefault();
+    // Validar todos los pasajeros
+    for (let i = 0; i < formDataList.length; i++) {
+      const p = formDataList[i];
+      if (
+        !p.tipoDocumento?.trim() ||
+        !p.numeroDocumento?.trim() ||
+        !p.fechaNacimiento?.trim() ||
+        !p.nombreCompleto?.trim() ||
+        !p.apellidos?.trim() ||
+        !p.email?.trim() ||
+        !p.celular?.trim()
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Complete la información",
+          text: `Todos los campos del pasajero #${i + 1} son obligatorios`,
+          showConfirmButton: false,
+          timer: 3500,
+        });
+        return;
+      }
+    }
+    // Guardar lista de pasajeros para uso posterior
+    try {
+      localStorage.setItem("pasajerosVuelo", JSON.stringify(formDataList));
+    } catch {}
+
+    // Usar el primer pasajero como titular para la reserva actual
+    const titular = formDataList[0];
+
+    const filtrarRetenciones = (retenciones) => {
+      return Object.fromEntries(
+        Object.entries(retenciones).filter(([_, value]) => {
+          return value.resultado !== 0 || value.porcentaje !== 0;
+        })
+      );
+    };
+
+    const informacionD = JSON.stringify({
+      total: Math.round(totalRetenciones),
+      mascotasNumber: reserva[0]?.mascotas || null,
+      adicionAlmuerzo: almuerzo,
+      adicionCena: cena,
+      titularInfo: {
+        firstName: titular.nombreCompleto,
+        lastName: titular.apellidos,
+        tipoDocumento: titular.tipoDocumento,
+        documento: titular.numeroDocumento,
+        fechaNacimiento: titular.fechaNacimiento,
+      },
+      infoTransporte:
+        reserva[0].incluirTraslado === true
+          ? {
+            numeroVuelo: titular.numeroVuelo,
+            ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
+              reserva[0].tipoTraslado === "ambos") && {
+              numeroVueloSalida: titular.numeroVueloSalida,
+            }),
+            firstContactNumber: titular.telefonotraslado,
+            aerolinea: titular.aereolinea,
+            tipoRecogida: tipodetraslado,
+            cantidadPersonas: totalHuespedes,
+          }
+          : null,
+      infoToures:
+        reserva[0].tourSeleccionado?.length > 0
+          ? {
+            nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
+            firstContactNumber: titular.celular,
+            secondContacNumber: titular.telefonotraslado || titular.celular,
+          }
+          : null,
+      ...filtrarRetenciones({
+        reteFuente: {
+          resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
+          porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
+        },
+        reteIca: {
+          resultado: Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
+          porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0,
+        },
+        reteIva: {
+          resultado: Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
+          porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
+        },
+      }),
+      planAlimentario: reserva[0].plandealimentacion,
+      exentoIva: titular.esExtranjero,
+      reservaInfo: {
+        agency: {
+          is_agency: true,
+          agency_type: agencia.agencia.category,
+          external_ref_id: "666222",
+        },
+        reservation: {
+          adults: adults,
+          checkin: checkin,
+          checkout: checkout,
+          children: ninos,
+          children_ages: childrenAgesString,
+          city: reserva[0].ciudad,
+          country: "COL",
+          currency: divisaSelec || "COP",
+          email: titular.email,
+          firstName: titular.nombreCompleto,
+          lastName: titular.apellidos,
+          nights: noches,
+          notes:
+            DatosRetenciones == null
+              ? `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${titular.nombreCompleto} ${titular.apellidos}. ${titular.esExtranjero ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}  `
+              : `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${titular.nombreCompleto} ${titular.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${titular.esExtranjero ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}${facturaE ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}`,
+          rooms: habitaciones,
+          roomsData: reserva.map((dato, index) => {
+            const roomConfig = fechasreserva.layout[index] || {};
+            return {
+              nombreHabitacion: dato.NombreH,
+              adults: JSON.stringify(roomConfig.adults || 0),
+              children_ages: roomConfig.children_ages?.join(",") || "",
+              children: roomConfig.children_ages ? JSON.stringify(roomConfig.children_ages.length) : "",
+              checkin: checkin,
+              checkout: checkout,
+              currency: currentCurrency,
+              id: dato.roomId,
+              quantity: "1",
+              rateId: dato.rateId,
+              unitaryPrice: dato.precio,
+            };
+          }),
+          telephone: `${titular.celular}`,
+        },
+      },
+    });
+
+    const enviar = async () => {
+      try {
+        setbotondesactivado(true);
+        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
+        const response = await fetchWithToken(url, {
+          method: "POST",
+          body: informacionD,
+        });
+        if (response.ok) {
+          await response.json();
+          Swal.fire({
+            icon: "success",
+            title: "Reserva realizada",
+            text: "Se ha confirmado su reserva con éxito.",
+          });
+          setTimeout(() => {
+            window.location.href = "/misreservas";
+          }, 2500);
+        } else if (response.status === 409) {
+          Swal.fire({
+            icon: "error",
+            title: "Sin disponibilidad",
+            text: "No se pudo completar la reserva porque una de las habitaciones ya no se encuentra disponible. Pruebe con otra acomodacion",
+          });
+        } else {
+          throw new Error("Error al consultar la API");
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error al realizar la reserva",
+          text: `No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva mas tarde. ${error.message}`,
+        });
+        console.error("Error al obtener disponibilidad:", error);
+      } finally {
+        setbotondesactivado(false);
+      }
+    };
+    enviar();
   };
 
   //FUNCION PARA FORMATEAR EL LOS VALORES DE DINERO
@@ -687,9 +924,11 @@ const FormularioReserva = () => {
 
         {/*-------------- SECCION INFORMACION DEL TITULAR DE LA RESERVA -------------- */}
 
-        <h3>Información de los huéspedes</h3>
+        <h3>Información de los pasajeros</h3>
 
-        <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
+        {/* Formulario único (hotel) oculto si vuelosActivados === true */}
+        {!vuelosActivados && (
+        <form name={"formularioHotel"} onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
           <fieldset
             style={{
               border: "1px solid #ddd",
@@ -698,9 +937,10 @@ const FormularioReserva = () => {
               marginBottom: "20px",
             }}
           >
-            <legend>Informacion del titular</legend>
+            <legend>Informacion del titular #1 (Titular)</legend>
 
-            <div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <div style={{ gridColumn: "1 / -1" }}>
               {/*-------------- INPUT CHECKBOX HUESPED -------------- */}
               <div
                 style={{
@@ -754,6 +994,7 @@ const FormularioReserva = () => {
                 <option value="otro">Otro</option>
               </select>
             </div>
+            
             {/*-------------- INPUT NUMERO DE DOCUMENTO -------------- */}
             <div>
               <label htmlFor="numeroDocumento">
@@ -889,9 +1130,9 @@ const FormularioReserva = () => {
               </label>
             </div>
 
-            <br />
+            
             {reserva[0]?.incluirTraslado === true ? (
-              <div>
+              <div style={{ gridColumn: "1 / -1" }}>
                 <h3>Datos del viajero para el traslado</h3>
                 <form style={{ marginTop: "20px" }}>
                   <fieldset
@@ -1047,7 +1288,7 @@ const FormularioReserva = () => {
             <br />
             {/*-------------- SECCION DATOS DE FACTURA ELECTRONICA -------------- */}
             {facturaE && (
-              <div>
+              <div style={{ gridColumn: "1 / -1" }}>
                 <h3>Datos factura electronica</h3>
                 <form style={{ marginTop: "20px" }}>
                   <fieldset
@@ -1150,6 +1391,7 @@ const FormularioReserva = () => {
                 </form>
               </div>
             )}
+            </div>
             <button
               disabled={botondesactivado}
               type="submit"
@@ -1169,6 +1411,485 @@ const FormularioReserva = () => {
             </button>
           </fieldset>
         </form>
+        )}
+
+        {/* Formularios múltiples de pasajeros cuando vuelo está activado */}
+        {vuelosActivados && (
+          <form onSubmit={handleSubmitMulti} style={{ marginTop: "20px" }}>
+            {formDataList.map((pax, idx) => (
+              <fieldset
+                key={idx}
+                style={{
+                  border: "1px solid #ddd",
+                  borderRadius: "5px",
+                  padding: "15px",
+                  marginBottom: "20px",
+                }}
+              >
+                <legend>Informacion del pasajero #{idx + 1}</legend>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "flex-start",
+                    }}
+                  >
+                    <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
+                      ¿El huésped es extranjero? marque la casilla para indicar si
+                    </label>
+                    <input
+                      style={{
+                        width: "15px",
+                        height: "15px",
+                        marginLeft: "40px",
+                        cursor: "pointer",
+                        accentColor: "#007BFF",
+                      }}
+                      type="checkbox"
+                      id="esExtranjero"
+                      checked={!!pax.esExtranjero}
+                      onChange={(e) => handleChangeIndexed(idx, e)}
+                    />
+                  </div>
+                  <strong>
+                    Nota: <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_3522_2025.htm" target="_blank" className="migracion">Condiciones para estar exento del iva.</a>{" "}
+                  </strong>
+                  <label htmlFor="tipoDocumento">
+                    Tipo de documento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <select
+                    id="tipoDocumento"
+                    value={pax.tipoDocumento}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="cedulaC">Cédula de ciudadanía</option>
+                    <option value="cedulaE">Cédula de extranjería</option>
+                    <option value="pasaporte">Pasaporte</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="numeroDocumento">
+                    Número de documento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="numeroDocumento"
+                    type="text"
+                    placeholder="Ingrese el número de documento"
+                    value={pax.numeroDocumento}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="nombreCompleto">
+                    Nombre del titular <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="nombreCompleto"
+                    type="text"
+                    placeholder="Ingrese el nombre"
+                    value={pax.nombreCompleto}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="apellidos">
+                    Apellidos del titular <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="apellidos"
+                    type="text"
+                    placeholder="Ingrese los apellidos"
+                    value={pax.apellidos}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid " + "#ccc",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="fechaNacimiento">
+                    Fecha de nacimiento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="fechaNacimiento"
+                    type="date"
+                    value={pax.fechaNacimiento}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email">
+                    Correo electrónico <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Ingrese el correo electronico "
+                    value={pax.email}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="celular">
+                    Celular <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="celular"
+                    placeholder="Ingrese el numero de celular"
+                    value={pax.celular}
+                    onChange={(e) => handleChangeIndexed(idx, e)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                  <label
+                    htmlFor="identificador"
+                    style={{ color: "red", fontWeight: "light", fontSize: "12px" }}
+                  >
+                    Incluir código de área (+57,+55, etc.) eje:+573002215487
+                  </label>
+                </div>
+
+                
+                {reserva[0]?.incluirTraslado === true ? (
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <h3>Datos del viajero para el traslado</h3>
+                    <form style={{ marginTop: "20px" }}>
+                      <fieldset
+                        style={{
+                          border: "1px solid #ddd",
+                          borderRadius: "5px",
+                          padding: "15px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <legend> Informacion del traslado</legend>
+
+                        <div>
+                          <label htmlFor="telefonotraslado">
+                            Telefono del viajero: <span style={{ color: "red" }}>*</span>
+                          </label>
+                          <input
+                            id="telefonotraslado"
+                            type="tel"
+                            placeholder="Ingrese el telefono del viajero"
+                            value={pax.telefonotraslado}
+                            onChange={(e) => handleChangeIndexed(idx, e)}
+                            maxLength={20}
+                            autoComplete="off"
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              padding: "8px",
+                              marginBottom: "10px",
+                              borderRadius: "5px",
+                              border: "1px solid #ccc",
+                            }}
+                          />
+                        </div>
+                        <label
+                          htmlFor="identificador"
+                          style={{ fontWeight: "light", fontSize: "12px" }}
+                        >
+                          Se debe escribir el identificador(+)
+                        </label>
+                        <div>
+                          <label htmlFor="numeroVuelo">
+                            Número del vuelo: <span style={{ color: "red" }}>*</span>
+                          </label>
+                          <input
+                            id="numeroVuelo"
+                            type="text"
+                            placeholder="Ingrese el numero de vuelo"
+                            maxLength={30}
+                            value={pax.numeroVuelo}
+                            onChange={(e) => handleChangeIndexed(idx, e)}
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              padding: "8px",
+                              marginBottom: "10px",
+                              borderRadius: "5px",
+                              border: "1px solid #ccc",
+                            }}
+                          />
+                        </div>
+
+                        {reserva[0]?.incluirTraslado &&
+                          (reserva[0]?.tipoTraslado === "hotel_aeropuerto" ||
+                            reserva[0]?.tipoTraslado === "ambos") && (
+                            <div>
+                              <label htmlFor="numeroVueloSalida">
+                                Número del vuelo Salida : <span style={{ color: "red" }}>*</span>
+                              </label>
+                              <input
+                                id="numeroVueloSalida"
+                                type="text"
+                                placeholder="Ingrese el numero de vuelo de regreso"
+                                maxLength={30}
+                                value={pax.numeroVueloSalida}
+                                onChange={(e) => handleChangeIndexed(idx, e)}
+                                style={{
+                                  display: "block",
+                                  width: "100%",
+                                  padding: "8px",
+                                  marginBottom: "10px",
+                                  borderRadius: "5px",
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            </div>
+                          )}
+
+                        <div>
+                          <label htmlFor="aereolinea">
+                            Aereolinia del viajero: <span style={{ color: "red" }}>*</span>
+                          </label>
+                          <input
+                            id="aereolinea"
+                            type="text"
+                            placeholder="Ingrese la aereolinia"
+                            value={pax.aereolinea}
+                            onChange={(e) => handleChangeIndexed(idx, e)}
+                            maxLength={15}
+                            style={{
+                              display: "block",
+                              width: "100%",
+                              padding: "8px",
+                              marginBottom: "10px",
+                              borderRadius: "5px",
+                              border: "1px solid #ccc",
+                            }}
+                          />
+                        </div>
+                      </fieldset>
+                    </form>
+                  </div>
+                ) : (
+                  ""
+                )}
+
+                {/* Eliminado checkbox y datos de factura por pasajero para usar un único control global */}
+                </div>
+              </fieldset>
+            ))}
+
+            {/* Sección única de factura electrónica (global) */}
+            <div style={{
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              padding: "15px",
+              marginBottom: "20px",
+              marginTop: "10px",
+            }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <label
+                  htmlFor="facturaElectronica"
+                  style={{ marginLeft: "10px" }}
+                >
+                  ¿Desea factura electronica?
+                </label>
+                <input
+                  style={{
+                    width: "15px",
+                    height: "15px",
+                    marginLeft: "40px",
+                    cursor: "pointer",
+                    accentColor: "#007BFF",
+                  }}
+                  type="checkbox"
+                  id="facturaElectronica"
+                  checked={facturaE}
+                  onChange={(e) => setfacturaE(e.target.checked)}
+                />
+              </div>
+              <br />
+              {facturaE && (
+                <div>
+                  <h3>Datos factura electronica</h3>
+                  <form style={{ marginTop: "20px" }}>
+                    <fieldset
+                      style={{
+                        border: "1px solid #ddd",
+                        borderRadius: "5px",
+                        padding: "15px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <legend> Informacion de la factura electronica</legend>
+                      <div>
+                        <label htmlFor="nombreEmpresa">
+                          Nombre: <span style={{ color: "red" }}>*</span>
+                        </label>
+                        <input
+                          id="nombreEmpresa"
+                          type="text"
+                          placeholder="Ingrese el nombre"
+                          value={formData.nombreEmpresa}
+                          onChange={handleChange}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            padding: "8px",
+                            marginBottom: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="nit">
+                          NIT: <span style={{ color: "red" }}>*</span>
+                        </label>
+                        <input
+                          id="nit"
+                          type="number"
+                          placeholder="Ingrese el numero de nit"
+                          value={formData.nit}
+                          onChange={handleChange}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            padding: "8px",
+                            marginBottom: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="emailEmpresa">
+                          Correo electrónico: <span style={{ color: "red" }}>*</span>
+                        </label>
+                        <input
+                          id="emailEmpresa"
+                          type="email"
+                          placeholder="Ingrese el email"
+                          value={formData.emailEmpresa}
+                          onChange={handleChange}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            padding: "8px",
+                            marginBottom: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="telefonoF">
+                          Telefono: <span style={{ color: "red" }}>*</span>
+                        </label>
+                        <input
+                          id="telefonoF"
+                          type="tel"
+                          placeholder="Ingrese el telefono"
+                          value={formData.telefonoF}
+                          onChange={handleChange}
+                          style={{
+                            display: "block",
+                            width: "100%",
+                            padding: "8px",
+                            marginBottom: "10px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      </div>
+                    </fieldset>
+                  </form>
+                </div>
+              )}
+            </div>
+
+            <button
+              disabled={botondesactivado}
+              type="submit"
+              style={{
+                fontWeight: "500",
+                backgroundColor: "#26547B",
+                color: "white",
+                padding: "10px 20px ",
+                border: "none",
+                borderRadius: "5px",
+                cursor: botondesactivado ? "not-allowed" : "pointer",
+                alignSelf: "flex-end",
+                marginRight: "20px",
+              }}
+            >
+              {botondesactivado ? "Procesando..." : "Finalizar Reserva"}
+            </button>
+          </form>
+        )}
       </div>
     </>
   );

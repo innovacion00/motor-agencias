@@ -144,8 +144,8 @@ body {
 
 .profile-card img {
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    width: 20vh;
+    height: 20vh;
 }
 
 .profile-card h2 {

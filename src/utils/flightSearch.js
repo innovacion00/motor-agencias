@@ -11,6 +11,7 @@ export const searchFlights = async () => {
     // Obtener datos del localStorage
     const datosDelVuelo = JSON.parse(localStorage.getItem('datosDelVuelo'));
     const cantAdultos = parseInt(localStorage.getItem('cantAdultos')) || 1;
+    const cantNinos = parseInt(localStorage.getItem('cantNinos')) || 0;
     const selectedCurrency = (localStorage.getItem('selectedCurrency') || 'COP').toUpperCase();
 
     // Validar que existan los datos necesarios
@@ -84,6 +85,17 @@ export const searchFlights = async () => {
         id: i.toString(),
         travelerType: "ADULT"
       });
+    }
+
+    // Agregar niños si existen en localStorage
+    if (cantNinos > 0) {
+      const startIdForChildren = travelers.length + 1;
+      for (let j = 0; j < cantNinos; j++) {
+        travelers.push({
+          id: (startIdForChildren + j).toString(),
+          travelerType: "CHILD"
+        });
+      }
     }
 
     // Body de la consulta (Con validacion)
