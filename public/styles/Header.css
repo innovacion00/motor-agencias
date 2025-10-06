@@ -70,7 +70,9 @@
 }
 
 .profile-menu img{
-    max-height: 50px;
+    max-height: 100px;
+    max-width: 70px;
+    border-radius: 10px;
   }
 
 .dropdown-content {

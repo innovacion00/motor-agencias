@@ -298,3 +298,118 @@ th {
     text-align: center;
   }
 }
+
+/* Estilos para el filtro de fecha de check-in */
+.dateFilterContainer {
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.dateFilterInput {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dateFilterInputField {
+  flex: 1;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  cursor: pointer;
+}
+
+.dateFilterInputField:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+.dateFilterInputField::placeholder {
+  color: #aaa;
+}
+
+.clearDateButton {
+  padding: 8px 12px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  min-width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearDateButton:hover {
+  background-color: #c82333;
+}
+
+.clearDateButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.clearDateButton:disabled:hover {
+  background-color: #6c757d;
+}
+
+.dateRangePicker {
+  flex-direction: column;
+  position: absolute;
+  max-width: 400px;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  
+}
+
+.confirmDateButton {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #9F6118;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.confirmDateButton:hover {
+  background-color: #be6703;
+}
+
+/* Responsive para el filtro de fecha */
+@media (max-width: 768px) {
+  .dateFilterInput {
+    max-width: 100%;
+  }
+  
+  .dateRangePicker {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+}

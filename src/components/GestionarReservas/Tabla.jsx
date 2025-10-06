@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles/tabla.module.css";
 import { getReservas, reservasNano } from "../../stores/disponibilidad";
 import { format } from "@formkit/tempo";
+import { Calendar } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 const Tabla = () => {
   const [reservas, setReservas] = useState([]);
@@ -12,11 +15,31 @@ const Tabla = () => {
   const [itemsPerPage] = useState(15); // Número de elementos por página
   const [selectedStatus, setselectedStatus] = useState("all"); //Filtro por estado
   const [isLoading, setIsLoading] = useState(true);
+  const [showDateFilter, setShowDateFilter] = useState(false);
+  const [dateFilter, setDateFilter] = useState(null);
+  const dateFilterRef = useRef(null);
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
     ObtenerReservas(datosUsuario.accessToken, datosUsuario.role[0]);
     setTokenUrl(datosUsuario.accessToken);
+  }, []);
+
+  // useEffect para manejar clicks fuera del selector de fechas
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        dateFilterRef.current &&
+        !dateFilterRef.current.contains(event.target)
+      ) {
+        setShowDateFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
   }, []);
 
   const SkeletonRow = () => (
@@ -67,29 +90,65 @@ const Tabla = () => {
   const handleSearch = (event) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchTerm(searchValue);
+    applyFilters(searchValue, selectedStatus, dateFilter);
+  };
 
-    const filtered = reservas.filter(
-      (reserva) =>
-        reserva.hotel.toLowerCase().includes(searchValue) || // Filtrar por hotel
-        reserva.reservaChatbotId.toLowerCase().includes(searchValue) || // Filtrar por código de reserva
-        reserva.reservation.firstName.toLowerCase().includes(searchValue) || // Filtrar por nombre del huésped
-        reserva.reservation.lastName.toLowerCase().includes(searchValue) || // Filtrar por apellido del huésped
-        (reserva.agenciaId?.fullName || "").toLowerCase().includes(searchValue)
-    );
+  const applyFilters = (searchTerm = "", status = "all", selectedDate = null) => {
+    let filtered = reservas;
+
+    // Filtro por texto de búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (reserva) =>
+          reserva.hotel.toLowerCase().includes(searchTerm) ||
+          reserva.reservaChatbotId.toLowerCase().includes(searchTerm) ||
+          reserva.reservation.firstName.toLowerCase().includes(searchTerm) ||
+          reserva.reservation.lastName.toLowerCase().includes(searchTerm) ||
+          (reserva.agenciaId?.fullName || "").toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filtro por estado
+    if (status !== "all") {
+      filtered = filtered.filter((reserva) => reserva.status.toString() === status);
+    }
+
+    // Filtro por fecha de check-in específica (comparación segura por zona horaria)
+    if (selectedDate) {
+      const formatDateLocal = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      };
+
+      const selectedLocal = formatDateLocal(new Date(selectedDate));
+
+      filtered = filtered.filter((reserva) => {
+        const checkinStr = reserva?.reservation?.checkin; // ya viene como YYYY-MM-DD
+        return checkinStr === selectedLocal;
+      });
+    }
+
     setFilteredReservas(filtered);
-    setCurrentPage(1); // Reiniciar a la primera página
+    setCurrentPage(1);
   };
 
   //Filtro por estado
 
   const handleStatusFilter = (status) => {
     setselectedStatus(status);
-    const filtered =
-      status == "all"
-        ? reservas
-        : reservas.filter((reservas) => reservas.status == status);
-    setFilteredReservas(filtered);
-    setCurrentPage(1); //Reiniciar a la primera página
+    applyFilters(searchTerm, status, dateFilter);
+  };
+
+  const handleDateChange = (date) => {
+    setDateFilter(date);
+    applyFilters(searchTerm, selectedStatus, date);
+  };
+
+  const clearDateFilter = () => {
+    setDateFilter(null);
+    applyFilters(searchTerm, selectedStatus, null);
   };
 
   // Cálculo de los índices de elementos para la paginación
@@ -139,6 +198,44 @@ const Tabla = () => {
           className={styles.searchInput}
         />
       </div>
+
+      {/* Filtro por fecha de check-in */}
+      <div className={styles.dateFilterContainer} ref={dateFilterRef}>
+        <div className={styles.dateFilterInput}>
+          <input
+            type="text"
+            placeholder="Ingrese la fecha de check-in"
+            value={dateFilter ? `${dateFilter.getFullYear()}-${String(dateFilter.getMonth()+1).padStart(2,"0")}-${String(dateFilter.getDate()).padStart(2,"0")}` : ""}
+            onFocus={() => setShowDateFilter(true)}
+            readOnly
+            className={styles.dateFilterInputField}
+          />
+          <button
+            onClick={clearDateFilter}
+            className={styles.clearDateButton}
+            title="Limpiar filtro de fecha"
+            disabled={!dateFilter}
+          >
+            ✕
+          </button>
+        </div>
+
+        {showDateFilter && (
+          <div className={styles.dateRangePicker}>
+            <Calendar
+              date={dateFilter || new Date()}
+              onChange={handleDateChange}
+            />
+            <button
+              onClick={() => setShowDateFilter(false)}
+              className={styles.confirmDateButton}
+            >
+              Confirmar selección
+            </button>
+          </div>
+        )}
+      </div>
+      
       <div className={styles.statusFilter}>
         <button
           onClick={() => handleStatusFilter("all")}
