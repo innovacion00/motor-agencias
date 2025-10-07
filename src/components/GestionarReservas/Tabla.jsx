@@ -188,6 +188,7 @@ const Tabla = () => {
       </style>
       <h1>Consultar mis reservas</h1>
       <br />
+      <div className={styles.containerfilters}>
       {/* Filtro de búsqueda */}
       <div className={styles.filters}>
         <input
@@ -234,6 +235,7 @@ const Tabla = () => {
             </button>
           </div>
         )}
+      </div>
       </div>
       
       <div className={styles.statusFilter}>
@@ -308,7 +310,7 @@ const Tabla = () => {
                 <tr key={index}>
                   <td>
                     {format(dato.createdAt, "h:mm a DD/MM/YYYY ", "es")}
-                  </td>{" "}
+                  </td>{""}
                   {/*Fecha de creacion*/}
                   <td>{dato.reservaChatbotId}</td> {/*ID de la reserva*/}
                   <td>{dato.hotel}</td> {/*Nombre del hotel*/}
