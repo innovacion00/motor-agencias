@@ -265,7 +265,7 @@ const Gestionar = ({ reservas }) => {
     try {
       const linkP = await generarLinkPagoBilletera(id, booleano); // Llamada a la API
       console.log(linkP);
-      if (linkP.link) {
+      if (linkP.link) {      
         window.location.href = linkP.link; // Redireccionar al link generado
       } else {
         alert("No se pudo generar el link de pago.");
