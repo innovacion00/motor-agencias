@@ -382,11 +382,7 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
-  /*method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,*/
-
+  
   //#region Cancelar reservas
   const cancelarReserva = async (reservaId) => {
     try {
@@ -692,6 +688,8 @@ const Gestionar = ({ reservas }) => {
     return currentDate > checkinDate || reservas?.status == "4";
   };
 
+        //Console log para ver la info de la reserva
+      console.log(reservas)
   return (
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
@@ -845,9 +843,10 @@ const Gestionar = ({ reservas }) => {
                       </p>
                     )}
                     <p>
-                      Contacto principal:{" "}
+                      Contacto del huesped:{" "}
                       {reservas.infoToures.firstContactNumber}
-                    </p>
+                    </p>  
+                    
                   </div>
                 )}
 
@@ -867,11 +866,11 @@ const Gestionar = ({ reservas }) => {
                           : "Aeropuerto - Hotel || Hotel - Aeropuerto"}
                     </p>
                     <p>
-                      Contacto: {reservas.infoTransporte.firstContactNumber}
-                    </p>
-                    <p>
                       Cantidad de personas:{" "}
                       {reservas.infoTransporte.cantidadPersonas}
+                    </p>
+                    <p>
+                      Contacto del huesped: {reservas.infoTransporte.firstContactNumber}
                     </p>
                   </div>
                 )}
@@ -909,9 +908,21 @@ const Gestionar = ({ reservas }) => {
                   ? `$${reservas?.total} USD`
                   : `${formatCurrency(reservas?.total)} COP`}
               </p>
+              
             </div>
+            
           </div>
-        </div>
+          {(reservas?.infoToures || reservas?.infoTransporte) && (
+          <p style={{color: "red", fontWeight: "bold", paddingLeft:"10px"}}>
+            Contacto de tour o traslado: {
+              reservas?.reservation?.city === "SANTA_MARTA" 
+                ? "+57 304 3697601" 
+                : reservas?.reservation?.city === "CARTAGENA" 
+                ? "+57 318 5480909" 
+                : ""
+            }
+          </p>)}
+        </div>  
       </div>
 
       <div className={styles.contentHusped_pago}>

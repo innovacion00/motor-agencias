@@ -18,7 +18,7 @@ const Header = () => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     if(datosdelusuario){
 
-      setUserData(JSON.parse(datosdelusuario));
+      setUserData((datosdelusuario));
     }
     
   }, [])
@@ -132,7 +132,7 @@ const Header = () => {
               src={userData?.imageUrl || profileImage}
               alt="UserIcon"
               id="profile-img"
-              onClick={toggleDropdown}
+              // onClick={toggleDropdown}
             />
             </a>
             {dropdownVisible && (
