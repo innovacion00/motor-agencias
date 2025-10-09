@@ -14,7 +14,7 @@ const Cotizaciones = () => {
       <div className="search-bar">
           <input type="text" placeholder="Buscar" className="search" />
         <br />
-        <button className="filter-btn">Filtros</button>
+       <button className="filter-btn">Filtros</button>
         </div>
       <div className="columns">
         {/* Columna Pendientes */}
