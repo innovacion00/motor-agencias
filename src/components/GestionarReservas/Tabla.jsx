@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles/tabla.module.css";
 import { getReservas, reservasNano } from "../../stores/disponibilidad";
 import { format } from "@formkit/tempo";
-import { Calendar } from "react-date-range";
+import { Calendar, DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
@@ -17,7 +17,16 @@ const Tabla = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showDateFilter, setShowDateFilter] = useState(false);
   const [dateFilter, setDateFilter] = useState(null);
+  const [showDateRangeFilter, setShowDateRangeFilter] = useState(false);
+  const [dateRangeFilter, setDateRangeFilter] = useState([
+    {
+      startDate: null,
+      endDate: null,
+      key: 'selection'
+    }
+  ]);
   const dateFilterRef = useRef(null);
+  const dateRangeFilterRef = useRef(null);
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -33,6 +42,12 @@ const Tabla = () => {
         !dateFilterRef.current.contains(event.target)
       ) {
         setShowDateFilter(false);
+      }
+      if (
+        dateRangeFilterRef.current &&
+        !dateRangeFilterRef.current.contains(event.target)
+      ) {
+        setShowDateRangeFilter(false);
       }
     };
 
@@ -90,10 +105,10 @@ const Tabla = () => {
   const handleSearch = (event) => {
     const searchValue = event.target.value.toLowerCase();
     setSearchTerm(searchValue);
-    applyFilters(searchValue, selectedStatus, dateFilter);
+    applyFilters(searchValue, selectedStatus, dateFilter, dateRangeFilter[0]);
   };
 
-  const applyFilters = (searchTerm = "", status = "all", selectedDate = null) => {
+  const applyFilters = (searchTerm = "", status = "all", selectedDate = null, dateRange = null) => {
     let filtered = reservas;
 
     // Filtro por texto de búsqueda
@@ -130,6 +145,29 @@ const Tabla = () => {
       });
     }
 
+    // Filtro por rango de fechas (check-in y check-out)
+    if (dateRange && dateRange.startDate && dateRange.endDate) {
+      const formatDateLocal = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      };
+
+      const startDate = formatDateLocal(new Date(dateRange.startDate));
+      const endDate = formatDateLocal(new Date(dateRange.endDate));
+
+      filtered = filtered.filter((reserva) => {
+        const checkinStr = reserva?.reservation?.checkin; // ya viene como YYYY-MM-DD
+        const checkoutStr = reserva?.reservation?.checkout; // ya viene como YYYY-MM-DD
+        
+        // Verificar si el check-in o check-out están dentro del rango seleccionado
+        return (checkinStr >= startDate && checkinStr <= endDate) || 
+               (checkoutStr >= startDate && checkoutStr <= endDate) ||
+               (checkinStr <= startDate && checkoutStr >= endDate); // Reserva que abarca todo el rango
+      });
+    }
+
     setFilteredReservas(filtered);
     setCurrentPage(1);
   };
@@ -138,17 +176,17 @@ const Tabla = () => {
 
   const handleStatusFilter = (status) => {
     setselectedStatus(status);
-    applyFilters(searchTerm, status, dateFilter);
+    applyFilters(searchTerm, status, dateFilter, dateRangeFilter[0]);
   };
 
   const handleDateChange = (date) => {
     setDateFilter(date);
-    applyFilters(searchTerm, selectedStatus, date);
+    applyFilters(searchTerm, selectedStatus, date, dateRangeFilter[0]);
   };
 
   const clearDateFilter = () => {
     setDateFilter(null);
-    applyFilters(searchTerm, selectedStatus, null);
+    applyFilters(searchTerm, selectedStatus, null, dateRangeFilter[0]);
   };
 
   // Cálculo de los índices de elementos para la paginación
@@ -236,6 +274,64 @@ const Tabla = () => {
           </div>
         )}
       </div>
+
+      {/* Filtro por rango de fechas de check-in y check-out - Solo para super-admin */}
+      {(() => {
+        const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
+        return datosUsuario && datosUsuario.role && datosUsuario.role.includes("super-admin");
+      })() && (
+        <div className={styles.dateFilterContainer} ref={dateRangeFilterRef}>
+          <div className={styles.dateFilterInput}>
+            <input
+              type="text"
+              placeholder="Ingrese un rango de fechas"
+              value={dateRangeFilter[0].startDate && dateRangeFilter[0].endDate && 
+                     (dateRangeFilter[0].startDate.getTime() !== dateRangeFilter[0].endDate.getTime() || 
+                      dateRangeFilter[0].startDate.getTime() !== new Date().getTime()) ? 
+                `${dateRangeFilter[0].startDate.getFullYear()}-${String(dateRangeFilter[0].startDate.getMonth()+1).padStart(2,"0")}-${String(dateRangeFilter[0].startDate.getDate()).padStart(2,"0")} a ${dateRangeFilter[0].endDate.getFullYear()}-${String(dateRangeFilter[0].endDate.getMonth()+1).padStart(2,"0")}-${String(dateRangeFilter[0].endDate.getDate()).padStart(2,"0")}` : ""}
+              onFocus={() => setShowDateRangeFilter(true)}
+              readOnly
+              className={styles.dateFilterInputField}
+            />
+            <button
+              onClick={() => {
+                setDateRangeFilter([{
+                  startDate: null,
+                  endDate: null,
+                  key: 'selection'
+                }]);
+                applyFilters(searchTerm, selectedStatus, dateFilter, null);
+              }}
+              className={styles.clearDateButton}
+              title="Limpiar filtro de rango de fechas"
+              disabled={!dateRangeFilter[0].startDate || !dateRangeFilter[0].endDate || 
+                       (dateRangeFilter[0].startDate && dateRangeFilter[0].endDate && 
+                        dateRangeFilter[0].startDate.getTime() === dateRangeFilter[0].endDate.getTime())}
+            >
+              ✕
+            </button>
+          </div>
+
+          {showDateRangeFilter && (
+            <div className={styles.dateRangePicker}>
+              <DateRange
+                ranges={dateRangeFilter}
+                onChange={(ranges) => {
+                  setDateRangeFilter([ranges.selection]);
+                  applyFilters(searchTerm, selectedStatus, dateFilter, ranges.selection);
+                }}
+                showSelectionPreview={true}
+              />
+              <button
+                onClick={() => setShowDateRangeFilter(false)}
+                className={styles.confirmDateButton}
+              >
+                Confirmar selección
+              </button>
+            </div>
+          )}
+        </div>
+      )}
       </div>
       
       <div className={styles.statusFilter}>
