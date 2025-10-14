@@ -275,63 +275,58 @@ const Tabla = () => {
         )}
       </div>
 
-      {/* Filtro por rango de fechas de check-in y check-out - Solo para super-admin */}
-      {(() => {
-        const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-        return datosUsuario && datosUsuario.role && datosUsuario.role.includes("super-admin");
-      })() && (
-        <div className={styles.dateFilterContainer} ref={dateRangeFilterRef}>
-          <div className={styles.dateFilterInput}>
-            <input
-              type="text"
-              placeholder="Ingrese un rango de fechas"
-              value={dateRangeFilter[0].startDate && dateRangeFilter[0].endDate && 
-                     (dateRangeFilter[0].startDate.getTime() !== dateRangeFilter[0].endDate.getTime() || 
-                      dateRangeFilter[0].startDate.getTime() !== new Date().getTime()) ? 
-                `${dateRangeFilter[0].startDate.getFullYear()}-${String(dateRangeFilter[0].startDate.getMonth()+1).padStart(2,"0")}-${String(dateRangeFilter[0].startDate.getDate()).padStart(2,"0")} a ${dateRangeFilter[0].endDate.getFullYear()}-${String(dateRangeFilter[0].endDate.getMonth()+1).padStart(2,"0")}-${String(dateRangeFilter[0].endDate.getDate()).padStart(2,"0")}` : ""}
-              onFocus={() => setShowDateRangeFilter(true)}
-              readOnly
-              className={styles.dateFilterInputField}
+      {/* Filtro por rango de fechas de check-in y check-out */}
+      <div className={styles.dateFilterContainer} ref={dateRangeFilterRef}>
+        <div className={styles.dateFilterInput}>
+          <input
+            type="text"
+            placeholder="Ingrese un rango de fechas"
+            value={dateRangeFilter[0].startDate && dateRangeFilter[0].endDate && 
+                   (dateRangeFilter[0].startDate.getTime() !== dateRangeFilter[0].endDate.getTime() || 
+                    dateRangeFilter[0].startDate.getTime() !== new Date().getTime()) ? 
+              `${dateRangeFilter[0].startDate.getFullYear()}-${String(dateRangeFilter[0].startDate.getMonth()+1).padStart(2,"0")}-${String(dateRangeFilter[0].startDate.getDate()).padStart(2,"0")} a ${dateRangeFilter[0].endDate.getFullYear()}-${String(dateRangeFilter[0].endDate.getMonth()+1).padStart(2,"0")}-${String(dateRangeFilter[0].endDate.getDate()).padStart(2,"0")}` : ""}
+            onFocus={() => setShowDateRangeFilter(true)}
+            readOnly
+            className={styles.dateFilterInputField}
+          />
+          <button
+            onClick={() => {
+              setDateRangeFilter([{
+                startDate: null,
+                endDate: null,
+                key: 'selection'
+              }]);
+              applyFilters(searchTerm, selectedStatus, dateFilter, null);
+            }}
+            className={styles.clearDateButton}
+            title="Limpiar filtro de rango de fechas"
+            disabled={!dateRangeFilter[0].startDate || !dateRangeFilter[0].endDate || 
+                     (dateRangeFilter[0].startDate && dateRangeFilter[0].endDate && 
+                      dateRangeFilter[0].startDate.getTime() === dateRangeFilter[0].endDate.getTime())}
+          >
+            ✕
+          </button>
+        </div>
+
+        {showDateRangeFilter && (
+          <div className={styles.dateRangePicker}>
+            <DateRange
+              ranges={dateRangeFilter}
+              onChange={(ranges) => {
+                setDateRangeFilter([ranges.selection]);
+                applyFilters(searchTerm, selectedStatus, dateFilter, ranges.selection);
+              }}
+              showSelectionPreview={true}
             />
             <button
-              onClick={() => {
-                setDateRangeFilter([{
-                  startDate: null,
-                  endDate: null,
-                  key: 'selection'
-                }]);
-                applyFilters(searchTerm, selectedStatus, dateFilter, null);
-              }}
-              className={styles.clearDateButton}
-              title="Limpiar filtro de rango de fechas"
-              disabled={!dateRangeFilter[0].startDate || !dateRangeFilter[0].endDate || 
-                       (dateRangeFilter[0].startDate && dateRangeFilter[0].endDate && 
-                        dateRangeFilter[0].startDate.getTime() === dateRangeFilter[0].endDate.getTime())}
+              onClick={() => setShowDateRangeFilter(false)}
+              className={styles.confirmDateButton}
             >
-              ✕
+              Confirmar selección
             </button>
           </div>
-
-          {showDateRangeFilter && (
-            <div className={styles.dateRangePicker}>
-              <DateRange
-                ranges={dateRangeFilter}
-                onChange={(ranges) => {
-                  setDateRangeFilter([ranges.selection]);
-                  applyFilters(searchTerm, selectedStatus, dateFilter, ranges.selection);
-                }}
-                showSelectionPreview={true}
-              />
-              <button
-                onClick={() => setShowDateRangeFilter(false)}
-                className={styles.confirmDateButton}
-              >
-                Confirmar selección
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </div>
       </div>
       
       <div className={styles.statusFilter}>
