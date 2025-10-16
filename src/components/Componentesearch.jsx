@@ -31,7 +31,7 @@ const BusquedaCartagena = () => {
     8: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg", //rodadero
     2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525
     48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg", //axis
-    44: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg", //sansiraka
+    44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg", //sansiraka
     41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
     56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
   };
