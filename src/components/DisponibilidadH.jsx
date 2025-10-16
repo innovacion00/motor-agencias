@@ -837,8 +837,7 @@ export const Cid = ({ id }) => {
             <p>Húespedes</p>
             <strong>{ninos + adultos}</strong>
           </div>
-          {/* <div>
-            <p>Habitaciones disponibles</p>
+          {/* <div>  <p>Habitaciones disponibles</p>
             <strong>
               {habitaciones?.availability?.map(
                 (tipo) => tipo.available_rooms?.length
@@ -1063,7 +1062,7 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
-                         {/* datos de persona en traslados bogota ahYha */}
+                         {/* datos de persona en traslados bogota ah/ha */}
                         Aeropuerto al hotel | Hotel al aeropuerto {" "} 
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
@@ -1160,8 +1159,7 @@ export const Cid = ({ id }) => {
           </div>
         </div>
         
-        {/* habitaciones?.availability?.map((cam)=>
-  cam.available_rooms?.map((camas)=>(dato.beds))) */}
+        {/* habitaciones?.availability?.map((cam)=>cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
             {habitaciones?.availability?.map((tipo) =>
@@ -1443,6 +1441,7 @@ export const Cid = ({ id }) => {
                 Reservar ahora
               </button>
             </a>
+            <a href="/cotizacionpagina"><button>Cotizar ahora</button></a>
           </div>
         </div>
       </div>
