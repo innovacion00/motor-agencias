@@ -1,13 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, ChevronDown } from 'lucide-react';
 import '/public/styles/Cotizacion.css';
+
+// Función para obtener el nombre del hotel basado en el ID
+const nombreHotelId = (hotelId) => {
+  const hotelMap = {
+    // Hoteles Cartagena
+    1: "Hotel Azuan Suites", // Hotel Azuan Suites
+    4: "Hotel Aixo Suites", // Hotel Aixo Suites
+    5: "Hotel Abi Inn", // Hotel Abi Inn
+    6: "Hotel Avexi Suites", // Hotel Avexi Suites
+    7: "Hotel Bocagrande Suites", // Hotel Bocagrande Suites
+    9: "Hotel Marina Suites", // Hotel Marina Suites
+    56: "Hotel Boquilla Suites", // Hotel Boquilla Suites
+    // Hoteles Santa Marta
+    8: "Hotel Rodadero ", // Hotel Rodadero 
+    2: "Hotel 1525", // Hotel 1525
+    48: "Hotel Axis Inn", // Hotel Axis Inn
+    44: "Hotel Sansiraka Inn", // Hotel Sansiraka Inn
+    41: "Hotel Zulita Inn", // Hotel Zulita Inn
+    56: "Hotel Boquilla Suites", // Hotel Boquilla Suites
+    // Hoteles Bogota
+    10: "Hotel Windsor", // Hotel Windsor
+    3: "Hotel Madisson", // Hotel Madisson
+
+  };
+
+  return hotelMap[hotelId] || "Hotel no encontrado";
+};
 
 export default function ReservaHotelComponent() {
   const [markup, setMarkup] = useState('');
   const [showReservaIncluye, setShowReservaIncluye] = useState(false);
   const [showPoliticas, setShowPoliticas] = useState(false);
   const [observaciones, setObservaciones] = useState('');
-  
+  const [datosReserva, setDatosReserva] = useState()
+
+  useEffect(() => {
+    const datareserva = JSON.parse(localStorage.getItem('datosreserva'));
+    setDatosReserva(datareserva);
+  }, []);
   // Estados para el formulario de datos del huésped
   const [formData, setFormData] = useState({
     tipoDocumento: '',
@@ -21,7 +53,7 @@ export default function ReservaHotelComponent() {
 
   const baseQuote = 3451000;
   const subtotal = 2900000;
-  const iva = 551000; 
+  const iva = 551000;
   const total = 3451000;
 
   // Función para manejar cambios en el formulario
@@ -72,8 +104,8 @@ export default function ReservaHotelComponent() {
           <div className="header">
             <div className="logos">
               <img src="" alt="Logo Agencia" className="logo" />
-              <img src="https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg" 
-              alt="GetSuites" className="logo" style={{width: "100px", height: "100px"}}/>
+              <img src="https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"
+                alt="GetSuites" className="logo" style={{ width: "100px", height: "100px" }} />
             </div>
           </div>
 
@@ -84,9 +116,9 @@ export default function ReservaHotelComponent() {
                 Pendiente por generar
               </span>
             </div>
-            
+
             <h2 className="title">Información del huésped</h2>
-            
+
             <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
               <fieldset style={{
                 border: "1px solid #ddd",
@@ -280,134 +312,142 @@ export default function ReservaHotelComponent() {
           </div>
 
           {/* Información de la Reserva */}
-          <div className="card">
-            <h2 className="title">Información de la reserva</h2>
-            
-            <h3 className="subtitle">Hotel Avexi Suites</h3>
-            
-            <div className="contact-info">
-              <div className="contact-item">
-                <MapPin className="icon" />
-                <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
-              </div>
-              <div className="contact-item">
-                <Phone className="icon" />
-                <span>+57 333 602 50 21</span>
-              </div>
-            </div>
+          {datosReserva?.map((data) => (
+            <>
+              <div key={data.roomId || index} >
 
-            {/* Fechas y Detalles */}
-            <div className="dates-grid">
-              <div className="date-item">
-                <p className="label">Check-in</p>
-                <p className="value">10 sep →</p>
               </div>
-              <div className="date-item">
-                <p className="label">Check-out</p>
-                <p className="value">12 sep</p>
-              </div>
-              <div className="date-item">
-                <p className="label">Noches</p>
-                <p className="value">4</p>
-              </div>
-              <div className="date-item">
-                <p className="label">Huéspedes</p>
-                <p className="value">8</p>
-              </div>
-              <div className="date-item">
-                <p className="label">Habitaciones</p>
-                <p className="value">3</p>
-              </div>
-            </div>
 
-            {/* Tabla de Habitaciones */}
-            <div className="table-wrapper">
-              <table className="table">
-                <thead>
-                  <tr className="table-header">
-                    <th className="th">Habitación</th>
-                    <th className="th">Descripción</th>
-                    <th className="th">Noches</th>
-                    <th className="th">Valor C/U</th>
-                    <th className="th">Valor total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="td">Doble estándar</td>
-                    <td className="td">Incluye 1 cama tamaño king y desayuno</td>
-                    <td className="td">4</td>
-                    <td className="td">$300.000</td>
-                    <td className="td">$1.200.000</td>
-                  </tr>
-                  <tr>
-                    <td className="td">Doble estándar</td>
-                    <td className="td">Incluye 1 cama tamaño king y desayuno</td>
-                    <td className="td">4</td>
-                    <td className="td">$300.000</td>
-                    <td className="td">$1.200.000</td>
-                  </tr>
-                  <tr>
-                    <td className="td">Cuádruple estándar</td>
-                    <td className="td">Incluye 2 camas tamaño king y desayuno</td>
-                    <td className="td">1</td>
-                    <td className="td">$500.000</td>
-                    <td className="td">$500.000</td>
-                  </tr>
-                  <tr className="table-subtotal">
-                    <td colSpan="4" className="td-total">Subtotal</td>
-                    <td className="td-amount">$2.900.000</td>
-                  </tr>
-                  <tr className="table-subtotal">
-                    <td colSpan="4" className="td-total">IVA 19%</td>
-                    <td className="td-amount">$551.000</td>
-                  </tr>
-                  <tr className="table-total">
-                    <td colSpan="4" className="td-total-label">Total</td>
-                    <td className="td-total-amount">$3.451.000</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+              <div className="card">
+                <h2 className="title">Información de la reserva</h2>
 
-            {/* Acordeones */}
-            <div className="accordions">
-              <div className="accordion">
-                <button
-                  onClick={() => setShowReservaIncluye(!showReservaIncluye)}
-                  className="accordion-button"
-                >
-                  <span className="accordion-title">La reserva incluye</span>
-                  <ChevronDown className={`icon-chevron ${showReservaIncluye ? 'rotated' : ''}`} />
-                </button>
-                {showReservaIncluye && (
-                  <div className="accordion-content">
-                    <p className="text">Contenido de lo que incluye la reserva...</p>
+                <h3 className="subtitle">{nombreHotelId(data.hotelidAutocore)}</h3>
+
+                <div className="contact-info">
+                  <div className="contact-item">
+                    <MapPin className="icon" />
+                    <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
                   </div>
-                )}
-              </div>
-
-              <div className="accordion">
-                <button
-                  onClick={() => setShowPoliticas(!showPoliticas)}
-                  className="accordion-button"
-                >
-                  <span className="accordion-title">Políticas de la reserva</span>
-                  <ChevronDown className={`icon-chevron ${showPoliticas ? 'rotated' : ''}`} />
-                </button>
-                {showPoliticas && (
-                  <div className="accordion-content">
-                    <p className="text">Políticas de cancelación y modificación...</p>
+                  <div className="contact-item">
+                    <Phone className="icon" />
+                    <span>+57 333 602 50 21</span>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
+                </div>
 
+                {/* Fechas y Detalles */}
+                <div className="dates-grid">
+                  <div className="date-item">
+                    <p className="label">Check-in</p>
+                    <p className="value">{data.checkin}  →</p>
+                  </div>
+                  <div className="date-item">
+                    <p className="label">Check-out</p>
+                    <p className="value">{data.checkout}</p>
+                  </div>
+                  <div className="date-item">
+                    <p className="label">Noches</p>
+                    <p className="value">{data.nights}</p>
+                  </div>
+                  <div className="date-item">
+                    <p className="label">Huéspedes</p>
+                    <p className="value">{data.huespedes}</p>
+                  </div>
+                  <div className="date-item">
+                    <p className="label">Habitaciones</p>
+                    <p className="value">3</p>
+                  </div>
+                </div>
+
+                {/* Tabla de Habitaciones */}
+                <div className="table-wrapper">
+                  <table className="table">
+                    <thead>
+                      <tr className="table-header">
+                        <th className="th">Habitación</th>
+                        <th className="th">Descripción</th>
+                        <th className="th">Noches</th>
+                        <th className="th">Valor C/U</th>
+                        <th className="th">Valor total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="td">Doble estándar</td>
+                        <td className="td">Incluye 1 cama tamaño king y desayuno</td>
+                        <td className="td">4</td>
+                        <td className="td">$300.000</td>
+                        <td className="td">$1.200.000</td>
+                      </tr>
+                      <tr>
+                        <td className="td">Doble estándar</td>
+                        <td className="td">Incluye 1 cama tamaño king y desayuno</td>
+                        <td className="td">4</td>
+                        <td className="td">$300.000</td>
+                        <td className="td">$1.200.000</td>
+                      </tr>
+                      <tr>
+                        <td className="td">Cuádruple estándar</td>
+                        <td className="td">Incluye 2 camas tamaño king y desayuno</td>
+                        <td className="td">1</td>
+                        <td className="td">$500.000</td>
+                        <td className="td">$500.000</td>
+                      </tr>
+                      <tr className="table-subtotal">
+                        <td colSpan="4" className="td-total">Subtotal</td>
+                        <td className="td-amount">$2.900.000</td>
+                      </tr>
+                      <tr className="table-subtotal">
+                        <td colSpan="4" className="td-total">IVA 19%</td>
+                        <td className="td-amount">$551.000</td>
+                      </tr>
+                      <tr className="table-total">
+                        <td colSpan="4" className="td-total-label">Total</td>
+                        <td className="td-total-amount">$3.451.000</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Acordeones */}
+                <div className="accordions">
+                  <div className="accordion">
+                    <button
+                      onClick={() => setShowReservaIncluye(!showReservaIncluye)}
+                      className="accordion-button"
+                    >
+                      <span className="accordion-title">La reserva incluye</span>
+                      <ChevronDown className={`icon-chevron ${showReservaIncluye ? 'rotated' : ''}`} />
+                    </button>
+                    {showReservaIncluye && (
+                      <div className="accordion-content">
+                        <p className="text">Contenido de lo que incluye la reserva...</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="accordion">
+                    <button
+                      onClick={() => setShowPoliticas(!showPoliticas)}
+                      className="accordion-button"
+                    >
+                      <span className="accordion-title">Políticas de la reserva</span>
+                      <ChevronDown className={`icon-chevron ${showPoliticas ? 'rotated' : ''}`} />
+                    </button>
+                    {showPoliticas && (
+                      <div className="accordion-content">
+                        <p className="text">Políticas de cancelación y modificación...</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            </>
+          ))}
           {/* Políticas de la Agencia */}
           <div className="card">
             <h2 className="title">Políticas de la agencia</h2>
-            
+
             <div className="editor">
               <div className="toolbar">
                 <button className="tool-btn"><strong>B</strong></button>
@@ -436,7 +476,7 @@ export default function ReservaHotelComponent() {
         <div className="sidebar">
           <div className="card sidebar-card">
             <h3 className="title">Markup</h3>
-            
+
             <div className="form-group">
               <label className="label">
                 Selecciona el markup
