@@ -1441,7 +1441,17 @@ export const Cid = ({ id }) => {
                 Reservar ahora
               </button>
             </a>
-            <a href="/cotizacionpagina"><button>Cotizar ahora</button></a>
+            <a href="/cotizacionpagina">
+            <button
+            onClick={enviardatos}
+            disabled={datohabitacion.length === 0}
+            style={{
+              backgroundColor:
+                datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+              cursor:
+                datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+            }}
+            >Cotizar ahora</button></a>
           </div>
         </div>
       </div>

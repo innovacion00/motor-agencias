@@ -7,11 +7,61 @@ export default function ReservaHotelComponent() {
   const [showReservaIncluye, setShowReservaIncluye] = useState(false);
   const [showPoliticas, setShowPoliticas] = useState(false);
   const [observaciones, setObservaciones] = useState('');
+  
+  // Estados para el formulario de datos del huésped
+  const [formData, setFormData] = useState({
+    tipoDocumento: '',
+    numeroDocumento: '',
+    nombreCompleto: '',
+    apellidos: '',
+    fechaNacimiento: '',
+    email: '',
+    celular: ''
+  });
 
   const baseQuote = 3451000;
   const subtotal = 2900000;
   const iva = 551000; 
   const total = 3451000;
+
+  // Función para manejar cambios en el formulario
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({
+      ...formData,
+      [id]: value,
+    });
+  };
+
+  // Función para manejar el envío del formulario
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const {
+      tipoDocumento,
+      numeroDocumento,
+      fechaNacimiento,
+      nombreCompleto,
+      apellidos,
+      email,
+      celular,
+    } = formData;
+
+    if (
+      tipoDocumento.trim() === '' ||
+      numeroDocumento.trim() === '' ||
+      fechaNacimiento.trim() === '' ||
+      nombreCompleto.trim() === '' ||
+      apellidos.trim() === '' ||
+      email.trim() === '' ||
+      celular.trim() === ''
+    ) {
+      alert('Todos los campos son obligatorios');
+      return;
+    }
+
+    console.log('Datos del formulario:', formData);
+    // Aquí puedes agregar la lógica para procesar los datos
+  };
 
   return (
     <div className="container">
@@ -21,12 +71,13 @@ export default function ReservaHotelComponent() {
           {/* Header */}
           <div className="header">
             <div className="logos">
-              <img src="https://via.placeholder.com/120x40?text=TravelDestination" alt="Travel Destination" className="logo" />
-              <img src="https://via.placeholder.com/120x40?text=GetSuites" alt="GetSuites" className="logo" />
+              <img src="" alt="Logo Agencia" className="logo" />
+              <img src="https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg" 
+              alt="GetSuites" className="logo" style={{width: "100px", height: "100px"}}/>
             </div>
           </div>
 
-          {/* Información del Huésped */}
+          {/* Formulario de Información del Huésped */}
           <div className="card">
             <div className="badge-container">
               <span className="badge">
@@ -36,24 +87,196 @@ export default function ReservaHotelComponent() {
             
             <h2 className="title">Información del huésped</h2>
             
-            <div className="info-grid">
-              <div className="info-item">
-                <p className="label">Nombre completo:</p>
-                <p className="value">Maria Angelica Londoño Vargas</p>
-              </div>
-              <div className="info-item">
-                <p className="label">Cédula de ciudadanía:</p>
-                <p className="value">5898765432</p>
-              </div>
-              <div className="info-item">
-                <p className="label">Correo electrónico:</p>
-                <p className="value">angelica.londono@gmail.com</p>
-              </div>
-              <div className="info-item">
-                <p className="label">Celular:</p>
-                <p className="value">322 456 78 98</p>
-              </div>
-            </div>
+            <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
+              <fieldset style={{
+                border: "1px solid #ddd",
+                borderRadius: "5px",
+                padding: "15px",
+                marginBottom: "20px",
+              }}>
+                <legend>Datos del titular</legend>
+
+                {/* Tipo de documento */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="tipoDocumento" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Tipo de documento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <select
+                    id="tipoDocumento"
+                    value={formData.tipoDocumento}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  >
+                    <option value="">Selecciona una opción</option>
+                    <option value="cedulaC">Cédula de ciudadanía</option>
+                    <option value="cedulaE">Cédula de extranjería</option>
+                    <option value="pasaporte">Pasaporte</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+
+                {/* Número de documento */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="numeroDocumento" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Número de documento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="numeroDocumento"
+                    type="text"
+                    placeholder="Ingrese el número de documento"
+                    value={formData.numeroDocumento}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                {/* Nombre del titular */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="nombreCompleto" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Nombre del titular <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="nombreCompleto"
+                    type="text"
+                    placeholder="Ingrese el nombre"
+                    value={formData.nombreCompleto}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                {/* Apellidos del titular */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="apellidos" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Apellidos del titular <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="apellidos"
+                    type="text"
+                    placeholder="Ingrese los apellidos"
+                    value={formData.apellidos}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                {/* Fecha de nacimiento */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="fechaNacimiento" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Fecha de nacimiento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="fechaNacimiento"
+                    type="date"
+                    value={formData.fechaNacimiento}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                {/* Correo electrónico */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="email" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Correo electrónico <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="Ingrese el correo electrónico"
+                    value={formData.email}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                </div>
+
+                {/* Celular */}
+                <div style={{ marginBottom: "15px" }}>
+                  <label htmlFor="celular" style={{ display: "block", marginBottom: "5px", fontWeight: "500" }}>
+                    Celular <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="celular"
+                    type="tel"
+                    placeholder="Ingrese el número de celular"
+                    value={formData.celular}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      fontSize: "14px"
+                    }}
+                  />
+                  <label
+                    htmlFor="identificador"
+                    style={{ color: "red", fontWeight: "light", fontSize: "12px", marginTop: "5px", display: "block" }}
+                  >
+                    Incluir código de área (+57,+55, etc.) eje:+573002215487
+                  </label>
+                </div>
+
+                {/* Botón de envío */}
+                <button
+                  type="submit"
+                  style={{
+                    fontWeight: "500",
+                    backgroundColor: "#26547B",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  Guardar Información
+                </button>
+              </fieldset>
+            </form>
           </div>
 
           {/* Información de la Reserva */}
