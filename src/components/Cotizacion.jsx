@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Phone, ChevronDown } from 'lucide-react';
 import '/public/styles/Cotizacion.css';
+import Swal from 'sweetalert2';
+import { format } from '@formkit/tempo';
+import Cookies from 'js-cookie';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -18,8 +21,8 @@ const nombreHotelId = (hotelId) => {
     2: "Hotel 1525", // Hotel 1525
     48: "Hotel Axis Inn", // Hotel Axis Inn
     44: "Hotel Sansiraka Inn", // Hotel Sansiraka Inn
-    41: "Hotel Zulita Inn", // Hotel Zulita Inn
-    56: "Hotel Boquilla Suites", // Hotel Boquilla Suites
+
+
     // Hoteles Bogota
     10: "Hotel Windsor", // Hotel Windsor
     3: "Hotel Madisson", // Hotel Madisson
@@ -29,16 +32,114 @@ const nombreHotelId = (hotelId) => {
   return hotelMap[hotelId] || "Hotel no encontrado";
 };
 
+// Función para obtener las imágenes del hotel basado en el ID
+const getHotelImagesById = (hotelId) => {
+  const hotelImagesMap = {
+    // Hoteles Cartagena
+    1: {
+      main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
+      secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg"
+    },
+    4: {
+      main: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
+      secondary1: "https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg"
+    },
+    5: {
+      main: "https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg",
+      secondary1: "https://www.gehsuites.com/multimedia/galerias/galeriaabi16972.jpg",
+      secondary2: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
+    },
+    6: {
+      main: "https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg",
+      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/foodStanAvexi.jpg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg"
+    },
+    7: {
+      main: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena4469.jpg",
+      secondary1: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena2953.jpg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena14676.jpg"
+    },
+    9: {
+      main: "https://www.gehsuites.com/images/portada_marian_suites.jpg ",
+      secondary1: "https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg"
+    },
+    56: {
+      main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
+      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada2_boquilla.jpg",
+      secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/desayuno_boquilla.jpg"
+    },
+    // Hoteles Santa Marta
+    8: {
+      main: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
+      secondary1: "https://www.gehsuites.com/multimedia/galerias/2rodadero23293.jpg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg"
+    },
+
+    48: {
+      main: "https://www.gehsuites.com/images/YULDAMA-2.jpg",
+      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Lobbyaxis.jpeg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg"
+    },
+    44: {
+      main: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
+      secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg"
+    },
+    41: {
+      main: "https://www.gehsuites.com/images/fachada-azuan.jpg", // Imagen por defecto para Zulita
+      secondary1: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
+      secondary2: "https://www.gehsuites.com/images/portada_marian_suites.jpg"
+    },
+    // Hoteles Bogotá
+    10: {
+      main: "https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg",
+      secondary1: "https://www.gehsuites.com/multimedia/galerias/16HotelWindsorHouse427.jpg",
+      secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg"
+    },
+    3: {
+      main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison10238.jpg",
+      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison8955.jpg",
+      secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison6250.jpg"
+    }
+  };
+
+  return hotelImagesMap[hotelId] || {
+    main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
+    secondary1: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
+    secondary2: "https://www.gehsuites.com/images/portada_marian_suites.jpg"
+  };
+};
+
 export default function ReservaHotelComponent() {
   const [markup, setMarkup] = useState('');
   const [showReservaIncluye, setShowReservaIncluye] = useState(false);
   const [showPoliticas, setShowPoliticas] = useState(false);
   const [observaciones, setObservaciones] = useState('');
-  const [datosReserva, setDatosReserva] = useState()
+  const [datosReserva, setDatosReserva] = useState();
+  const [agencia, setAgencia] = useState();
+  const [fechasreserva, setFechasreserva] = useState();
+  const [cantadultos, setCantadultos] = useState();
+  const [cantninos, setCantninos] = useState();
+  const [botondesactivado, setBotondesactivado] = useState(false);
+  const [logoAgencia, setLogoAgencia] = useState();
 
   useEffect(() => {
+    const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
     const datareserva = JSON.parse(localStorage.getItem('datosreserva'));
+    
+    const adultos = JSON.parse(localStorage.getItem('cantAdultos'));
+    const ninos = JSON.parse(localStorage.getItem('cantNinos'));
+    const fechas = JSON.parse(localStorage.getItem('nochesyedades'));
+    const token = JSON.parse(localStorage.getItem('datosUsuario'));
+    setLogoAgencia(datosDelUsuario);
     setDatosReserva(datareserva);
+    setCantadultos(adultos);
+    setCantninos(ninos);
+    setFechasreserva(fechas);
+    setAgencia(token);
   }, []);
   // Estados para el formulario de datos del huésped
   const [formData, setFormData] = useState({
@@ -51,10 +152,15 @@ export default function ReservaHotelComponent() {
     celular: ''
   });
 
-  const baseQuote = 3451000;
-  const subtotal = 2900000;
-  const iva = 551000;
-  const total = 3451000;
+  // Calcular totales basados en los datos de las habitaciones
+  const subtotal = datosReserva ? datosReserva.reduce((sum, data) => sum + (data.precio || 0), 0) : 0;
+  const iva = Math.round(subtotal * 0.19) || 0;
+  const total = subtotal + iva;
+
+  // Calcular markup (admite coma o punto como separador decimal)
+  const markupPorcentaje = parseFloat(String(markup).replace(',', '.')) || 0;
+  const markupAmount = Math.round(total * (markupPorcentaje / 100));
+  const totalConMarkup = total + markupAmount;
 
   // Función para manejar cambios en el formulario
   const handleChange = (e) => {
@@ -87,12 +193,141 @@ export default function ReservaHotelComponent() {
       email.trim() === '' ||
       celular.trim() === ''
     ) {
-      alert('Todos los campos son obligatorios');
+      Swal.fire({
+        icon: "error",
+        title: "Complete la información",
+        text: "Todos los campos del titular son obligatorios",
+        showConfirmButton: false,
+        timer: 3500,
+      });
       return;
     }
 
-    console.log('Datos del formulario:', formData);
-    // Aquí puedes agregar la lógica para procesar los datos
+    enviarCotizacion();
+  };
+
+  const enviarCotizacion = async () => {
+    try {
+      setBotondesactivado(true);
+
+      // Calcular totales
+      const totalHuespedes = cantadultos + cantninos;
+      const adults = JSON.stringify(cantadultos);
+      const ninos = JSON.stringify(cantninos);
+      const noches = JSON.stringify(datosReserva[0]?.nights);
+      const habitaciones = JSON.stringify(datosReserva.length);
+
+      // Formatear fechas
+      const checkin = format(
+        fechasreserva?.dateRange?.startDate,
+        "YYYY-MM-DD",
+        "es"
+      );
+      const checkout = format(
+        fechasreserva?.dateRange?.endDate,
+        "YYYY-MM-DD",
+        "es"
+      );
+
+      // Convertir edades de niños
+      const childrenAgesString =
+        fechasreserva?.layout
+          .flatMap((room) => room.children_ages || [])
+          .join(",") || "";
+
+      const informacionD = JSON.stringify({
+        total: Math.round(totalConMarkup),
+        mascotasNumber: datosReserva[0]?.mascotas || null,
+        adicionAlmuerzo: false,
+        adicionCena: false,
+        titularInfo: {
+          firstName: formData.nombreCompleto,
+          lastName: formData.apellidos,
+          tipoDocumento: formData.tipoDocumento,
+          documento: formData.numeroDocumento,
+          fechaNacimiento: formData.fechaNacimiento,
+        },
+        infoTransporte: null,
+        infoToures: null,
+        planAlimentario: datosReserva[0]?.plandealimentacion || "Solo desayuno",
+        exentoIva: false,
+        reservaInfo: {
+          agency: {
+            is_agency: true,
+            agency_type: agencia?.agencia?.category || 0,
+            external_ref_id: "666222",
+          },
+          reservation: {
+            adults: adults,
+            checkin: checkin,
+            checkout: checkout,
+            children: ninos,
+            children_ages: childrenAgesString,
+            city: datosReserva[0]?.ciudad || "CARTAGENA",
+            country: "COL",
+            currency: "COP",
+            email: formData.email,
+            firstName: formData.nombreCompleto,
+            lastName: formData.apellidos,
+            nights: noches,
+            notes: `Creada por la agencia: ${agencia?.agencia?.fullName || 'Agencia'}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}.`,
+            rooms: habitaciones,
+            roomsData: datosReserva.map((dato, index) => {
+              const roomConfig = fechasreserva?.layout?.[index] || {};
+              return {
+                nombreHabitacion: dato.NombreH,
+                adults: JSON.stringify(roomConfig.adults || 0),
+                children_ages: roomConfig.children_ages?.join(",") || "",
+                children: roomConfig.children_ages
+                  ? JSON.stringify(roomConfig.children_ages.length)
+                  : "",
+                checkin: checkin,
+                checkout: checkout,
+                currency: "COP",
+                id: dato.roomId,
+                quantity: "1",
+                rateId: dato.rateId,
+                unitaryPrice: dato.precio,
+              };
+            }),
+            telephone: formData.celular,
+          },
+        },
+      });
+
+      const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/cotizaciones/from-disponibilidad`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Cookies.get('accessToken')}`,
+        },
+        body: informacionD,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Cotización enviada:', data);
+        Swal.fire({
+          icon: "success",
+          title: "Cotización enviada",
+          text: "Se ha enviado la cotización con éxito.",
+        });
+        window.location.href = `/cotizaciones/${data._id}`;
+      } else {
+        throw new Error("Error al enviar la cotización");
+      }
+    } catch (error) {
+      console.error("Error al enviar cotización:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error al enviar cotización",
+        text: `No se pudo enviar la cotización. ${error.message}`,
+      });
+    } finally {
+      setBotondesactivado(false);
+    }
   };
 
   return (
@@ -102,15 +337,14 @@ export default function ReservaHotelComponent() {
         <div className="main-content">
           {/* Header */}
           <div className="header">
-            <div className="logos">
-              <img src="" alt="Logo Agencia" className="logo" />
-              <img src="https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"
-                alt="GetSuites" className="logo" style={{ width: "100px", height: "100px" }} />
-            </div>
           </div>
 
           {/* Formulario de Información del Huésped */}
           <div className="card">
+            <div className="logos" style={{ justifyContent: "flex-end" }}>
+              <img src={logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
+                alt="Logo Agencia" className="logo" style={{ width: "100px", height: "100px" }} />
+            </div>
             <div className="badge-container">
               <span className="badge">
                 Pendiente por generar
@@ -291,159 +525,190 @@ export default function ReservaHotelComponent() {
                   </label>
                 </div>
 
-                {/* Botón de envío */}
-                <button
-                  type="submit"
-                  style={{
-                    fontWeight: "500",
-                    backgroundColor: "#26547B",
-                    color: "white",
-                    padding: "10px 20px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "14px"
-                  }}
-                >
-                  Guardar Información
-                </button>
               </fieldset>
             </form>
           </div>
 
           {/* Información de la Reserva */}
-          {datosReserva?.map((data) => (
-            <>
-              <div key={data.roomId || index} >
+          {datosReserva && datosReserva.length > 0 && (
+            <div className="card">
+              <h2 className="title">Información de la reserva</h2>
 
+              <h3 className="subtitle">{nombreHotelId(datosReserva[0].hotelidAutocore)}</h3>
+              <div className="contact-item">
+                <MapPin className="icon" />
+                <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
+                <div className="contact-item">
+                  <Phone className="icon" />
+                  <span>+57 333 602 50 21</span>
+                </div>
               </div>
 
-              <div className="card">
-                <h2 className="title">Información de la reserva</h2>
-
-                <h3 className="subtitle">{nombreHotelId(data.hotelidAutocore)}</h3>
-
-                <div className="contact-info">
-                  <div className="contact-item">
-                    <MapPin className="icon" />
-                    <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
+              {/* Contenedor de imágenes del hotel */}
+              <div className="hotel-images-container">
+                <div className="main-image">
+                  <img
+                    src={getHotelImagesById(datosReserva[0].hotelidAutocore).main}
+                    alt={`Vista principal del ${nombreHotelId(datosReserva[0].hotelidAutocore)}`}
+                    className="hotel-main-img"
+                  />
+                </div>
+                <div className="secondary-images">
+                  <div className="secondary-image">
+                    <img
+                      src={getHotelImagesById(datosReserva[0].hotelidAutocore).secondary1}
+                      alt={`Vista secundaria 1 del ${nombreHotelId(datosReserva[0].hotelidAutocore)}`}
+                      className="hotel-secondary-img"
+                    />
                   </div>
-                  <div className="contact-item">
-                    <Phone className="icon" />
-                    <span>+57 333 602 50 21</span>
+                  <div className="secondary-image">
+                    <img
+                      src={getHotelImagesById(datosReserva[0].hotelidAutocore).secondary2}
+                      alt={`Vista secundaria 2 del ${nombreHotelId(datosReserva[0].hotelidAutocore)}`}
+                      className="hotel-secondary-img"
+                    />
                   </div>
                 </div>
-
-                {/* Fechas y Detalles */}
-                <div className="dates-grid">
-                  <div className="date-item">
-                    <p className="label">Check-in</p>
-                    <p className="value">{data.checkin}  →</p>
-                  </div>
-                  <div className="date-item">
-                    <p className="label">Check-out</p>
-                    <p className="value">{data.checkout}</p>
-                  </div>
-                  <div className="date-item">
-                    <p className="label">Noches</p>
-                    <p className="value">{data.nights}</p>
-                  </div>
-                  <div className="date-item">
-                    <p className="label">Huéspedes</p>
-                    <p className="value">{data.huespedes}</p>
-                  </div>
-                  <div className="date-item">
-                    <p className="label">Habitaciones</p>
-                    <p className="value">3</p>
-                  </div>
-                </div>
-
-                {/* Tabla de Habitaciones */}
-                <div className="table-wrapper">
-                  <table className="table">
-                    <thead>
-                      <tr className="table-header">
-                        <th className="th">Habitación</th>
-                        <th className="th">Descripción</th>
-                        <th className="th">Noches</th>
-                        <th className="th">Valor C/U</th>
-                        <th className="th">Valor total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="td">Doble estándar</td>
-                        <td className="td">Incluye 1 cama tamaño king y desayuno</td>
-                        <td className="td">4</td>
-                        <td className="td">$300.000</td>
-                        <td className="td">$1.200.000</td>
-                      </tr>
-                      <tr>
-                        <td className="td">Doble estándar</td>
-                        <td className="td">Incluye 1 cama tamaño king y desayuno</td>
-                        <td className="td">4</td>
-                        <td className="td">$300.000</td>
-                        <td className="td">$1.200.000</td>
-                      </tr>
-                      <tr>
-                        <td className="td">Cuádruple estándar</td>
-                        <td className="td">Incluye 2 camas tamaño king y desayuno</td>
-                        <td className="td">1</td>
-                        <td className="td">$500.000</td>
-                        <td className="td">$500.000</td>
-                      </tr>
-                      <tr className="table-subtotal">
-                        <td colSpan="4" className="td-total">Subtotal</td>
-                        <td className="td-amount">$2.900.000</td>
-                      </tr>
-                      <tr className="table-subtotal">
-                        <td colSpan="4" className="td-total">IVA 19%</td>
-                        <td className="td-amount">$551.000</td>
-                      </tr>
-                      <tr className="table-total">
-                        <td colSpan="4" className="td-total-label">Total</td>
-                        <td className="td-total-amount">$3.451.000</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Acordeones */}
-                <div className="accordions">
-                  <div className="accordion">
-                    <button
-                      onClick={() => setShowReservaIncluye(!showReservaIncluye)}
-                      className="accordion-button"
-                    >
-                      <span className="accordion-title">La reserva incluye</span>
-                      <ChevronDown className={`icon-chevron ${showReservaIncluye ? 'rotated' : ''}`} />
-                    </button>
-                    {showReservaIncluye && (
-                      <div className="accordion-content">
-                        <p className="text">Contenido de lo que incluye la reserva...</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="accordion">
-                    <button
-                      onClick={() => setShowPoliticas(!showPoliticas)}
-                      className="accordion-button"
-                    >
-                      <span className="accordion-title">Políticas de la reserva</span>
-                      <ChevronDown className={`icon-chevron ${showPoliticas ? 'rotated' : ''}`} />
-                    </button>
-                    {showPoliticas && (
-                      <div className="accordion-content">
-                        <p className="text">Políticas de cancelación y modificación...</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
               </div>
-            </>
-          ))}
+
+              <div className="contact-info">
+              </div>
+
+              {/* Fechas y Detalles */}
+              <div className="dates-grid">
+                <div className="date-item">
+                  <p className="label">Check-in</p>
+                  <p className="value">{datosReserva[0].checkin}  →</p>
+                </div>
+                <div className="date-item">
+                  <p className="label">Check-out</p>
+                  <p className="value">{datosReserva[0].checkout}</p>
+                </div>
+                <div className="date-item">
+                  <p className="label">Noches</p>
+                  <p className="value">{datosReserva[0].nights}</p>
+                </div>
+                <div className="date-item">
+                  <p className="label">Huéspedes</p>
+                  <p className="value">{datosReserva[0].huespedes}</p>
+                </div>
+                <div className="date-item">
+                  <p className="label">Habitaciones</p>
+                  <p className="value">{datosReserva.length}</p>
+                </div>
+              </div>
+
+              {/* Tabla de Habitaciones */}
+              <div className="table-wrapper">
+                <table className="table">
+                  <thead>
+                    <tr className="table-header">
+                      <th className="th">Habitación</th>
+                      <th className="th">Descripción</th>
+                      <th className="th">Noches</th>
+                      <th className="th">Valor C/U</th>
+                      <th className="th">Valor total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {datosReserva.map((data, index) => (
+                      <tr key={data.roomId || index}>
+                        <td className="td">{data.NombreH || 'Habitación estándar'}</td>
+                        <td className="td">{data.descripcion || 'Incluye desayuno y servicios básicos'}</td>
+                        <td className="td">{data.nights}</td>
+                        <td className="td">${data.precioBase ? data.precioBase.toLocaleString() : '0'}</td>
+                        <td className="td">${data.precio ? data.precio.toLocaleString() : '0'}</td>
+                      </tr>
+                    ))}
+                    <tr className="table-subtotal">
+                      <td colSpan="4" className="td-total">Subtotal</td>
+                      <td className="td-amount">${subtotal.toLocaleString()}</td>
+                    </tr>
+                    <tr className="table-subtotal">
+                      <td colSpan="4" className="td-total">IVA 19%</td>
+                      <td className="td-amount">${iva.toLocaleString()}</td>
+                    </tr>
+                    <tr className="table-total">
+                      <td colSpan="4" className="td-total-label">Total</td>
+                      <td className="td-total-amount">${total.toLocaleString()}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Acordeones */}
+              <div className="accordions">
+                <div className="accordion">
+                  <button
+                    onClick={() => setShowReservaIncluye(!showReservaIncluye)}
+                    className="accordion-button"
+                  >
+                    <span className="accordion-title">La reserva incluye</span>
+                    <ChevronDown className={`icon-chevron ${showReservaIncluye ? 'rotated' : ''}`} />
+                  </button>
+                  {showReservaIncluye && (
+                    <div className="accordion-content">
+                      <div className="text">
+                        <p><strong>Plan de alimentación:</strong> {datosReserva[0]?.plandealimentacion || 'No especificado'}</p>
+                        
+                        {datosReserva[0]?.mascotas > 0 && (
+                          <p><strong>Mascotas permitidas:</strong> {datosReserva[0].mascotas} mascota(s)</p>
+                        )}
+                        
+                        {datosReserva[0]?.incluirTraslado ? (
+                          <div>
+                            <p><strong>Traslado incluido:</strong> Sí</p>
+                            {datosReserva[0]?.tipoTraslado && (
+                              <p><strong>Tipo de traslado:</strong> {datosReserva[0].tipoTraslado}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <p><strong>Traslado incluido:</strong> No</p>
+                        )}
+                        
+                        {datosReserva[0]?.tourSeleccionado && datosReserva[0].tourSeleccionado.length > 0 ? (
+                          <div>
+                            <p><strong>Tours incluidos:</strong></p>
+                            <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
+                              {datosReserva[0].tourSeleccionado.map((tour, index) => (
+                                <li key={index}>{tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          <p><strong>Tours incluidos:</strong> Ninguno</p>
+                        )}
+                        
+                        <p><strong>Servicios básicos incluidos:</strong></p>
+                        <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
+                          <li>WiFi gratuito</li>
+                          <li>Servicio de habitación</li>
+                          <li>Piscina y zona de recreación</li>
+                          <li>Servicio de conserjería</li>
+                          <li>Recepción 24 horas</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="accordion">
+                  <button
+                    onClick={() => setShowPoliticas(!showPoliticas)}
+                    className="accordion-button"
+                  >
+                    <span className="accordion-title">Políticas de la reserva</span>
+                    <ChevronDown className={`icon-chevron ${showPoliticas ? 'rotated' : ''}`} />
+                  </button>
+                  {showPoliticas && (
+                    <div className="accordion-content">
+                      <p className="text">Políticas de cancelación y modificación...</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
           {/* Políticas de la Agencia */}
           <div className="card">
             <h2 className="title">Políticas de la agencia</h2>
@@ -475,34 +740,70 @@ export default function ReservaHotelComponent() {
         {/* Columna Lateral - Markup */}
         <div className="sidebar">
           <div className="card sidebar-card">
-            <h3 className="title">Markup</h3>
+            <h3 className="title">Calcular markup</h3>
 
             <div className="form-group">
               <label className="label">
-                Selecciona el markup
+                Ingresa el markup (%)
               </label>
               <div className="select-wrapper">
-                <select
+                <input
+                  type="text"
+                  inputMode="decimal"
                   value={markup}
-                  onChange={(e) => setMarkup(e.target.value)}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    // Permite solo dígitos, coma y punto
+                    const cleaned = raw.replace(/[^0-9.,]/g, '');
+                    setMarkup(cleaned);
+                  }}
+                  placeholder="Ej: 9,5"
                   className="select"
-                >
-                  <option value="">Selecciona el porcentaje</option>
-                  <option value="5">5%</option>
-                  <option value="10">10%</option>
-                  <option value="15">15%</option>
-                  <option value="20">20%</option>
-                </select>
-                <ChevronDown className="select-icon" />
+                />
               </div>
             </div>
 
             <div className="price-section">
               <div className="price-row">
-                <span className="price-label">Base cotización</span>
-                <span className="price-value">${baseQuote.toLocaleString()}</span>
+                <span className="price-label">Precio base</span>
+                <span className="price-value">${total.toLocaleString()}</span>
               </div>
+              {markupPorcentaje > 0 && (
+                <>
+                  <div className="price-row">
+                    <span className="price-label">Markup ({markupPorcentaje}%)</span>
+                    <span className="price-value">+${markupAmount.toLocaleString()}</span>
+                  </div>
+                  <div className="price-row" style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px", marginTop: "8px" }}>
+                    <span className="price-label" style={{ fontWeight: "600" }}>Total con markup</span>
+                    <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${totalConMarkup.toLocaleString()}</span>
+                  </div>
+                </>
+              )}
             </div>
+
+            {/* Botón de cotizar */}
+
+            <button
+              onClick={handleSubmit}
+              disabled={botondesactivado}
+              style={{
+                fontWeight: "500",
+                backgroundColor: "#26547B",
+                color: "white",
+                padding: "12px 24px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: botondesactivado ? "not-allowed" : "pointer",
+                fontSize: "14px",
+                width: "100%",
+                marginTop: "20px",
+                opacity: botondesactivado ? 0.6 : 1
+              }}
+            >
+              {botondesactivado ? "Enviando..." : "Cotizar Ahora"}
+            </button>
+
           </div>
         </div>
       </div>

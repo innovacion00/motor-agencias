@@ -1438,7 +1438,7 @@ export const Cid = ({ id }) => {
                     datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
                 }}
               >
-                Reservar ahora
+                Reservar ahora  
               </button>
             </a>
             <a href="/cotizacionpagina">
@@ -1451,7 +1451,7 @@ export const Cid = ({ id }) => {
               cursor:
                 datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
             }}
-            >Cotizar ahora</button></a>
+            >Generar cotización</button></a>
           </div>
         </div>
       </div>

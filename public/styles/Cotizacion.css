@@ -24,7 +24,6 @@
 }
 
 .header {
-  display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 24px;
@@ -65,14 +64,14 @@
 .title {
   font-size: 24px;
   font-weight: bold;
-  color: #1f2937;
+  color: #1C3D5A;
   margin-bottom: 16px;
 }
 
 .subtitle {
   font-size: 20px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1C3D5A;
   margin-bottom: 12px;
 }
 
@@ -95,7 +94,7 @@
 }
 
 .value {
-  color: #1f2937;
+  color: #1C3D5A;
 }
 
 .contact-info {
@@ -338,5 +337,68 @@
 
 .price-value {
   font-weight: 600;
-  color: #1f2937;
+  color: #1C3D5A;
+}
+
+/* Estilos para el contenedor de imágenes del hotel */
+.hotel-images-container {
+  display: flex;
+  gap: 16px;
+  margin: 20px 0;
+  height: 300px;
+}
+
+.main-image {
+  flex: 2;
+  height: 100%;
+}
+
+.hotel-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.secondary-images {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.secondary-image {
+  flex: 1;
+  height: calc(50% - 4px);
+}
+
+.hotel-secondary-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .hotel-images-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .main-image {
+    height: 200px;
+  }
+  
+  .secondary-images {
+    flex-direction: row;
+    height: 100px;
+  }
+  
+  .secondary-image {
+    height: 100%;
+  }
 }
