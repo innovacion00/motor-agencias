@@ -361,6 +361,12 @@ const FormularioReserva = () => {
                 } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
                   ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
                   : ""
+                }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+                  ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
+                  : ""
+                }${reserva[0].mascotas && reserva[0].mascotas > 0
+                  ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
+                  : ""
                 }  `
                 : `Creada por la agencia: ${agencia.agencia.fullName
                 }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
@@ -374,6 +380,12 @@ const FormularioReserva = () => {
                   : ""
                 }${facturaE
                   ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+                  : ""
+                }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+                  ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
+                  : ""
+                }${reserva[0].mascotas && reserva[0].mascotas > 0
+                  ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
                   : ""
                 }`,
             rooms: habitaciones, // TIPO DE HABITACIONES
