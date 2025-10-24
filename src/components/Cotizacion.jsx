@@ -129,7 +129,6 @@ export default function ReservaHotelComponent() {
   useEffect(() => {
     const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
     const datareserva = JSON.parse(localStorage.getItem('datosreserva'));
-    
     const adultos = JSON.parse(localStorage.getItem('cantAdultos'));
     const ninos = JSON.parse(localStorage.getItem('cantNinos'));
     const fechas = JSON.parse(localStorage.getItem('nochesyedades'));
@@ -203,9 +202,30 @@ export default function ReservaHotelComponent() {
       return;
     }
 
+    // Validar markup - si está vacío o es 0, preguntar al usuario
+    const markupPorcentaje = parseFloat(String(markup).replace(',', '.')) || 0;
+    if (markupPorcentaje === 0 || markup.trim() === '') {
+      Swal.fire({
+        title: '¿Continuar sin markup?',
+        text: 'No se ha ingresado un valor de markup. ¿Deseas continuar con la cotización sin aplicar markup?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, continuar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          enviarCotizacion();
+        }
+      });
+      return;
+    }
+
     enviarCotizacion();
   };
 
+  // Función para enviar la cotización
   const enviarCotizacion = async () => {
     try {
       setBotondesactivado(true);
@@ -236,9 +256,14 @@ export default function ReservaHotelComponent() {
           .join(",") || "";
 
       const informacionD = JSON.stringify({
-        total: Math.round(totalConMarkup),
+        total: Math.round(total),
+        markup: Math.round(totalConMarkup),
+        porcentajemarkup: markupPorcentaje,
         mascotasNumber: datosReserva[0]?.mascotas || null,
         adicionAlmuerzo: false,
+        hotelInfo:{
+          name: "",
+        },
         adicionCena: false,
         titularInfo: {
           firstName: formData.nombreCompleto,

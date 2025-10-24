@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard } from 'lucide-react';
+import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard, CheckCircle, XCircle } from 'lucide-react';
 import '/public/styles/Cotizacion.css';
-import { cotizaciones, cotizacionData } from '../stores/cotizaciones';
 import { useStore } from '@nanostores/react';
+import Swal from 'sweetalert2';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -98,22 +98,143 @@ const getHotelImagesById = (hotelId) => {
     };
 };
 
-export const CotizacionCreada = ({ id }) => {
+export const CotizacionPublica = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
     const [loading, setLoading] = useState(true);
-    const cotizacion = useStore(cotizacionData);
+    const [decision, setDecision] = useState(null); // 'aceptar' o 'rechazar'
+    const [cotizacion, setCotizacion] = useState(null);
+
+    // Función para obtener cotización pública sin autenticación
+    const fetchCotizacionPublica = async (cotizacionId) => {
+        try {
+            const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/public/${cotizacionId}`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Cotización pública:', data);
+                setCotizacion(data);
+                return data;
+            } else {
+                throw new Error("Error al consultar la API pública");
+            }
+        } catch (error) {
+            console.error('Error al obtener la cotización pública:', error);
+            return null;
+        }
+    };
 
     useEffect(() => {
-        const fetchCotizacion = async () => {
+        const loadCotizacion = async () => {
             if (id) {
                 setLoading(true);
-                await cotizaciones({ id: id });
+                await fetchCotizacionPublica(id);
                 setLoading(false);
             }
         };
-        fetchCotizacion();
+        loadCotizacion();
     }, [id]);
+
+    const handleAceptar = () => {
+        Swal.fire({
+            title: '¿Aceptar cotización?',
+            text: '¿Está seguro de que desea aceptar esta cotización?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#059669',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, aceptar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    // Llamar al endpoint para aceptar la cotización
+                    const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            status: 1
+                        })
+                    });
+
+                    if (response.ok) {
+                        setDecision('aceptar');
+                        Swal.fire({
+                            title: '¡Cotización aceptada!',
+                            text: 'Su respuesta ha sido registrada. Nos pondremos en contacto con usted pronto.',
+                            icon: 'success',
+                            confirmButtonColor: '#059669'
+                        });
+                    } else {
+                        throw new Error('Error al enviar la respuesta');
+                    }
+                } catch (error) {
+                    console.error('Error al aceptar cotización:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo procesar su respuesta. Intente nuevamente.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            }
+        });
+    };
+
+    const handleRechazar = () => {
+        Swal.fire({
+            title: '¿Rechazar cotización?',
+            text: '¿Está seguro de que desea rechazar esta cotización?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sí, rechazar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    // Llamar al endpoint para rechazar la cotización
+                    const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            status: 2,
+                        })
+                    });
+
+                    if (response.ok) {
+                        setDecision('rechazar');
+                        Swal.fire({
+                            title: 'Cotización rechazada',
+                            text: 'Su respuesta ha sido registrada. Gracias por su tiempo.',
+                            icon: 'info',
+                            confirmButtonColor: '#6b7280'
+                        });
+                    } else {
+                        throw new Error('Error al enviar la respuesta');
+                    }
+                } catch (error) {
+                    console.error('Error al rechazar cotización:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo procesar su respuesta. Intente nuevamente.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            }
+        });
+    };
 
     if (loading) {
         return (
@@ -158,6 +279,20 @@ export const CotizacionCreada = ({ id }) => {
                 <div className="main-content">
                     {/* Header */}
                     <div className="header">
+                    </div>
+
+                    {/* Aviso de precios sujetos a cambio */}
+                    <div className="card" style={{ backgroundColor: '#fef3c7', border: '1px solid #f59e0b' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div style={{ fontSize: '24px' }}>⚠️</div>
+                            <div>
+                                <h3 style={{ margin: '0 0 8px 0', color: '#92400e' }}>Aviso importante</h3>
+                                <p style={{ margin: 0, color: '#92400e', fontSize: '14px' }}>
+                                    Los precios mostrados están sujetos a cambio después de 24 horas. 
+                                    Esta cotización es válida hasta el {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')}.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Información del Huésped */}
@@ -468,7 +603,7 @@ export const CotizacionCreada = ({ id }) => {
                     </div>
                 </div>
 
-                {/* Columna Lateral - Resumen */}
+                {/* Columna Lateral - Resumen y Acciones */}
                 <div className="sidebar">
                     <div className="card sidebar-card">
                         <h3 className="title">Resumen de la cotización</h3>
@@ -486,59 +621,86 @@ export const CotizacionCreada = ({ id }) => {
                                 <span className="price-label" style={{ fontWeight: "600" }}>Total</span>
                                 <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${total.toLocaleString()}</span>
                             </div>
-                            {cotizacion.markup && cotizacion.markup !== total && (
-                                <div className="price-row">
-                                    <span className="price-label" style={{ fontWeight: "600" }}>Total con markup</span>
-                                    <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${cotizacion.markup.toLocaleString()}</span>
+                        </div>
+
+                        {/* Estado de la decisión */}
+                        {decision && (
+                            <div style={{ 
+                                marginTop: '20px', 
+                                padding: '16px', 
+                                backgroundColor: decision === 'aceptar' ? '#f0fdf4' : '#fef2f2', 
+                                borderRadius: '8px', 
+                                border: `1px solid ${decision === 'aceptar' ? '#22c55e' : '#ef4444'}` 
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                    {decision === 'aceptar' ? (
+                                        <CheckCircle style={{ color: '#22c55e' }} />
+                                    ) : (
+                                        <XCircle style={{ color: '#ef4444' }} />
+                                    )}
+                                    <h4 style={{ margin: 0, color: decision === 'aceptar' ? '#166534' : '#991b1b' }}>
+                                        {decision === 'aceptar' ? 'Cotización Aceptada' : 'Cotización Rechazada'}
+                                    </h4>
                                 </div>
-                            )}
-                        </div>
-                        <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-                            <button
-                                onClick={() => window.print()}
-                                style={{
-                                    fontWeight: '500',
-                                    backgroundColor: '#26547B',
-                                    color: 'white',
-                                    padding: '12px 16px',
-                                    border: 'none',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    width: '100%'
-                                }}
-                            >
-                                Descargar PDF
-                            </button>
-                            <button
-                                onClick={async () => {
-                                    try {
-                                        const publicUrl = `${window.location.origin}/cotizacion-publica/${id}`;
-                                        await navigator.clipboard.writeText(publicUrl);
-                                        alert('Link público de cotización copiado al portapapeles');
-                                    } catch (e) {
-                                        alert('No se pudo copiar el link. Intente manualmente.');
+                                <p style={{ margin: 0, fontSize: '14px', color: decision === 'aceptar' ? '#166534' : '#991b1b' }}>
+                                    {decision === 'aceptar' 
+                                        ? 'Su respuesta ha sido registrada. Nos pondremos en contacto con usted pronto.'
+                                        : 'Su respuesta ha sido registrada. Gracias por su tiempo.'
                                     }
-                                }}
-                                style={{
-                                    fontWeight: '500',
-                                    backgroundColor: 'white',
-                                    color: '#26547B',
-                                    padding: '12px 16px',
-                                    border: '1px solid #26547B',
-                                    borderRadius: '5px',
-                                    cursor: 'pointer',
-                                    fontSize: '14px',
-                                    width: '100%'
-                                }}
-                            >
-                                Generar link de cotización
-                            </button>
-                        </div>
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Botones de acción */}
+                        {!decision && (
+                            <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                                <button
+                                    onClick={handleAceptar}
+                                    style={{
+                                        fontWeight: '500',
+                                        backgroundColor: '#059669',
+                                        color: 'white',
+                                        padding: '12px 16px',
+                                        border: 'none',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    <CheckCircle size={18} />
+                                    Aceptar Cotización
+                                </button>
+                                <button
+                                    onClick={handleRechazar}
+                                    style={{
+                                        fontWeight: '500',
+                                        backgroundColor: 'white',
+                                        color: '#ef4444',
+                                        padding: '12px 16px',
+                                        border: '1px solid #ef4444',
+                                        borderRadius: '5px',
+                                        cursor: 'pointer',
+                                        fontSize: '14px',
+                                        width: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    <XCircle size={18} />
+                                    Rechazar Cotización
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
         </div>
     );
 };
-

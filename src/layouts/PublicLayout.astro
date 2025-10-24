@@ -1,0 +1,31 @@
+---
+const { title } = Astro.props;
+import Footer from '../components/Footer.astro';
+
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <link rel="icon" type="image/png" href="https://www.gehsuites.com/favicon/favicon-32x32.png" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="stylesheet" href="/styles/global.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Header público simple sin autenticación -->
+      <header style="background-color: #1C3D5A; color: white; padding: 1rem 0; text-align: center;">
+        <h1 style="margin: 0; font-size: 1.5rem;">BookingConnect</h1>
+        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.8;">Cotización de Reserva</p>
+      </header>
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
+  </body>
+</html>
