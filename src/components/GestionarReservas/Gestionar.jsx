@@ -22,6 +22,7 @@ const Gestionar = ({ reservas }) => {
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
   const [nota, setNota] = useState(reservas?.notasSuperAdmin || "");
+  const [notaAgencia, setNotaAgencia] = useState(reservas?.notasagencias || "");
   const [mostrarnota1, setmostrarnota1] = useState(false);
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
@@ -186,6 +187,11 @@ const Gestionar = ({ reservas }) => {
   //#region Texto del textarea
   const handleChange = (event) => {
     setNota(event.target.value); // Guarda el valor del textarea en el estado
+  };
+
+  //#region Texto del textarea para notas de agencias
+  const handleChangeAgencia = (event) => {
+    setNotaAgencia(event.target.value); // Guarda el valor del textarea en el estado
   };
 
   //#region Obtener MI Saldo
@@ -378,6 +384,56 @@ const Gestionar = ({ reservas }) => {
       Swal.fire(
         "Error",
         "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
+        "error"
+      );
+    }
+  };
+
+  //#region editar reserva(nota de agencias)
+
+  const editarnotaAgencia = async (reservaId) => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/editar-reserva/${reservaId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            notasagencias: notaAgencia,
+          }),
+        }
+      );
+
+      // //#region Noti erro editar reserva
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error al guardar la nota de agencia:", errorData);
+        Swal.fire(
+          "Error",
+          "No se pudo guardar la nota de agencia. Intente nuevamente.",
+          "error"
+        );
+        return;
+      }
+
+      //#region Exito editar reserva
+      const data = await response.json();
+      console.log("Nota de agencia guardada exitosamente:", data);
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Nota de agencia guardada exitosamente.",
+        icon: "success",
+        timer: 1000, // La alerta se cierra automáticamente en 2 segundos
+        showConfirmButton: false, // Ocultar botón de confirmación
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.reload(); // Recargar la página
+      });
+    } catch (error) {
+      console.error("Error al guardar la nota de agencia:", error);
+      //#region Noti fallo en la api de editar reserva
+      Swal.fire(
+        "Error",
+        "Ocurrió un error al guardar la nota de agencia. Intenta nuevamente.",
         "error"
       );
     }
@@ -1166,7 +1222,7 @@ const Gestionar = ({ reservas }) => {
             <br />
             {datosDelUsuario?.role.includes("super-admin") ? (
               <div className={styles.textAreaNotas}>
-                <h3>Nota:</h3>
+                <h3>Notas de administrador:</h3>
 
                 <p
                   style={{
@@ -1200,6 +1256,39 @@ const Gestionar = ({ reservas }) => {
             ) : (
               <></>
             )}
+
+            {/* Apartado de notas de agencias - visible para todos los usuarios */}
+            <div className={styles.textAreaNotas}>
+              <h3>Notas de Agencia:</h3>
+
+              <p
+                style={{
+                  fontStyle: "normal",
+                  color: "black",
+                  fontSize: "14px",
+                }}
+              >
+                {reservas.notasagencias || "No hay notas de agencia"}
+              </p>
+
+              <h3 style={{ fontSize: "14px" }}>Ingrese la nota de agencia:</h3>
+              <textarea
+                name="notasAgencia"
+                id="notasagencias"
+                value={notaAgencia}
+                placeholder="Escriba las notas de agencia aquí"
+                onChange={handleChangeAgencia}
+                maxLength={200}
+              ></textarea>
+
+              <button onClick={() => editarnotaAgencia(reservas._id)}>
+                Actualizar nota de agencia
+              </button>
+
+              <p>
+                Atención: Estas notas son visibles para toda la agencia
+              </p>
+            </div>
           </div>
         </div>
         <div>
