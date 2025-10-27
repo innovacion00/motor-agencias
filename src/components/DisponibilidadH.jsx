@@ -8,6 +8,7 @@ import { currency } from "../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
+import { Tooltip } from 'react-tooltip';
 
 const hotelesData = {
   9: {
@@ -771,6 +772,20 @@ export const Cid = ({ id }) => {
 
   return (
     <>
+      <style>{`
+        #tooltip-generar-cotizacion {
+          background-color: white !important;
+          color: #1C3D5A !important;
+          border: 2px solid #1C3D5A !important;
+          border-radius: 8px !important;
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+          max-width: 350px !important;
+          line-height: 1.5 !important;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+          opacity: 1 !important;
+        }
+      `}</style>
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
@@ -1431,6 +1446,9 @@ export const Cid = ({ id }) => {
               <button
                 onClick={enviardatos}
                 disabled={datohabitacion.length === 0}
+                data-tooltip-id="tooltip-generar-cotizacion"
+            data-tooltip-content={datohabitacion.length === 0 ? "Selecciona las habitaciones que deseas reservar" : "Crear una reserva personalizada para el cliente."}
+            data-tooltip-place="left"
                 style={{
                   backgroundColor:
                     datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
@@ -1445,6 +1463,9 @@ export const Cid = ({ id }) => {
             <button
             onClick={enviardatos}
             disabled={datohabitacion.length === 0}
+            data-tooltip-id="tooltip-generar-cotizacion"
+            data-tooltip-content={datohabitacion.length === 0 ? "Selecciona habitaciones para generar una cotización" : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."}
+            data-tooltip-place="left"
             style={{
               backgroundColor:
                 datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
@@ -1452,6 +1473,10 @@ export const Cid = ({ id }) => {
                 datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
             }}
             >Generar cotización</button></a>
+          <Tooltip 
+            id="tooltip-generar-cotizacion"
+            className="custom-tooltip"
+          />
           </div>
         </div>
       </div>

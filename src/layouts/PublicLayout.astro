@@ -1,7 +1,6 @@
 ---
 const { title } = Astro.props;
 import Footer from '../components/Footer.astro';
-
 ---
 
 <!DOCTYPE html>
@@ -18,9 +17,15 @@ import Footer from '../components/Footer.astro';
   <body>
     <div class="wrapper">
       <!-- Header público simple sin autenticación -->
-      <header style="background-color: #1C3D5A; color: white; padding: 1rem 0; text-align: center;">
-        <h1 style="margin: 0; font-size: 1.5rem;">BookingConnect</h1>
-        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; opacity: 0.8;">Cotización de Reserva</p>
+      <header style="background-color: white; color: #a87129; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;">
+        <a href="https://www.gehsuites.com/es">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/gehlogo.png" alt="GH Suites Logo" style="height: 40px;" />
+      </a>
+        <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+          <h1 style="margin: 0; font-size: 1.5rem; color: #a87129; font-family: 'Roboto', sans-serif;">BookingConnect</h1>
+          <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #a87129; font-family: 'Roboto', sans-serif;">Cotización de reserva</p>
+        </div>
+        <div style="width: 40px;"></div>
       </header>
       <main>
         <slot />

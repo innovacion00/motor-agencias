@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MapPin, Phone, ChevronDown } from 'lucide-react';
 import '/public/styles/Cotizacion.css';
 import Swal from 'sweetalert2';
 import { format } from '@formkit/tempo';
 import Cookies from 'js-cookie';
+import { refreshToken } from '../stores/authtoken';
+import { Tooltip } from 'react-tooltip';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -125,6 +127,7 @@ export default function ReservaHotelComponent() {
   const [cantninos, setCantninos] = useState();
   const [botondesactivado, setBotondesactivado] = useState(false);
   const [logoAgencia, setLogoAgencia] = useState();
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
@@ -168,6 +171,92 @@ export default function ReservaHotelComponent() {
       ...formData,
       [id]: value,
     });
+  };
+
+  // Función para hacer clic en el input de archivo
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
+  // Función fetchWithToken para manejar llamadas con token
+  const fetchWithToken = async (url, options = {}) => {
+    let token = Cookies.get('accessToken');
+    
+    const isFormData = options.body instanceof FormData;
+    
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+    };
+    
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
+    
+    let response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        const retryHeaders = {
+          ...options.headers,
+          'Authorization': `Bearer ${newToken}`,
+        };
+        
+        if (!isFormData) {
+          retryHeaders['Content-Type'] = 'application/json';
+        }
+        
+        response = await fetch(url, {
+          ...options,
+          headers: retryHeaders,
+        });
+      }
+    }
+    return response;
+  };
+
+  // Función para manejar la carga de imagen
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/files/user-profile`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message);
+      }
+
+      const data = await response.json();
+
+      if (data.url) {
+        setLogoAgencia({ ...logoAgencia, imageUrl: data.url });
+        const updatedUserData = { ...logoAgencia, imageUrl: data.url };
+        localStorage.setItem("datosUsuario", JSON.stringify(updatedUserData));
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo cargar la imagen.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    }
   };
 
   // Función para manejar el envío del formulario
@@ -366,13 +455,46 @@ export default function ReservaHotelComponent() {
 
           {/* Formulario de Información del Huésped */}
           <div className="card">
-            <div className="logos" style={{ justifyContent: "flex-end" }}>
+            <div className="logos" style={{ display: "flex", alignItems: "center", gap: "15px", justifyContent: "flex-start" }}>
               <img src={logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
-                alt="Logo Agencia" className="logo" style={{ width: "100px", height: "100px" }} />
+                alt="Logo Agencia" className="logo" style={{ width: "200px", height: "200px" }} />
+              
+              
+              
+              
+              
+              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
+                <button
+                  type="button"
+                  onClick={handleClick}
+                  data-tooltip-id="tooltip-logo-agencia"
+                  data-tooltip-content="Carga el logotipo de tu agencia que se mostrará en la cotización enviada al cliente"
+                  data-tooltip-place="left"
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor: "#26547B",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "14px"
+                  }}
+                >
+                  Cargar logotipo de la agencia
+                </button>
+                
+              </div>
             </div>
             <div className="badge-container">
               <span className="badge">
-                Pendiente por generar
+                Estado: pendiente por generar
               </span>
             </div>
 
@@ -765,7 +887,22 @@ export default function ReservaHotelComponent() {
         {/* Columna Lateral - Markup */}
         <div className="sidebar">
           <div className="card sidebar-card">
-            <h3 className="title">Calcular markup</h3>
+            <h3 className="title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              Calcular markup
+              <img 
+                src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png" 
+                alt="Información sobre markup"
+                data-tooltip-id="tooltip-markup"
+                data-tooltip-content="El markup es un porcentaje de ganancia que se suma al valor base de la reserva. Permite a tu agencia obtener ingresos adicionales sobre el costo de la reserva."
+                data-tooltip-place="right"
+                style={{ width: '20px', height: '20px', cursor: 'help' }}
+              />
+            </h3>
+
+            
+            <p style={{ fontSize: "13px", color: "#666", marginBottom: "15px", lineHeight: "1.5" }}>
+              Ingresa el porcentaje de ganancia que se sumará al valor base de la reserva.
+            </p>
 
             <div className="form-group">
               <label className="label">
@@ -832,6 +969,8 @@ export default function ReservaHotelComponent() {
           </div>
         </div>
       </div>
+      <Tooltip id="tooltip-markup" className="custom-tooltip" />
+      <Tooltip id="tooltip-logo-agencia" className="custom-tooltip" />
 
     </div>
   );

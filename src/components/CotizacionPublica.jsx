@@ -306,8 +306,15 @@ export const CotizacionPublica = ({ id }) => {
                             />
                         </div>
                         <div className="badge-container">
-                            <span className="badge" style={{ backgroundColor: '#059669' }}>
-                                Cotización Generada
+                            <span className="badge" style={{ 
+                                backgroundColor: 
+                                    cotizacion.status === 2 ? '#dc2626' : 
+                                    cotizacion.status === 1 ? '#059669' : 
+                                    '#3b82f6' 
+                            }}>
+                                {cotizacion.status === 2 ? 'Cotización Rechazada' : 
+                                 cotizacion.status === 1 ? 'Cotización Aceptada' : 
+                                 'Cotización Generada'}
                             </span>
                         </div>
 
