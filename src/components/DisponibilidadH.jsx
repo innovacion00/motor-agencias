@@ -1204,8 +1204,21 @@ export const Cid = ({ id }) => {
                     </p>
                     <p className="price"></p>
                     <p className="price">
-                      {dato.products?.map((product, idx) => {
-                        if (regexSeleccionado?.test(product.roomName)) {
+                      {(() => {
+                        // Filtrar productos únicos basándose en el roomName base (sin sufijos de booking)
+                        const productosUnicos = dato.products?.filter((product, idx, arr) => {
+                          if (!regexSeleccionado?.test(product.roomName)) return false;
+                          
+                          // Extraer el nombre base de la habitación (sin los sufijos de booking)
+                          const roomNameBase = product.roomName.split('[')[0].trim();
+                          
+                          // Verificar si es el primer producto con este nombre base
+                          return arr.findIndex(p => 
+                            p.roomName.split('[')[0].trim() === roomNameBase
+                          ) === idx;
+                        });
+
+                        return productosUnicos?.map((product, idx) => {
                           const price =
                             currentCurrency === "USD"
                               ? product?.baseRate?.amountBeforeTaxUSD
@@ -1222,9 +1235,8 @@ export const Cid = ({ id }) => {
                               <span> {currentCurrency}</span>
                             </span>
                           );
-                        }
-                        return null; // No renderiza nada si no cumple la condición
-                      })}
+                        });
+                      })()}
                     </p>
 
                     {/* Mostrar "Habitaciones disponibles" solo si la habitación está en la lista restringida */}

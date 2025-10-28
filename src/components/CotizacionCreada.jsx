@@ -3,6 +3,9 @@ import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard } from 'lu
 import '/public/styles/Cotizacion.css';
 import { cotizaciones, cotizacionData } from '../stores/cotizaciones';
 import { useStore } from '@nanostores/react';
+import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
+import { refreshToken } from '../stores/authtoken';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -140,6 +143,32 @@ export const CotizacionCreada = ({ id }) => {
         );
     }
 
+    const fetchWithToken = async (url, options = {}) => {
+        let token = Cookies.get('accessToken');
+        let response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        if (response.status === 401) {
+          const newToken = await refreshToken();
+          if (newToken) {
+            response = await fetch(url, {
+              ...options,
+              headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${newToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        }
+        return response;
+      };
     // Extraer datos de la cotización
     const reservaInfo = cotizacion.reservation || {};
     const titularInfo = cotizacion.titularInfo || {};
@@ -150,6 +179,67 @@ export const CotizacionCreada = ({ id }) => {
     const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
     const iva = Math.round(subtotal * 0.19);
     const total = subtotal + iva;
+
+    // Función para descargar PDF
+    const handleDownloadPDF = async () => {
+        try {
+            const accessToken = Cookies.get('accessToken');
+            
+            Swal.fire({
+                title: 'Generando PDF...',
+                text: 'Por favor espere',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/cotizaciones/pdf`;
+            const response = await fetchWithToken(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    cotizacionId: cotizacion._id
+                })
+            });
+
+            if (response.ok) {
+                const pdfUrl = await response.text(); // El endpoint devuelve el link directamente como texto
+                
+                if (pdfUrl && pdfUrl.trim()) {
+                    // Crear un enlace temporal para descargar desde Cloudinary
+                    const link = document.createElement('a');
+                    link.href = pdfUrl.trim();
+                    link.download = `cotizacion-${cotizacion._id}.pdf`;
+                    link.target = '_blank'; // Abrir en nueva pestaña como respaldo
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'PDF descargado',
+                        text: 'La cotización se ha descargado exitosamente',
+                        confirmButtonColor: '#059669'
+                    });
+                } else {
+                    throw new Error('No se recibió el link del PDF');
+                }
+            } else {
+                throw new Error('Error al generar el PDF');
+            }
+        } catch (error) {
+            console.error('Error al descargar PDF:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo descargar el PDF. Intente nuevamente.',
+                confirmButtonColor: '#d33'
+            });
+        }
+    };
 
     return (
         <div className="container">
@@ -502,7 +592,7 @@ export const CotizacionCreada = ({ id }) => {
                         </div>
                         <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
                             <button
-                                onClick={() => window.print()}
+                                onClick={handleDownloadPDF}
                                 style={{
                                     fontWeight: '500',
                                     backgroundColor: '#26547B',

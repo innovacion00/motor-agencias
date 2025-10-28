@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard, CheckCircle, XCircle } from 'lucide-react';
 import '/public/styles/Cotizacion.css';
 import { useStore } from '@nanostores/react';
@@ -104,11 +104,13 @@ export const CotizacionPublica = ({ id }) => {
     const [loading, setLoading] = useState(true);
     const [decision, setDecision] = useState(null); // 'aceptar' o 'rechazar'
     const [cotizacion, setCotizacion] = useState(null);
+    const containerRef = useRef(null);
 
+    const url = import.meta.env.PUBLIC_API_URL;
     // Función para obtener cotización pública sin autenticación
     const fetchCotizacionPublica = async (cotizacionId) => {
         try {
-            const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/public/${cotizacionId}`, {
+            const response = await fetch(`${url}/agencias/v1/cotizaciones/public/${id}`, {
                 method: "GET",
                 headers: {
                     'Content-Type': 'application/json',
@@ -153,14 +155,18 @@ export const CotizacionPublica = ({ id }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
+                    // Obtener el HTML del componente
+                    const landingHTML = containerRef.current ? containerRef.current.innerHTML : '';
+                    
                     // Llamar al endpoint para aceptar la cotización
-                    const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
+                    const response = await fetch(`${url}/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
-                            status: 1
+                            status: 1,
+                            
                         })
                     });
 
@@ -201,14 +207,18 @@ export const CotizacionPublica = ({ id }) => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
+                    // Obtener el HTML del componente
+                    const landingHTML = containerRef.current ? containerRef.current.innerHTML : '';
+                    
                     // Llamar al endpoint para rechazar la cotización
-                    const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
+                    const response = await fetch(`${url}/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
                             status: 2,
+                            
                         })
                     });
 
@@ -273,7 +283,7 @@ export const CotizacionPublica = ({ id }) => {
     const total = subtotal + iva;
 
     return (
-        <div className="container">
+        <div className="container" >
             <div className="layout">
                 {/* Columna Principal */}
                 <div className="main-content">
