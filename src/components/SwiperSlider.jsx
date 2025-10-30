@@ -21,11 +21,9 @@ const SwiperSlider = () => {
       loop={true} // Habilitar bucle
       
     >
-      {/* <SwiperSlide >
-        
+      <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/geh%20booking2.jpg" alt="Banner cotizaciones" />
-      </SwiperSlide> */}
-      
+      </SwiperSlide>
       <SwiperSlide >
         <a href="/tablerousuario">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="Banner cashback" /></a>
