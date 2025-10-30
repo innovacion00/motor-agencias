@@ -20,7 +20,8 @@ const requestOptions = {
   method: "GET",
   headers: myHeaders,
 };
-const response = await fetch(`http://localhost:3000/agencias/v1/cotizaciones/${id}`, requestOptions)
+const url = import.meta.env.PUBLIC_API_URL;
+const response = await fetch(`${url}/agencias/v1/cotizaciones/${id}`, requestOptions)
 
 if (response.ok) {
     const data = await response.json();

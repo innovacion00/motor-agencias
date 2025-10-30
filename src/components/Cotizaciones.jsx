@@ -26,7 +26,8 @@ const Cotizaciones = () => {
                 return;
             }
 
-            const response = await fetch('http://localhost:3000/agencias/v1/cotizaciones/', {
+            const url = import.meta.env.PUBLIC_API_URL;
+            const response = await fetch(`${url}/agencias/v1/cotizaciones/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
