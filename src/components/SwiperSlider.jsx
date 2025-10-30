@@ -22,11 +22,19 @@ const SwiperSlider = () => {
       
     >
       <SwiperSlide >
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/geh%20booking2.jpg" alt="Banner cotizaciones" />
+        
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/geh%20booking2.jpg" alt="Banner toures y traslados" />
+      </SwiperSlide>
+      <SwiperSlide >
+        <a href="/tablerousuario">
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-prepagados.jpeg" alt="Banner saldos prepagados" /></a>
       </SwiperSlide>
       <SwiperSlide >
         <a href="/tablerousuario">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="Banner cashback" /></a>
+      </SwiperSlide>
+      <SwiperSlide>
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-grupos.jpeg" alt="Banner Grupos" />
       </SwiperSlide>
       <SwiperSlide>
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner plan de alimentacion" />
