@@ -10,23 +10,26 @@ import { refreshToken } from '../stores/authtoken';
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
     const hotelMap = {
-        // Hoteles Cartagena
-        1: "Hotel Azuan Suites",
-        4: "Hotel Aixo Suites",
-        5: "Hotel Abi Inn",
-        6: "Hotel Avexi Suites",
-        7: "Hotel Bocagrande Suites",
-        9: "Hotel Marina Suites",
-        56: "Hotel Boquilla Suites",
-        // Hoteles Santa Marta
-        8: "Hotel Rodadero",
-        2: "Hotel 1525",
-        48: "Hotel Axis Inn",
-        44: "Hotel Sansiraka Inn",
-        // Hoteles Bogotá
-        10: "Hotel Windsor",
-        3: "Hotel Madisson",
-    };
+         // Hoteles Cartagena
+    1: "Hotel Azuan", // Hotel Azuan Suites
+    4: "Hotel Aixo", // Hotel Aixo Suites
+    5: "Hotel Abi", // Hotel Abi Inn
+    6: "Hotel Avexi", // Hotel Avexi Suites
+    7: "Hotel Bocagrande", // Hotel Bocagrande Suites
+    9: "Hotel Marina", // Hotel Marina Suites
+    56: "Hotel Boquilla", // Hotel Boquilla Suites
+    // Hoteles Santa Marta
+    8: "Hotel Rodadero ", // Hotel Rodadero 
+    2: "Hotel 1525", // Hotel 1525
+    48: "Hotel Axis", // Hotel Axis Inn
+    44: "Hotel Sansiraka", // Hotel Sansiraka Inn
+
+
+    // Hoteles Bogota
+    10: "Hotel Windsor", // Hotel Windsor
+    3: "Hotel Madisson", // Hotel Madisson
+
+  };
     return hotelMap[hotelId] || "Hotel no encontrado";
 };
 
@@ -106,18 +109,27 @@ const getHotelIdByName = (hotelName) => {
     if (!hotelName) return undefined;
     const normalized = String(hotelName).trim().toLowerCase();
     const nameToId = {
-        // Hoteles Cartagena
+        // Hoteles Cartagena (nombres nuevos y anteriores)
+        "hotel azuan": 1,
         "hotel azuan suites": 1,
+        "hotel aixo": 4,
         "hotel aixo suites": 4,
+        "hotel abi": 5,
         "hotel abi inn": 5,
+        "hotel avexi": 6,
         "hotel avexi suites": 6,
+        "hotel bocagrande": 7,
         "hotel bocagrande suites": 7,
+        "hotel marina": 9,
         "hotel marina suites": 9,
+        "hotel boquilla": 56,
         "hotel boquilla suites": 56,
         // Hoteles Santa Marta
         "hotel rodadero": 8,
         "hotel 1525": 2,
+        "hotel axis": 48,
         "hotel axis inn": 48,
+        "hotel sansiraka": 44,
         "hotel sansiraka inn": 44,
         // Hoteles Bogotá
         "hotel windsor": 10,
