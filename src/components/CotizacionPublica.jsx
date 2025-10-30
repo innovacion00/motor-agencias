@@ -130,7 +130,19 @@ export const CotizacionPublica = ({ id }) => {
     const [loading, setLoading] = useState(true);
     const [decision, setDecision] = useState(null); // 'aceptar' o 'rechazar'
     const [cotizacion, setCotizacion] = useState(null);
+    const [logoAgencia, setLogoAgencia] = useState(); // 👈 Añadido
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        try {
+            const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
+            if (datosDelUsuario) {
+                setLogoAgencia(datosDelUsuario);
+            }
+        } catch (_) {
+            // ignorar errores
+        }
+    }, []);
 
     const url = import.meta.env.PUBLIC_API_URL;
     // Función para obtener cotización pública sin autenticación
@@ -305,6 +317,7 @@ export const CotizacionPublica = ({ id }) => {
 
     // Resolver logo de la agencia de forma robusta
     const agencyLogoUrl =
+        logoAgencia?.imageUrl || // 👈 Prioridad al logo de localStorage
         agency?.imageUrl ||
         cotizacion?.agency?.imageUrl ||
         cotizacion?.agencyImageUrl ||
@@ -630,6 +643,9 @@ export const CotizacionPublica = ({ id }) => {
                     <h2 style={{ color: '#fff', borderBottom: '2px solid #fff', margin: 0, paddingBottom: '10px' }}>¿Preguntas?</h2>
                     <p><strong>Contáctanos</strong></p>
                     <p>Whatsapp y Llamadas: <a href="tel:+573336025021" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>+57 333 602 50 21</a></p>
+                    <br />
+                    
+                    <p>Desarrollado por <a href="https://www.gehsuites.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>GEH Suites</a></p>
                 </div>
 
                 </div>
