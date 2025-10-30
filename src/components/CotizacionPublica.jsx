@@ -98,6 +98,32 @@ const getHotelImagesById = (hotelId) => {
     };
 };
 
+// Mapa inverso: nombre -> id para resolver imágenes cuando solo hay nombre
+const getHotelIdByName = (hotelName) => {
+    if (!hotelName) return undefined;
+    const normalized = String(hotelName).trim().toLowerCase();
+    const nameToId = {
+        // Hoteles Cartagena
+        "hotel azuan suites": 1,
+        "hotel aixo suites": 4,
+        "hotel abi inn": 5,
+        "hotel avexi suites": 6,
+        "hotel bocagrande suites": 7,
+        "hotel marina suites": 9,
+        "hotel boquilla suites": 56,
+        // Hoteles Santa Marta
+        "hotel rodadero": 8,
+        "hotel 1525": 2,
+        "hotel axis inn": 48,
+        "hotel sansiraka inn": 44,
+        // Hoteles Bogotá
+        "hotel windsor": 10,
+        "hotel madisson": 3,
+    };
+    // Manejar variantes comunes (espacios extra, mayúsculas)
+    return nameToId[normalized];
+};
+
 export const CotizacionPublica = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
@@ -277,445 +303,335 @@ export const CotizacionPublica = ({ id }) => {
     const roomsData = reservaInfo.roomsData || [];
     const agency = reservaInfo.agency || {};
 
+    // Resolver logo de la agencia de forma robusta
+    const agencyLogoUrl =
+        agency?.imageUrl ||
+        cotizacion?.agency?.imageUrl ||
+        cotizacion?.agencyImageUrl ||
+        cotizacion?.agencyInfo?.imageUrl ||
+        "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg";
+
+    // Resolver nombre e id del hotel de forma robusta
+    const hotelNameFromPayload =
+        (cotizacion?.hotelInfo && cotizacion.hotelInfo.name) ||
+        (reservaInfo?.hotelInfo && reservaInfo.hotelInfo.name) ||
+        (roomsData[0]?.hotelInfo && roomsData[0].hotelInfo.name) ||
+        cotizacion?.hotel;
+
+    const candidateHotelId =
+        roomsData[0]?.hotelidAutocore ||
+        getHotelIdByName(hotelNameFromPayload) ||
+        undefined;
+
     // Calcular totales
     const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
     const iva = Math.round(subtotal * 0.19);
     const total = subtotal + iva;
 
     return (
-        <div className="container" >
-            <div className="layout">
-                {/* Columna Principal */}
-                <div className="main-content">
-                    {/* Header */}
-                    <div className="header">
-                    </div>
+        <div className="container" ref={containerRef}>
+            <div className="card" style={{ padding: '24px' }}>
+                <style>{`
+                    .stack-gallery img { height: 420px; width: 90%; object-fit: cover; border-radius: 0; box-shadow: none; margin: 0 auto; }
+                    .header-responsive { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; }
+                    @media (max-width: 768px) {
+                        .stack-gallery img { height: 360px; width: 95%; }
+                        .container { padding: 16px !important; }
+                        .card { padding: 16px !important; }
+                        header { margin-bottom: 20px !important; padding-bottom: 12px !important; }
+                        header h1 { font-size: 22px !important; }
+                        h2 { font-size: 18px !important; }
+                        .greeting { padding: 12px !important; margin: 16px 0 !important; }
+                        .reservation-details { padding: 16px !important; }
+                        .pricing-section { padding: 16px !important; }
+                        ul { margin: 10px 0 !important; }
+                        .header-responsive { flex-direction: column; gap: 6px; }
+                    }
+                `}</style>
+                {/* LOGO DE LA AGENCIA */}
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                    <img
+                        src={agencyLogoUrl}
+                        alt="Logo Agencia"
+                        style={{ maxWidth: '200px', height: 'auto' }}
+                    />
+                </div>
 
-                    {/* Aviso de precios sujetos a cambio */}
-                    <div className="card" style={{ backgroundColor: '#fef3c7', border: '1px solid #f59e0b' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ fontSize: '24px' }}>⚠️</div>
-                            <div>
-                                <h3 style={{ margin: '0 0 8px 0', color: '#92400e' }}>Aviso importante</h3>
-                                <p style={{ margin: 0, color: '#92400e', fontSize: '14px' }}>
-                                    Los precios mostrados están sujetos a cambio después de 24 horas. 
-                                    Esta cotización es válida hasta el {new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString('es-ES')}.
-                                </p>
-                            </div>
+                {/* HEADER */}
+                <header className="header-responsive" style={{ textAlign: 'center', borderBottom: '3px solid #886b43', paddingBottom: '20px', marginBottom: '30px' }}>
+                    <h1 style={{ color: '#886b43', fontSize: '28px', marginBottom: '10px' }}>
+                        Reserva del {reservaInfo.checkin || '—'} al {reservaInfo.checkout || '—'}
+                    </h1>
+                    <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#886b43', marginBottom: '5px' }}>
+                        {hotelNameFromPayload || nombreHotelId(candidateHotelId || 1)}
+                    </p>
+                    <p style={{ color: '#666', fontSize: '16px', fontStyle: 'italic' }}>
+                        Disfrute una estadía confortable en nuestras instalaciones
+                    </p>
+                </header>
+
+                {/* SALUDO */}
+                <div className="greeting" style={{ backgroundColor: '#f8f9fa', padding: '15px', borderLeft: '4px solid #886b43', margin: '20px 0' }}>
+                    <p><strong style={{ color: '#886b43' }}>Estimado/a {`${titularInfo.firstName || ''} ${titularInfo.lastName || ''}`.trim() || 'Cliente'}</strong></p>
+                    <p>Gracias por contactar a {agency.fullName || 'la agencia'} para gestionar su reserva.</p>
+                </div>
+
+                {/* DETALLES DE LA RESERVA */}
+                <div className="reservation-details" style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '5px', margin: '20px 0' }}>
+                    <h2 style={{ color: '#886b43', fontSize: '22px', margin: 0, borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Detalles de la Reserva</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', margin: '15px 0' }}>
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Check-in</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>{reservaInfo.checkin || 'No especificado'}</div>
                         </div>
-                    </div>
-
-                    {/* Información del Huésped */}
-                    <div className="card">
-                        <div className="logos" style={{ justifyContent: "flex-end" }}>
-                            <img
-                                src={agency.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
-                                alt="Logo Agencia"
-                                className="logo"
-                                style={{ width: "100px", height: "100px" }}
-                            />
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Check-out</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>{reservaInfo.checkout || 'No especificado'}</div>
                         </div>
-                        <div className="badge-container">
-                            <span className="badge" style={{ 
-                                backgroundColor: 
-                                    cotizacion.status === 2 ? '#dc2626' : 
-                                    cotizacion.status === 1 ? '#059669' : 
-                                    '#3b82f6' 
-                            }}>
-                                {cotizacion.status === 2 ? 'Cotización Rechazada' : 
-                                 cotizacion.status === 1 ? 'Cotización Aceptada' : 
-                                 'Cotización Generada'}
-                            </span>
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Noches</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>{reservaInfo.nights || 'No especificado'}</div>
                         </div>
-
-                        <h2 className="title">Información del huésped</h2>
-
-                        <div style={{ marginTop: "20px" }}>
-                            <fieldset style={{
-                                border: "1px solid #ddd",
-                                borderRadius: "5px",
-                                padding: "15px",
-                                marginBottom: "20px",
-                            }}>
-                                <legend>Datos del titular</legend>
-
-                                <div className="info-grid">
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <User className="icon" style={{ marginRight: '8px' }} />
-                                            Tipo de documento
-                                        </label>
-                                        <p className="value">{titularInfo.tipoDocumento || 'No especificado'}</p>
-                                    </div>
-
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <CreditCard className="icon" style={{ marginRight: '8px' }} />
-                                            Número de documento
-                                        </label>
-                                        <p className="value">{titularInfo.documento || 'No especificado'}</p>
-                                    </div>
-
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <User className="icon" style={{ marginRight: '8px' }} />
-                                            Nombre completo
-                                        </label>
-                                        <p className="value">{titularInfo.firstName || 'No especificado'}</p>
-                                    </div>
-
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <User className="icon" style={{ marginRight: '8px' }} />
-                                            Apellidos
-                                        </label>
-                                        <p className="value">{titularInfo.lastName || 'No especificado'}</p>
-                                    </div>
-
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <Calendar className="icon" style={{ marginRight: '8px' }} />
-                                            Fecha de nacimiento
-                                        </label>
-                                        <p className="value">{titularInfo.fechaNacimiento || 'No especificado'}</p>
-                                    </div>
-
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <Mail className="icon" style={{ marginRight: '8px' }} />
-                                            Correo electrónico
-                                        </label>
-                                        <p className="value">{reservaInfo.email || 'No especificado'}</p>
-                                    </div>
-
-                                    <div className="info-item">
-                                        <label className="label">
-                                            <Phone className="icon" style={{ marginRight: '8px' }} />
-                                            Teléfono
-                                        </label>
-                                        <p className="value">{reservaInfo.telephone || 'No especificado'}</p>
-                                    </div>
-                                </div>
-                            </fieldset>
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Huéspedes</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>{`${reservaInfo.adults || 0} adultos, ${reservaInfo.children || 0} niños`}</div>
                         </div>
-                    </div>
-
-                    {/* Información de la Reserva */}
-                    {roomsData.length > 0 && (
-                        <div className="card">
-                            <h2 className="title">Información de la reserva</h2>
-
-                            <h3 className="subtitle">{nombreHotelId(roomsData[0]?.hotelidAutocore || 1)}</h3>
-                            <div className="contact-item">
-                                <MapPin className="icon" />
-                                <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
-                                <div className="contact-item">
-                                    <Phone className="icon" />
-                                    <span>+57 333 602 50 21</span>
-                                </div>
-                            </div>
-
-                            {/* Contenedor de imágenes del hotel */}
-                            <div className="hotel-images-container">
-                                <div className="main-image">
-                                    <img
-                                        src={getHotelImagesById(roomsData[0]?.id || 1).main}
-                                        alt={`Vista principal del ${nombreHotelId(roomsData[0]?.id || 1)}`}
-                                        className="hotel-main-img"
-                                    />
-                                </div>
-                                <div className="secondary-images">
-                                    <div className="secondary-image">
-                                        <img
-                                            src={getHotelImagesById(roomsData[0]?.id || 1).secondary1}
-                                            alt={`Vista secundaria 1 del ${nombreHotelId(roomsData[0]?.id || 1)}`}
-                                            className="hotel-secondary-img"
-                                        />
-                                    </div>
-                                    <div className="secondary-image">
-                                        <img
-                                            src={getHotelImagesById(roomsData[0]?.id || 1).secondary2}
-                                            alt={`Vista secundaria 2 del ${nombreHotelId(roomsData[0]?.id || 1)}`}
-                                            className="hotel-secondary-img"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="contact-info">
-                            </div>
-
-                            {/* Fechas y Detalles */}
-                            <div className="dates-grid">
-                                <div className="date-item">
-                                    <p className="label">Check-in</p>
-                                    <p className="value">{reservaInfo.checkin || 'No especificado'}</p>
-                                </div>
-                                <div className="date-item">
-                                    <p className="label">Check-out</p>
-                                    <p className="value">{reservaInfo.checkout || 'No especificado'}</p>
-                                </div>
-                                <div className="date-item">
-                                    <p className="label">Noches</p>
-                                    <p className="value">{reservaInfo.nights || 'No especificado'}</p>
-                                </div>
-                                <div className="date-item">
-                                    <p className="label">Huéspedes</p>
-                                    <p className="value">{`${reservaInfo.adults || 0} adultos, ${reservaInfo.children || 0} niños`}</p>
-                                </div>
-                                <div className="date-item">
-                                    <p className="label">Habitaciones</p>
-                                    <p className="value">{roomsData.length}</p>
-                                </div>
-                            </div>
-
-                            {/* Tabla de Habitaciones */}
-                            <div className="table-wrapper">
-                                <table className="table">
-                                    <thead>
-                                        <tr className="table-header">
-                                            <th className="th">Habitación</th>
-                                            <th className="th">Descripción</th>
-                                            <th className="th">Noches</th>
-                                            <th className="th">Valor C/U</th>
-                                            <th className="th">Valor total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {roomsData.map((room, index) => (
-                                            <tr key={room.id || index}>
-                                                <td className="td">{room.nombreHabitacion || 'Habitación estándar'}</td>
-                                                <td className="td">Incluye desayuno y servicios básicos</td>
-                                                <td className="td">{reservaInfo.nights || '1'}</td>
-                                                <td className="td">${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</td>
-                                                <td className="td">${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</td>
-                                            </tr>
-                                        ))}
-                                        <tr className="table-subtotal">
-                                            <td colSpan="4" className="td-total">Subtotal</td>
-                                            <td className="td-amount">${subtotal.toLocaleString()}</td>
-                                        </tr>
-                                        <tr className="table-subtotal">
-                                            <td colSpan="4" className="td-total">IVA 19%</td>
-                                            <td className="td-amount">${iva.toLocaleString()}</td>
-                                        </tr>
-                                        <tr className="table-total">
-                                            <td colSpan="4" className="td-total-label">Total</td>
-                                            <td className="td-total-amount">${total.toLocaleString()}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* Acordeones */}
-                            <div className="accordions">
-                                <div className="accordion">
-                                    <button
-                                        onClick={() => setShowReservaIncluye(!showReservaIncluye)}
-                                        className="accordion-button"
-                                    >
-                                        <span className="accordion-title">La reserva incluye</span>
-                                        <ChevronDown className={`icon-chevron ${showReservaIncluye ? 'rotated' : ''}`} />
-                                    </button>
-                                    {showReservaIncluye && (
-                                        <div className="accordion-content">
-                                            <div className="text">
-                                                <p><strong>Plan de alimentación:</strong> {roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'No especificado'}</p>
-
-                                                {cotizacion?.mascotasNumber > 0 && (
-                                                    <p><strong>Mascotas permitidas:</strong> {cotizacion.mascotasNumber} mascota(s)</p>
-                                                )}
-
-                                                {cotizacion?.infoTransporte ? (
-                                                    <div>
-                                                        <p><strong>Traslado incluido:</strong> Sí</p>
-                                                        {cotizacion.infoTransporte.tipo && (
-                                                            <p><strong>Tipo de traslado:</strong> {cotizacion.infoTransporte.tipo}</p>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <p><strong>Traslado incluido:</strong> No</p>
-                                                )}
-
-                                                {cotizacion?.infoToures && cotizacion.infoToures.length > 0 ? (
-                                                    <div>
-                                                        <p><strong>Tours incluidos:</strong></p>
-                                                        <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
-                                                            {cotizacion.infoToures.map((tour, index) => (
-                                                                <li key={index}>{tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
-                                                            ))}
-                                                        </ul>
-                                                    </div>
-                                                ) : (
-                                                    <p><strong>Tours incluidos:</strong> Ninguno</p>
-                                                )}
-
-                                                <p><strong>Servicios básicos incluidos:</strong></p>
-                                                <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
-                                                    <li>WiFi gratuito</li>
-                                                    <li>Servicio de habitación</li>
-                                                    <li>Piscina y zona de recreación</li>
-                                                    <li>Servicio de conserjería</li>
-                                                    <li>Recepción 24 horas</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="accordion">
-                                    <button
-                                        onClick={() => setShowPoliticas(!showPoliticas)}
-                                        className="accordion-button"
-                                    >
-                                        <span className="accordion-title">Políticas de la reserva</span>
-                                        <ChevronDown className={`icon-chevron ${showPoliticas ? 'rotated' : ''}`} />
-                                    </button>
-                                    {showPoliticas && (
-                                        <div className="accordion-content">
-                                            <p className="text">• Cancelación gratuita hasta 24 horas antes del check-in<br />
-                                                • No reembolsable después del check-in<br />
-                                                • Modificaciones sujetas a disponibilidad<br />
-                                                • Check-in: 15:00 | Check-out: 12:00</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Habitaciones</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>{roomsData.length}</div>
                         </div>
-                    )}
-
-                    {/* Políticas de la Agencia */}
-                    <div className="card">
-                        <h2 className="title">Políticas de la agencia</h2>
-                        <div className="editor">
-                            <div className="toolbar">
-                                <button className="tool-btn"><strong>B</strong></button>
-                                <button className="tool-btn"><em>I</em></button>
-                                <button className="tool-btn"><u>U</u></button>
-                                <div className="separator"></div>
-                                <button className="tool-btn">≡</button>
-                                <button className="tool-btn">≡</button>
-                                <button className="tool-btn">≡</button>
-                                <button className="tool-btn">≡</button>
-                                <div className="separator"></div>
-                                <button className="tool-btn">• •</button>
-                                <button className="tool-btn">1.</button>
-                            </div>
-                            <div className="textarea" style={{
-                                padding: '16px',
-                                minHeight: '160px',
-                                backgroundColor: '#f9fafb',
-                                border: '1px solid #d1d5db',
-                                borderRadius: '4px'
-                            }}>
-                                <p style={{ margin: 0, color: '#1C3D5A' }}>
-                                    Esta cotización ha sido generada por {agency.fullName || 'la agencia'} el {new Date().toLocaleDateString('es-ES')}.<br /><br />
-                                    • Precios sujetos a disponibilidad<br />
-                                    • Válida por 24 horas<br />
-                                    • Pago requerido para confirmar la reserva<br />
-                                    • Contacto: {reservaInfo.email || 'No especificado'}
-                                </p>
-                            </div>
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Plan de Alimentación</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>{roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'No especificado'}</div>
                         </div>
+                        {cotizacion?.mascotasNumber > 0 && (
+                            <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                                <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Mascotas</div>
+                                <div style={{ color: '#333', marginTop: '5px' }}>{cotizacion.mascotasNumber} mascota(s) permitida(s)</div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {/* Columna Lateral - Resumen y Acciones */}
-                <div className="sidebar">
-                    <div className="card sidebar-card">
-                        <h3 className="title">Resumen de la cotización</h3>
-
-                        <div className="price-section">
-                            <div className="price-row">
-                                <span className="price-label">Precio base</span>
-                                <span className="price-value">${subtotal.toLocaleString()}</span>
-                            </div>
-                            <div className="price-row">
-                                <span className="price-label">IVA 19%</span>
-                                <span className="price-value">${iva.toLocaleString()}</span>
-                            </div>
-                            <div className="price-row" style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px", marginTop: "8px" }}>
-                                <span className="price-label" style={{ fontWeight: "600" }}>Total</span>
-                                <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${total.toLocaleString()}</span>
-                            </div>
+                {/* GALERÍA DEL HOTEL */}
+                {roomsData.length > 0 && (
+                    <section style={{ margin: '30px 0' }}>
+                        <h2 style={{ color: '#886b43', fontSize: '22px', margin: 0, borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Galería del Hotel</h2>
+                        <div className="stack-gallery" style={{ display: 'flex', flexDirection: 'column', gap: '10px', margin: '20px 0' }}>
+                            <img
+                                src={getHotelImagesById(candidateHotelId || 1).main}
+                                alt={`Vista principal del ${hotelNameFromPayload || nombreHotelId(candidateHotelId || 1)}`}
+                            />
+                            <img
+                                src={getHotelImagesById(candidateHotelId || 1).secondary1}
+                                alt={`Vista del hotel ${hotelNameFromPayload || nombreHotelId(candidateHotelId || 1)}`}
+                            />
+                            <img
+                                src={getHotelImagesById(candidateHotelId || 1).secondary2}
+                                alt={`Vista del hotel ${hotelNameFromPayload || nombreHotelId(candidateHotelId || 1)}`}
+                            />
                         </div>
+                    </section>
+                )}
 
-                        {/* Estado de la decisión */}
-                        {decision && (
-                            <div style={{ 
-                                marginTop: '20px', 
-                                padding: '16px', 
-                                backgroundColor: decision === 'aceptar' ? '#f0fdf4' : '#fef2f2', 
-                                borderRadius: '8px', 
-                                border: `1px solid ${decision === 'aceptar' ? '#22c55e' : '#ef4444'}` 
-                            }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                    {decision === 'aceptar' ? (
-                                        <CheckCircle style={{ color: '#22c55e' }} />
-                                    ) : (
-                                        <XCircle style={{ color: '#ef4444' }} />
-                                    )}
-                                    <h4 style={{ margin: 0, color: decision === 'aceptar' ? '#166534' : '#991b1b' }}>
-                                        {decision === 'aceptar' ? 'Cotización Aceptada' : 'Cotización Rechazada'}
-                                    </h4>
-                                </div>
-                                <p style={{ margin: 0, fontSize: '14px', color: decision === 'aceptar' ? '#166534' : '#991b1b' }}>
-                                    {decision === 'aceptar' 
-                                        ? 'Su respuesta ha sido registrada. Nos pondremos en contacto con usted pronto.'
-                                        : 'Su respuesta ha sido registrada. Gracias por su tiempo.'
-                                    }
-                                </p>
-                            </div>
-                        )}
+                <br />
 
-                        {/* Botones de acción */}
-                        {!decision && (
-                            <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
-                                <button
-                                    onClick={handleAceptar}
-                                    style={{
-                                        fontWeight: '500',
-                                        backgroundColor: '#059669',
-                                        color: 'white',
-                                        padding: '12px 16px',
-                                        border: 'none',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px'
-                                    }}
-                                >
-                                    <CheckCircle size={18} />
-                                    Aceptar Cotización
-                                </button>
-                                <button
-                                    onClick={handleRechazar}
-                                    style={{
-                                        fontWeight: '500',
-                                        backgroundColor: 'white',
-                                        color: '#ef4444',
-                                        padding: '12px 16px',
-                                        border: '1px solid #ef4444',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer',
-                                        fontSize: '14px',
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px'
-                                    }}
-                                >
-                                    <XCircle size={18} />
-                                    Rechazar Cotización
-                                </button>
-                            </div>
-                        )}
+                {/* DESCRIPCIÓN GENERAL */}
+                <section>
+                    <h2 style={{ color: '#886b43', fontSize: '22px', marginTop: '30px', marginBottom: '15px', borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Descripción general</h2>
+                    <p>De acuerdo a conversaciones, enviamos cotización detallada de la siguiente manera:</p>
+                    <ul style={{ listStylePosition: 'inside', margin: '15px 0', paddingLeft: '20px' }}>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Estancia de {reservaInfo.nights || '1'} noche(s) del {reservaInfo.checkin || '—'} al {reservaInfo.checkout || '—'}</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Habitaciones confortables, dotadas con cajillas de seguridad, Tv moderno, duchas con agua caliente, wifi en todas las áreas del hotel.</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>{roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Plan de alimentación no especificado'} incluido</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Check-in 3:00 pm y check-out 12:00 pm</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de guarda equipaje sin costo adicional</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Baño privado con ducha o bañera</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Amenities de baño</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Tv Smart</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Escritorio</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Silla</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Closet</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Sala de estar en las habitaciones</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de wifi de cortesía</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Cajillas de seguridad</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de recepción durante 24 horas</li>
+                    </ul>
+                </section>
+
+                {/* HABITACIONES RESERVADAS */}
+                <section>
+                    <h2 style={{ color: '#886b43', fontSize: '22px', marginTop: '30px', marginBottom: '15px', borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Habitaciones Reservadas</h2>
+                    {roomsData.map((room, index) => (
+                        <div key={room.id || index} style={{ backgroundColor: '#f8f9fa', padding: '15px', margin: '10px 0', borderRadius: '5px' }}>
+                            <h3 style={{ color: '#444', fontSize: '18px', margin: '0 0 10px 0' }}>Habitación {index + 1}: {room.nombreHabitacion || 'Habitación estándar'}</h3>
+                            <p><strong>Descripción:</strong> Incluye desayuno y servicios básicos</p>
+                            <p><strong>Precio por noche:</strong> ${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</p>
+                            <p><strong>Total habitación:</strong> ${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</p>
+                        </div>
+                    ))}
+                </section>
+
+                <br />
+                <br />
+                <br />
+
+                {/* TARIFAS */}
+                <section>
+                    <h2 style={{ color: '#886b43', fontSize: '22px', marginTop: '30px', marginBottom: '15px', borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Tarifas</h2>
+                    <div className="pricing-section" style={{ backgroundColor: '#f0f7ff', padding: '20px', borderRadius: '5px', margin: '20px 0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+                            <span>Subtotal ({roomsData.length} habitación/es):</span>
+                            <span>${subtotal.toLocaleString()}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+                            <span>IVA 19%:</span>
+                            <span>${iva.toLocaleString()}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: 'none', fontWeight: 'bold', fontSize: '18px', color: '#886b43', marginTop: '10px', paddingTop: '15px', borderTop: '2px solid #886b43' }}>
+                            <span>Total:</span>
+                            <span>${total.toLocaleString()}</span>
+                        </div>
                     </div>
+                </section>
+
+                {/* INFORMACIÓN IMPORTANTE */}
+                <div style={{ backgroundColor: '#fff3cd', border: '1px solid #ffc107', padding: '15px', borderRadius: '5px', margin: '20px 0' }}>
+                    <p><strong style={{ color: '#856404' }}>Información importante:</strong></p>
+                    <p>Los valores de las tarifas enviadas en la siguiente cotización estarán vigentes durante los próximos 5 días a partir de la fecha de envío.</p>
+                    <p><strong>Nota:</strong> En caso de solicitar factura a nombre de la empresa, debe enviar el RUT al momento de realizar el check-in y antes de realizar el check-out, de lo contrario, la reserva se facturará a nombre del huésped o titular de la reserva perdiendo el derecho a solicitar modificación o corrección del documento.</p>
+                </div>
+
+                {/* TÉRMINOS Y CONDICIONES */}
+                <section style={{ marginTop: '30px' }}>
+                    <h2 style={{ color: '#886b43', fontSize: '22px', marginTop: '30px', marginBottom: '15px', borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Términos y condiciones</h2>
+
+                    <h3 style={{ color: '#444', fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Cancelaciones</h3>
+                    <ul style={{ listStylePosition: 'inside', margin: '15px 0', paddingLeft: '20px' }}>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>En caso de cancelar o modificar su reserva deberá notificar con 72 horas de anticipación a la fecha de entrada al hotel, para no recibir penalización.</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Si el hotel no recibe información de cancelación o modificación de su alojamiento, dentro de las 72 horas, el hotel podrá realizar la penalización parcial o total del monto de su reserva.</li>
+                    </ul>
+
+                    <h3 style={{ color: '#444', fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Tener en cuenta</h3>
+                    <p>El NO envío del comprobante en la fecha estipulada o anterior a esta, puede causar la apertura de disponibilidad o venta de la habitación sin previo aviso, por lo tanto, es de suma importancia hacer el envío de la foto o escáner del comprobante por el presente medio como prueba de garantía.</p>
+
+                    <h3 style={{ color: '#444', fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Grupos mínimo 30 personas</h3>
+                    <ul style={{ listStylePosition: 'inside', margin: '15px 0', paddingLeft: '20px' }}>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Deben notificar cualquier tipo de modificación antes de ingresar al hotel.</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>En caso de cancelar una reserva de grupo deberá notificar 720 horas de anticipación a la fecha de entrada al hotel, para no recibir personalización.</li>
+                    </ul>
+
+                    <h3 style={{ color: '#444', fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Estadía con menores de edad:</h3>
+                    <ul style={{ listStylePosition: 'inside', margin: '15px 0', paddingLeft: '20px' }}>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>{nombreHotelId(roomsData[0]?.hotelidAutocore || roomsData[0]?.id || 1)} protege a los niños, niñas y adolescentes de la explotación sexual y comercial Ley 679 de 2001.</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Recuerde; todo niño que viaje debe contar sus documentos de identidad (Registro civil o tarjeta de identidad)</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Si los niños que viajan no son hijos de los adultos que los representan deben contar con un permiso de los padres, autenticado en una notaría.</li>
+                    </ul>
+
+                    <h3 style={{ color: '#444', fontSize: '18px', marginTop: '20px', marginBottom: '10px' }}>Turismo sostenible</h3>
+                    <ul style={{ listStylePosition: 'inside', margin: '15px 0', paddingLeft: '20px' }}>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>El tráfico, comercio, consumo, colección y cualquier tipo de actividad que genere un impacto negativo en la flora y fauna está prohibida por la Ley 1333 de 2009. Quienes realicen estas actividades ilícitas incurrirán en prisión de 4 a 9 años y multas hasta de 35.000 SMLV de acuerdo a la Ley 1453 de 2011.</li>
+                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Está prohibido el tráfico y comercialización ilegal de bienes de interés cultural de acuerdo a lo establecido en la Ley 1185 de 2008</li>
+                    </ul>
+                </section>
+
+                {/* ESTADO DE LA COTIZACIÓN Y BOTONES */}
+                <div style={{ marginTop: '24px' }}>
+                    {/* Mostrar mensaje según el status */}
+                    {cotizacion.status === 1 && (
+                        <div style={{
+                            padding: '16px',
+                            backgroundColor: '#f0fdf4',
+                            borderRadius: '8px',
+                            border: '1px solid #22c55e',
+                            marginBottom: '20px'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                <CheckCircle style={{ color: '#22c55e' }} />
+                                <h4 style={{ margin: 0, color: '#166534' }}>
+                                    Cotización Aceptada
+                                </h4>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '14px', color: '#166534' }}>
+                                Su respuesta ha sido registrada. Nos pondremos en contacto con usted pronto.
+                            </p>
+                        </div>
+                    )}
+
+                    {cotizacion.status === 2 && (
+                        <div style={{
+                            padding: '16px',
+                            backgroundColor: '#fef2f2',
+                            borderRadius: '8px',
+                            border: '1px solid #ef4444',
+                            marginBottom: '20px'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                                <XCircle style={{ color: '#ef4444' }} />
+                                <h4 style={{ margin: 0, color: '#991b1b' }}>
+                                    Cotización Rechazada
+                                </h4>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '14px', color: '#991b1b' }}>
+                                Su respuesta ha sido registrada. Gracias por su tiempo.
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Mostrar botones solo si no hay decisión previa */}
+                    {!decision && cotizacion.status !== 1 && cotizacion.status !== 2 && (
+                        <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
+                            <button
+                                onClick={handleAceptar}
+                                style={{
+                                    fontWeight: '500',
+                                    backgroundColor: '#059669',
+                                    color: 'white',
+                                    padding: '12px 16px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <CheckCircle size={18} />
+                                Aceptar Cotización
+                            </button>
+                            <button
+                                onClick={handleRechazar}
+                                style={{
+                                    fontWeight: '500',
+                                    backgroundColor: 'white',
+                                    color: '#ef4444',
+                                    padding: '12px 16px',
+                                    border: '1px solid #ef4444',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <XCircle size={18} />
+                                Rechazar Cotización
+                            </button>
+                        </div>
+                    )}
+                {/* CONTACTO */}
+                <div style={{ backgroundColor: '#886b43', color: '#fff', padding: '20px', borderRadius: '5px', marginTop: '30px', textAlign: 'center' }}>
+                    <h2 style={{ color: '#fff', borderBottom: '2px solid #fff', margin: 0, paddingBottom: '10px' }}>¿Preguntas?</h2>
+                    <p><strong>Contáctanos</strong></p>
+                    <p>Whatsapp y Llamadas: <a href="tel:+573336025021" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>+57 333 602 50 21</a></p>
+                </div>
+
                 </div>
             </div>
         </div>

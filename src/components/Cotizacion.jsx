@@ -558,16 +558,16 @@ export default function ReservaHotelComponent() {
 
         .detail-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1px));
-            gap: 15px;
+            grid-template-columns: 1fr; /* una sola columna */
+            gap: 8px;
             margin: 15px 0;
         }
 
         .detail-item {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            border-left: 3px solid #886b43;
+            background-color: transparent; /* quitar tarjetas */
+            padding: 0;
+            border-radius: 0;
+            border-left: none;
         }
 
         .detail-label {
@@ -598,10 +598,10 @@ export default function ReservaHotelComponent() {
 
         .main-gallery-image img {
             width: 100%;
-            height: 450px;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            height: 320px;
+            object-fit: cover;
+            border-radius: 0;
+            box-shadow: none;
         }
 
         .secondary-gallery-images {
@@ -616,10 +616,10 @@ export default function ReservaHotelComponent() {
 
         .gallery-image img {
             width: 100%;
-            height: 300px;
-            object-fit: contain;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 320px;
+            object-fit: cover;
+            border-radius: 0;
+            box-shadow: none;
         }
 
         @media print {
@@ -662,13 +662,13 @@ export default function ReservaHotelComponent() {
             }
 
             .main-gallery-image img {
-                height: 350px;
-                object-fit: contain;
+                height: 300px;
+                object-fit: cover;
             }
 
             .gallery-image img {
-                height: 250px;
-                object-fit: contain;
+                height: 300px;
+                object-fit: cover;
             }
         }
     </style>
@@ -742,7 +742,7 @@ export default function ReservaHotelComponent() {
                 </div>
             </div>
         </section>
-
+<br>
         <section>
             <h2>Descripción general</h2>
             <p>De acuerdo a conversaciones, enviamos cotización detallada de la siguiente manera:</p>
@@ -776,12 +776,10 @@ export default function ReservaHotelComponent() {
             </div>
             `).join('')}
         </section>
-
+<br>
+<br>
+<br>
         <section>
-        <br>
-        <br>
-        <br>
-        <br>  
             <h2>Tarifas</h2>
             <div class="pricing-section">
                 <div class="price-row">
@@ -793,19 +791,9 @@ export default function ReservaHotelComponent() {
                     <span>$${ivaFormateado}</span>
                 </div>
                 <div class="price-row">
-                    <span>Total sin markup:</span>
-                    <span>$${totalFormateado}</span>
-                </div>
-                ${markupPorcentaje > 0 ? `
-                <div class="price-row">
-                    <span>Markup (${markupPorcentaje}%):</span>
-                    <span>+$${(totalConMarkup - total).toLocaleString()}</span>
-                </div>
-                <div class="price-row">
-                    <span>Total con markup:</span>
+                    <span>Total:</span>
                     <span>$${totalConMarkupFormateado}</span>
                 </div>
-                ` : ''}
             </div>
         </section>
 
@@ -897,7 +885,7 @@ export default function ReservaHotelComponent() {
         mascotasNumber: datosReserva[0]?.mascotas || null,
         adicionAlmuerzo: false,
         hotelInfo:{
-          name: "",
+          name: nombreHotelId(datosReserva[0]?.hotelidAutocore) || "",
         },
         adicionCena: false,
         titularInfo: {
@@ -1323,9 +1311,19 @@ export default function ReservaHotelComponent() {
                       <td className="td-amount">${iva.toLocaleString()}</td>
                     </tr>
                     <tr className="table-total">
-                      <td colSpan="4" className="td-total-label">Total</td>
+                      <td colSpan="4" className="td-total-label">Precio total para la agencia</td>
                       <td className="td-total-amount">${total.toLocaleString()}</td>
                     </tr>
+                    {markupPorcentaje > 0 && (
+                      <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
+                        <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
+                        Precio total para tu cliente ({markupPorcentaje}%)
+                        </td>
+                        <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
+                          ${totalConMarkup.toLocaleString()}
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -1391,7 +1389,8 @@ export default function ReservaHotelComponent() {
                     onClick={() => setShowPoliticas(!showPoliticas)}
                     className="accordion-button"
                   >
-                    <span className="accordion-title">Políticas de la reserva</span>
+                    <span className="accordion-title">Políticas de la reserva para tu agencia
+                    </span>
                     <ChevronDown className={`icon-chevron ${showPoliticas ? 'rotated' : ''}`} />
                   </button>
                   {showPoliticas && (
@@ -1466,7 +1465,7 @@ export default function ReservaHotelComponent() {
                     const cleaned = raw.replace(/[^0-9.,]/g, '');
                     setMarkup(cleaned);
                   }}
-                  placeholder="Ej: 9,5"
+                  placeholder="Ej: 30%"
                   className="select"
                 />
               </div>

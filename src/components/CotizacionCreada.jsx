@@ -101,10 +101,36 @@ const getHotelImagesById = (hotelId) => {
     };
 };
 
+// Mapa inverso: nombre -> id para resolver imágenes cuando solo hay nombre
+const getHotelIdByName = (hotelName) => {
+    if (!hotelName) return undefined;
+    const normalized = String(hotelName).trim().toLowerCase();
+    const nameToId = {
+        // Hoteles Cartagena
+        "hotel azuan suites": 1,
+        "hotel aixo suites": 4,
+        "hotel abi inn": 5,
+        "hotel avexi suites": 6,
+        "hotel bocagrande suites": 7,
+        "hotel marina suites": 9,
+        "hotel boquilla suites": 56,
+        // Hoteles Santa Marta
+        "hotel rodadero": 8,
+        "hotel 1525": 2,
+        "hotel axis inn": 48,
+        "hotel sansiraka inn": 44,
+        // Hoteles Bogotá
+        "hotel windsor": 10,
+        "hotel madisson": 3,
+    };
+    return nameToId[normalized];
+};
+
 export const CotizacionCreada = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [logoAgencia, setLogoAgencia] = useState();
     const cotizacion = useStore(cotizacionData);
 
     useEffect(() => {
@@ -117,6 +143,18 @@ export const CotizacionCreada = ({ id }) => {
         };
         fetchCotizacion();
     }, [id]);
+
+    // Cargar logo de la agencia desde localStorage (datosUsuario.imageUrl)
+    useEffect(() => {
+        try {
+            const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
+            if (datosDelUsuario) {
+                setLogoAgencia(datosDelUsuario);
+            }
+        } catch (_) {
+            // Ignorar errores de parseo y continuar con fallback
+        }
+    }, []);
 
     if (loading) {
         return (
@@ -175,10 +213,28 @@ export const CotizacionCreada = ({ id }) => {
     const roomsData = reservaInfo.roomsData || [];
     const agency = reservaInfo.agency || {};
 
+    // Determinar el nombre del hotel priorizando hotelInfo.name cuando esté disponible
+    const hotelName =
+        (cotizacion?.hotelInfo && cotizacion.hotelInfo.name) ||
+        (reservaInfo?.hotelInfo && reservaInfo.hotelInfo.name) ||
+        (roomsData[0]?.hotelInfo && roomsData[0].hotelInfo.name) ||
+        cotizacion?.hotel ||
+        nombreHotelId(roomsData[0]?.hotelidAutocore || roomsData[0]?.id || 1);
+
+    // Resolver un ID de hotel confiable para la galería
+    const candidateHotelId =
+        roomsData[0]?.hotelidAutocore ||
+        getHotelIdByName(hotelName) ||
+        undefined;
+
     // Calcular totales
     const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
     const iva = Math.round(subtotal * 0.19);
     const total = subtotal + iva;
+    
+    // Calcular markup si existe
+    const markupAmount = cotizacion.markup ? cotizacion.markup - total : 0;
+    const markupPorcentaje = total > 0 ? Math.round((markupAmount / total) * 100) : 0;
 
     // Función para descargar PDF
     const handleDownloadPDF = async () => {
@@ -254,7 +310,7 @@ export const CotizacionCreada = ({ id }) => {
                     <div className="card">
                         <div className="logos" style={{ justifyContent: "flex-end" }}>
                             <img
-                                src={agency.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
+                                src={logoAgencia?.imageUrl || agency.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
                                 alt="Logo Agencia"
                                 className="logo"
                                 style={{ width: "100px", height: "100px" }}
@@ -267,9 +323,9 @@ export const CotizacionCreada = ({ id }) => {
                                     cotizacion.status === 1 ? '#059669' : 
                                     '#3b82f6' 
                             }}>
-                                {cotizacion.status === 2 ? 'Cotización Rechazada' : 
-                                 cotizacion.status === 1 ? 'Cotización Aceptada' : 
-                                 'Cotización Generada'}
+                                {cotizacion.status === 2 ? 'Estado: cotización rechazada' : 
+                                 cotizacion.status === 1 ? 'Estado: cotización aceptada' : 
+                                 'Estado: cotización generada'}
                             </span>
                         </div>
 
@@ -350,7 +406,7 @@ export const CotizacionCreada = ({ id }) => {
                         <div className="card">
                             <h2 className="title">Información de la reserva</h2>
 
-                            <h3 className="subtitle">{nombreHotelId(roomsData[0]?.hotelidAutocore || 1)}</h3>
+                            <h3 className="subtitle">{hotelName}</h3>
                             <div className="contact-item">
                                 <MapPin className="icon" />
                                 <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
@@ -364,23 +420,23 @@ export const CotizacionCreada = ({ id }) => {
                             <div className="hotel-images-container">
                                 <div className="main-image">
                                     <img
-                                        src={getHotelImagesById(roomsData[0]?.id || 1).main}
-                                        alt={`Vista principal del ${nombreHotelId(roomsData[0]?.id || 1)}`}
+                                        src={getHotelImagesById(candidateHotelId || 1).main}
+                                        alt={`Vista principal del ${hotelName || nombreHotelId(candidateHotelId || 1)}`}
                                         className="hotel-main-img"
                                     />
                                 </div>
                                 <div className="secondary-images">
                                     <div className="secondary-image">
                                         <img
-                                            src={getHotelImagesById(roomsData[0]?.id || 1).secondary1}
-                                            alt={`Vista secundaria 1 del ${nombreHotelId(roomsData[0]?.id || 1)}`}
+                                            src={getHotelImagesById(candidateHotelId || 1).secondary1}
+                                            alt={`Vista secundaria 1 del ${hotelName || nombreHotelId(candidateHotelId || 1)}`}
                                             className="hotel-secondary-img"
                                         />
                                     </div>
                                     <div className="secondary-image">
                                         <img
-                                            src={getHotelImagesById(roomsData[0]?.id || 1).secondary2}
-                                            alt={`Vista secundaria 2 del ${nombreHotelId(roomsData[0]?.id || 1)}`}
+                                            src={getHotelImagesById(candidateHotelId || 1).secondary2}
+                                            alt={`Vista secundaria 2 del ${hotelName || nombreHotelId(candidateHotelId || 1)}`}
                                             className="hotel-secondary-img"
                                         />
                                     </div>
@@ -445,9 +501,19 @@ export const CotizacionCreada = ({ id }) => {
                                             <td className="td-amount">${iva.toLocaleString()}</td>
                                         </tr>
                                         <tr className="table-total">
-                                            <td colSpan="4" className="td-total-label">Total</td>
+                                            <td colSpan="4" className="td-total-label">Precio total para la agencia</td>
                                             <td className="td-total-amount">${total.toLocaleString()}</td>
                                         </tr>
+                                        {markupAmount > 0 && (
+                                            <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
+                                                <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
+                                                    Precio total para tu cliente ({markupPorcentaje}%)
+                                                </td>
+                                                <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
+                                                    ${cotizacion.markup.toLocaleString()}
+                                                </td>
+                                            </tr>
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
@@ -580,12 +646,12 @@ export const CotizacionCreada = ({ id }) => {
                                 <span className="price-value">${iva.toLocaleString()}</span>
                             </div>
                             <div className="price-row" style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px", marginTop: "8px" }}>
-                                <span className="price-label" style={{ fontWeight: "600" }}>Total</span>
+                                <span className="price-label" style={{ fontWeight: "600" }}>Precio total para la agencia</span>
                                 <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${total.toLocaleString()}</span>
                             </div>
-                            {cotizacion.markup && cotizacion.markup !== total && (
+                            {markupAmount > 0 && (
                                 <div className="price-row">
-                                    <span className="price-label" style={{ fontWeight: "600" }}>Total con markup</span>
+                                    <span className="price-label" style={{ fontWeight: "600" }}>Precio total para tu cliente ({markupPorcentaje}%)</span>
                                     <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${cotizacion.markup.toLocaleString()}</span>
                                 </div>
                             )}
