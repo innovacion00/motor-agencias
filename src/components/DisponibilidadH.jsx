@@ -8,6 +8,7 @@ import { currency } from "../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
+import { Tooltip } from 'react-tooltip';
 
 const hotelesData = {
   9: {
@@ -771,6 +772,20 @@ export const Cid = ({ id }) => {
 
   return (
     <>
+      <style>{`
+        #tooltip-generar-cotizacion {
+          background-color: white !important;
+          color: #1C3D5A !important;
+          border: 2px solid #1C3D5A !important;
+          border-radius: 8px !important;
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+          max-width: 350px !important;
+          line-height: 1.5 !important;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+          opacity: 1 !important;
+        }
+      `}</style>
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
@@ -837,8 +852,7 @@ export const Cid = ({ id }) => {
             <p>Húespedes</p>
             <strong>{ninos + adultos}</strong>
           </div>
-          {/* <div>
-            <p>Habitaciones disponibles</p>
+          {/* <div>  <p>Habitaciones disponibles</p>
             <strong>
               {habitaciones?.availability?.map(
                 (tipo) => tipo.available_rooms?.length
@@ -1063,7 +1077,7 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
-                         {/* datos de persona en traslados bogota ahYha */}
+                         {/* datos de persona en traslados bogota ah/ha */}
                         Aeropuerto al hotel | Hotel al aeropuerto {" "} 
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
@@ -1160,8 +1174,7 @@ export const Cid = ({ id }) => {
           </div>
         </div>
         
-        {/* habitaciones?.availability?.map((cam)=>
-  cam.available_rooms?.map((camas)=>(dato.beds))) */}
+        {/* habitaciones?.availability?.map((cam)=>cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
             {habitaciones?.availability?.map((tipo) =>
@@ -1191,8 +1204,21 @@ export const Cid = ({ id }) => {
                     </p>
                     <p className="price"></p>
                     <p className="price">
-                      {dato.products?.map((product, idx) => {
-                        if (regexSeleccionado?.test(product.roomName)) {
+                      {(() => {
+                        // Filtrar productos únicos basándose en el roomName base (sin sufijos de booking)
+                        const productosUnicos = dato.products?.filter((product, idx, arr) => {
+                          if (!regexSeleccionado?.test(product.roomName)) return false;
+                          
+                          // Extraer el nombre base de la habitación (sin los sufijos de booking)
+                          const roomNameBase = product.roomName.split('[')[0].trim();
+                          
+                          // Verificar si es el primer producto con este nombre base
+                          return arr.findIndex(p => 
+                            p.roomName.split('[')[0].trim() === roomNameBase
+                          ) === idx;
+                        });
+
+                        return productosUnicos?.map((product, idx) => {
                           const price =
                             currentCurrency === "USD"
                               ? product?.baseRate?.amountBeforeTaxUSD
@@ -1209,9 +1235,8 @@ export const Cid = ({ id }) => {
                               <span> {currentCurrency}</span>
                             </span>
                           );
-                        }
-                        return null; // No renderiza nada si no cumple la condición
-                      })}
+                        });
+                      })()}
                     </p>
 
                     {/* Mostrar "Habitaciones disponibles" solo si la habitación está en la lista restringida */}
@@ -1433,6 +1458,9 @@ export const Cid = ({ id }) => {
               <button
                 onClick={enviardatos}
                 disabled={datohabitacion.length === 0}
+                data-tooltip-id="tooltip-generar-cotizacion"
+            data-tooltip-content={datohabitacion.length === 0 ? "Selecciona las habitaciones que deseas reservar" : "Crear una reserva personalizada para el cliente."}
+            data-tooltip-place="left"
                 style={{
                   backgroundColor:
                     datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
@@ -1440,9 +1468,27 @@ export const Cid = ({ id }) => {
                     datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
                 }}
               >
-                Reservar ahora
+                Reservar ahora  
               </button>
             </a>
+            <a href="/cotizacionpagina">
+            <button
+            onClick={enviardatos}
+            disabled={datohabitacion.length === 0}
+            data-tooltip-id="tooltip-generar-cotizacion"
+            data-tooltip-content={datohabitacion.length === 0 ? "Selecciona habitaciones para generar una cotización" : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."}
+            data-tooltip-place="left"
+            style={{
+              backgroundColor:
+                datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+              cursor:
+                datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+            }}
+            >Generar cotización</button></a>
+          <Tooltip 
+            id="tooltip-generar-cotizacion"
+            className="custom-tooltip"
+          />
           </div>
         </div>
       </div>

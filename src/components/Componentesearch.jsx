@@ -12,7 +12,7 @@ import CurrencySelector from "./Cambiardivisas";
 const BusquedaCartagena = () => {
   
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
-   const currentCurrency = useStore(currency); // COP o USD
+  const currentCurrency = useStore(currency); // COP o USD
   const [nochesyedades1, setnochesyedades] = useState({});
   const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");

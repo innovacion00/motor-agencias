@@ -770,7 +770,7 @@ const Estadisticas = () => {
           Mi perfíl
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-        <a className="active"href="/estadisticas">Análisis de datos</a>
+        <a className="active" href="/estadisticas">Análisis de datos</a>
         <a href="/configuracion">Configuración</a>
         <button onClick={handleLogout}>Cerrar sesión</button>
       </div>
