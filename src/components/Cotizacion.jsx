@@ -11,18 +11,18 @@ import { Tooltip } from 'react-tooltip';
 const nombreHotelId = (hotelId) => {
   const hotelMap = {
     // Hoteles Cartagena
-    1: "Hotel Azuan Suites", // Hotel Azuan Suites
-    4: "Hotel Aixo Suites", // Hotel Aixo Suites
-    5: "Hotel Abi Inn", // Hotel Abi Inn
-    6: "Hotel Avexi Suites", // Hotel Avexi Suites
-    7: "Hotel Bocagrande Suites", // Hotel Bocagrande Suites
-    9: "Hotel Marina Suites", // Hotel Marina Suites
-    56: "Hotel Boquilla Suites", // Hotel Boquilla Suites
+    1: "Hotel Azuan", // Hotel Azuan Suites
+    4: "Hotel Aixo", // Hotel Aixo Suites
+    5: "Hotel Abi", // Hotel Abi Inn
+    6: "Hotel Avexi", // Hotel Avexi Suites
+    7: "Hotel Bocagrande", // Hotel Bocagrande Suites
+    9: "Hotel Marina", // Hotel Marina Suites
+    56: "Hotel Boquilla", // Hotel Boquilla Suites
     // Hoteles Santa Marta
     8: "Hotel Rodadero ", // Hotel Rodadero 
     2: "Hotel 1525", // Hotel 1525
-    48: "Hotel Axis Inn", // Hotel Axis Inn
-    44: "Hotel Sansiraka Inn", // Hotel Sansiraka Inn
+    48: "Hotel Axis", // Hotel Axis Inn
+    44: "Hotel Sansiraka", // Hotel Sansiraka Inn
 
 
     // Hoteles Bogota
