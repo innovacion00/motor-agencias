@@ -859,10 +859,6 @@ export default function ReservaHotelComponent() {
             <h2>Tarifas</h2>
             <div class="pricing-section">
                 <div class="price-row">
-                
-                    <span>$${totalConMarkupFormateado}</span>
-                </div>
-                <div class="price-row">
                     <span>${exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
                     <span>$${ivaFormateado}</span>
                 </div>
