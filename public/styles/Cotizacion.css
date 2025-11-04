@@ -286,11 +286,13 @@
 .sidebar {
   display: flex;
   flex-direction: column;
+  position: sticky;
+  top: 24px;
+  height: max-content;
 }
 
 .sidebar-card {
-  position: sticky;
-  top: 24px;
+  position: static;
 }
 
 .form-group {

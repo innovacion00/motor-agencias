@@ -404,3 +404,43 @@ hr {
   background-color: #eee;
   margin: 15px 0;
 }
+
+/* Reusable buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  user-select: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.02s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: #26547B;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #1e4666;
+  box-shadow: 0 2px 8px rgba(38, 84, 123, 0.35);
+}
+
+.btn-secondary {
+  background-color: #eceff1;
+  color: #37474f;
+}
+
+.btn-secondary:hover {
+  background-color: #dde3e6;
+  box-shadow: 0 2px 8px rgba(55, 71, 79, 0.15);
+}

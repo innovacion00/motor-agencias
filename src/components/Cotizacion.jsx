@@ -127,6 +127,7 @@ export default function ReservaHotelComponent() {
   const [cantninos, setCantninos] = useState();
   const [botondesactivado, setBotondesactivado] = useState(false);
   const [logoAgencia, setLogoAgencia] = useState();
+  const [huespedExtranjero, setHuespedExtranjero] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -156,7 +157,8 @@ export default function ReservaHotelComponent() {
 
   // Calcular totales basados en los datos de las habitaciones
   const subtotal = datosReserva ? datosReserva.reduce((sum, data) => sum + (data.precio || 0), 0) : 0;
-  const iva = Math.round(subtotal * 0.19) || 0;
+  const exentoIva = huespedExtranjero === true;
+  const iva = exentoIva ? 0 : (Math.round(subtotal * 0.19) || 0);
   const total = subtotal + iva;
 
   // Calcular markup (admite coma o punto como separador decimal)
@@ -680,7 +682,7 @@ export default function ReservaHotelComponent() {
         </div>
 
         <header>
-            <h1>Reserva del ${checkin} al ${checkout}</h1>
+            <h1>Cotización del ${checkin} al ${checkout}</h1>
             <p class="hotel-name">${hotelName}</p>
             <p class="subtitle">Disfrute una estadía confortable en nuestras instalaciones</p>
         </header>
@@ -787,7 +789,7 @@ export default function ReservaHotelComponent() {
                     <span>$${subtotalFormateado}</span>
                 </div>
                 <div class="price-row">
-                    <span>IVA 19%:</span>
+                    <span>${exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
                     <span>$${ivaFormateado}</span>
                 </div>
                 <div class="price-row">
@@ -898,7 +900,7 @@ export default function ReservaHotelComponent() {
         infoTransporte: null,
         infoToures: null,
         planAlimentario: datosReserva[0]?.plandealimentacion || "Solo desayuno",
-        exentoIva: false,
+        exentoIva: exentoIva,
         landingHtml: generarLandingHtml(),
         reservaInfo: {
           agency: {
@@ -965,14 +967,14 @@ export default function ReservaHotelComponent() {
         });
         window.location.href = `/cotizaciones/${data._id}`;
       } else {
-        throw new Error("Error al enviar la cotización");
+        throw new Error("o intente nuevamente mas tarde");
       }
     } catch (error) {
       console.error("Error al enviar cotización:", error);
       Swal.fire({
         icon: "error",
         title: "Error al enviar cotización",
-        text: `No se pudo enviar la cotización. ${error.message}`,
+        text: `Recargue la página y vuelva a intentarlo ${error.message}`,
       });
     } finally {
       setBotondesactivado(false);
@@ -1206,7 +1208,16 @@ export default function ReservaHotelComponent() {
                     Incluir código de área (+57,+55, etc.) eje:+573002215487
                   </label>
                 </div>
-
+                <div className="form-group">
+              <label className="label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input
+                  type="checkbox"
+                  checked={huespedExtranjero}
+                  onChange={(e) => setHuespedExtranjero(e.target.checked)}
+                />
+                Huésped extranjero (exento de IVA)
+              </label>
+            </div>
               </fieldset>
             </form>
           </div>
@@ -1307,11 +1318,20 @@ export default function ReservaHotelComponent() {
                       <td className="td-amount">${subtotal.toLocaleString()}</td>
                     </tr>
                     <tr className="table-subtotal">
-                      <td colSpan="4" className="td-total">IVA 19%</td>
+                      <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</td>
                       <td className="td-amount">${iva.toLocaleString()}</td>
                     </tr>
                     <tr className="table-total">
-                      <td colSpan="4" className="td-total-label">Precio total para la agencia</td>
+                      <td colSpan="4" className="td-total-label">Precio total para la agencia
+                        <img
+                          src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
+                          alt="Información"
+                          data-tooltip-id="tooltip-precio-agencia"
+                          data-tooltip-content="Este valor no se mostrará en la cotización"
+                          data-tooltip-place="right"
+                          style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
+                        />
+                      </td>
                       <td className="td-total-amount">${total.toLocaleString()}</td>
                     </tr>
                     {markupPorcentaje > 0 && (
@@ -1395,7 +1415,25 @@ export default function ReservaHotelComponent() {
                   </button>
                   {showPoliticas && (
                     <div className="accordion-content">
-                      <p className="text">Políticas de cancelación y modificación...</p>
+                      <p >Tener en cuenta:</p>
+              <br />
+              <p>
+                * La cadena hotelera Geh Suites protege a los niños, niñas y
+                adolescentes de la explotación sexual y comercial Ley 679 de
+                2001.
+              </p>
+              <br />
+              <p>
+                {" "}
+                * Recuerde: todo niño que viaje debe contar con su documento de
+                identidad (Registro civil o tarjeta de identidad).
+              </p>
+              <br />
+              <p>
+                * Si los niños que viajan no son hijos de los adultos que los
+                representan deben contar con un permiso de los padres,
+                autenticado en una notaría.
+              </p>
                     </div>
                   )}
                 </div>
@@ -1449,6 +1487,8 @@ export default function ReservaHotelComponent() {
             <p style={{ fontSize: "13px", color: "#666", marginBottom: "15px", lineHeight: "1.5" }}>
               Ingresa el porcentaje de ganancia que se sumará al valor base de la reserva.
             </p>
+
+           
 
             <div className="form-group">
               <label className="label">
@@ -1517,6 +1557,7 @@ export default function ReservaHotelComponent() {
       </div>
       <Tooltip id="tooltip-markup" className="custom-tooltip" />
       <Tooltip id="tooltip-logo-agencia" className="custom-tooltip" />
+      <Tooltip id="tooltip-precio-agencia" className="custom-tooltip" />
 
     </div>
   );

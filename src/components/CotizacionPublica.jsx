@@ -347,10 +347,12 @@ export const CotizacionPublica = ({ id }) => {
         getHotelIdByName(hotelNameFromPayload) ||
         undefined;
 
-    // Calcular totales
+    // Calcular totales (respetar exención de IVA) y mostrar precio con markup si existe
     const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
-    const iva = Math.round(subtotal * 0.19);
+    const exentoIva = !!cotizacion?.exentoIva;
+    const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
     const total = subtotal + iva;
+    const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : total;
 
     return (
         <div className="container" ref={containerRef}>
@@ -509,12 +511,12 @@ export const CotizacionPublica = ({ id }) => {
                             <span>${subtotal.toLocaleString()}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
-                            <span>IVA 19%:</span>
+                            <span>{exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
                             <span>${iva.toLocaleString()}</span>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: 'none', fontWeight: 'bold', fontSize: '18px', color: '#886b43', marginTop: '10px', paddingTop: '15px', borderTop: '2px solid #886b43' }}>
                             <span>Total:</span>
-                            <span>${total.toLocaleString()}</span>
+                            <span>${totalConMarkup.toLocaleString()}</span>
                         </div>
                     </div>
                 </section>

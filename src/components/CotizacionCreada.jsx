@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard } from 'lucide-react';
+import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard, CheckCircle, XCircle } from 'lucide-react';
 import '/public/styles/Cotizacion.css';
+import { Tooltip } from 'react-tooltip';
 import { cotizaciones, cotizacionData } from '../stores/cotizaciones';
 import { useStore } from '@nanostores/react';
 import Swal from 'sweetalert2';
@@ -141,6 +142,7 @@ const getHotelIdByName = (hotelName) => {
 export const CotizacionCreada = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
+    const [decision, setDecision] = useState(null); // 'aceptar' | 'rechazar'
     const [loading, setLoading] = useState(true);
     const [logoAgencia, setLogoAgencia] = useState();
     const cotizacion = useStore(cotizacionData);
@@ -219,6 +221,110 @@ export const CotizacionCreada = ({ id }) => {
         }
         return response;
       };
+
+    const url = import.meta.env.PUBLIC_API_URL;
+
+    const handleAceptar = () => {
+        Swal.fire({
+            title: '¿Aceptar cotización?',
+            text: 'Al aceptar, se creará la reserva automáticamente. ¿Desea continuar?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#059669',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, aceptar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    if (!cotizacion?.tokenAcceso) {
+                        Swal.fire({
+                            title: 'Acción no disponible',
+                            text: 'Genere primero el link público de la cotización para habilitar la respuesta del cliente.',
+                            icon: 'info',
+                            confirmButtonColor: '#26547B'
+                        });
+                        return;
+                    }
+                    const response = await fetch(`${url}/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 1 })
+                    });
+                    if (response.ok) {
+                        setDecision('aceptar');
+                        Swal.fire({
+                            title: '¡Cotización aceptada!',
+                            text: 'La respuesta ha sido registrada y la reserva será creada automáticamente.',
+                            icon: 'success',
+                            confirmButtonColor: '#059669'
+                        });
+                    } else {
+                        throw new Error('Error al enviar la respuesta');
+                    }
+                } catch (error) {
+                    console.error('Error al aceptar cotización:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo procesar la respuesta. Intente nuevamente.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            }
+        });
+    };
+
+    const handleRechazar = () => {
+        Swal.fire({
+            title: '¿Rechazar cotización?',
+            text: '¿Está seguro de que desea rechazar esta cotización?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sí, rechazar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    if (!cotizacion?.tokenAcceso) {
+                        Swal.fire({
+                            title: 'Acción no disponible',
+                            text: 'Genere primero el link público de la cotización para habilitar la respuesta del cliente.',
+                            icon: 'info',
+                            confirmButtonColor: '#26547B'
+                        });
+                        return;
+                    }
+                    const response = await fetch(`${url}/agencias/v1/cotizaciones/public/responder/${cotizacion.tokenAcceso}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 2 })
+                    });
+                    if (response.ok) {
+                        setDecision('rechazar');
+                        Swal.fire({
+                            title: 'Cotización rechazada',
+                            text: 'La respuesta ha sido registrada.',
+                            icon: 'info',
+                            confirmButtonColor: '#6b7280'
+                        });
+                    } else {
+                        throw new Error('Error al enviar la respuesta');
+                    }
+                } catch (error) {
+                    console.error('Error al rechazar cotización:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se pudo procesar la respuesta. Intente nuevamente.',
+                        icon: 'error',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+            }
+        });
+    };
     // Extraer datos de la cotización
     const reservaInfo = cotizacion.reservation || {};
     const titularInfo = cotizacion.titularInfo || {};
@@ -239,9 +345,10 @@ export const CotizacionCreada = ({ id }) => {
         getHotelIdByName(hotelName) ||
         undefined;
 
-    // Calcular totales
+    // Calcular totales (respetar exención de IVA)
     const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
-    const iva = Math.round(subtotal * 0.19);
+    const exentoIva = !!cotizacion?.exentoIva;
+    const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
     const total = subtotal + iva;
     
     // Calcular markup si existe
@@ -333,10 +440,12 @@ export const CotizacionCreada = ({ id }) => {
                                 backgroundColor: 
                                     cotizacion.status === 2 ? '#dc2626' : 
                                     cotizacion.status === 1 ? '#059669' : 
+                                    cotizacion.status === 3 ? '#8b5cf6' : 
                                     '#3b82f6' 
                             }}>
                                 {cotizacion.status === 2 ? 'Estado: cotización rechazada' : 
                                  cotizacion.status === 1 ? 'Estado: cotización aceptada' : 
+                                 cotizacion.status === 3 ? 'Estado: cotización convertida en reserva' : 
                                  'Estado: cotización generada'}
                             </span>
                         </div>
@@ -509,11 +618,20 @@ export const CotizacionCreada = ({ id }) => {
                                             <td className="td-amount">${subtotal.toLocaleString()}</td>
                                         </tr>
                                         <tr className="table-subtotal">
-                                            <td colSpan="4" className="td-total">IVA 19%</td>
+                                            <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</td>
                                             <td className="td-amount">${iva.toLocaleString()}</td>
                                         </tr>
                                         <tr className="table-total">
-                                            <td colSpan="4" className="td-total-label">Precio total para la agencia</td>
+                                            <td colSpan="4" className="td-total-label">Precio total para la agencia
+                                                <img
+                                                    src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
+                                                    alt="Información"
+                                                    data-tooltip-id="tooltip-precio-agencia"
+                                                    data-tooltip-content="Este valor no se mostrará en la cotización"
+                                                    data-tooltip-place="right"
+                                                    style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
+                                                />
+                                            </td>
                                             <td className="td-total-amount">${total.toLocaleString()}</td>
                                         </tr>
                                         {markupAmount > 0 && (
@@ -654,11 +772,20 @@ export const CotizacionCreada = ({ id }) => {
                                 <span className="price-value">${subtotal.toLocaleString()}</span>
                             </div>
                             <div className="price-row">
-                                <span className="price-label">IVA 19%</span>
+                                <span className="price-label">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</span>
                                 <span className="price-value">${iva.toLocaleString()}</span>
                             </div>
                             <div className="price-row" style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px", marginTop: "8px" }}>
-                                <span className="price-label" style={{ fontWeight: "600" }}>Precio total para la agencia</span>
+                                <span className="price-label" style={{ fontWeight: "600" }}>Precio total para la agencia
+                                    <img
+                                        src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
+                                        alt="Información"
+                                        data-tooltip-id="tooltip-precio-agencia"
+                                        data-tooltip-content="Este valor no se mostrará en la cotización"
+                                        data-tooltip-place="right"
+                                        style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
+                                    />
+                                </span>
                                 <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${total.toLocaleString()}</span>
                             </div>
                             {markupAmount > 0 && (
@@ -671,6 +798,7 @@ export const CotizacionCreada = ({ id }) => {
                         <div style={{ marginTop: '20px', display: 'grid', gap: '10px' }}>
                             <button
                                 onClick={handleDownloadPDF}
+                                disabled={cotizacion?.status !== 0}
                                 style={{
                                     fontWeight: '500',
                                     backgroundColor: '#26547B',
@@ -678,9 +806,10 @@ export const CotizacionCreada = ({ id }) => {
                                     padding: '12px 16px',
                                     border: 'none',
                                     borderRadius: '5px',
-                                    cursor: 'pointer',
+                                    cursor: cotizacion?.status !== 0 ? 'not-allowed' : 'pointer',
                                     fontSize: '14px',
-                                    width: '100%'
+                                    width: '100%',
+                                    opacity: cotizacion?.status !== 0 ? 0.5 : 1
                                 }}
                             >
                                 Descargar PDF
@@ -695,6 +824,7 @@ export const CotizacionCreada = ({ id }) => {
                                         alert('No se pudo copiar el link. Intente manualmente.');
                                     }
                                 }}
+                                disabled={cotizacion?.status !== 0}
                                 style={{
                                     fontWeight: '500',
                                     backgroundColor: 'white',
@@ -702,17 +832,102 @@ export const CotizacionCreada = ({ id }) => {
                                     padding: '12px 16px',
                                     border: '1px solid #26547B',
                                     borderRadius: '5px',
-                                    cursor: 'pointer',
+                                    cursor: cotizacion?.status !== 0 ? 'not-allowed' : 'pointer',
                                     fontSize: '14px',
-                                    width: '100%'
+                                    width: '100%',
+                                    opacity: cotizacion?.status !== 0 ? 0.5 : 1
                                 }}
                             >
                                 Generar link de cotización
                             </button>
                         </div>
                     </div>
+
+                    {/* Recuadro: Aceptar / Rechazar cotización */}
+                    <div className="card sidebar-card" style={{ marginTop: '16px' }}>
+                       
+
+                        {/* Mensajes de estado si ya hay respuesta */}
+                        {cotizacion?.status === 1 && (
+                            <div style={{
+                                padding: '12px',
+                                backgroundColor: '#f0fdf4',
+                                borderRadius: '8px',
+                                border: '1px solid #22c55e',
+                                marginBottom: '12px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <CheckCircle style={{ color: '#22c55e' }} />
+                                    <span style={{ color: '#166534', fontWeight: 600 }}>Cotización aceptada</span>
+                                </div>
+                            </div>
+                        )}
+                        {cotizacion?.status === 2 && (
+                            <div style={{
+                                padding: '12px',
+                                backgroundColor: '#fef2f2',
+                                borderRadius: '8px',
+                                border: '1px solid #ef4444',
+                                marginBottom: '12px'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <XCircle style={{ color: '#ef4444' }} />
+                                    <span style={{ color: '#991b1b', fontWeight: 600 }}>Cotización rechazada</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Botones (visibles solo cuando status === 0) */}
+                        {cotizacion?.status === 0 && (
+                        <div style={{ display: 'grid', gap: '10px' }}>
+                            <button
+                                onClick={handleAceptar}
+                                style={{
+                                    fontWeight: '500',
+                                    backgroundColor: '#059669',
+                                    color: 'white',
+                                    padding: '12px 16px',
+                                    border: 'none',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <CheckCircle size={18} />
+                                Cotización aceptada
+                            </button>
+                            <button
+                                onClick={handleRechazar}
+                                style={{
+                                    fontWeight: '500',
+                                    backgroundColor: 'white',
+                                    color: '#ef4444',
+                                    padding: '12px 16px',
+                                    border: '1px solid #ef4444',
+                                    borderRadius: '5px',
+                                    cursor: 'pointer',
+                                    fontSize: '14px',
+                                    width: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <XCircle size={18} />
+                                Cotización rechazada
+                            </button>
+                        </div>
+                        )}
+                    </div>
                 </div>
             </div>
+            <Tooltip id="tooltip-precio-agencia" className="custom-tooltip" />
         </div>
     );
 };
