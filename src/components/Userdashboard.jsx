@@ -23,6 +23,7 @@ const UserDashboard = () => {
   const [displayValue, setDisplayValue] = useState(""); // Guardamos el valor formateado
   const [isPoliciesModalOpen, setIsPoliciesModalOpen] = useState(false);
   const [policiesText, setPoliciesText] = useState("");
+  const [policiesLoading, setPoliciesLoading] = useState(false);
   const dataejem = [
     { month: "Enero", reservas: 30 },
     { month: "Febrero", reservas: 45 },
@@ -67,6 +68,41 @@ const UserDashboard = () => {
   const closePoliciesModal = () => {
     setIsPoliciesModalOpen(false);
   };
+
+  //#region Obtener políticas de la agencia
+  const obtenerPoliticasAgencia = async () => {
+    if (!userData?.agencia?._id) {
+      return;
+    }
+
+    try {
+      setPoliciesLoading(true);
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/${userData.agencia._id}/politicas`
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudieron obtener las políticas");
+      }
+
+      const data = await response.json();
+      setPoliciesText(data.politicasAgencia || "");
+    } catch (error) {
+      console.error("Error obteniendo políticas:", error);
+      // Si hay error, dejamos el textarea vacío en lugar de mostrar un error bloqueante
+      setPoliciesText("");
+    } finally {
+      setPoliciesLoading(false);
+    }
+  };
+
+  // useEffect para cargar las políticas cuando se abre el modal
+  useEffect(() => {
+    if (isPoliciesModalOpen && userData?.agencia?._id) {
+      obtenerPoliticasAgencia();
+    }
+  }, [isPoliciesModalOpen, userData?.agencia?._id]);
 
   const handleUpdatePolicies = async () => {
     try {
@@ -525,7 +561,8 @@ const UserDashboard = () => {
                 id="policies-textarea"
                 value={policiesText}
                 onChange={(e) => setPoliciesText(e.target.value)}
-                placeholder="Ingresa aquí las políticas de tu agencia..."
+                placeholder={policiesLoading ? "Cargando políticas..." : "Ingresa aquí las políticas de tu agencia..."}
+                disabled={policiesLoading}
                 style={{
                   width: "100%",
                   minHeight: "260px",
@@ -535,6 +572,8 @@ const UserDashboard = () => {
                   borderRadius: "6px",
                   fontSize: "14px",
                   lineHeight: 1.5,
+                  opacity: policiesLoading ? 0.6 : 1,
+                  cursor: policiesLoading ? "wait" : "text",
                 }}
               />
             </div>
@@ -545,8 +584,8 @@ const UserDashboard = () => {
               justifyContent: "flex-end",
               gap: "10px",
             }}>
-              <button onClick={closePoliciesModal} className="btn btn-secondary">Salir</button>
-              <button onClick={handleUpdatePolicies} className="btn btn-primary">Actualizar</button>
+              <button onClick={closePoliciesModal} className="btn btn-secondary" disabled={policiesLoading}>Salir</button>
+              <button onClick={handleUpdatePolicies} className="btn btn-primary" disabled={policiesLoading}>Actualizar</button>
             </div>
           </div>
         </div>

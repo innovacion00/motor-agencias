@@ -128,6 +128,8 @@ export default function ReservaHotelComponent() {
   const [botondesactivado, setBotondesactivado] = useState(false);
   const [logoAgencia, setLogoAgencia] = useState();
   const [huespedExtranjero, setHuespedExtranjero] = useState(false);
+  const [policiesText, setPoliciesText] = useState("");
+  const [policiesLoading, setPoliciesLoading] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -144,6 +146,7 @@ export default function ReservaHotelComponent() {
     setFechasreserva(fechas);
     setAgencia(token);
   }, []);
+
   // Estados para el formulario de datos del huésped
   const [formData, setFormData] = useState({
     tipoDocumento: '',
@@ -255,6 +258,77 @@ export default function ReservaHotelComponent() {
       Swal.fire({
         title: "Error",
         text: "No se pudo cargar la imagen.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    }
+  };
+
+  //#region Obtener políticas de la agencia
+  const obtenerPoliticasAgencia = async () => {
+    const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
+    if (!datosDelUsuario?.agencia?._id) {
+      return;
+    }
+
+    try {
+      setPoliciesLoading(true);
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/${datosDelUsuario.agencia._id}/politicas`
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudieron obtener las políticas");
+      }
+
+      const data = await response.json();
+      setPoliciesText(data.politicasAgencia || "");
+    } catch (error) {
+      console.error("Error obteniendo políticas:", error);
+      setPoliciesText("");
+    } finally {
+      setPoliciesLoading(false);
+    }
+  };
+
+  // useEffect para cargar las políticas cuando se monta el componente
+  useEffect(() => {
+    obtenerPoliticasAgencia();
+  }, []);
+
+  //#region Actualizar políticas de la agencia
+  const handleUpdatePolicies = async () => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/auth/politicas-agencia`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ politicasAgencia: policiesText }),
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudo actualizar las políticas");
+      }
+
+      await response.json().catch(() => ({}));
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Políticas actualizadas correctamente.",
+        icon: "success",
+        confirmButtonColor: "#26547B",
+        timer: 3000,
+        timerProgressBar: true,
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Error al actualizar las políticas.",
         icon: "error",
         confirmButtonColor: "#26547B",
       });
@@ -838,6 +912,15 @@ export default function ReservaHotelComponent() {
                 <li>Está prohibido el tráfico y comercialización ilegal de bienes de interés cultural de acuerdo a lo establecido en la Ley 1185 de 2008</li>
             </ul>
         </section>
+        
+                ${policiesText ? `
+                <section class="terms-section" style="margin-top: 30px;">
+                    <h2>Políticas de la agencia</h2>
+                    <div style="background-color: #f9fafb; padding: 20px; border-radius: 5px; border: 1px solid #d1d5db; margin: 20px 0;">
+                        <p style="white-space: pre-wrap; line-height: 1.8; color: #333; margin: 0; font-family: 'Roboto', 'Arial', 'Helvetica', sans-serif;">${policiesText}</p>
+                    </div>
+                </section>
+                ` : ''}
 
         <div class="contact-section">
             <h2>¿Preguntas?</h2>
@@ -1442,28 +1525,56 @@ export default function ReservaHotelComponent() {
           )}
           {/* Políticas de la Agencia */}
           <div className="card">
-            <h2 className="title">Políticas de la agencia</h2>
+            <h2 className="title">Políticas de tu agencia</h2>
 
             <div className="editor">
-              <div className="toolbar">
-                <button className="tool-btn"><strong>B</strong></button>
-                <button className="tool-btn"><em>I</em></button>
-                <button className="tool-btn"><u>U</u></button>
-                <div className="separator"></div>
-                <button className="tool-btn">≡</button>
-                <button className="tool-btn">≡</button>
-                <button className="tool-btn">≡</button>
-                <button className="tool-btn">≡</button>
-                <div className="separator"></div>
-                <button className="tool-btn">• •</button>
-                <button className="tool-btn">1.</button>
-              </div>
               <textarea
-                value={observaciones}
-                onChange={(e) => setObservaciones(e.target.value)}
-                placeholder="Escribe las observaciones"
+                value={policiesText}
+                onChange={(e) => setPoliciesText(e.target.value)}
+                placeholder={policiesLoading ? "Cargando políticas..." : "Ingresa aquí las políticas de tu agencia..."}
+                disabled={policiesLoading}
                 className="textarea"
+                style={{
+                  opacity: policiesLoading ? 0.6 : 1,
+                  cursor: policiesLoading ? "wait" : "text",
+                  fontFamily: "Roboto, sans-serif",
+                }}
               />
+            </div>
+            <div style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "12px",
+            }}>
+              <button
+                onClick={handleUpdatePolicies}
+                disabled={policiesLoading}
+                style={{
+                  padding: "10px 16px",
+                  backgroundColor: "#26547B",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: policiesLoading ? "not-allowed" : "pointer",
+                  fontSize: "14px",
+                  opacity: policiesLoading ? 0.6 : 1,
+                  transition: "background-color 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  if (!policiesLoading) {
+                    e.target.style.backgroundColor = "#1e4666";
+                    e.target.style.boxShadow = "0 2px 8px rgba(38, 84, 123, 0.35)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!policiesLoading) {
+                    e.target.style.backgroundColor = "#26547B";
+                    e.target.style.boxShadow = "none";
+                  }
+                }}
+              >
+                {policiesLoading ? "Cargando..." : "Actualizar"}
+              </button>
             </div>
           </div>
         </div>

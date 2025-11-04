@@ -145,6 +145,8 @@ export const CotizacionCreada = ({ id }) => {
     const [decision, setDecision] = useState(null); // 'aceptar' | 'rechazar'
     const [loading, setLoading] = useState(true);
     const [logoAgencia, setLogoAgencia] = useState();
+    const [policiesText, setPoliciesText] = useState("");
+    const [policiesLoading, setPoliciesLoading] = useState(false);
     const cotizacion = useStore(cotizacionData);
 
     useEffect(() => {
@@ -168,6 +170,67 @@ export const CotizacionCreada = ({ id }) => {
         } catch (_) {
             // Ignorar errores de parseo y continuar con fallback
         }
+    }, []);
+
+    // Función fetchWithToken para obtener políticas
+    const fetchWithTokenForPolicies = async (url, options = {}) => {
+        let token = Cookies.get('accessToken');
+        let response = await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+    
+        if (response.status === 401) {
+          const newToken = await refreshToken();
+          if (newToken) {
+            response = await fetch(url, {
+              ...options,
+              headers: {
+                ...options.headers,
+                'Authorization': `Bearer ${newToken}`,
+                'Content-Type': 'application/json'
+              }
+            });
+          }
+        }
+        return response;
+    };
+
+    //#region Obtener políticas de la agencia
+    const obtenerPoliticasAgencia = async () => {
+        const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
+        if (!datosDelUsuario?.agencia?._id) {
+            return;
+        }
+
+        try {
+            setPoliciesLoading(true);
+            const response = await fetchWithTokenForPolicies(
+                `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/${datosDelUsuario.agencia._id}/politicas`
+            );
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.message || "No se pudieron obtener las políticas");
+            }
+
+            const data = await response.json();
+            setPoliciesText(data.politicasAgencia || "");
+        } catch (error) {
+            console.error("Error obteniendo políticas:", error);
+            setPoliciesText("");
+        } finally {
+            setPoliciesLoading(false);
+        }
+    };
+
+    // useEffect para cargar las políticas cuando se monta el componente
+    useEffect(() => {
+        obtenerPoliticasAgencia();
     }, []);
 
     if (loading) {
@@ -729,33 +792,24 @@ export const CotizacionCreada = ({ id }) => {
                     <div className="card">
                         <h2 className="title">Políticas de la agencia</h2>
                         <div className="editor">
-                            <div className="toolbar">
-                                <button className="tool-btn"><strong>B</strong></button>
-                                <button className="tool-btn"><em>I</em></button>
-                                <button className="tool-btn"><u>U</u></button>
-                                <div className="separator"></div>
-                                <button className="tool-btn">≡</button>
-                                <button className="tool-btn">≡</button>
-                                <button className="tool-btn">≡</button>
-                                <button className="tool-btn">≡</button>
-                                <div className="separator"></div>
-                                <button className="tool-btn">• •</button>
-                                <button className="tool-btn">1.</button>
-                            </div>
+                            
                             <div className="textarea" style={{
                                 padding: '16px',
                                 minHeight: '160px',
                                 backgroundColor: '#f9fafb',
                                 border: '1px solid #d1d5db',
-                                borderRadius: '4px'
+                                borderRadius: '4px',
+                                fontFamily: 'Roboto, sans-serif',
+                                whiteSpace: 'pre-wrap',
+                                wordWrap: 'break-word'
                             }}>
-                                <p style={{ margin: 0, color: '#1C3D5A' }}>
-                                    Esta cotización ha sido generada por {agency.fullName || 'la agencia'} el {new Date().toLocaleDateString('es-ES')}.<br /><br />
-                                    • Precios sujetos a disponibilidad<br />
-                                    • Válida por 24 horas<br />
-                                    • Pago requerido para confirmar la reserva<br />
-                                    • Contacto: {reservaInfo.email || 'No especificado'}
-                                </p>
+                                {policiesLoading ? (
+                                    <p style={{ margin: 0, color: '#666' }}>Cargando políticas...</p>
+                                ) : policiesText ? (
+                                    <p style={{ margin: 0, color: '#1C3D5A' }}>{policiesText}</p>
+                                ) : (
+                                    <p style={{ margin: 0, color: '#666' }}>No hay políticas configuradas</p>
+                                )}
                             </div>
                         </div>
                     </div>
