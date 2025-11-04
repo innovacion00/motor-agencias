@@ -1243,7 +1243,7 @@ const Gestionar = ({ reservas }) => {
                   name="notas"
                   id="notaspropias"
                   value={nota}
-                  placeholder="Escriba sus notas aquí"
+                  placeholder="Escriba sus otras aquí"
                   onChange={handleChange}
                   maxLength={200}
                 ></textarea>

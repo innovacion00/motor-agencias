@@ -859,8 +859,8 @@ export default function ReservaHotelComponent() {
             <h2>Tarifas</h2>
             <div class="pricing-section">
                 <div class="price-row">
-                    <span>Subtotal (${habitaciones} habitación/es):</span>
-                    <span>$${subtotalFormateado}</span>
+                
+                    <span>$${totalConMarkupFormateado}</span>
                 </div>
                 <div class="price-row">
                     <span>${exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
