@@ -955,10 +955,14 @@ const Gestionar = ({ reservas }) => {
                 )}
 
                 <p className={styles.plazoPago}>
-                  Tienes plazo de pagar hasta el {reservas?.fechaLimitePago}
+                  Tienes plazo de hacer el primero pago hasta el {reservas?.fechaLimitePago}
                 </p>
+                
+                <p className={styles.plazoPago}>
+                Tienes plazo de hacer el segundo pago hasta el {reservas?.fechaLimitePago2}
+              </p>
               </div>
-
+              
               <p className={styles.total}>
                 {reservas?.reservation.currency == "USD"
                   ? `$${reservas?.total} USD`
