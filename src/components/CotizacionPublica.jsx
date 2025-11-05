@@ -478,7 +478,6 @@ export const CotizacionPublica = ({ id }) => {
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Escritorio</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Silla</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Closet</li>
-                        <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Sala de estar en las habitaciones</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de wifi de cortesía</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Cajillas de seguridad</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de recepción durante 24 horas</li>
@@ -507,8 +506,8 @@ export const CotizacionPublica = ({ id }) => {
                     <h2 style={{ color: '#886b43', fontSize: '22px', marginTop: '30px', marginBottom: '15px', borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Tarifas</h2>
                     <div className="pricing-section" style={{ backgroundColor: '#f0f7ff', padding: '20px', borderRadius: '5px', margin: '20px 0' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
-                            <span>Subtotal ({roomsData.length} habitación/es):</span>
-                            <span>${subtotal.toLocaleString()}</span>
+                            
+                           
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
                             <span>{exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>

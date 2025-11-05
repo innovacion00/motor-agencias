@@ -834,7 +834,6 @@ export default function ReservaHotelComponent() {
                 <li>Escritorio</li>
                 <li>Silla</li>
                 <li>Closet</li>
-                <li>Sala de estar en las habitaciones</li>
                 <li>Servicio de wifi de cortesía</li>
                 <li>Cajillas de seguridad</li>
                 <li>Servicio de recepción durante 24 horas</li>
