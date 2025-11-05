@@ -1,0 +1,25 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import RouteProtection from "../components/RouteProtection.astro";
+import BookingConnectIAComponent from "../components/BookingConnectIA.jsx";
+---
+
+<html lang="es">
+    <RouteProtection/>
+    <BaseLayout title="BookingConnectIA">
+        <link 
+        rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        />
+
+        <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+        <link rel="stylesheet" href="/styles/BookingConnectIA.css" />
+
+        <BookingConnectIAComponent client:load />
+    </BaseLayout>
+      
+</html>

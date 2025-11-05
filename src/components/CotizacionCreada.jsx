@@ -251,11 +251,11 @@ export const CotizacionCreada = ({ id }) => {
                 <div className="card">
                     <div style={{ textAlign: 'center', padding: '40px' }}>
                         <h2>No se pudo cargar la cotización</h2>
-                        <p>Verifique que el ID de la cotización sea correcto.</p>
+                        <p>Recargue la pagina o intente nuevamente mas tarde.</p>
                     </div>
                 </div>
             </div>
-        );
+        );      
     }
 
     const fetchWithToken = async (url, options = {}) => {

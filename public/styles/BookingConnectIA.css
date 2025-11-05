@@ -1,0 +1,127 @@
+/* Variables CSS para modo claro y oscuro */
+:root {
+	--bg-color: #ffffff;
+	--text-color: #af7730f6;
+	--input-bg: #f5f5f5;
+	--input-text: #af7730f6;
+	--button-border: #af7730f6;
+	--button-text: #af7730f6;
+	--shadow-color: rgba(175, 119, 48, 0.1);
+}
+
+[data-theme="dark"] {
+	--bg-color: #121821;
+	--text-color: #ffffff;
+	--input-bg: #212936;
+	--input-text: #e0e3eb;
+	--button-border: #505a76;
+	--button-text: #a0a6b4;
+	--shadow-color: rgba(19, 25, 40, 0.4);
+}
+
+/* Ámbito de la página del componente */
+.bcia-page {
+	margin: 0;
+	min-height: 70vh;
+	background-color: var(--bg-color);
+	color: var(--text-color);
+	font-family: 'Roboto', Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.3s ease, color 0.3s ease;
+	position: relative;
+}
+
+/* Botón de modo oscuro */
+.theme-toggle {
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	background-color: var(--input-bg);
+	border: 1px solid var(--button-border);
+	border-radius: 20px;
+	padding: 10px 20px;
+	color: var(--text-color);
+	cursor: pointer;
+	font-size: 14px;
+	transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+\topacity: 0.8;
+}
+
+/* Contenedor central */
+.container {
+	text-align: center;
+	max-width: 700px;
+	width: 90%;
+}
+
+/* Texto de saludo */
+.container h2 {
+	font-weight: 600;
+	margin-bottom: 24px;
+	color: var(--text-color);
+}
+
+/* Caja de mensaje */
+.input-box {
+	display: flex;
+	align-items: center;
+	background-color: var(--input-bg);
+	border-radius: 20px;
+	padding: 12px 16px;
+	margin-bottom: 30px;
+	box-shadow: 0 3px 21px var(--shadow-color);
+	transition: background-color 0.3s ease;
+}
+
+.input-box input[type="text"] {
+	flex: 1;
+	background-color: transparent;
+	border: none;
+	color: var(--input-text);
+	font-size: 16px;
+	outline: none;
+}
+
+.input-box input[type="text"]::placeholder {
+	color: var(--button-text);
+	opacity: 0.7;
+}
+
+/* Icono de micrófono */
+.mic-icon {
+	margin-left: 15px;
+	color: var(--button-text);
+	cursor: pointer;
+	font-size: 20px;
+}
+
+/* Estilos para los botones debajo */
+.button-group {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+}
+
+.button-group button {
+	background-color: transparent;
+	border: 1px solid var(--button-border);
+	border-radius: 12px;
+	padding: 8px 16px;
+	color: var(--button-text);
+	cursor: pointer;
+	font-size: 13px;
+	transition: all 0.3s ease;
+}
+
+.button-group button:hover {
+	background-color: var(--input-bg);
+}
+
+
