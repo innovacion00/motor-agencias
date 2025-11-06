@@ -1,7 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [message, setMessage] = useState("");
+	const [agencyDisplayName, setAgencyDisplayName] = useState(agencyName);
+
+	useEffect(() => {
+		try {
+			const raw = localStorage.getItem("datosUsuario");
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				const name = parsed?.agencia?.fullName;
+				if (typeof name === "string" && name.trim().length > 0) {
+					setAgencyDisplayName(name);
+				}
+			}
+		} catch (_) {
+			// ignorar errores de parseo/acceso
+		}
+	}, []);
 
 	return (
 		<div className="bcia-page">
@@ -42,7 +58,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 				<main className="main-content">
 					<div className="container">
 						<h2>
-							Hola {agencyName}, de parte de Geh Suites ¿En que podemos ayudarte hoy?
+							Hola {agencyDisplayName}, de parte de Geh Suites ¿En que podemos ayudarte hoy?
 						</h2>
 						<div className="input-box">
 							<input

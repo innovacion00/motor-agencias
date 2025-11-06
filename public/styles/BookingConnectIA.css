@@ -1,11 +1,11 @@
 /* Variables CSS (modo claro) */
 :root {
 	--bg-color: #ffffff;
-	--text-color: #af7730f6;
+	--text-color: #af7730f6; /* mantiene color del h2 */
 	--input-bg: #f5f5f5;
-	--input-text: #af7730f6;
-	--button-border: #af7730f6;
-	--button-text: #af7730f6;
+	--input-text: #1C3D5A; /* color general de textos */
+	--button-border: #1C3D5A; /* borde de botones del button-group */
+	--button-text: #1C3D5A; /* color de texto general en botones/íconos */
 	--shadow-color: rgba(175, 119, 48, 0.1);
 }
 
@@ -14,7 +14,7 @@
 	margin: 0;
 	min-height: 70vh;
 	background-color: var(--bg-color);
-	color: var(--text-color);
+	color: #1C3D5A; /* color por defecto para todas las fuentes */
 	font-family: 'Roboto', Arial, sans-serif;
 	display: flex;
 	flex-direction: column;
@@ -69,7 +69,7 @@
 
 .icon-btn:hover {
 	background-color: var(--input-bg);
-	color: var(--text-color);
+	color: #1C3D5A;
 	border-color: var(--button-border);
 }
 
@@ -80,7 +80,7 @@
 	padding: 10px 12px;
 	border-radius: 6px;
 	cursor: pointer;
-	color: var(--text-color);
+	color: #1C3D5A;
 	font-size: 14px;
 	margin-bottom: 4px;
 	transition: all 0.2s;
@@ -88,7 +88,7 @@
 
 .menu-item:hover {
 	background-color: var(--input-bg);
-	color: var(--text-color);
+	color: #1C3D5A;
 }
 
 .menu-icon {
@@ -170,5 +170,8 @@
 .button-group button:hover {
 	background-color: var(--input-bg);
 }
+
+/* Botón "+" del input */
+.add-btn { color: #1C3D5A; }
 
 
