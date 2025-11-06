@@ -347,12 +347,25 @@ export const CotizacionPublica = ({ id }) => {
         getHotelIdByName(hotelNameFromPayload) ||
         undefined;
 
+    // Utilidad: calcular noches si no viene explícito
+    const calculateNights = (checkin, checkout) => {
+        if (!checkin || !checkout) return 0;
+        const inDate = new Date(checkin);
+        const outDate = new Date(checkout);
+        const diffMs = outDate.getTime() - inDate.getTime();
+        if (Number.isNaN(diffMs) || diffMs <= 0) return 0;
+        return Math.round(diffMs / (1000 * 60 * 60 * 24));
+    };
+
+    const nights = Number(reservaInfo?.nights) || calculateNights(reservaInfo?.checkin, reservaInfo?.checkout) || 1;
+
     // Calcular totales (respetar exención de IVA) y mostrar precio con markup si existe
     const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
     const exentoIva = !!cotizacion?.exentoIva;
     const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
     const total = subtotal + iva;
     const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : total;
+    const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
 
     return (
         <div className="container" ref={containerRef}>
@@ -491,15 +504,14 @@ export const CotizacionPublica = ({ id }) => {
                         <div key={room.id || index} style={{ backgroundColor: '#f8f9fa', padding: '15px', margin: '10px 0', borderRadius: '5px' }}>
                             <h3 style={{ color: '#444', fontSize: '18px', margin: '0 0 10px 0' }}>Habitación {index + 1}: {room.nombreHabitacion || 'Habitación estándar'}</h3>
                             <p><strong>Descripción:</strong> Incluye desayuno y servicios básicos</p>
-                            <p><strong>Precio por noche:</strong> ${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</p>
-                            <p><strong>Total habitación:</strong> ${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</p>
+							<p><strong>Precio por noche:</strong> ${ (totalConMarkup && nights > 0 ? (totalConMarkup / nights) : 0).toLocaleString() }</p>
+							<p><strong>Total habitación:</strong> ${ totalSinIvaConMarkup.toLocaleString() }</p>
                         </div>
                     ))}
                 </section>
 
-                <br />
-                <br />
-                <br />
+          
+                
 
                 {/* TARIFAS */}
                 <section>

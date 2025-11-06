@@ -396,6 +396,8 @@ export default function ReservaHotelComponent() {
     const checkin = format(fechasreserva?.dateRange?.startDate, "YYYY-MM-DD", "es");
     const checkout = format(fechasreserva?.dateRange?.endDate, "YYYY-MM-DD", "es");
     const noches = datosReserva[0]?.nights || 1;
+    const precioPorNocheCalc = totalConMarkup && noches > 0 ? (totalConMarkup / noches) : 0;
+    const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
     const totalHuespedes = cantadultos + cantninos;
     const habitaciones = datosReserva.length;
     const precioPorNoche = datosReserva[0]?.precioBase || 0;
@@ -846,8 +848,8 @@ export default function ReservaHotelComponent() {
             <div style="background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px;">
                 <h3>Habitación ${index + 1}: ${habitacion.NombreH || 'Habitación estándar'}</h3>
                 <p><strong>Descripción:</strong> ${habitacion.descripcion || 'Incluye desayuno y servicios básicos'}</p>
-                <p><strong>Precio por noche:</strong> $${habitacion.precioBase ? habitacion.precioBase.toLocaleString() : '0'}</p>
-                <p><strong>Total habitación:</strong> $${habitacion.precio ? habitacion.precio.toLocaleString() : '0'}</p>
+                <p><strong>Precio por noche:</strong> $${precioPorNocheCalc.toLocaleString()}</p>
+                <p><strong>Total habitación:</strong> $${totalSinIvaConMarkup.toLocaleString()}</p>
             </div>
             `).join('')}
         </section>
@@ -855,6 +857,9 @@ export default function ReservaHotelComponent() {
 <br>
 <br>
         <section>
+        <br>
+        <br>
+
             <h2>Tarifas</h2>
             <div class="pricing-section">
                 <div class="price-row">
