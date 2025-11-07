@@ -573,6 +573,7 @@ export const Cid = ({ id }) => {
     "Habitacion Doble Standard con vista al mar ",
     "Habitacion Cuadruple standard con vista a la ciudad",
     "Habitación Doble Standard con Vista a la Ciudad",
+    "Habitacion cuadruple superior con vista al mar ",
     // Hotel Madison
     "ESTANDAR",
     "SUPERIOR CON TERRAZA",
@@ -581,16 +582,42 @@ export const Cid = ({ id }) => {
     "EJECUTIVA TWIN",
     "FAMILIAR",
     // Hotel Windsor
-    "Doble Superior ",
-    "Doble estandar twin",
+    // "Doble Superior ",
+    // "Doble estandar twin",
     "Triple estandar altillo con escaleras",
-    "Doble junior Suites",
-    "Doble junior twin",
+    // "Doble junior Suites",
+    // "Doble junior twin",
     "Suite matrimonial ",
     //Hotel boquilla
     "Habtiacion Doble Standard ",
     "Habitacion Sextuple",
   ];
+
+  // Habitaciones que tienen un límite especial: count + 3
+  const habitacionesConLimiteEspecial = [
+    "Doble estandar",
+    "Doble estandar ",
+    "Doble estándar",
+    "DOBLE",
+    "Habitacion Doble Standard",
+    "Doble ",
+    "Habitacion Doble Standard con vista al mar ",
+    "Habitacion Doble Standard con vista al mar ",
+    "Habitación Doble Standard con Vista a la Ciudad",
+    "Doble Superior ",
+    "Doble estandar twin",
+    "Doble junior Suites",
+    "Doble junior twin",
+    "Habtiacion Doble Standard ",
+  ];
+
+  // Función para obtener el límite de habitaciones según el tipo
+  const obtenerLimiteHabitaciones = (roomName, count) => {
+    if (habitacionesConLimiteEspecial.includes(roomName)) {
+      return count + 3;
+    }
+    return count;
+  };
 
   //console.log("numero de camas:"camas)
   const formatCurrency = (value) => {
@@ -1282,7 +1309,7 @@ export const Cid = ({ id }) => {
                     {/* Mostrar "Habitaciones disponibles" solo si la habitación está en la lista restringida */}
                     {habitacionesRestringidas.includes(dato.roomName) && (
                       <b style={{ marginTop: "100px", color: "red" }}>
-                        Habitaciones disponibles: {dato.count}
+                        Habitaciones disponibles: {obtenerLimiteHabitaciones(dato.roomName, dato.count)}
                       </b>
                     )}
                     <br />
@@ -1295,12 +1322,15 @@ export const Cid = ({ id }) => {
                         data-room="Doble Estándar"
                         data-price="#Valor"
                         onClick={() => {
+                          const limiteHabitaciones = habitacionesRestringidas.includes(dato.roomName)
+                            ? obtenerLimiteHabitaciones(dato.roomName, dato.count)
+                            : Infinity;
                           if (
                             !(
                               quintuple[habitaciones?.hotel?.id] &&
                               habitacionesRestringidas.includes(dato.roomName)
                             ) ||
-                            contadorHabitaciones < (dato.count || Infinity) // Verifica el límite de habitaciones
+                            contadorHabitaciones < limiteHabitaciones // Verifica el límite de habitaciones
                           ) {
                             setDatohabitacion((prevState) => [
                               ...prevState,
@@ -1361,13 +1391,13 @@ export const Cid = ({ id }) => {
                         disabled={
                           quintuple[habitaciones?.hotel?.id] &&
                           habitacionesRestringidas.includes(dato.roomName) &&
-                          contadorHabitaciones >= dato.count
+                          contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
                         }
                         onMouseOver={() => {
                           if (
                             quintuple[habitaciones?.hotel?.id] &&
                             habitacionesRestringidas.includes(dato.roomName) &&
-                            contadorHabitaciones >= dato.count
+                            contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
                           ) {
                             setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
                           }
