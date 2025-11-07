@@ -542,14 +542,54 @@ export const Cid = ({ id }) => {
   // console.log(selectedTours);
 
   const habitacionesRestringidas = [
+    
+    //Hotel Abi/Rodadero
     "Familiar quintuple",
-    "Quintuple",
-    "QUINTUPLE",
-    "Habitacion Sextuple",
-    "Quíntuple",
-    "Habitacion Cuadruple Standard",
     "Cuadruple estandar ",
-    "Cuádruple"
+    "Triple estandar",
+    "Doble estandar ",
+    "Doble estándar",
+    //Hotel Axis
+    "Doble estandar", 
+    "Quíntuple",
+    "Cuádruple",
+    "Triple estándar",
+    //Hotel Sansiraka
+    "QUINTUPLE",
+    "CUADRUPLE",
+    "TRIPLE",
+    "DOBLE",
+    "TWIN",
+    "JUNIOR SUITE",
+    //Hotel avexi/azuan/Marina
+    "Habitacion Doble Standard",
+    "Habitacion Cuadruple Standard",
+    //Hotel Bocagrande
+    "Doble ",
+    "Triple ",
+    "Cuadruple ",
+    "Quintuple",
+    // Hotel Aixo
+    "Habitacion Doble Standard con vista al mar ",
+    "Habitacion Cuadruple standard con vista a la ciudad",
+    "Habitación Doble Standard con Vista a la Ciudad",
+    // Hotel Madison
+    "ESTANDAR",
+    "SUPERIOR CON TERRAZA",
+    "FAMILIAR 3PAX",
+    "SUITE BUSINESS",
+    "EJECUTIVA TWIN",
+    "FAMILIAR",
+    // Hotel Windsor
+    "Doble Superior ",
+    "Doble estandar twin",
+    "Triple estandar altillo con escaleras",
+    "Doble junior Suites",
+    "Doble junior twin",
+    "Suite matrimonial ",
+    //Hotel boquilla
+    "Habtiacion Doble Standard ",
+    "Habitacion Sextuple",
   ];
 
   //console.log("numero de camas:"camas)
