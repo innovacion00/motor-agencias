@@ -1,8 +1,79 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import "./BookingConnectIA.css";
+
+const STORAGE_KEY_CONVERSATIONS = "bookingConnectIA.conversations";
+const STORAGE_KEY_ACTIVE_ID = "bookingConnectIA.activeId";
+
+function generateId() {
+	return "c_" + Math.random().toString(36).slice(2, 10);
+}
+
+function loadConversations() {
+	if (typeof window === "undefined") return [];
+	try {
+		const raw = window.localStorage.getItem(STORAGE_KEY_CONVERSATIONS);
+		if (!raw) return [];
+		const parsed = JSON.parse(raw);
+		return Array.isArray(parsed) ? parsed : [];
+	} catch {
+		return [];
+	}
+}
+
+function saveConversations(conversations) {
+	if (typeof window === "undefined") return;
+	try {
+		window.localStorage.setItem(STORAGE_KEY_CONVERSATIONS, JSON.stringify(conversations));
+	} catch {
+		/* ignore */
+	}
+}
+
+function loadActiveId() {
+	if (typeof window === "undefined") return "";
+	try {
+		return window.localStorage.getItem(STORAGE_KEY_ACTIVE_ID) || "";
+	} catch {
+		return "";
+	}
+}
+
+function saveActiveId(id) {
+	if (typeof window === "undefined") return;
+	try {
+		window.localStorage.setItem(STORAGE_KEY_ACTIVE_ID, id);
+	} catch {
+		/* ignore */
+	}
+}
 
 export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [message, setMessage] = useState("");
+	const [welcomePrompt, setWelcomePrompt] = useState("");
+	const [conversations, setConversations] = useState(() => loadConversations());
+	const [activeId, setActiveId] = useState(() => loadActiveId());
+	const [isChatStarted, setIsChatStarted] = useState(false);
+	const [isResponding, setIsResponding] = useState(false);
+	const textareaRef = useRef(null);
+	const welcomeTextareaRef = useRef(null);
+	const messagesEndRef = useRef(null);
 	const [agencyDisplayName, setAgencyDisplayName] = useState(agencyName);
+	const prompts = [
+		"{prompt-recomend-hoteles_location}",
+		"{prompt-recomend-planes}",
+		"{prompt-armarpaquetes (tours/traslado)}",
+		"{prompt-info-hoteles}",
+		"{prompt-info-planes}",
+		"{prompt-sorprendeme}",
+		"{prompt-traslados}",
+	];
+
+	const activeConversation = useMemo(
+		() => conversations.find((conv) => conv.id === activeId) || null,
+		[conversations, activeId]
+	);
 
 	useEffect(() => {
 		try {
@@ -18,6 +89,162 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 			// ignorar errores de parseo/acceso
 		}
 	}, []);
+
+	useEffect(() => {
+		saveConversations(conversations);
+	}, [conversations]);
+
+	useEffect(() => {
+		saveActiveId(activeId);
+	}, [activeId]);
+
+	useEffect(() => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	}, [activeConversation, isResponding]);
+
+	useEffect(() => {
+		const exists = conversations.some((conv) => conv.id === activeId);
+		if (!exists) {
+			handleNewChat();
+		} else {
+			setIsChatStarted((activeConversation?.messages.length || 0) > 0);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	function autoResize(ref) {
+		const el = ref.current;
+		if (!el) return;
+		el.style.height = "0px";
+		const next = Math.min(el.scrollHeight, 200);
+		el.style.height = `${next}px`;
+	}
+
+	function handleNewChat() {
+		const id = generateId();
+		const newConversation = {
+			id,
+			title: "Nuevo chat",
+			messages: [],
+		};
+		setConversations((prev) => [newConversation, ...prev]);
+		setActiveId(id);
+		setIsChatStarted(false);
+		setWelcomePrompt("");
+		setMessage("");
+		setIsResponding(false);
+		autoResize(welcomeTextareaRef);
+		autoResize(textareaRef);
+	}
+
+	function updateActiveConversation(updater) {
+		setConversations((prev) =>
+			prev.map((conv) => {
+				if (conv.id !== activeId) return conv;
+				return updater(conv);
+			})
+		);
+	}
+
+	function sendMessage(content, fromWelcome = false) {
+		const trimmed = content.trim();
+		if (!trimmed) return;
+
+		const userMessage = { role: "user", content: trimmed };
+
+		updateActiveConversation((conv) => {
+			const title =
+				conv.messages.length === 0 ? trimmed.slice(0, 40) || "Nuevo chat" : conv.title;
+			return {
+				...conv,
+				title,
+				messages: [...conv.messages, userMessage],
+			};
+		});
+
+		if (fromWelcome) {
+			setIsChatStarted(true);
+			setWelcomePrompt("");
+		} else {
+			setMessage("");
+			autoResize(textareaRef);
+		}
+
+		simulateAIResponse(trimmed);
+	}
+
+	function simulateAIResponse(userContent) {
+		setIsResponding(true);
+		const reply = `Gracias por tu mensaje. Estoy analizando: "${userContent}". ¿Quieres que profundicemos en alguna área específica o te comparto sugerencias personalizadas?`;
+
+		setTimeout(() => {
+			const assistantMessage = { role: "assistant", content: reply };
+			updateActiveConversation((conv) => ({
+				...conv,
+				messages: [...conv.messages, assistantMessage],
+			}));
+			setIsResponding(false);
+		}, 800);
+	}
+
+	function handleWelcomeChange(e) {
+		setWelcomePrompt(e.target.value);
+		autoResize(welcomeTextareaRef);
+	}
+
+	function handleComposerChange(e) {
+		setMessage(e.target.value);
+		autoResize(textareaRef);
+	}
+
+	function onWelcomeKeyDown(e) {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			sendMessage(welcomePrompt, true);
+		}
+	}
+
+	function onComposerKeyDown(e) {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			sendMessage(message, false);
+		}
+	}
+
+	function handlePromptClick(prompt) {
+		if (!isChatStarted) {
+			sendMessage(prompt, true);
+			return;
+		}
+		sendMessage(prompt, false);
+	}
+
+	function activateConversation(id) {
+		setActiveId(id);
+		const conv = conversations.find((item) => item.id === id);
+		setIsChatStarted((conv?.messages.length || 0) > 0);
+		setMessage("");
+		setWelcomePrompt("");
+		setIsResponding(false);
+		autoResize(welcomeTextareaRef);
+		autoResize(textareaRef);
+	}
+
+	function handleDeleteConversation(id, evt) {
+		evt.stopPropagation();
+		setConversations((prev) => prev.filter((conv) => conv.id !== id));
+		if (id === activeId) {
+			const [next] = conversations.filter((conv) => conv.id !== id);
+			if (next) {
+				setActiveId(next.id);
+				setIsChatStarted(next.messages.length > 0);
+			} else {
+				handleNewChat();
+			}
+		}
+	}
 
 	return (
 		<div className="bcia-page">
@@ -35,9 +262,9 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							</svg>
 						</button>
 					</div>
-					<div className="menu-item">
+					<div className="menu-item" onClick={handleNewChat}>
 						<svg className="menu-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+							<path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
 						</svg>
 						<span>Nuevo chat</span>
 					</div>
@@ -49,37 +276,114 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					</div>
 					<div className="menu-item">
 						<svg className="menu-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
+							<path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
 						</svg>
 						<span>Biblioteca</span>
 					</div>
-				</aside>
-
-				<main className="main-content">
-					<div className="container">
-						<h2>
-							Hola {agencyDisplayName}, de parte de Geh Suites ¿En que podemos ayudarte hoy?
-						</h2>
-						<div className="input-box">
-							<input
-								type="text"
-								placeholder="{Enviar un mensaje a BookingConnectIA}"
-								maxLength={5000}
-								value={message}
-								onChange={(e) => setMessage(e.target.value)}
-							/>
-							<span className="mic-icon" aria-label="Micrófono">🎤</span>
-						</div>
-						<div className="button-group">
-							<button>{"{prompt-recomend-planes}"}</button>
-							<button>{"{prompt-recomend-hoteles_location}"}</button>
-							<button>{"{prompt-armarpaquetes (tours/traslado)}"}</button>
-							<button>{"{prompt-info-hoteles}"}</button>
-							<button>{"{prompt-info-planes}"}</button>
-							<button>{"{prompt-sorprendeme}"}</button>
-							<button>{"{prompt-traslados}"}</button>
+					<div className="history-section">
+						<p className="history-title">Historial</p>
+						{conversations.length === 0 && <p className="history-empty">Sin chats aún</p>}
+						<div className="history-list">
+							{conversations.map((conv) => (
+								<button
+									key={conv.id}
+									className={`history-item${conv.id === activeId ? " is-active" : ""}`}
+									onClick={() => activateConversation(conv.id)}
+								>
+									<span className="history-item-title">{conv.title}</span>
+									<button
+										className="history-item-delete"
+										aria-label="Eliminar chat"
+										onClick={(evt) => handleDeleteConversation(conv.id, evt)}
+										title="Eliminar chat"
+									>
+										<FontAwesomeIcon icon={faTrash} />
+									</button>
+								</button>
+							))}
 						</div>
 					</div>
+				</aside>
+
+				<main className={`main-content${isChatStarted ? " has-chat" : ""}`}>
+					{!isChatStarted ? (
+						<div className="container">
+							<h2>
+								Hola {agencyDisplayName}, de parte de Geh Suites ¿En que podemos ayudarte hoy?
+							</h2>
+							<div className="input-box">
+								<textarea
+									ref={welcomeTextareaRef}
+									placeholder="Escribe un mensaje a BookingConnectsIA"
+									maxLength={5000}
+									value={welcomePrompt}
+									onChange={handleWelcomeChange}
+									onKeyDown={onWelcomeKeyDown}
+									rows={1}
+								/>
+								<span className="mic-icon" aria-label="Micrófono">
+									🎤
+								</span>
+							</div>
+							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
+							<div className="button-group">
+								{prompts.map((prompt) => (
+									<button key={prompt} onClick={() => handlePromptClick(prompt)}>
+										{prompt}
+									</button>
+								))}
+							</div>
+						</div>
+					) : (
+						<div className="chat-surface">
+							<header className="chat-header">
+								<h2>Chat con BookingConnectIA</h2>
+								<p className="chat-subtitle">
+									Conversando como <strong>{agencyDisplayName}</strong>
+								</p>
+							</header>
+							<div className="chat-messages">
+								{activeConversation && activeConversation.messages.length === 0 && (
+									<div className="chat-empty">No hay mensajes aún.</div>
+								)}
+								{activeConversation &&
+									activeConversation.messages.map((msg, idx) => (
+										<div key={idx} className={`chat-bubble chat-bubble--${msg.role}`}>
+											<div className="chat-bubble-content">{msg.content}</div>
+										</div>
+									))}
+								{isResponding && (
+									<div className="chat-bubble chat-bubble--assistant">
+										<div className="chat-typing">
+											<span className="dot" />
+											<span className="dot" />
+											<span className="dot" />
+										</div>
+									</div>
+								)}
+								<div ref={messagesEndRef} />
+							</div>
+							<div className="chat-composer">
+								<textarea
+									ref={textareaRef}
+									placeholder="Escribe un mensaje..."
+									maxLength={5000}
+									value={message}
+									onChange={handleComposerChange}
+									onKeyDown={onComposerKeyDown}
+									rows={1}
+									disabled={isResponding}
+								/>
+								<button
+									className="chat-send"
+									onClick={() => sendMessage(message, false)}
+									disabled={!message.trim() || isResponding}
+								>
+									Enviar
+								</button>
+							</div>
+						</div>
+					)}
 				</main>
 			</div>
 		</div>

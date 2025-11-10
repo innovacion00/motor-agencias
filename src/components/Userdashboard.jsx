@@ -276,8 +276,8 @@ const UserDashboard = () => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 0, // Mínimo de decimales (0)
-      maximumFractionDigits: 0, // Máximo de decimales (0)
+      minimumFractionDigits: 2, // Mínimo de decimales (2)
+      maximumFractionDigits: 2, // Máximo de decimales (2)
     }).format(value);
   };
 

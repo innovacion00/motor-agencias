@@ -542,7 +542,6 @@ export const Cid = ({ id }) => {
   // console.log(selectedTours);
 
   const habitacionesRestringidas = [
-    
     //Hotel Abi/Rodadero
     "Familiar quintuple",
     "Cuadruple estandar ",
