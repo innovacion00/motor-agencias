@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip } from 'react-tooltip';
+import Cookies from 'js-cookie';
+import { refreshToken } from '../stores/authtoken';
 import "./BookingConnectIA.css";
 
 const STORAGE_KEY_CONVERSATIONS = "bookingConnectIA.conversations";
@@ -69,6 +72,33 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		"{prompt-sorprendeme}",
 		"{prompt-traslados}",
 	];
+
+	const fetchWithToken = async (url, options = {}) => {
+		let token = Cookies.get('accessToken');
+		
+		const headers = {
+			...options.headers,
+			'Authorization': `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		};
+		
+		let response = await fetch(url, {
+			...options,
+			headers,
+		});
+
+		if (response.status === 401) {
+			const newToken = await refreshToken();
+			if (newToken) {
+				headers['Authorization'] = `Bearer ${newToken}`;
+				response = await fetch(url, {
+					...options,
+					headers,
+				});
+			}
+		}
+		return response;
+	};
 
 	const activeConversation = useMemo(
 		() => conversations.find((conv) => conv.id === activeId) || null,
@@ -172,21 +202,74 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 			autoResize(textareaRef);
 		}
 
-		simulateAIResponse(trimmed);
+		sendMessageToAPI(trimmed);
 	}
 
-	function simulateAIResponse(userContent) {
+	async function sendMessageToAPI(userContent) {
 		setIsResponding(true);
-		const reply = `Gracias por tu mensaje. Estoy analizando: "${userContent}". ¿Quieres que profundicemos en alguna área específica o te comparto sugerencias personalizadas?`;
+		
+		try {
+			// URL del endpoint
+			const apiUrl = "http://143.198.98.188:4000/api/v1/llm/chat";
+			
+			// Preparar el cuerpo de la petición
+			const requestBody = {
+				message: userContent,
+			};
 
-		setTimeout(() => {
-			const assistantMessage = { role: "assistant", content: reply };
+			// Hacer la petición al endpoint
+			const response = await fetch(apiUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(requestBody)
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json().catch(() => ({ 
+					message: `Error: ${response.status} ${response.statusText}` 
+				}));
+				throw new Error(errorData.message || `Error: ${response.statusText}`);
+			}
+
+			const data = await response.json();
+			
+			// Verificar que la respuesta tenga el formato esperado
+			if (!data.success || !data.data || !data.data.response) {
+				throw new Error(data.message || "Respuesta del servidor en formato incorrecto");
+			}
+			
+			// Extraer el mensaje de respuesta
+			const responseMessage = data.data.response;
+			
+			// Agregar respuesta del asistente a la conversación
+			const assistantMessage = { 
+				role: "assistant", 
+				content: responseMessage
+			};
+			
 			updateActiveConversation((conv) => ({
 				...conv,
 				messages: [...conv.messages, assistantMessage],
 			}));
+			
+		} catch (error) {
+			console.error('Error al enviar mensaje al API:', error);
+			
+			// Mostrar mensaje de error al usuario
+			const errorMessage = { 
+				role: "assistant", 
+				content: `Lo siento, hubo un error al procesar tu mensaje: ${error.message}. Por favor intenta de nuevo.` 
+			};
+			
+			updateActiveConversation((conv) => ({
+				...conv,
+				messages: [...conv.messages, errorMessage],
+			}));
+		} finally {
 			setIsResponding(false);
-		}, 800);
+		}
 	}
 
 	function handleWelcomeChange(e) {
@@ -251,7 +334,13 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 			<div className="chat-root">
 				<aside className="sidebar" aria-label="Barra lateral">
 					<div className="sidebar-header">
-						<button className="icon-btn" aria-label="Información">
+						<button 
+							className="icon-btn" 
+							aria-label="Información"
+							data-tooltip-id="tooltip-booking-connect-info"
+							data-tooltip-content="BookingConnectsIA es la nueva herramienta de inteligencia artificial para agencias. Te brinda información sobre disponibilidad y planes, permite reservar, cotizar y cancelar reservas de BookingConnect."
+							data-tooltip-place="right"
+						>
 							<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 								<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
 							</svg>
@@ -386,6 +475,10 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					)}
 				</main>
 			</div>
+			<Tooltip 
+				id="tooltip-booking-connect-info"
+				className="custom-tooltip"
+			/>
 		</div>
 	);
 }
