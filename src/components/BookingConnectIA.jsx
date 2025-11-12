@@ -217,12 +217,9 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 				message: userContent,
 			};
 
-			// Hacer la petición al endpoint
-			const response = await fetch(apiUrl, {
+			// Hacer la petición al endpoint con autenticación
+			const response = await fetchWithToken(apiUrl, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
 				body: JSON.stringify(requestBody)
 			});
 
