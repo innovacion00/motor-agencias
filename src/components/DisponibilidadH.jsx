@@ -453,13 +453,13 @@ const idRooms = {
   123:{
     // doble
     164099:
-    "",
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/760635557.jpg?k=4f27fe4927417058fce420af7e61ceb23f36e26733c9f6bf7d0ef98514a43123&o=",
     //triple
     164100:
-    "",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_triple_salguero.jpg",
     //Cuadruple
     164101:
-    "",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_cuadruple_salguero.jpg",
     //quintuple
     164102:
     ""
@@ -1289,7 +1289,7 @@ export const Cid = ({ id }) => {
         <div className={styles.room_section}>
           <div className={styles.cards}>
             {habitaciones?.availability?.map((tipo) =>
-              tipo.available_rooms?.map((dato) => (
+              tipo.available_rooms?.filter((dato) => dato.roomId != 164102).map((dato) => (
                 <div className={styles.room_card} key={dato.roomId}>
                   <img
                     alt="Standard double room with a double bed, TV, and modern decor"
