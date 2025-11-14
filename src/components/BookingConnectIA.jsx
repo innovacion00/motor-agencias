@@ -52,6 +52,196 @@ function saveActiveId(id) {
 	}
 }
 
+// Función para obtener imágenes de hoteles por nombre
+function getHotelImagesByName(hotelName) {
+	// Normalizar el nombre del hotel (minúsculas, sin espacios extra)
+	const normalized = hotelName.toLowerCase().trim();
+	
+	// Mapeo de nombres de hoteles a sus imágenes
+	const hotelImagesMap = {
+		'azuan': {
+			main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
+			secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg"
+		},
+		'aixo': {
+			main: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
+			secondary1: "https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg"
+		},
+		'abi': {
+			main: "https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg",
+			secondary1: "https://www.gehsuites.com/multimedia/galerias/galeriaabi16972.jpg",
+			secondary2: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
+		},
+		'boquilla': {
+			main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
+			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada2_boquilla.jpg",
+			secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/desayuno_boquilla.jpg"
+		},
+		'marina': {
+			main: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
+			secondary1: "https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg"
+		},
+		'avexi': {
+			main: "https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg",
+			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/foodStanAvexi.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg"
+		},
+		'bocagrande': {
+			main: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena4469.jpg",
+			secondary1: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena2953.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena14676.jpg"
+		},
+		'rodadero': {
+			main: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
+			secondary1: "https://www.gehsuites.com/multimedia/galerias/2rodadero23293.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg"
+		},
+		'axis': {
+			main: "https://www.gehsuites.com/images/YULDAMA-2.jpg",
+			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Lobbyaxis.jpeg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg"
+		},
+		'sansiraka': {
+			main: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
+			secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg"
+		},
+		'windsor': {
+			main: "https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg",
+			secondary1: "https://www.gehsuites.com/multimedia/galerias/16HotelWindsorHouse427.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg"
+		},
+		'madison': {
+			main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison10238.jpg",
+			secondary1: "https://www.gehsuites.com/images/fachada-madison.jpg",
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/madison10238.jpg"
+		}
+	};
+
+	// Buscar coincidencias parciales en el nombre
+	for (const [key, images] of Object.entries(hotelImagesMap)) {
+		if (normalized.includes(key)) {
+			return images;
+		}
+	}
+	
+	return null;
+}
+
+// Función para detectar hoteles mencionados en el texto
+function detectHotelsInText(text) {
+	// Mapeo de patrones de búsqueda a nombres canónicos de hoteles
+	const hotelPatterns = [
+		{ patterns: ['Hotel Azuan Suites', 'Hotel Azuan', 'Azuan Suites', 'Azuan'], canonical: 'Azuan Suites' },
+		{ patterns: ['Hotel Aixo Suites', 'Hotel Aixo', 'Aixo Suites', 'Aixo'], canonical: 'Aixo Suites' },
+		{ patterns: ['Hotel Abi Inn', 'Hotel Abi', 'Abi Inn', 'Abi'], canonical: 'Abi Inn' },
+		{ patterns: ['Hotel Boquilla Suites', 'Hotel Boquilla', 'Boquilla Suites', 'Boquilla'], canonical: 'Boquilla Suites' },
+		{ patterns: ['Hotel Marina Suites', 'Hotel Marina', 'Marina Suites', 'Marina'], canonical: 'Marina Suites' },
+		{ patterns: ['Hotel Avexi Suites', 'Hotel Avexi', 'Avexi Suites', 'Avexi'], canonical: 'Avexi Suites' },
+		{ patterns: ['Hotel Bocagrande Suites', 'Hotel Bocagrande', 'Bocagrande Suites', 'Bocagrande'], canonical: 'Bocagrande Suites' },
+		{ patterns: ['Hotel Rodadero', 'Rodadero'], canonical: 'Hotel Rodadero' },
+		{ patterns: ['Hotel Axis', 'Axis'], canonical: 'Hotel Axis' },
+		{ patterns: ['Hotel Sansiraka', 'Sansiraka'], canonical: 'Hotel Sansiraka' },
+		{ patterns: ['Hotel Windsor', 'Windsor'], canonical: 'Hotel Windsor' },
+		{ patterns: ['Hotel Madison', 'Madison'], canonical: 'Hotel Madison' }
+	];
+
+	const detectedHotels = [];
+	const foundHotelKeys = new Set();
+	
+	for (const hotel of hotelPatterns) {
+		// Buscar si alguno de los patrones coincide en el texto
+		for (const pattern of hotel.patterns) {
+			const regex = new RegExp(`\\b${pattern.replace(/\s+/g, '\\s+')}\\b`, 'gi');
+			if (regex.test(text)) {
+				// Usar el nombre canónico como clave para evitar duplicados
+				const hotelKey = hotel.canonical.toLowerCase();
+				if (!foundHotelKeys.has(hotelKey)) {
+					foundHotelKeys.add(hotelKey);
+					const images = getHotelImagesByName(hotel.canonical);
+					if (images) {
+						detectedHotels.push({
+							name: hotel.canonical,
+							images: images
+						});
+					}
+				}
+				break; // Si encontramos un patrón, no necesitamos buscar los demás
+			}
+		}
+	}
+	
+	return detectedHotels;
+}
+
+// Componente para renderizar mensajes con imágenes de hoteles
+function ChatMessageContent({ content, role }) {
+	// Solo procesar imágenes para mensajes del asistente
+	if (role !== 'assistant') {
+		return <div className="chat-bubble-content">{content}</div>;
+	}
+
+	const detectedHotels = detectHotelsInText(content);
+	
+	// Si no hay hoteles detectados, renderizar texto normal
+	if (detectedHotels.length === 0) {
+		return (
+			<div className="chat-bubble-content" 
+				 dangerouslySetInnerHTML={{ 
+					 __html: content.replace(/\n/g, '<br />') 
+				 }} 
+			/>
+		);
+	}
+
+	return (
+		<div className="chat-bubble-content">
+			{/* Renderizar texto con formato markdown básico */}
+			<div className="chat-message-text" 
+				 dangerouslySetInnerHTML={{ 
+					 __html: content.replace(/\n/g, '<br />') 
+				 }} 
+			/>
+			
+			{/* Renderizar imágenes de hoteles detectados */}
+			{detectedHotels.map((hotel, idx) => (
+				<div key={idx} className="hotel-images-container">
+					<h4 className="hotel-name">{hotel.name}</h4>
+					<div className="hotel-images-grid">
+						<img 
+							src={hotel.images.main} 
+							alt={`${hotel.name} - Imagen principal`}
+							className="hotel-image hotel-image-main"
+							onError={(e) => {
+								e.target.style.display = 'none';
+							}}
+						/>
+						<img 
+							src={hotel.images.secondary1} 
+							alt={`${hotel.name} - Imagen 2`}
+							className="hotel-image hotel-image-secondary"
+							onError={(e) => {
+								e.target.style.display = 'none';
+							}}
+						/>
+						<img 
+							src={hotel.images.secondary2} 
+							alt={`${hotel.name} - Imagen 3`}
+							className="hotel-image hotel-image-secondary"
+							onError={(e) => {
+								e.target.style.display = 'none';
+							}}
+						/>
+					</div>
+				</div>
+			))}
+		</div>
+	);
+}
+
 export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [message, setMessage] = useState("");
 	const [welcomePrompt, setWelcomePrompt] = useState("");
@@ -210,11 +400,12 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		
 		try {
 			// URL del endpoint
-			const apiUrl = "http://143.198.98.188:4000/api/v1/llm/chat";
+			const apiUrl = "http://localhost:4000/api/v1/llm/chat";
 			
 			// Preparar el cuerpo de la petición
 			const requestBody = {
 				message: userContent,
+				conversationId:"conv-123458"
 			};
 
 			// Hacer la petición al endpoint con autenticación
@@ -435,7 +626,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 								{activeConversation &&
 									activeConversation.messages.map((msg, idx) => (
 										<div key={idx} className={`chat-bubble chat-bubble--${msg.role}`}>
-											<div className="chat-bubble-content">{msg.content}</div>
+											<ChatMessageContent content={msg.content} role={msg.role} />
 										</div>
 									))}
 								{isResponding && (
