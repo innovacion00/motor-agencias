@@ -174,6 +174,14 @@ const BusquedaCartagena = () => {
     SANTA_MARTA: "Santa marta",
   };
 
+  // Función para normalizar el nombre del hotel
+  const getHotelName = (hotel) => {
+    if (hotel.id === 123) {
+      return "Hotel Playa Salguero";
+    }
+    return hotel.name;
+  };
+
   // Función para formatear valores como moneda colombiana
   const formatToCurrency = (amount) => {
     if (typeof amount !== "number") return "N/A";
@@ -296,7 +304,7 @@ const BusquedaCartagena = () => {
               />
               <div className={styles.hotel_info}>
                 <h3>
-                  {tipo.hotel.name}{" "}
+                  {getHotelName(tipo.hotel)}{" "}
                   <a href={`/hoteles/${tipo.hotel.id}`}>Ver detalle de hotel</a>
                 </h3>
                 <div className={styles.icons}>

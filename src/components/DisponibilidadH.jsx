@@ -514,6 +514,14 @@ const trasladosBogotaDolares = {
   1: "35.4",
 };
 
+// Función para normalizar el nombre del hotel
+const getHotelName = (hotel) => {
+  if (hotel?.id === 123) {
+    return "Hotel Playa Salguero";
+  }
+  return hotel?.name || "Hotel no encontrado";
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
@@ -894,10 +902,10 @@ export const Cid = ({ id }) => {
         {/* Detalles del hotel */}
         <div className={styles.breadcrumb}>
           <a href="/">Inicio</a> / <a href="#">Resultados de búsqueda</a> /{" "}
-          {habitaciones?.hotel?.name}
+          {getHotelName(habitaciones?.hotel)}
         </div>
         <div className={styles.hotel_title}>
-          {habitaciones?.hotel?.name || "Hotel no encontrado"}
+          {getHotelName(habitaciones?.hotel)}
         </div>
         <div className={styles.hotel_info}>
           <img
@@ -908,7 +916,7 @@ export const Cid = ({ id }) => {
           />
           <div className={styles.hotel_details}>
             <div className={styles.description}>
-              <h2>{habitaciones?.hotel?.name}</h2>
+              <h2>{getHotelName(habitaciones?.hotel)}</h2>
              
               <p>
                 <i className={"fas fa_map_marke_alt"}></i> {hotel.direction} ||
@@ -1473,7 +1481,7 @@ export const Cid = ({ id }) => {
             <h3>Reserva</h3>
             <hr />
             <br />
-            <h3>{habitaciones?.hotel?.name}</h3>
+            <h3>{getHotelName(habitaciones?.hotel)}</h3>
             <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
             <p>
               {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
