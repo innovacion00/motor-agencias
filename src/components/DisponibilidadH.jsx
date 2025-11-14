@@ -160,6 +160,14 @@ const hotelesData = {
     leermas: "/infoboquilla",
     mapa: "google.com/maps/place/Hotel+Boquilla+Suites/@10.4704047,-75.501179,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef63ac94ada9efd:0xf15682aa17f6c6b6!5m2!4m1!1i2!8m2!3d10.4703994!4d-75.4986041!16s%2Fg%2F1yh9tpqwj?hl=es&entry=ttu&g_ep=EgoyMDI1MDEyMS4wIKXMDSoASAFQAw%3D%3D",
   },
+  123:{
+    name: "Hotel Playa Salguero",
+    direction: "CRA 4 N° 23F05 Gaira, 470002",
+    description:"El Hotel Playa Salguero By GEH Suites está ubicado en Santa Marta, a solo 12 minutos caminando de la playa Salguero, y ofrece alojamiento con aire acondicionado, Wi-Fi gratuito, piscina al aire libre, jardín y terraza. Las habitaciones cuentan con baño privado, TV de pantalla plana y algunas tienen vista a la piscina. Disfruta de desayuno tipo buffet o americano, cocina caribeña en su restaurante y organiza tus actividades con el servicio de tours. El hotel también ofrece recepción 24 horas, estacionamiento privado gratuito y está a pocos kilómetros de lugares turísticos como el Acuario del Rodadero y la Catedral de Santa Marta.",
+    image:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg",
+    leermas:"/infosalguero",
+    maps:"https://www.google.com/maps/place/Hotel+Playa+Salguero+By+GEH+Suites/@11.187723,-74.2300729,17z/data=!4m10!3m9!1s0x8ef458ac933bfdff:0x4e2c5201a79272a0!5m3!1s2025-11-19!4m1!1i2!8m2!3d11.187723!4d-74.225202!16s%2Fg%2F11yl4t64f3?entry=ttu&g_ep=EgoyMDI1MTExMS4wIKXMDSoASAFQAw%3D%3D"
+  }
 };
 
 const hotelIcons = {
@@ -282,6 +290,16 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+  ],
+  123: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
 };
@@ -430,6 +448,22 @@ const idRooms = {
     83801:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg", //
   },
+
+  //Salguero
+  123:{
+    // doble
+    164099:
+    "",
+    //triple
+    164100:
+    "",
+    //Cuadruple
+    164101:
+    "",
+    //quintuple
+    164102:
+    ""
+  }
 };
 
 const quintuple = {
@@ -875,12 +909,14 @@ export const Cid = ({ id }) => {
           <div className={styles.hotel_details}>
             <div className={styles.description}>
               <h2>{habitaciones?.hotel?.name}</h2>
+             
               <p>
                 <i className={"fas fa_map_marke_alt"}></i> {hotel.direction} ||
                 <a href={hotel.mapa} target="_blank" rel="noopener noreferrer">
                   Ver mapa
                 </a>
               </p>
+              <br />
               <p>
                 {hotel.description}
                 <a
@@ -891,6 +927,7 @@ export const Cid = ({ id }) => {
                   Leer más
                 </a>
               </p>
+              <br />
               <div className={styles.icons}>{renderIcons()}</div>
             </div>
             <div className={styles.more_info}>

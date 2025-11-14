@@ -34,6 +34,7 @@ const BusquedaCartagena = () => {
     44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg", //sansiraka
     41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
     56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
+    123:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg", //Salguero
   };
 
   //Objeto con los arreglos de los iconos
@@ -153,6 +154,16 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+    ],
+    123: [
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
     ],
   };
