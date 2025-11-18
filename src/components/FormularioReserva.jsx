@@ -28,6 +28,8 @@ const plan_alimentacion = {
   56: true, // Boquilla,
 };
 
+const HOTELES_EXENTOS_IVA = new Set([56, 123]);
+
 //#region UseState
 const FormularioReserva = () => {
   const [reserva, setReserva] = useState([]);
@@ -121,6 +123,8 @@ const FormularioReserva = () => {
         reserva.plandealimentacion === "Solo desayuno"
     );
 
+  const hotelExentoIVA = HOTELES_EXENTOS_IVA.has(reserva[0]?.hotelidAutocore);
+
   const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
   const [DatosRetenciones, setDatosRetenciones] = useState(null);
   //convertir esExtranjero
@@ -182,7 +186,7 @@ const FormularioReserva = () => {
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
   const tasaIVA = 0.19; // Tasa del IVA
-  const valorIVA = esExtranjero || reserva[0]?.hotelidAutocore === 56 ? 0 : totalPrecio * tasaIVA;
+  const valorIVA = esExtranjero || hotelExentoIVA ? 0 : totalPrecio * tasaIVA;
   const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
   // console.log(totalConIVA);
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
@@ -664,10 +668,10 @@ const FormularioReserva = () => {
               </strong>
             </p>
             <p>
-              (Hospedaje + A&B {reserva[0]?.hotelidAutocore !== 56 ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
+              (Hospedaje + A&B {!hotelExentoIVA ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
               adicionales)
             </p>
-            {/* {reserva[0]?.hotelidAutocore !== 56 && (
+            {/* {!hotelExentoIVA && (
             )} */}
             {/* formuario desglose */}
             <TablaDesglose precio={totalConIVA} adults={cantadultos} ninos={cantninos} fechasreserva={fechasreserva} totalRetenciones={totalRetenciones} />

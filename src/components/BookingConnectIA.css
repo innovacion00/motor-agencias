@@ -205,6 +205,9 @@ main:has(.bcia-page) {
 .main-content.has-chat {
 	align-items: stretch;
 	justify-content: stretch;
+	width: 100%;
+	max-height: calc(100vh - 48px);
+	overflow: hidden;
 }
 
 .container {
@@ -293,6 +296,7 @@ main:has(.bcia-page) {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+	min-height: 0;
 	width: 100%;
 	gap: 18px;
 	border-radius: 22px;
@@ -536,7 +540,8 @@ main:has(.bcia-page) {
 
 .hotel-images-grid {
 	display: grid;
-	grid-template-columns: 2fr 1fr 1fr;
+	grid-template-columns: repeat(2, 1fr);
+	grid-auto-rows: auto;
 	gap: 8px;
 	max-width: 100%;
 }
@@ -557,12 +562,12 @@ main:has(.bcia-page) {
 }
 
 .hotel-image-main {
-	grid-row: 1 / 3;
-	height: 408px;
+	grid-column: 1 / span 2;
+	height: 280px;
 }
 
 .hotel-image-secondary {
-	height: 200px;
+	height: 180px;
 }
 
 /* Responsive para móviles */
@@ -572,8 +577,12 @@ main:has(.bcia-page) {
 	}
 	
 	.hotel-image-main {
-		grid-row: 1;
-		height: 200px;
+		grid-column: 1;
+		height: 220px;
+	}
+	
+	.hotel-image-secondary {
+		height: 180px;
 	}
 	
 	.hotel-images-container {

@@ -539,6 +539,8 @@ const plan_alimentacion = {
   56: false, // Boquilla,
 };
 
+const hotelesExentosIVA = new Set([56, 123]);
+
 // Add these constants near the top with other price constants
 const MASCOTA_PRECIO_COP = 50000;
 const MASCOTA_PRECIO_USD = 10;
@@ -569,6 +571,8 @@ export const Cid = ({ id }) => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
+  const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
+  const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
 
   function openModal(tour) {
     setIsOpen(true);
@@ -972,6 +976,20 @@ export const Cid = ({ id }) => {
           </div> */}
           {/* <button>Modificar búsqueda</button> */}
         </div>
+        {esHotelExentoIVA && (
+          <div
+            style={{
+              backgroundColor: "#e0f0ff",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              color: "#1f3b64",
+              marginTop: "16px",
+              fontWeight: 500,
+            }}
+          >
+            Este hotel está exento del cobro de IVA.
+          </div>
+        )}
         {/* Sección de Plan de Alimentación */}
         {mostrarseccion && (
           <div className={styles.plan_alimentacion}>
@@ -1210,7 +1228,7 @@ export const Cid = ({ id }) => {
                   </div>
                 )}
                 <br />
-                {/* ----------------------TOURES------------------- */}
+                {/*---------------------- TOURES -------------------*/}
                 <h3>¿Desea añadir tours a su reserva?</h3>
                 <input
                   type="radio"
@@ -1379,6 +1397,7 @@ export const Cid = ({ id }) => {
                             setDatohabitacion((prevState) => [
                               ...prevState,
                               {
+                                exentoIVA: esHotelExentoIVA,
                                 incluirTraslado: mostrarTraslados, // Booleano que indica si se seleccionó traslado
                                 tipoTraslado: mostrarTraslados
                                   ? tipoTraslado
@@ -1506,6 +1525,9 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
+                  {dato.exentoIVA && (
+                    <h5>Este hotel está exento del cobro de IVA.</h5>
+                  )}
                   {tipoTraslado && (
                     <h5>
                       Traslado seleccionado: {" "}

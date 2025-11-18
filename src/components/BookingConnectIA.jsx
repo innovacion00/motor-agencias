@@ -165,6 +165,7 @@ function detectHotelsInText(text) {
 					if (images) {
 						detectedHotels.push({
 							name: hotel.canonical,
+							patterns: hotel.patterns,
 							images: images
 						});
 					}
@@ -185,59 +186,106 @@ function ChatMessageContent({ content, role }) {
 	}
 
 	const detectedHotels = detectHotelsInText(content);
-	
-	// Si no hay hoteles detectados, renderizar texto normal
-	if (detectedHotels.length === 0) {
-		return (
-			<div className="chat-bubble-content" 
-				 dangerouslySetInnerHTML={{ 
-					 __html: content.replace(/\n/g, '<br />') 
-				 }} 
-			/>
-		);
-	}
+	const renderedHotels = new Set();
+	const lines = content.split('\n');
 
 	return (
 		<div className="chat-bubble-content">
-			{/* Renderizar texto con formato markdown básico */}
-			<div className="chat-message-text" 
-				 dangerouslySetInnerHTML={{ 
-					 __html: content.replace(/\n/g, '<br />') 
-				 }} 
-			/>
-			
-			{/* Renderizar imágenes de hoteles detectados */}
-			{detectedHotels.map((hotel, idx) => (
-				<div key={idx} className="hotel-images-container">
-					<h4 className="hotel-name">{hotel.name}</h4>
-					<div className="hotel-images-grid">
-						<img 
-							src={hotel.images.main} 
-							alt={`${hotel.name} - Imagen principal`}
-							className="hotel-image hotel-image-main"
-							onError={(e) => {
-								e.target.style.display = 'none';
+			{lines.map((line, idx) => {
+				// Convertir markdown básico a HTML
+				const htmlLine = line
+					.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+					.replace(/__(.*?)__/g, '<strong>$1</strong>')
+					.replace(/`(.*?)`/g, '<code>$1</code>')
+					.replace(/^\s*[-*]\s+/g, '• ')
+					.replace(/#+\s*(.*)/g, '<strong>$1</strong>');
+
+				const matchingHotel = detectedHotels.find((hotel) => {
+					if (renderedHotels.has(hotel.name)) return false;
+					return hotel.patterns.some((pattern) => {
+						const regex = new RegExp(`\\b${pattern.replace(/\s+/g, '\\s+')}\\b`, 'i');
+						return regex.test(line);
+					});
+				});
+
+				return (
+					<div key={`line-${idx}`}>
+						<div
+							className="chat-message-text"
+							dangerouslySetInnerHTML={{
+								__html: htmlLine || '<br />'
 							}}
 						/>
-						<img 
-							src={hotel.images.secondary1} 
-							alt={`${hotel.name} - Imagen 2`}
-							className="hotel-image hotel-image-secondary"
-							onError={(e) => {
-								e.target.style.display = 'none';
-							}}
-						/>
-						<img 
-							src={hotel.images.secondary2} 
-							alt={`${hotel.name} - Imagen 3`}
-							className="hotel-image hotel-image-secondary"
-							onError={(e) => {
-								e.target.style.display = 'none';
-							}}
-						/>
+						{matchingHotel && (
+							renderedHotels.add(matchingHotel.name),
+							<div className="hotel-images-container">
+								<h4 className="hotel-name">{matchingHotel.name}</h4>
+								<div className="hotel-images-grid">
+									<img
+										src={matchingHotel.images.main}
+										alt={`${matchingHotel.name} - Imagen principal`}
+										className="hotel-image hotel-image-main"
+										onError={(e) => {
+											e.target.style.display = 'none';
+										}}
+									/>
+									<img
+										src={matchingHotel.images.secondary1}
+										alt={`${matchingHotel.name} - Imagen 2`}
+										className="hotel-image hotel-image-secondary"
+										onError={(e) => {
+											e.target.style.display = 'none';
+										}}
+									/>
+									<img
+										src={matchingHotel.images.secondary2}
+										alt={`${matchingHotel.name} - Imagen 3`}
+										className="hotel-image hotel-image-secondary"
+										onError={(e) => {
+											e.target.style.display = 'none';
+										}}
+									/>
+								</div>
+							</div>
+						)}
 					</div>
-				</div>
-			))}
+				);
+			})}
+
+			{/* Mostrar imágenes de hoteles detectados que no fueron insertados en el texto */}
+			{detectedHotels
+				.filter((hotel) => !renderedHotels.has(hotel.name))
+				.map((hotel, idx) => (
+					<div key={`fallback-${idx}`} className="hotel-images-container">
+						<h4 className="hotel-name">{hotel.name}</h4>
+						<div className="hotel-images-grid">
+							<img
+								src={hotel.images.main}
+								alt={`${hotel.name} - Imagen principal`}
+								className="hotel-image hotel-image-main"
+								onError={(e) => {
+									e.target.style.display = 'none';
+								}}
+							/>
+							<img
+								src={hotel.images.secondary1}
+								alt={`${hotel.name} - Imagen 2`}
+								className="hotel-image hotel-image-secondary"
+								onError={(e) => {
+									e.target.style.display = 'none';
+								}}
+							/>
+							<img
+								src={hotel.images.secondary2}
+								alt={`${hotel.name} - Imagen 3`}
+								className="hotel-image hotel-image-secondary"
+								onError={(e) => {
+									e.target.style.display = 'none';
+								}}
+							/>
+						</div>
+					</div>
+				))}
 		</div>
 	);
 }
@@ -614,7 +662,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					) : (
 						<div className="chat-surface">
 							<header className="chat-header">
-								<h2>Chat con BookingConnectIA</h2>
+								<h2>Chat con LucIA</h2>
 								<p className="chat-subtitle">
 									Conversando como <strong>{agencyDisplayName}</strong>
 								</p>
