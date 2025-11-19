@@ -84,11 +84,11 @@ const Cotizaciones = () => {
             case 0:
                 return { label: 'Pendiente', color: 'blue' };
             case 1:
-                return { label: 'Aceptada', color: 'green' };
+                return { label: 'Aceptada', color: 'purple' };
             case 2:
                 return { label: 'Rechazada', color: 'red' };
             case 3:
-                return { label: 'Convertida en reserva', color: 'purple' };
+                return { label: 'Convertida en reserva', color: 'green' };
             default:
                 return { label: 'Estado no identificado', color: 'gray' };
         }

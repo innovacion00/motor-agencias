@@ -448,7 +448,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		
 		try {
 			// URL del endpoint
-			const apiUrl = "http://localhost:4000/api/v1/llm/chat";
+			const apiUrl = "https://bookingconnectia.gehsuitesapps.com/api/v1/llm/chat";
 			
 			// Preparar el cuerpo de la petición
 			const requestBody = {
