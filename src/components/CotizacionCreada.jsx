@@ -24,7 +24,7 @@ const nombreHotelId = (hotelId) => {
     2: "Hotel 1525", // Hotel 1525
     48: "Hotel Axis", // Hotel Axis Inn
     44: "Hotel Sansiraka", // Hotel Sansiraka Inn
-    123: "Hotel Playa Salguero", // Hotel Playa Salguero
+    123: "Playa Salguero Hotel", // Hotel Playa Salguero
 
     // Hoteles Bogota
     10: "Hotel Windsor", // Hotel Windsor
