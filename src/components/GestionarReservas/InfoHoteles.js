@@ -74,6 +74,11 @@ export const hoteles = (hotel) => {
                 imgHotel: 'https://www.gehsuites.com/images/SANSIRAKA-portada.jpg',
                 ubicacion: 'Cra. 4 #15-65, Gaira, Santa Marta, Magdalena'
             };
+        case 'Playa Salguero Hotel':
+        return{
+            imgHotel:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/PS-4.jpg',
+            ubicacion: 'CRA 4 N° 23F05 Gaira, 470002    '
+        };
         default:
             return {
                 error: true,
@@ -283,7 +288,21 @@ export const habitaciones = {
         url: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-quintuple-sansiraka.jpeg',
         name: "Habitación Familiar",
     },
-     //Boquilla
+    //Playa Salguero
+    '164101':{
+        url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_cuadruple_salguero.jpg',
+        name:'Habitación Cuadrúple',
+    },
+
+    '164100':{
+        url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_triple_salguero.jpg',
+        name:'Habitación Triple',
+    },
+    '164099':{
+        url:'https://cf.bstatic.com/xdata/images/hotel/max1024x768/760635557.jpg?k=4f27fe4927417058fce420af7e61ceb23f36e26733c9f6bf7d0ef98514a43123&o=',
+        name:'Habitación Doble',
+    },
+    //Boquilla
     '83803':{
         url:'https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg', //Doble
         name:'Habitación Doble', //Doble
