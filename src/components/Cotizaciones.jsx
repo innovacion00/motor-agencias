@@ -79,24 +79,40 @@ const Cotizaciones = () => {
         window.location.href = `/cotizaciones/${cotizacionId}`;
     };
 
+    const getStatusInfo = (status) => {
+        switch (status) {
+            case 0:
+                return { label: 'Pendiente', color: 'blue' };
+            case 1:
+                return { label: 'Aceptada', color: 'green' };
+            case 2:
+                return { label: 'Rechazada', color: 'red' };
+            case 3:
+                return { label: 'Convertida en reserva', color: 'purple' };
+            default:
+                return { label: 'Estado no identificado', color: 'gray' };
+        }
+    };
+
     // Función para renderizar las cards de cotizaciones
     const renderCotizacionesCards = (cotizacionesList) => {
-        return cotizacionesList.map((cotizacion, index) => (
+        return cotizacionesList.map((cotizacion, index) => {
+            const { label, color } = getStatusInfo(cotizacion.status);
+            return (
             <div 
                 key={cotizacion._id || index} 
                 className="card clickable-card"
                 onClick={() => navigateToCotizacion(cotizacion._id)}
                 style={{ cursor: 'pointer' }}
             >
-                <span className={`badge ${cotizacion.status === 0 ? 'blue' : cotizacion.status === 1 ? 'green' : 'red'}`}>
-                    {cotizacion.status === 0 ? 'Pendiente' : 
-                     cotizacion.status === 1 ? 'Aceptada' : 'Rechazada'}
+                <span className={`badge ${color}`}>
+                    {label}
                 </span>
                 <p className="client">Cliente: {getClientName(cotizacion.reservation)}</p>
                 <p className="hotel">Hotel: {cotizacion.hotel}</p>
                 <p className="date">Fecha de creación: {formatDate(cotizacion.createdAt)}</p>
             </div>
-        ));
+        )});
     };
 
     return(
@@ -139,6 +155,15 @@ const Cotizaciones = () => {
             <span className="count">{getCotizacionesByStatus(2).length}</span>
           </div>
           {renderCotizacionesCards(getCotizacionesByStatus(2))}
+        </div>
+
+        {/* Columna Convertidas en reserva */}
+        <div className="column">
+          <div className="column-header">
+            <span>Convertidas en reserva</span>
+            <span className="count">{getCotizacionesByStatus(3).length}</span>
+          </div>
+          {renderCotizacionesCards(getCotizacionesByStatus(3))}
         </div>
       </div>
     </div>

@@ -63,7 +63,7 @@
 
   .columns {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
   }
 
@@ -151,6 +151,11 @@
 
   .badge.red {
     background: #D32F2F;
+    color: white;
+  }
+
+  .badge.purple {
+    background: #7B1FA2;
     color: white;
   }
 
