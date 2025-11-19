@@ -24,7 +24,7 @@ const nombreHotelId = (hotelId) => {
     2: "Hotel 1525", // Hotel 1525
     48: "Hotel Axis", // Hotel Axis Inn
     44: "Hotel Sansiraka", // Hotel Sansiraka Inn
-
+    123: "Hotel Playa Salguero", // Hotel Playa Salguero
 
     // Hoteles Bogota
     10: "Hotel Windsor", // Hotel Windsor
@@ -96,6 +96,11 @@ const getHotelImagesById = (hotelId) => {
             main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison10238.jpg",
             secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison8955.jpg",
             secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison6250.jpg"
+        },
+        123: {
+            main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_salguero.jpg",
+            secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/cafeteria2_salguero.jpg",
+            secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/piscina_salguero.jpg"
         }
     };
     return hotelImagesMap[hotelId] || {
