@@ -102,7 +102,7 @@ export const toursData = [
    images: {
      main: "https://www.baytours.com.co/wp-content/uploads/2021/11/chiva_3997139_20201216111803.jpg",
      side1: "https://vehitours.com/wp-content/uploads/2022/02/CITY-TOURS-CARTAGENA-tour-en-chiva-city-tour-en-cartagena-guia-cartagena-min.jpg",
-     side2: "https://cdn-ilcfjhh.nitrocdn.com/AMsOVcaxJEBiDUJmLghgteLoXmGyZJhB/assets/images/optimized/rev-c7d5926/cartagena-tours.co/wp-content/uploads/2022/10/Torre-del-Reloj.jpg"
+     side2: "https://media.tacdn.com/media/attractions-splice-spp-674x446/07/8b/1d/30.jpg   "
    },
    includes: [
      "Te recogemos a tu Hotel en Chiva",
@@ -170,9 +170,9 @@ export const toursData = [
      duration: "7 horas",
      meetingPoint: "A Playa del Nuevo Hospital de Bocagrande",
      images: {
-       main: "https://palmaritobeach.com/wp-content/uploads/2024/03/DJI_0100_1-scaled.jpg",
+       main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Palmarito-Beach-2.jpg",
        side1: "https://www.cartagenaexplorer.com/wp-content/uploads/2022/01/DSCF0803-1024x683.jpg",
-       side2: "https://betraveltour.com/wp-content/uploads/2022/06/Palamarito-Beach-4.jpg"
+       side2: "https://images.trvl-media.com/lodging/11000000/10490000/10483000/10482985/8136841a.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill"
      },
      includes: [
        "Transporte en lancha ida y regreso con salida desde la Playa del Nuevo Hospital de Bocagrande.",
