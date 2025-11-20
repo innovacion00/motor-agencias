@@ -62,62 +62,110 @@ function getHotelImagesByName(hotelName) {
 		'azuan': {
 			main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
 			secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/244639436.jpg?k=6053b3890a7824a3f1a2e30cf862520be80de97644162b30a3e0097d920efafd&o=&hp=1",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/100688940.jpg?k=6feeec694af1e9a1ce62b699b7360999ec64c17ceb04536c99d43b5820585258&o=&hp=1",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/100688038.jpg?k=54490e2560d63e691c5d1cf6b009af33d7931f19ef58f69cfbadcc1d7d7b9e2e&o=&hp=1",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/244639401.jpg?k=5a15a41671ee0d3ee3adeca39f4fecc9e11da47a48cb3f9f8840645872114a43&o=&hp=1",
 		},
 		'aixo': {
 			main: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
 			secondary1: "https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822217.jpg?k=d6df4249a82e1b056bc2f4a8c4a577bafda2ab323fe80e3687e9c4bab55a9a2e&o=&hp=1",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822196.jpg?k=b0cf6c2c7473c6904939307e198dbc450595fa7b31276a526636601f50d7cd0b&o=&hp=1",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/277764369.jpg?k=fd77fa5491ffe7d4798985d53bd83a6d678cf7912730a95da78d224f43e9db91&o=&hp=1",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/245913368.jpg?k=c797277d02ed79ad1e762412e74b9cc289de13e7def62739f012f36bd8b28574&o=&hp=1",
 		},
 		'abi': {
 			main: "https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg",
 			secondary1: "https://www.gehsuites.com/multimedia/galerias/galeriaabi16972.jpg",
-			secondary2: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
+			secondary2: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103583.jpg?k=071126037d20bcbfc858d66c26de1815baf6998a56b3f81b73fd8f7eae6dbff7&o=&hp=1",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103563.jpg?k=c576cf614094adb97aac6fb5efaf9824d0e82cc4475335da439307f9b988c998&o=&hp=1",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103653.jpg?k=5d5ac95d4cfffcbb34279c6bfceff8f9e83d7ff91667ef35e8b18a2e66b3b810&o=&hp=1",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465103653.jpg?k=5d5ac95d4cfffcbb34279c6bfceff8f9e83d7ff91667ef35e8b18a2e66b3b810&o=&hp=1",
 		},
 		'boquilla': {
 			main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
 			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada2_boquilla.jpg",
-			secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/desayuno_boquilla.jpg"
+			secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/desayuno_boquilla.jpg",
+			extra1:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/doble1_boquilla.jpg",
+			extra2:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg",
+			extra3:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple2_boquilla.jpg",
+			extra4:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg",
 		},
 		'marina': {
 			main: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
 			secondary1: "https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243542610.jpg?k=2cf75ad03a472256d6b2e402fd8d462ce679052a32d0df13c6e7dac56c3d1136&o=&hp=1",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543715.jpg?k=7a47cd6af5f8971556ec91581b60c011e0544430470ef73311dd1663eb7dae96&o=&hp=1",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543709.jpg?k=4e2e40743d7fb17a4ea1e2935d754059afb8f5720967603bd3da5c394dcae6a0&o=&hp=1",
 		},
 		'avexi': {
 			main: "https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg",
 			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/foodStanAvexi.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687850.jpg?k=9778545d180eb45a8c1efc9be1dcc6096307cbc29f54c3d085a91c5d5ac25509&o=&hp=1",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/217859458.jpg?k=c7440344e3b869059d93d860a7965a1fda3f7f127378dbfbee10dc2568e2ab62&o=&hp=1",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687880.jpg?k=372da40f421cb18e3158e3cee258a55df68da3916f5ca7b345f4e62b84cd943d&o=&hp=1",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/217859510.jpg?k=f71e3a9d6edaa9123e44d3af987237f09f2a2fc4541f71ee208c2c3f52efc100&o=&hp=1",
 		},
 		'bocagrande': {
 			main: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena4469.jpg",
 			secondary1: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena2953.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena14676.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena14676.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270762.jpg?k=cfe9e10545681c6490650e349d45ab6c7dea125d24801658e92055501b28e1e1&o=&hp=1",
+			extra2:"https://bocagrande-cartagena-de-indias-hotel.hotelmix.es/data/Photos/1920x1080/7442/744293/744293593/Hotel-Bocagrande-By-Geh-Suites-Cartagena-Exterior.JPEG",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270636.webp?k=7ed4455bdce59da1c0465ff2bd51c425b437c3f8f4562246ed26f0b869175ba9&o=",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270615.jpg?k=496ffd5ad15ff3a2e0bc2c336cd6f4844af888bb637abe5a5e875b545f339f05&o=&hp=1",
 		},
 		'rodadero': {
 			main: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
 			secondary1: "https://www.gehsuites.com/multimedia/galerias/2rodadero23293.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439332.webp?k=be9946ab62f0398843255b2a33a1145d955860e341f24ab15e3ce246d3ebbc40&o=",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439308.webp?k=e119dab3708ce15ad454b328bebaf8b67c0badac44f046676d5e9bc4035d26da&o=",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439333.webp?k=867e3a6be58a64ccc40ab9484fd8ce06f78e67024f6b842c9d86554d345f5e58&o=",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439330.webp?k=8f3d063550a4618c4990bd8a749429a7403c921a57039861d3ed71526fe854eb&o=",
 		},
 		'axis': {
 			main: "https://www.gehsuites.com/images/YULDAMA-2.jpg",
 			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Lobbyaxis.jpeg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg",
+			extra1:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Doble-axis.jpeg",
+			extra2:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-axis2.jpeg",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/109098049.jpg?k=d28963d3d5f71aa4e6fcc2e3864341d453c8d5bd2aeb8875caaf92d9e9b6c63a&o=",
+			extra4:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Familiar-axis.jpeg",
 		},
 		'sansiraka': {
 			main: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
 			secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg",
+			extra1:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Doble-sansiraka.jpeg",
+			extra2:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-sansiraka.jpeg",
+			extra3:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacon-cuaruple-sansiraka2.jpeg",
+			extra4:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Ba%C3%B1o-sansiraka.jpeg",
 		},
 		'windsor': {
 			main: "https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg",
 			secondary1: "https://www.gehsuites.com/multimedia/galerias/16HotelWindsorHouse427.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/471543571.webp?k=54017a86c0d7226bac8c223cd1a3795097ad3a70ce8a7a58ae229466dc0a7e9a&o=",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544101.webp?k=6c3fb4b167056b664463cf80e3069a292560771651fe2884be3744be45c88bf3&o=",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/471545854.webp?k=52ce0d7e3c23fd6cea937dde4b0c3057f369ace5b7bb91b030caa7d9066d6c3d&o=",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/16238049.webp?k=0f372de15850d81efd52caff66eb7f9f1bb343b272a74a4c183f158b9424b9e1&o=",
 		},
-		'madison': {
+		'madisson': {
 			main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison10238.jpg",
 			secondary1: "https://www.gehsuites.com/images/fachada-madison.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/madison10238.jpg"
+			secondary2: "https://www.gehsuites.com/multimedia/galerias/madison10238.jpg",
+			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334226.webp?k=a004d558a7caac5707bdc849283abfeb2ecd6d58cf26240134d7f05eb8dec747&o=",
+			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334105.webp?k=a47582ec901b5eb62ceb7f54c35513f4be2dcb643c1afb614de836d9d4e13d58&o=",
+			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334103.webp?k=2ab38772d7efc02a82af9ecdbb30fe80e426884ba1921673816001a052fcef5f&o=",
+			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334236.webp?k=45c0d1d467b2948766f9498bd96ad31c23d6d07bd4bc56c868c1c350867191d2&o=",
 		}
 	};
 
@@ -146,7 +194,7 @@ function detectHotelsInText(text) {
 		{ patterns: ['Hotel Axis', 'Axis'], canonical: 'Hotel Axis' },
 		{ patterns: ['Hotel Sansiraka', 'Sansiraka'], canonical: 'Hotel Sansiraka' },
 		{ patterns: ['Hotel Windsor', 'Windsor'], canonical: 'Hotel Windsor' },
-		{ patterns: ['Hotel Madison', 'Madison'], canonical: 'Hotel Madison' }
+		{ patterns: ['Hotel Madison', 'Madisson'], canonical: 'Hotel Madisson' }
 	];
 
 	const detectedHotels = [];
@@ -179,113 +227,91 @@ function detectHotelsInText(text) {
 }
 
 // Componente para renderizar mensajes con imágenes de hoteles
-function ChatMessageContent({ content, role }) {
-	// Solo procesar imágenes para mensajes del asistente
+function ChatMessageContent({ content, role, onImageClick }) {
+	// Solo procesar diseño enriquecido para el asistente
 	if (role !== 'assistant') {
 		return <div className="chat-bubble-content">{content}</div>;
 	}
 
-	const detectedHotels = detectHotelsInText(content);
-	const renderedHotels = new Set();
+	const detectedHotels = detectHotelsInText(content).map((hotel) => ({
+		...hotel,
+		imageList: Object.values(hotel.images).filter(Boolean),
+	}));
+	const hasHotels = detectedHotels.length > 0;
 	const lines = content.split('\n');
 
+	const formatMarkdownLine = (line) =>
+		line
+			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+			.replace(/__(.*?)__/g, '<strong>$1</strong>')
+			.replace(/`(.*?)`/g, '<code>$1</code>')
+			.replace(/^\s*[-*]\s+/g, '• ')
+			.replace(/#+\s*(.*)/g, '<strong>$1</strong>');
+
 	return (
-		<div className="chat-bubble-content">
-			{lines.map((line, idx) => {
-				// Convertir markdown básico a HTML
-				const htmlLine = line
-					.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-					.replace(/__(.*?)__/g, '<strong>$1</strong>')
-					.replace(/`(.*?)`/g, '<code>$1</code>')
-					.replace(/^\s*[-*]\s+/g, '• ')
-					.replace(/#+\s*(.*)/g, '<strong>$1</strong>');
+		<div className={`chat-bubble-content ${hasHotels ? 'chat-bubble-content--with-hotels' : ''}`}>
+			<div className="chat-text-column">
+				{lines.map((line, idx) => (
+					<div
+						key={`line-${idx}`}
+						className="chat-message-text"
+						dangerouslySetInnerHTML={{
+							__html: formatMarkdownLine(line) || '<br />'
+						}}
+					/>
+				))}
+			</div>
 
-				const matchingHotel = detectedHotels.find((hotel) => {
-					if (renderedHotels.has(hotel.name)) return false;
-					return hotel.patterns.some((pattern) => {
-						const regex = new RegExp(`\\b${pattern.replace(/\s+/g, '\\s+')}\\b`, 'i');
-						return regex.test(line);
-					});
-				});
-
-				return (
-					<div key={`line-${idx}`}>
-						<div
-							className="chat-message-text"
-							dangerouslySetInnerHTML={{
-								__html: htmlLine || '<br />'
-							}}
-						/>
-						{matchingHotel && (
-							renderedHotels.add(matchingHotel.name),
-							<div className="hotel-images-container">
-								<h4 className="hotel-name">{matchingHotel.name}</h4>
-								<div className="hotel-images-grid">
+			{hasHotels && (
+				<div className="hotel-info-column">
+					{detectedHotels.map((hotel, idx) => (
+						<div key={`hotel-${idx}`} className="hotel-info-card">
+							<div className="hotel-info-header">
+								<span className="hotel-info-title">{hotel.name}</span>
+								<button
+									type="button"
+									className="hotel-info-badge"
+									onClick={() => onImageClick?.(hotel.name, hotel.imageList, 0)}
+									aria-label={`Ver detalles e imágenes de ${hotel.name}`}
+								>
+									Detalles
+								</button>
+							</div>
+							<div className="hotel-info-images">
+								<img
+									src={hotel.images.main}
+									alt={`${hotel.name} - Imagen principal`}
+									className="hotel-image hotel-image-main"
+									onClick={() => onImageClick?.(hotel.name, hotel.imageList, 0)}
+									onError={(e) => {
+										e.target.style.display = 'none';
+									}}
+								/>
+								<div className="hotel-info-thumbs">
 									<img
-										src={matchingHotel.images.main}
-										alt={`${matchingHotel.name} - Imagen principal`}
-										className="hotel-image hotel-image-main"
+										src={hotel.images.secondary1}
+										alt={`${hotel.name} - Imagen 2`}
+										className="hotel-image hotel-image-secondary"
+										onClick={() => onImageClick?.(hotel.name, hotel.imageList, 1)}
 										onError={(e) => {
 											e.target.style.display = 'none';
 										}}
 									/>
 									<img
-										src={matchingHotel.images.secondary1}
-										alt={`${matchingHotel.name} - Imagen 2`}
+										src={hotel.images.secondary2}
+										alt={`${hotel.name} - Imagen 3`}
 										className="hotel-image hotel-image-secondary"
-										onError={(e) => {
-											e.target.style.display = 'none';
-										}}
-									/>
-									<img
-										src={matchingHotel.images.secondary2}
-										alt={`${matchingHotel.name} - Imagen 3`}
-										className="hotel-image hotel-image-secondary"
+										onClick={() => onImageClick?.(hotel.name, hotel.imageList, 2)}
 										onError={(e) => {
 											e.target.style.display = 'none';
 										}}
 									/>
 								</div>
 							</div>
-						)}
-					</div>
-				);
-			})}
-
-			{/* Mostrar imágenes de hoteles detectados que no fueron insertados en el texto */}
-			{detectedHotels
-				.filter((hotel) => !renderedHotels.has(hotel.name))
-				.map((hotel, idx) => (
-					<div key={`fallback-${idx}`} className="hotel-images-container">
-						<h4 className="hotel-name">{hotel.name}</h4>
-						<div className="hotel-images-grid">
-							<img
-								src={hotel.images.main}
-								alt={`${hotel.name} - Imagen principal`}
-								className="hotel-image hotel-image-main"
-								onError={(e) => {
-									e.target.style.display = 'none';
-								}}
-							/>
-							<img
-								src={hotel.images.secondary1}
-								alt={`${hotel.name} - Imagen 2`}
-								className="hotel-image hotel-image-secondary"
-								onError={(e) => {
-									e.target.style.display = 'none';
-								}}
-							/>
-							<img
-								src={hotel.images.secondary2}
-								alt={`${hotel.name} - Imagen 3`}
-								className="hotel-image hotel-image-secondary"
-								onError={(e) => {
-									e.target.style.display = 'none';
-								}}
-							/>
 						</div>
-					</div>
-				))}
+					))}
+				</div>
+			)}
 		</div>
 	);
 }
@@ -297,6 +323,12 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [activeId, setActiveId] = useState(() => loadActiveId());
 	const [isChatStarted, setIsChatStarted] = useState(false);
 	const [isResponding, setIsResponding] = useState(false);
+	const [galleryModal, setGalleryModal] = useState({
+		open: false,
+		hotelName: "",
+		images: [],
+		activeIndex: 0,
+	});
 	const textareaRef = useRef(null);
 	const welcomeTextareaRef = useRef(null);
 	const messagesEndRef = useRef(null);
@@ -367,6 +399,17 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}, [activeId]);
 
 	useEffect(() => {
+		if (!galleryModal.open) return;
+		const handleKeyDown = (event) => {
+			if (event.key === "Escape") {
+				closeGalleryModal();
+			}
+		};
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, [galleryModal.open]);
+
+	useEffect(() => {
 		if (messagesEndRef.current) {
 			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
@@ -388,6 +431,36 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		el.style.height = "0px";
 		const next = Math.min(el.scrollHeight, 200);
 		el.style.height = `${next}px`;
+	}
+
+	function openGalleryModal(hotelName, imagesArray = [], startIndex = 0) {
+		const galleryImages = imagesArray.filter(Boolean);
+		if (galleryImages.length === 0) return;
+		const safeIndex = Number.isFinite(startIndex) && startIndex >= 0 && startIndex < galleryImages.length ? startIndex : 0;
+		setGalleryModal({
+			open: true,
+			hotelName,
+			images: galleryImages,
+			activeIndex: safeIndex,
+		});
+	}
+
+	function closeGalleryModal() {
+		setGalleryModal((prev) => ({ ...prev, open: false }));
+	}
+
+	function goToPrevImage() {
+		setGalleryModal((prev) => ({
+			...prev,
+			activeIndex: (prev.activeIndex - 1 + prev.images.length) % prev.images.length,
+		}));
+	}
+
+	function goToNextImage() {
+		setGalleryModal((prev) => ({
+			...prev,
+			activeIndex: (prev.activeIndex + 1) % prev.images.length,
+		}));
 	}
 
 	function handleNewChat() {
@@ -674,7 +747,11 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 								{activeConversation &&
 									activeConversation.messages.map((msg, idx) => (
 										<div key={idx} className={`chat-bubble chat-bubble--${msg.role}`}>
-											<ChatMessageContent content={msg.content} role={msg.role} />
+											<ChatMessageContent
+												content={msg.content}
+												role={msg.role}
+												onImageClick={openGalleryModal}
+											/>
 										</div>
 									))}
 								{isResponding && (
@@ -711,6 +788,46 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					)}
 				</main>
 			</div>
+			{galleryModal.open && (
+				<div className="hotel-gallery-modal" role="dialog" aria-modal="true" aria-label={`Galería ${galleryModal.hotelName}`}>
+					<div className="hotel-gallery-backdrop" onClick={closeGalleryModal} />
+					<div className="hotel-gallery-content">
+						<button className="hotel-gallery-close" onClick={closeGalleryModal} aria-label="Cerrar galería">
+							×
+						</button>
+						<h3 className="hotel-gallery-title">{galleryModal.hotelName}</h3>
+						<div className="hotel-gallery-image-wrapper">
+							<button className="gallery-nav-btn" onClick={goToPrevImage} aria-label="Imagen anterior">
+								‹
+							</button>
+							<img
+								src={galleryModal.images[galleryModal.activeIndex]}
+								alt={`${galleryModal.hotelName} - Imagen ${galleryModal.activeIndex + 1}`}
+							/>
+							<button className="gallery-nav-btn" onClick={goToNextImage} aria-label="Imagen siguiente">
+								›
+							</button>
+						</div>
+						<div className="hotel-gallery-thumbs">
+							{galleryModal.images.map((img, idx) => (
+								<button
+									key={idx}
+									className={`gallery-thumb ${idx === galleryModal.activeIndex ? "is-active" : ""}`}
+									onClick={() =>
+										setGalleryModal((prev) => ({
+											...prev,
+											activeIndex: idx,
+										}))
+									}
+									aria-label={`Ver imagen ${idx + 1}`}
+								>
+									<img src={img} alt={`${galleryModal.hotelName} miniatura ${idx + 1}`} />
+								</button>
+							))}
+						</div>
+					</div>
+				</div>
+			)}
 			<Tooltip 
 				id="tooltip-booking-connect-info"
 				className="custom-tooltip"
