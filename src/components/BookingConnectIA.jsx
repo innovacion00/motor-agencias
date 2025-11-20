@@ -166,8 +166,14 @@ function getHotelImagesByName(hotelName) {
 			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334105.webp?k=a47582ec901b5eb62ceb7f54c35513f4be2dcb643c1afb614de836d9d4e13d58&o=",
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334103.webp?k=2ab38772d7efc02a82af9ecdbb30fe80e426884ba1921673816001a052fcef5f&o=",
 			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334236.webp?k=45c0d1d467b2948766f9498bd96ad31c23d6d07bd4bc56c868c1c350867191d2&o=",
-		}
-	};
+		},
+		'chipinque': {
+			main:"https://i1.sndcdn.com/artworks-8gMsHpp2Z0JVsOIA-PibhGA-t500x500.png",
+			secondary1:"https://i1.sndcdn.com/artworks-8gMsHpp2Z0JVsOIA-PibhGA-t500x500.png",
+			secondary2:"https://i1.sndcdn.com/artworks-8gMsHpp2Z0JVsOIA-PibhGA-t500x500.png",
+			
+		}	
+		};
 
 	// Buscar coincidencias parciales en el nombre
 	for (const [key, images] of Object.entries(hotelImagesMap)) {
@@ -194,7 +200,8 @@ function detectHotelsInText(text) {
 		{ patterns: ['Hotel Axis', 'Axis'], canonical: 'Hotel Axis' },
 		{ patterns: ['Hotel Sansiraka', 'Sansiraka'], canonical: 'Hotel Sansiraka' },
 		{ patterns: ['Hotel Windsor', 'Windsor'], canonical: 'Hotel Windsor' },
-		{ patterns: ['Hotel Madison', 'Madisson'], canonical: 'Hotel Madisson' }
+		{ patterns: ['Hotel Madisson', 'Madisson'], canonical: 'Hotel Madisson' },
+		{patterns:  ['Cerraron chipinque', 'Chipinque', 'chipinque'], canonical: 'Cerraron chipinque'}
 	];
 
 	const detectedHotels = [];
