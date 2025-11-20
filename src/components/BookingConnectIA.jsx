@@ -440,10 +440,10 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 			autoResize(textareaRef);
 		}
 
-		sendMessageToAPI(trimmed);
+		sendMessageToAPI(trimmed, activeId);
 	}
 
-	async function sendMessageToAPI(userContent) {
+	async function sendMessageToAPI(userContent, conversationId) {
 		setIsResponding(true);
 		
 		try {
@@ -453,7 +453,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 			// Preparar el cuerpo de la petición
 			const requestBody = {
 				message: userContent,
-				conversationId:"conv-123458"
+				conversationId: conversationId || generateId(),
 			};
 
 			// Hacer la petición al endpoint con autenticación
