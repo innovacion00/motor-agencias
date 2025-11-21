@@ -349,7 +349,7 @@ main:has(.bcia-page) {
 .chat-bubble-content--with-hotels {
 	display: flex;
 	gap: 20px;
-	max-width: 100%;
+	max-width: 50%;
 }
 
 .chat-text-column {

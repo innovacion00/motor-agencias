@@ -406,6 +406,16 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}, [activeId]);
 
 	useEffect(() => {
+		const intervalMs = 60 * 60 * 1000; // 1 hora
+		const intervalId = setInterval(() => {
+			if (typeof window !== "undefined") {
+				window.location.reload();
+			}
+		}, intervalMs);
+		return () => clearInterval(intervalId);
+	}, []);
+
+	useEffect(() => {
 		if (!galleryModal.open) return;
 		const handleKeyDown = (event) => {
 			if (event.key === "Escape") {
