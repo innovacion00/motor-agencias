@@ -22,10 +22,10 @@ const SwiperSlider = () => {
       
     >
       {/* Banner servicio temporalmente inactivo */}
-      <SwiperSlide >
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ChatGPT%20Image%2024%20nov%202025,%2009_48_26%20a.m..png" alt="Banner playa salguero" />
-      </SwiperSlide>
       {/* <SwiperSlide >
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ChatGPT%20Image%2024%20nov%202025,%2009_48_26%20a.m..png" alt="Banner playa salguero" />
+      </SwiperSlide> */}
+      <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20cotizador.jpg" alt="Banner cotizar 2" />
       </SwiperSlide>
       <SwiperSlide >
@@ -44,7 +44,7 @@ const SwiperSlider = () => {
       
       <SwiperSlide>
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner principal" />
-      </SwiperSlide> */}
+      </SwiperSlide>
     </Swiper>
   );
 };
