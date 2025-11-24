@@ -152,6 +152,8 @@ export const CotizacionCreada = ({ id }) => {
     const [logoAgencia, setLogoAgencia] = useState();
     const [policiesText, setPoliciesText] = useState("");
     const [policiesLoading, setPoliciesLoading] = useState(false);
+    const [agencyName, setAgencyName] = useState("");
+    const [agencyNameLoading, setAgencyNameLoading] = useState(false);
     const cotizacion = useStore(cotizacionData);
 
     useEffect(() => {
@@ -238,31 +240,6 @@ export const CotizacionCreada = ({ id }) => {
         obtenerPoliticasAgencia();
     }, []);
 
-    if (loading) {
-        return (
-            <div className="container">
-                <div className="card">
-                    <div style={{ textAlign: 'center', padding: '40px' }}>
-                        <h2>Cargando cotización...</h2>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (!cotizacion) {
-        return (
-            <div className="container">
-                <div className="card">
-                    <div style={{ textAlign: 'center', padding: '40px' }}>
-                        <h2>No se pudo cargar la cotización</h2>
-                        <p>Recargue la pagina o intente nuevamente mas tarde.</p>
-                    </div>
-                </div>
-            </div>
-        );      
-    }
-
     const fetchWithToken = async (url, options = {}) => {
         let token = Cookies.get('accessToken');
         let response = await fetch(url, {
@@ -291,6 +268,62 @@ export const CotizacionCreada = ({ id }) => {
       };
 
     const url = import.meta.env.PUBLIC_API_URL;
+
+    useEffect(() => {
+        const agencyId = cotizacion?.agenciaId?._id;
+        if (!agencyId) {
+            setAgencyName("");
+            return;
+        }
+
+        const loadAgencyName = async () => {
+            try {
+                setAgencyNameLoading(true);
+                const response = await fetchWithToken(`${url}/agencias/v1/agencias/${agencyId}/nombre`, {
+                    method: 'GET'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                setAgencyName(data?.nombre || data?.name || "");
+            } catch (error) {
+                console.error('Error obteniendo el nombre de la agencia:', error);
+                setAgencyName("");
+            } finally {
+                setAgencyNameLoading(false);
+            }
+        };
+
+        loadAgencyName();
+    }, [cotizacion?.agenciaId?._id, url]);
+
+    if (loading) {
+        return (
+            <div className="container">
+                <div className="card">
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <h2>Cargando cotización...</h2>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!cotizacion) {
+        return (
+            <div className="container">
+                <div className="card">
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <h2>No se pudo cargar la cotización</h2>
+                        <p>Recargue la pagina o intente nuevamente mas tarde.</p>
+                    </div>
+                </div>
+            </div>
+        );      
+    }
 
     const handleAceptar = () => {
         Swal.fire({
@@ -584,6 +617,14 @@ export const CotizacionCreada = ({ id }) => {
                                             Teléfono
                                         </label>
                                         <p className="value">{reservaInfo.telephone || 'No especificado'}</p>
+                                    </div>
+                                    <div className="info-item">
+                                        <label className="label">Agencia</label>
+                                        <p className="value">
+                                            {agencyNameLoading
+                                                ? 'Cargando...'
+                                                : agencyName || 'No especificado'}
+                                        </p>
                                     </div>
                                 </div>
                             </fieldset>

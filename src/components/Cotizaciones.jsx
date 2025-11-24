@@ -183,7 +183,7 @@ const Cotizaciones = () => {
                 <p className="hotel">Hotel: {cotizacion.hotel}</p>
                 <p className="date">Fecha de creación: {formatDate(cotizacion.createdAt)}</p>
                 {cotizacion?.agenciaId?._id && agencyNames[cotizacion.agenciaId._id] && (
-                    <p className="agency-name">{agencyNames[cotizacion.agenciaId._id]}</p>
+                    <p className="agency-name"> Agencia: {agencyNames[cotizacion.agenciaId._id]}</p>
                 )}
             </div>
         )});
