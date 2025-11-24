@@ -6,6 +6,7 @@ import { format } from '@formkit/tempo';
 import Cookies from 'js-cookie';
 import { refreshToken } from '../stores/authtoken';
 import { Tooltip } from 'react-tooltip';
+import FormularioRetenciones from './desglose/FormularioRetenciones';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -33,6 +34,8 @@ const nombreHotelId = (hotelId) => {
 
   return hotelMap[hotelId] || "Hotel no encontrado";
 };
+
+const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 
 // Función para obtener las imágenes del hotel basado en el ID
 const getHotelImagesById = (hotelId) => {
@@ -135,6 +138,8 @@ export default function ReservaHotelComponent() {
   const [huespedExtranjero, setHuespedExtranjero] = useState(false);
   const [policiesText, setPoliciesText] = useState("");
   const [policiesLoading, setPoliciesLoading] = useState(false);
+  const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
+  const [DatosRetenciones, setDatosRetenciones] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -165,14 +170,38 @@ export default function ReservaHotelComponent() {
 
   // Calcular totales basados en los datos de las habitaciones
   const subtotal = datosReserva ? datosReserva.reduce((sum, data) => sum + (data.precio || 0), 0) : 0;
-  const exentoIva = huespedExtranjero === true;
+  const hotelExentoIVA = HOTELES_EXENTOS_IVA.has(datosReserva?.[0]?.hotelidAutocore);
+  const exentoIva = huespedExtranjero === true || hotelExentoIVA;
   const iva = exentoIva ? 0 : (Math.round(subtotal * 0.19) || 0);
   const total = subtotal + iva;
+  const totalConIVA = total; // Para compatibilidad con TablaDesglose y FormularioRetenciones
+
+  // Calcular retenciones
+  const totalRetencionesF = () => {
+    if (DatosRetenciones == null) {
+      return totalConIVA;
+    } else {
+      return (
+        totalConIVA -
+        (DatosRetenciones.calculo_rtf_fte +
+          DatosRetenciones.calculo_rtf_ica +
+          DatosRetenciones.calculo_rtf_iva)
+      );
+    }
+  };
+
+  const totalRetenciones = totalRetencionesF();
 
   // Calcular markup (admite coma o punto como separador decimal)
   const markupPorcentaje = parseFloat(String(markup).replace(',', '.')) || 0;
-  const markupAmount = Math.round(total * (markupPorcentaje / 100));
-  const totalConMarkup = total + markupAmount;
+  const markupAmount = Math.round(totalRetenciones * (markupPorcentaje / 100));
+  const totalConMarkup = totalRetenciones + markupAmount;
+
+  // Función para manejar los datos de retenciones
+  const manejarDatos = (datosHijo, rtePorcentajes) => {
+    setDatosRetenciones(datosHijo);
+    setRetencionesPorcentaje(rtePorcentajes);
+  };
 
   // Función para manejar cambios en el formulario
   const handleChange = (e) => {
@@ -408,7 +437,7 @@ export default function ReservaHotelComponent() {
     const precioPorNoche = datosReserva[0]?.precioBase || 0;
     const subtotalFormateado = subtotal.toLocaleString();
     const ivaFormateado = iva.toLocaleString();
-    const totalFormateado = total.toLocaleString();
+    const totalFormateado = totalRetenciones.toLocaleString();
     const totalConMarkupFormateado = totalConMarkup.toLocaleString();
     const nombreCompleto = `${formData.nombreCompleto} ${formData.apellidos}`;
     const planAlimentacion = datosReserva[0]?.plandealimentacion || "Solo desayuno";
@@ -968,8 +997,17 @@ export default function ReservaHotelComponent() {
           .flatMap((room) => room.children_ages || [])
           .join(",") || "";
 
+      // Función para filtrar retenciones que no son 0
+      const filtrarRetenciones = (retenciones) => {
+        return Object.fromEntries(
+          Object.entries(retenciones).filter(([_, value]) => {
+            return value.resultado !== 0 || value.porcentaje !== 0;
+          })
+        );
+      };
+
       const informacionD = JSON.stringify({
-        total: Math.round(total),
+        total: Math.round(totalRetenciones),
         markup: Math.round(totalConMarkup),
         porcentajemarkup: markupPorcentaje,
         mascotasNumber: datosReserva[0]?.mascotas || null,
@@ -987,6 +1025,20 @@ export default function ReservaHotelComponent() {
         },
         infoTransporte: null,
         infoToures: null,
+        ...filtrarRetenciones({
+          reteFuente: {
+            resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
+          },
+          reteIca: {
+            resultado: Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0,
+          },
+          reteIva: {
+            resultado: Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
+            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
+          },
+        }),
         planAlimentario: datosReserva[0]?.plandealimentacion || "Solo desayuno",
         exentoIva: exentoIva,
         landingHtml: generarLandingHtml(),
@@ -1308,6 +1360,18 @@ export default function ReservaHotelComponent() {
             </div>
               </fieldset>
             </form>
+          {/* Formulario Retenciones */}
+          {totalRetenciones >= 199000 && (
+            <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+              <FormularioRetenciones
+                precio={totalConIVA}
+                adults={cantadultos}
+                ninos={cantninos}
+                fechasreserva={fechasreserva}
+                manejarDatos={manejarDatos}
+              />
+            </div>
+          )}
           </div>
 
           {/* Información de la Reserva */}
@@ -1420,7 +1484,7 @@ export default function ReservaHotelComponent() {
                           style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
                         />
                       </td>
-                      <td className="td-total-amount">${total.toLocaleString()}</td>
+                      <td className="td-total-amount">${totalRetenciones.toLocaleString()}</td>
                     </tr>
                     {markupPorcentaje > 0 && (
                       <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
@@ -1435,6 +1499,7 @@ export default function ReservaHotelComponent() {
                   </tbody>
                 </table>
               </div>
+
 
               {/* Acordeones */}
               <div className="accordions">
@@ -1630,7 +1695,7 @@ export default function ReservaHotelComponent() {
             <div className="price-section">
               <div className="price-row">
                 <span className="price-label">Precio base</span>
-                <span className="price-value">${total.toLocaleString()}</span>
+                <span className="price-value">${totalRetenciones.toLocaleString()}</span>
               </div>
               {markupPorcentaje > 0 && (
                 <>

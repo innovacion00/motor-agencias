@@ -419,3 +419,128 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
   opacity: 1 !important;
 }
+
+/* Estilos para retenciones */
+.contenRetenciones {
+  display: flex;
+}
+
+.container_retenciones {
+  border: 1px solid rgb(221, 221, 221);
+  border-radius: 4px;
+  padding: 1rem;
+  width: 50%;
+  margin-bottom: 1rem;
+}
+
+.container_principal {
+  display: flex;
+  justify-content: space-between;
+  min-height: 300px;
+}
+
+.container_valor_retenciones {
+  display: flex;
+}
+
+.container_valor_retenciones p {
+  border: 1px solid rgb(221, 221, 221);
+  padding: .5rem;
+  width: 100%;
+}
+
+.info_precios {
+  width: 380px;
+  font-weight: 700;
+}
+
+.info_totales {
+  width: 150px;
+  text-align: right;
+}
+
+.formulario_retenciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formulario_retenciones label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.formulario_retenciones input[type='number'] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.formulario_retenciones button {
+  background-color: #26547B;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.formulario_retenciones button:hover {
+  background-color: #1e4666;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Para Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Estilos de tabla para retenciones */
+.formulario_retenciones ~ .container_valor_retenciones table,
+.container_valor_retenciones table {
+  width: 60%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container_valor_retenciones th,
+.container_valor_retenciones td {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+.container_valor_retenciones thead {
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+.container_valor_retenciones tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.container_valor_retenciones tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.container_valor_retenciones th {
+  font-size: 1rem;
+}
+
+.container_valor_retenciones td {
+  font-size: 0.95rem;
+}
