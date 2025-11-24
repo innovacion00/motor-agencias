@@ -21,6 +21,7 @@ const SwiperSlider = () => {
       loop={true} // Habilitar bucle
       
     >
+      {/* Banner servicio temporalmente inactivo */}
       <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ChatGPT%20Image%2024%20nov%202025,%2009_48_26%20a.m..png" alt="Banner playa salguero" />
       </SwiperSlide>

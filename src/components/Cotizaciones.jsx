@@ -3,6 +3,7 @@ import "../components/styles/cotizaciones.css"
 
 const Cotizaciones = () => {
     const [cotizaciones, setCotizaciones] = useState([]);
+    const [agencyNames, setAgencyNames] = useState({});
 
     // Función para obtener el token de las cookies
     const getTokenFromCookies = () => {
@@ -50,6 +51,76 @@ const Cotizaciones = () => {
     useEffect(() => {
         fetchCotizaciones();
     }, []);
+
+    const fetchAgencyName = async (agencyId, token) => {
+        const url = import.meta.env.PUBLIC_API_URL;
+        const response = await fetch(`${url}/agencias/v1/agencias/${agencyId}/nombre`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data?.nombre || data?.name || '';
+    };
+
+    useEffect(() => {
+        const loadAgencyNames = async () => {
+            const token = getTokenFromCookies();
+
+            if (!token) {
+                console.log('No se encontró el token de acceso en las cookies');
+                return;
+            }
+
+            const agenciesInData = cotizaciones
+                .map(cotizacion => cotizacion?.agenciaId?._id)
+                .filter(Boolean);
+
+            const uniqueIds = [...new Set(agenciesInData)]
+                .filter(id => !agencyNames[id]);
+
+            if (!uniqueIds.length) {
+                return;
+            }
+
+            try {
+                const entries = await Promise.all(
+                    uniqueIds.map(async (agencyId) => {
+                        try {
+                            const name = await fetchAgencyName(agencyId, token);
+                            return [agencyId, name];
+                        } catch (error) {
+                            console.error(`Error al obtener el nombre de la agencia ${agencyId}:`, error);
+                            return [agencyId, ''];
+                        }
+                    })
+                );
+
+                setAgencyNames(prev => {
+                    const next = { ...prev };
+                    entries.forEach(([id, name]) => {
+                        if (name) {
+                            next[id] = name;
+                        }
+                    });
+                    return next;
+                });
+            } catch (error) {
+                console.error('Error al consultar nombres de agencias:', error);
+            }
+        };
+
+        if (cotizaciones.length) {
+            loadAgencyNames();
+        }
+    }, [cotizaciones, agencyNames]);
 
     // Función para filtrar cotizaciones por status
     const getCotizacionesByStatus = (status) => {
@@ -111,6 +182,9 @@ const Cotizaciones = () => {
                 <p className="client">Cliente: {getClientName(cotizacion.reservation)}</p>
                 <p className="hotel">Hotel: {cotizacion.hotel}</p>
                 <p className="date">Fecha de creación: {formatDate(cotizacion.createdAt)}</p>
+                {cotizacion?.agenciaId?._id && agencyNames[cotizacion.agenciaId._id] && (
+                    <p className="agency-name">{agencyNames[cotizacion.agenciaId._id]}</p>
+                )}
             </div>
         )});
     };
