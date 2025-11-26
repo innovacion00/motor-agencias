@@ -454,6 +454,34 @@ export const CotizacionPublica = ({ id }) => {
                                 <div style={{ color: '#333', marginTop: '5px' }}>{cotizacion.mascotasNumber} mascota(s) permitida(s)</div>
                             </div>
                         )}
+                        {/* Traslados */}
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Traslados</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>
+                                {cotizacion?.infoTransporte
+                                    ? (
+                                        cotizacion.infoTransporte.tipo === 'aeropuerto_hotel' ? 'Aeropuerto al hotel' :
+                                        cotizacion.infoTransporte.tipo === 'hotel_aeropuerto' ? 'Hotel al aeropuerto' :
+                                        cotizacion.infoTransporte.tipo === 'ambos' ? 'Aeropuerto al hotel | Hotel al aeropuerto' :
+                                        'Incluido'
+                                      )
+                                    : 'No incluidos'}
+                            </div>
+                        </div>
+                        {/* Tours */}
+                        <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                            <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Tours</div>
+                            <div style={{ color: '#333', marginTop: '5px' }}>
+                                {cotizacion?.infoToures && Array.isArray(cotizacion.infoToures.nombres) && cotizacion.infoToures.nombres.length > 0
+                                    ? cotizacion.infoToures.nombres.map((nombreTour, index) => (
+                                        <span key={index}>
+                                            {index > 0 && ', '}
+                                            {nombreTour || `Tour ${index + 1}`}
+                                        </span>
+                                      ))
+                                    : 'No incluidos'}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

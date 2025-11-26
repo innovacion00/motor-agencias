@@ -787,12 +787,12 @@ export const CotizacionCreada = ({ id }) => {
                                                     <p><strong>Traslado incluido:</strong> No</p>
                                                 )}
 
-                                                {cotizacion?.infoToures && cotizacion.infoToures.length > 0 ? (
+                                                {cotizacion?.infoToures && Array.isArray(cotizacion.infoToures.nombres) && cotizacion.infoToures.nombres.length > 0 ? (
                                                     <div>
                                                         <p><strong>Tours incluidos:</strong></p>
                                                         <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
-                                                            {cotizacion.infoToures.map((tour, index) => (
-                                                                <li key={index}>{tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
+                                                            {cotizacion.infoToures.nombres.map((nombreTour, index) => (
+                                                                <li key={index}>{nombreTour || `Tour ${index + 1}`}</li>
                                                             ))}
                                                         </ul>
                                                     </div>

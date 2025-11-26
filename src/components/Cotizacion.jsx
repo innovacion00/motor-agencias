@@ -978,6 +978,7 @@ export default function ReservaHotelComponent() {
       const ninos = JSON.stringify(cantninos);
       const noches = JSON.stringify(datosReserva[0]?.nights);
       const habitaciones = JSON.stringify(datosReserva.length);
+      const primerDatoReserva = datosReserva[0] || {};
 
       // Formatear fechas
       const checkin = format(
@@ -996,6 +997,47 @@ export default function ReservaHotelComponent() {
         fechasreserva?.layout
           .flatMap((room) => room.children_ages || [])
           .join(",") || "";
+
+      // Construir información de transporte (traslados) si aplica,
+      // respetando el esquema que usa FormularioReserva.jsx
+      const tipodetraslado = (() => {
+        const tipoTraslado = primerDatoReserva.tipoTraslado;
+        if (tipoTraslado === "aeropuerto_hotel") return 0;
+        if (tipoTraslado === "hotel_aeropuerto") return 1;
+        if (tipoTraslado === "ambos") return 2;
+        return null;
+      })();
+
+      const infoTransporte =
+        primerDatoReserva.incluirTraslado === true && tipodetraslado !== null
+          ? {
+              // En cotización no pedimos aún número de vuelo ni aerolínea,
+              // pero el backend exige strings con longitud mínima; usamos "ND"
+              numeroVuelo: "ND",
+              ...(primerDatoReserva.tipoTraslado === "hotel_aeropuerto" ||
+              primerDatoReserva.tipoTraslado === "ambos"
+                ? { numeroVueloSalida: "ND" }
+                : {}),
+              firstContactNumber: formData.celular || "",
+              aerolinea: "ND",
+              tipoRecogida: tipodetraslado,
+              cantidadPersonas: totalHuespedes,
+            }
+          : null;
+
+      // Construir información de toures si hay seleccionados
+      // Debe ser un objeto (no array) igual que en FormularioReserva.jsx
+      const infoToures =
+        Array.isArray(primerDatoReserva.tourSeleccionado) &&
+        primerDatoReserva.tourSeleccionado.length > 0
+          ? {
+              nombres: primerDatoReserva.tourSeleccionado.map(
+                (tour) => tour.title || tour.nombre || tour.titulo || ""
+              ),
+              firstContactNumber: formData.celular || "",
+              secondContacNumber: formData.celular || "",
+            }
+          : null;
 
       // Función para filtrar retenciones que no son 0
       const filtrarRetenciones = (retenciones) => {
@@ -1023,8 +1065,8 @@ export default function ReservaHotelComponent() {
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
-        infoTransporte: null,
-        infoToures: null,
+        infoTransporte,
+        infoToures,
         ...filtrarRetenciones({
           reteFuente: {
             resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,

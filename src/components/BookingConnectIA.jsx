@@ -343,9 +343,6 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const prompts = [
 		"{prompt-recomend-hoteles_location}",
 		"{prompt-recomend-planes}",
-		"{prompt-armarpaquetes (tours/traslado)}",
-		"{prompt-info-hoteles}",
-		"{prompt-info-planes}",
 		"{prompt-sorprendeme}",
 		"{prompt-traslados}",
 	];
