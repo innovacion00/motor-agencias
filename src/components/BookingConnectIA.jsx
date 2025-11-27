@@ -4,6 +4,7 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from 'react-tooltip';
 import Cookies from 'js-cookie';
 import { refreshToken } from '../stores/authtoken';
+import { toursData } from '../stores/InfoTours';
 import "./BookingConnectIA.css";
 
 const STORAGE_KEY_CONVERSATIONS = "bookingConnectIA.conversations";
@@ -233,6 +234,54 @@ function detectHotelsInText(text) {
 	return detectedHotels;
 }
 
+// Función para obtener imágenes de tours por número
+function getTourImagesByNumber(tourNumber) {
+	const tour = toursData.find(t => t.id === tourNumber);
+	if (!tour || !tour.images) return null;
+	
+	return {
+		main: tour.images.main || null,
+		secondary1: tour.images.side1 || null,
+		secondary2: tour.images.side2 || null,
+	};
+}
+
+// Función para detectar tours mencionados en el texto
+function detectToursInText(text) {
+	const detectedTours = [];
+	const foundTourNumbers = new Set();
+	
+	// Buscar patrones como "Tour 1", "Tour 2", etc. hasta "Tour 14"
+	for (let i = 1; i <= 14; i++) {
+		if (foundTourNumbers.has(i)) continue; // Evitar duplicados
+		
+		const patterns = [
+			`Tour ${i}`,
+			`tour ${i}`,
+			`TOUR ${i}`,
+		];
+		
+		for (const pattern of patterns) {
+			const regex = new RegExp(`\\b${pattern.replace(/\s+/g, '\\s+')}\\b`, 'gi');
+			if (regex.test(text)) {
+				const images = getTourImagesByNumber(i);
+				if (images) {
+					foundTourNumbers.add(i);
+					const tour = toursData.find(t => t.id === i);
+					detectedTours.push({
+						number: i,
+						name: tour?.title || `Tour ${i}`,
+						images: images
+					});
+				}
+				break; // Si encontramos el tour, no necesitamos buscar más patrones
+			}
+		}
+	}
+	
+	return detectedTours;
+}
+
 // Componente para renderizar mensajes con imágenes de hoteles
 function ChatMessageContent({ content, role, onImageClick }) {
 	// Solo procesar diseño enriquecido para el asistente
@@ -244,7 +293,13 @@ function ChatMessageContent({ content, role, onImageClick }) {
 		...hotel,
 		imageList: Object.values(hotel.images).filter(Boolean),
 	}));
+	const detectedTours = detectToursInText(content).map((tour) => ({
+		...tour,
+		imageList: Object.values(tour.images).filter(Boolean),
+	}));
 	const hasHotels = detectedHotels.length > 0;
+	const hasTours = detectedTours.length > 0;
+	const hasContent = hasHotels || hasTours;
 	const lines = content.split('\n');
 
 	const formatMarkdownLine = (line) =>
@@ -256,7 +311,7 @@ function ChatMessageContent({ content, role, onImageClick }) {
 			.replace(/#+\s*(.*)/g, '<strong>$1</strong>');
 
 	return (
-		<div className={`chat-bubble-content ${hasHotels ? 'chat-bubble-content--with-hotels' : ''}`}>
+		<div className={`chat-bubble-content ${hasContent ? 'chat-bubble-content--with-hotels' : ''}`}>
 			<div className="chat-text-column">
 				{lines.map((line, idx) => (
 					<div
@@ -269,8 +324,9 @@ function ChatMessageContent({ content, role, onImageClick }) {
 				))}
 			</div>
 
-			{hasHotels && (
+			{hasContent && (
 				<div className="hotel-info-column">
+					{/* Mostrar hoteles */}
 					{detectedHotels.map((hotel, idx) => (
 						<div key={`hotel-${idx}`} className="hotel-info-card">
 							<div className="hotel-info-header">
@@ -309,6 +365,54 @@ function ChatMessageContent({ content, role, onImageClick }) {
 										alt={`${hotel.name} - Imagen 3`}
 										className="hotel-image hotel-image-secondary"
 										onClick={() => onImageClick?.(hotel.name, hotel.imageList, 2)}
+										onError={(e) => {
+											e.target.style.display = 'none';
+										}}
+									/>
+								</div>
+							</div>
+						</div>
+					))}
+					
+					{/* Mostrar tours */}
+					{detectedTours.map((tour, idx) => (
+						<div key={`tour-${idx}`} className="hotel-info-card">
+							<div className="hotel-info-header">
+								<span className="hotel-info-title">{tour.name}</span>
+								<button
+									type="button"
+									className="hotel-info-badge"
+									onClick={() => onImageClick?.(tour.name, tour.imageList, 0)}
+									aria-label={`Ver detalles e imágenes de ${tour.name}`}
+								>
+									Detalles
+								</button>
+							</div>
+							<div className="hotel-info-images">
+								<img
+									src={tour.images.main}
+									alt={`${tour.name} - Imagen principal`}
+									className="hotel-image hotel-image-main"
+									onClick={() => onImageClick?.(tour.name, tour.imageList, 0)}
+									onError={(e) => {
+										e.target.style.display = 'none';
+									}}
+								/>
+								<div className="hotel-info-thumbs">
+									<img
+										src={tour.images.secondary1}
+										alt={`${tour.name} - Imagen 2`}
+										className="hotel-image hotel-image-secondary"
+										onClick={() => onImageClick?.(tour.name, tour.imageList, 1)}
+										onError={(e) => {
+											e.target.style.display = 'none';
+										}}
+									/>
+									<img
+										src={tour.images.secondary2}
+										alt={`${tour.name} - Imagen 3`}
+										className="hotel-image hotel-image-secondary"
+										onClick={() => onImageClick?.(tour.name, tour.imageList, 2)}
 										onError={(e) => {
 											e.target.style.display = 'none';
 										}}
