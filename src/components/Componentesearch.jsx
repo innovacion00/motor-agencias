@@ -240,6 +240,16 @@ const BusquedaCartagena = () => {
     return ninos;
   };
 
+  // Función para verificar si la fecha está entre el 01 y 11 de enero de 2026
+  const isDateInRange = (date) => {
+    if (!date) return false;
+    const checkDate = new Date(date);
+    const startDate = new Date("2026-01-01");
+    const endDate = new Date("2026-01-11");
+    // Verificar si la fecha está en el rango (incluyendo los límites)
+    return checkDate >= startDate && checkDate <= endDate;
+  };
+
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
     // Recuperar la ciudad desde el localStorage
@@ -330,6 +340,20 @@ const BusquedaCartagena = () => {
                     : "Sin Disponibilidad"} ${currentCurrency}`}{" "}
                   | Incluye desayuno y seguro
                 </div>
+                {/* Mensaje especial para Bocagrande (id: 7) entre el 01 y 11 de enero de 2026 */}
+                {/* Para eliminar este mensaje, simplemente elimina o comenta el siguiente bloque condicional */}
+                {tipo.hotel.id === 7 && 
+                 nochesyedades1?.dateRange?.startDate && 
+                 isDateInRange(nochesyedades1.dateRange.startDate) && (
+                  <div style={{ 
+                    marginTop: "8px", 
+                    color: "#d32f2f", 
+                    fontSize: "14px",
+                    fontStyle: "italic"
+                  }}>
+                    Estas habitaciones solo están disponibles para dos noches o más
+                  </div>
+                )}
                 <a href={`/hoteles/${tipo.hotel.id}`}>
                   <button>Ver disponibilidad</button>
                 </a>
