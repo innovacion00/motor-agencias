@@ -342,7 +342,7 @@ const BusquedaCartagena = () => {
                 </div>
                 {/* Mensaje especial para Bocagrande (id: 7) entre el 01 y 11 de enero de 2026 */}
                 {/* Para eliminar este mensaje, simplemente elimina o comenta el siguiente bloque condicional */}
-                {tipo.hotel.id === 7 && 
+                {(tipo.hotel.id === 7 || tipo.hotel.id === 9 || tipo.hotel.id === 1 || tipo.hotel.id === 6) && 
                  nochesyedades1?.dateRange?.startDate && 
                  isDateInRange(nochesyedades1.dateRange.startDate) && (
                   <div style={{ 
