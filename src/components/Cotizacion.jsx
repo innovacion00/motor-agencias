@@ -140,9 +140,12 @@ export default function ReservaHotelComponent() {
   const [policiesLoading, setPoliciesLoading] = useState(false);
   const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
   const [DatosRetenciones, setDatosRetenciones] = useState(null);
+  const [divisaSelec, setdivisaSelec] = useState("COP");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    const divisa = localStorage.getItem("selectedCurrency");
+    setdivisaSelec(divisa);
     const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));
     const datareserva = JSON.parse(localStorage.getItem('datosreserva'));
     const adultos = JSON.parse(localStorage.getItem('cantAdultos'));
@@ -1098,7 +1101,7 @@ export default function ReservaHotelComponent() {
             children_ages: childrenAgesString,
             city: datosReserva[0]?.ciudad || "CARTAGENA",
             country: "COL",
-            currency: "COP",
+            currency: divisaSelec || "COP",
             email: formData.email,
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
@@ -1116,7 +1119,7 @@ export default function ReservaHotelComponent() {
                   : "",
                 checkin: checkin,
                 checkout: checkout,
-                currency: "COP",
+                currency: divisaSelec || "COP",
                 id: dato.roomId,
                 quantity: "1",
                 rateId: dato.rateId,
