@@ -192,6 +192,20 @@ const BusquedaCartagena = () => {
     }).format(amount);
   };
 
+  // Función para saber si aplica el descuento especial del 5% en Axis (id: 48)
+  const hasAxisDecemberDiscount = (hotelId, dateRange) => {
+    if (hotelId !== 48 || !dateRange?.startDate) return false;
+
+    const checkIn = new Date(dateRange.startDate);
+    const month = checkIn.getMonth(); // 0 = enero, 11 = diciembre
+    const day = checkIn.getDate();
+
+    // Fechas válidas: 4, 5, 6, 11 y 14 de diciembre (cualquier año)
+    const validDays = [4, 5, 6, 11, 14];
+
+    return month === 11 && validDays.includes(day);
+  };
+
   // Función existente modificada
   const findMinBaseRate = (data) => {
     let minAmount = Infinity;
@@ -306,6 +320,11 @@ const BusquedaCartagena = () => {
             .filter(hotel => hotel.hotel.id !== 2 && hotel.hotel.id !== 41) // Filter out hotels with IDs 2 and 45
             .map((tipo) => (
             <div className={styles.hotel} key={tipo.hotel.id}>
+              {hasAxisDecemberDiscount(tipo.hotel.id, nochesyedades1?.dateRange) && (
+                <div className={styles.discount}>
+                  5%
+                </div>
+              )}
               <img
                 alt="Imagen del hotel"
                 height="200"
@@ -333,6 +352,11 @@ const BusquedaCartagena = () => {
                   {cantAdultos(tipo.availability)} Adultos{" "}
                   {cantNinos(tipo.availability) || 0} Niños
                 </div>
+                  {hasAxisDecemberDiscount(tipo.hotel.id, nochesyedades1?.dateRange) && (
+                    <span style={{ color: "#a0522d", fontSize: "14px", fontWeight: "bold" }}>
+                      Descuento especial del 5% en estas fechas
+                    </span>
+                  )}
                 <div className={styles.price}>
                   Desde:{" "}
                   {`${findMinBaseRate(tipo.availability) !== Infinity

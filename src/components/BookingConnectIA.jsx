@@ -825,7 +825,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					{!isChatStarted ? (
 						<div className="container">
 							<h2>
-								Hola {agencyDisplayName}, de parte de Geh Suites ¿En que podemos ayudarte hoy?
+								Hola {agencyDisplayName}, de parte de Geh Suites ¿En que podemos ayudart	e hoy?
 							</h2>
 							<div className="input-box">
 								<textarea
