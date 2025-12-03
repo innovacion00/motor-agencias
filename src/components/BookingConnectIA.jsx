@@ -168,10 +168,10 @@ function getHotelImagesByName(hotelName) {
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334103.webp?k=2ab38772d7efc02a82af9ecdbb30fe80e426884ba1921673816001a052fcef5f&o=",
 			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/383334236.webp?k=45c0d1d467b2948766f9498bd96ad31c23d6d07bd4bc56c868c1c350867191d2&o=",
 		},
-		'chipinque': {
-			main:"https://i1.sndcdn.com/artworks-8gMsHpp2Z0JVsOIA-PibhGA-t500x500.png",
-			secondary1:"https://i1.sndcdn.com/artworks-8gMsHpp2Z0JVsOIA-PibhGA-t500x500.png",
-			secondary2:"https://i1.sndcdn.com/artworks-8gMsHpp2Z0JVsOIA-PibhGA-t500x500.png",
+		'salguero': {
+			main:"hhttps://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_salguero.jpg",
+			secondary1:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/piscina_salguero.jpg",
+			secondary2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/760635528.jpg?k=eae7d2b151be1dd3e530c9adf256f197cd2380ff8cc8b8236f2197955f1a5681&o=",
 			
 		}	
 		};
@@ -202,7 +202,7 @@ function detectHotelsInText(text) {
 		{ patterns: ['Hotel Sansiraka', 'Sansiraka'], canonical: 'Hotel Sansiraka' },
 		{ patterns: ['Hotel Windsor', 'Windsor'], canonical: 'Hotel Windsor' },
 		{ patterns: ['Hotel Madisson', 'Madisson'], canonical: 'Hotel Madisson' },
-		{patterns:  ['Cerraron chipinque', 'Chipinque', 'chipinque'], canonical: 'Cerraron chipinque'}
+		{patterns:  ['Hotel Playa Salguero', 'Salguero', 'salugero'], canonical: 'Playa salguero Hotel'}
 	];
 
 	const detectedHotels = [];
