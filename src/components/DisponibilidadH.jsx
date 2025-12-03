@@ -882,6 +882,17 @@ export const Cid = ({ id }) => {
   };
   console.log(mostrarTraslados);
 
+  // Cálculo de camas totales seleccionadas vs número de adultos
+  const totalBedsSeleccionadas = datohabitacion.reduce(
+    (acumulado, habitacion) => acumulado + (Number(habitacion.beds) || 0),
+    0
+  );
+  // OJO: en este componente, por cómo se cargan los datos desde localStorage,
+  // la variable "ninos" contiene realmente la cantidad de adultos.
+  const totalAdultos = Number(ninos) || 0;
+  const puedeReservar =
+    datohabitacion.length > 0 && totalBedsSeleccionadas >= totalAdultos;
+
   return (
     <>
       <style>{`
@@ -1593,34 +1604,45 @@ export const Cid = ({ id }) => {
             <a href="/reservas">
               <button
                 onClick={enviardatos}
-                disabled={datohabitacion.length === 0}
+                disabled={!puedeReservar}
                 data-tooltip-id="tooltip-generar-cotizacion"
-            data-tooltip-content={datohabitacion.length === 0 ? "Selecciona las habitaciones que deseas reservar" : "Crear una reserva personalizada para el cliente."}
-            data-tooltip-place="left"
+                data-tooltip-content={
+                  !puedeReservar
+                    ? datohabitacion.length === 0
+                      ? "Selecciona las habitaciones que deseas reservar"
+                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                    : "Crear una reserva personalizada para el cliente."
+                }
+                data-tooltip-place="left"
                 style={{
-                  backgroundColor:
-                    datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
-                  cursor:
-                    datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+                  cursor: !puedeReservar ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
                 }}
               >
-                Reservar ahora  
+                Reservar ahora
               </button>
             </a>
             <a href="/cotizacionpagina">
-            <button
-            onClick={enviardatos}
-            disabled={datohabitacion.length === 0}
-            data-tooltip-id="tooltip-generar-cotizacion"
-            data-tooltip-content={datohabitacion.length === 0 ? "Selecciona habitaciones para generar una cotización" : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."}
-            data-tooltip-place="left"
-            style={{
-              backgroundColor:
-                datohabitacion.length === 0 ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
-              cursor:
-                datohabitacion.length === 0 ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
-            }}
-            >Generar cotización</button></a>
+              <button
+                onClick={enviardatos}
+                disabled={!puedeReservar}
+                data-tooltip-id="tooltip-generar-cotizacion"
+                data-tooltip-content={
+                  !puedeReservar
+                    ? datohabitacion.length === 0
+                      ? "Selecciona habitaciones para generar una cotización"
+                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                    : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."
+                }
+                data-tooltip-place="left"
+                style={{
+                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+                  cursor: !puedeReservar ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                }}
+              >
+                Generar cotización
+              </button>
+            </a>
           <Tooltip 
             id="tooltip-generar-cotizacion"
             className="custom-tooltip"
