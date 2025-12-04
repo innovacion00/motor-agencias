@@ -301,6 +301,25 @@ function ChatMessageContent({ content, role, onImageClick }) {
 	const hasTours = detectedTours.length > 0;
 	const hasContent = hasHotels || hasTours;
 	const lines = content.split('\n');
+	
+	// Frases que activan el botón "Ir a mis reservas"
+	const reservaPhrases = [
+		'reserva creada',
+		'reserva completada',
+		'reservada exitosa',
+		'reserva exitosa',
+		'reserva realizada',
+		'reserva confirmada',
+		'reserva procesada',
+		'reserva finalizada'
+	];
+	
+	// Detectar si el contenido contiene alguna de las frases de reserva
+	const hasReservaCreada = reservaPhrases.some(phrase => {
+		// Crear una expresión regular flexible que permita espacios variables
+		const regex = new RegExp(phrase.replace(/\s+/g, '\\s+'), 'gi');
+		return regex.test(content);
+	});
 
 	const formatMarkdownLine = (line) =>
 		line
@@ -322,6 +341,38 @@ function ChatMessageContent({ content, role, onImageClick }) {
 						}}
 					/>
 				))}
+				{hasReservaCreada && (
+					<div style={{ marginTop: '16px' }}>
+						<a 
+							href="/misreservas" 
+							className="reserva-button"
+							style={{
+								display: 'inline-block',
+								padding: '10px 20px',
+								backgroundColor: '#1c3d5a',
+								color: '#ffffff',
+								textDecoration: 'none',
+								borderRadius: '12px',
+								fontWeight: '600',
+								fontSize: '14px',
+								transition: 'all 0.2s ease',
+								cursor: 'pointer'
+							}}
+							onMouseEnter={(e) => {
+								e.target.style.backgroundColor = '#264b74';
+								e.target.style.transform = 'translateY(-1px)';
+								e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.3)';
+							}}
+							onMouseLeave={(e) => {
+								e.target.style.backgroundColor = '#1c3d5a';
+								e.target.style.transform = 'translateY(0)';
+								e.target.style.boxShadow = 'none';
+							}}
+						>
+							Ir a mis reservas
+						</a>
+					</div>
+				)}
 			</div>
 
 			{hasContent && (
