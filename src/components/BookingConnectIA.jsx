@@ -202,7 +202,7 @@ function detectHotelsInText(text) {
 		{ patterns: ['Hotel Sansiraka', 'Sansiraka'], canonical: 'Hotel Sansiraka' },
 		{ patterns: ['Hotel Windsor', 'Windsor'], canonical: 'Hotel Windsor' },
 		{ patterns: ['Hotel Madisson', 'Madisson'], canonical: 'Hotel Madisson' },
-		{patterns:  ['Hotel Playa Salguero', 'Salguero', 'salugero'], canonical: 'Playa salguero Hotel'}
+		{patterns:  ['Hotel Playa Salguero', 'Salguero', 'salguero'], canonical: 'Playa salguero Hotel'}
 	];
 
 	const detectedHotels = [];
@@ -447,9 +447,34 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const prompts = [
 		"{prompt-recomend-hoteles_location}",
 		"{prompt-recomend-planes}",
-		"{prompt-sorprendeme}",
-		"{prompt-traslados}",
+		"{prompt-Hoteles-SantaMarta}",
+		"{prompt-Hoteles-Cartagena}",
+		"{prompt-Hoteles-Bogota}",
 	];
+
+	// Configuración de prompts: mapea el placeholder al texto del botón y al prompt real
+	const promptConfig = {
+		"{prompt-recomend-hoteles_location}": {
+			buttonText: "Ciudades disponibles",
+			realPrompt: "Hola lucIA! en que hoteles tienes disponibilidad que me puedas ofrecer"
+		},
+		"{prompt-recomend-planes}": {
+			buttonText: "Planes touristicos dispnibles",
+			realPrompt: "Hola LucIA! puedes decirme que toures tienes disponibles Cartagena?"
+		},
+		"{prompt-Hoteles-SantaMarta}": {
+			buttonText: "Santa Marta",
+			realPrompt: "Hola LucIA! puedes decirme informacion y que hoteles tienes disponibles en Santa Marta ?"
+		},
+		"{prompt-Hoteles-Cartagena}": {
+			buttonText: "Cartagena",
+			realPrompt: "Hola LucIA! puedes decirme informacion y que hoteles tienes disponibles en Cartagena ?"
+		},
+		"{prompt-Hoteles-Bogota}": {
+			buttonText: "Bogota",
+			realPrompt: "hola LucIA! puedes decirme informacion y que hoteles tienes disponibles en Bogota ?"
+		}
+	};
 
 	const fetchWithToken = async (url, options = {}) => {
 		let token = Cookies.get('accessToken');
@@ -724,11 +749,15 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}
 
 	function handlePromptClick(prompt) {
+		// Obtener el prompt real desde la configuración, o usar el prompt original si no existe
+		const config = promptConfig[prompt];
+		const realPrompt = config ? config.realPrompt : prompt;
+		
 		if (!isChatStarted) {
-			sendMessage(prompt, true);
+			sendMessage(realPrompt, true);
 			return;
 		}
-		sendMessage(prompt, false);
+		sendMessage(realPrompt, false);
 	}
 
 	function activateConversation(id) {
@@ -843,11 +872,15 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							</div>
 							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
 							<div className="button-group">
-								{prompts.map((prompt) => (
-									<button key={prompt} onClick={() => handlePromptClick(prompt)}>
-										{prompt}
-									</button>
-								))}
+								{prompts.map((prompt) => {
+									const config = promptConfig[prompt];
+									const buttonText = config ? config.buttonText : prompt;
+									return (
+										<button key={prompt} onClick={() => handlePromptClick(prompt)}>
+											{buttonText}
+										</button>
+									);
+								})}
 							</div>
 						</div>
 					) : (
