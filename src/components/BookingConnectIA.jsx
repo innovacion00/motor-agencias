@@ -626,6 +626,14 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		const next = Math.min(el.scrollHeight, 200);
 		el.style.height = `${next}px`;
 	}
+	
+	function forceResize(ref) {
+		const el = ref.current;
+		if (!el) return;
+		// Forzar el resize sin límite para mostrar todo el contenido
+		el.style.height = "auto";
+		el.style.height = `${el.scrollHeight}px`;
+	}
 
 	function openGalleryModal(hotelName, imagesArray = [], startIndex = 0) {
 		const galleryImages = imagesArray.filter(Boolean);
@@ -799,6 +807,38 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		}
 	}
 
+	function handleReservaRapida() {
+		const reservaRapidaText = 'Hola me gustaria crear una reserva. dia de checkin:  y dia de checkout:  del mes:  para el hotel:  del año:  numero de personas:  nombre del titular: , tipo de documento: , correo:  , fecha de nacimiento: , telefono: +57 , numero de documento: , preferiblemente habitacion: .';
+		
+		if (!isChatStarted) {
+			setWelcomePrompt(reservaRapidaText);
+			// Usar setTimeout para asegurar que React haya actualizado el DOM
+			setTimeout(() => {
+				forceResize(welcomeTextareaRef);
+				// Enfocar el textarea
+				if (welcomeTextareaRef.current) {
+					welcomeTextareaRef.current.focus();
+					// Colocar el cursor al final
+					const length = reservaRapidaText.length;
+					welcomeTextareaRef.current.setSelectionRange(length, length);
+				}
+			}, 0);
+		} else {
+			setMessage(reservaRapidaText);
+			// Usar setTimeout para asegurar que React haya actualizado el DOM
+			setTimeout(() => {
+				forceResize(textareaRef);
+				// Enfocar el textarea
+				if (textareaRef.current) {
+					textareaRef.current.focus();
+					// Colocar el cursor al final
+					const length = reservaRapidaText.length;
+					textareaRef.current.setSelectionRange(length, length);
+				}
+			}, 0);
+		}
+	}
+
 	function handlePromptClick(prompt) {
 		// Obtener el prompt real desde la configuración, o usar el prompt original si no existe
 		const config = promptConfig[prompt];
@@ -916,6 +956,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 									onChange={handleWelcomeChange}
 									onKeyDown={onWelcomeKeyDown}
 									rows={1}
+									spellCheck={false}
 								/>
 								<span className="mic-icon" aria-label="Micrófono">
 									🎤
@@ -923,6 +964,36 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							</div>
 							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
 							<div className="button-group">
+								<button 
+									className="reserva-rapida-button"
+									onClick={handleReservaRapida}
+									style={{
+										backgroundColor: '#1c3d5a',
+										color: '#ffffff',
+										border: 'none',
+										borderRadius: '12px',
+										padding: '12px 24px',
+										fontSize: '15px',
+										fontWeight: '600',
+										cursor: 'pointer',
+										transition: 'all 0.3s ease',
+										width: '100%',
+										marginBottom: '12px',
+										boxShadow: '0 4px 12px rgba(28, 61, 90, 0.2)'
+									}}
+									onMouseEnter={(e) => {
+										e.target.style.backgroundColor = '#264b74';
+										e.target.style.transform = 'translateY(-2px)';
+										e.target.style.boxShadow = '0 6px 16px rgba(28, 61, 90, 0.3)';
+									}}
+									onMouseLeave={(e) => {
+										e.target.style.backgroundColor = '#1c3d5a';
+										e.target.style.transform = 'translateY(0)';
+										e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.2)';
+									}}
+								>
+									Reserva rápida
+								</button>
 								{prompts.map((prompt) => {
 									const config = promptConfig[prompt];
 									const buttonText = config ? config.buttonText : prompt;
@@ -977,6 +1048,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 									onKeyDown={onComposerKeyDown}
 									rows={1}
 									disabled={isResponding}
+									// spellCheck={false} // deshabilitar la corrección ortográfica
 								/>
 								<button
 									className="chat-send"
