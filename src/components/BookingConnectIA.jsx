@@ -839,6 +839,38 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		}
 	}
 
+	function handleCotizacionRapida() {
+		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion. dia de checkin:  y dia de checkout:  del mes:  para el hotel:  del año:  numero de personas:  nombre del titular: , tipo de documento: , correo:  , fecha de nacimiento: , telefono: +57 , numero de documento: , preferiblemente habitacion: .';
+		
+		if (!isChatStarted) {
+			setWelcomePrompt(cotizacionRapidaText);
+			// Usar setTimeout para asegurar que React haya actualizado el DOM
+			setTimeout(() => {
+				forceResize(welcomeTextareaRef);
+				// Enfocar el textarea
+				if (welcomeTextareaRef.current) {
+					welcomeTextareaRef.current.focus();
+					// Colocar el cursor al final
+					const length = cotizacionRapidaText.length;
+					welcomeTextareaRef.current.setSelectionRange(length, length);
+				}
+			}, 0);
+		} else {
+			setMessage(cotizacionRapidaText);
+			// Usar setTimeout para asegurar que React haya actualizado el DOM
+			setTimeout(() => {
+				forceResize(textareaRef);
+				// Enfocar el textarea
+				if (textareaRef.current) {
+					textareaRef.current.focus();
+					// Colocar el cursor al final
+					const length = cotizacionRapidaText.length;
+					textareaRef.current.setSelectionRange(length, length);
+				}
+			}, 0);
+		}
+	}
+
 	function handlePromptClick(prompt) {
 		// Obtener el prompt real desde la configuración, o usar el prompt original si no existe
 		const config = promptConfig[prompt];
@@ -961,7 +993,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 								<img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/enviar.png" alt="enviar" width="20" height="20" style={{ cursor: 'pointer' }} />
 							</div>
 							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
-							<div className="button-group">
+							<div className="button-group" style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
 								<button 
 									className="reserva-rapida-button"
 									onClick={handleReservaRapida}
@@ -975,8 +1007,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 										fontWeight: '600',
 										cursor: 'pointer',
 										transition: 'all 0.3s ease',
-										width: '100%',
-										marginBottom: '12px',
+										flex: '1',
 										boxShadow: '0 4px 12px rgba(28, 61, 90, 0.2)'
 									}}
 									onMouseEnter={(e) => {
@@ -992,6 +1023,37 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 								>
 									Reserva rápida
 								</button>
+								<button 
+									className="cotizacion-rapida-button"
+									onClick={handleCotizacionRapida}
+									style={{
+										backgroundColor: '#1c3d5a',
+										color: '#ffffff',
+										border: 'none',
+										borderRadius: '12px',
+										padding: '12px 24px',
+										fontSize: '15px',
+										fontWeight: '600',
+										cursor: 'pointer',
+										transition: 'all 0.3s ease',
+										flex: '1',
+										boxShadow: '0 4px 12px rgba(28, 61, 90, 0.2)'
+									}}
+									onMouseEnter={(e) => {
+										e.target.style.backgroundColor = '#264b74';
+										e.target.style.transform = 'translateY(-2px)';
+										e.target.style.boxShadow = '0 6px 16px rgba(28, 61, 90, 0.3)';
+									}}
+									onMouseLeave={(e) => {
+										e.target.style.backgroundColor = '#1c3d5a';
+										e.target.style.transform = 'translateY(0)';
+										e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.2)';
+									}}
+								>
+									Cotización rápida
+								</button>
+							</div>
+							<div className="button-group">
 								{prompts.map((prompt) => {
 									const config = promptConfig[prompt];
 									const buttonText = config ? config.buttonText : prompt;
