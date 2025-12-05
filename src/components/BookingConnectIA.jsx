@@ -918,7 +918,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							className="icon-btn" 
 							aria-label="Información"
 							data-tooltip-id="tooltip-booking-connect-info"
-							data-tooltip-content="Lucia es la nueva herramienta de inteligencia artificial para agencias. Te brinda información sobre disponibilidad y planes, permite reservar, cotizar y cancelar reservas de BookingConnect."
+							data-tooltip-content="LucIA es la nueva herramienta de inteligencia artificial para agencias. Te brinda información sobre disponibilidad y planes, permite reservar, cotizar y cancelar reservas de BookingConnect."
 							data-tooltip-place="right"
 						>
 							<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -983,7 +983,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							<div className="input-box">
 								<textarea
 									ref={welcomeTextareaRef}
-									placeholder="Escribe un mensaje a Lucia"
+									placeholder="Escribe un mensaje a LucIA"
 									maxLength={5000}
 									value={welcomePrompt}
 									onChange={handleWelcomeChange}
@@ -1069,7 +1069,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					) : (
 						<div className="chat-surface">
 							<header className="chat-header">
-								<h2>Chat con Lucia</h2>
+								<h2>Chat con LucIA</h2>
 								<p className="chat-subtitle">
 									Conversando como <strong>{agencyDisplayName}</strong>
 								</p>
