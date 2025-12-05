@@ -58,6 +58,15 @@ const DropdownSearch = () => {
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
 
+  // Configurar el appElement para react-modal
+  useEffect(() => {
+    // Configurar el elemento de la aplicación para react-modal
+    // Esto es necesario para que los lectores de pantalla funcionen correctamente
+    if (typeof window !== "undefined") {
+      Modal.setAppElement(document.body);
+    }
+  }, []);
+
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
