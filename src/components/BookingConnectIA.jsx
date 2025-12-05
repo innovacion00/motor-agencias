@@ -808,7 +808,8 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}
 
 	function handleReservaRapida() {
-		const reservaRapidaText = 'Hola me gustaria crear una reserva. dia de checkin:  y dia de checkout:  del mes:  para el hotel:  del año:  numero de personas:  nombre del titular: , tipo de documento: , correo:  , fecha de nacimiento: , telefono: +57 , numero de documento: , preferiblemente habitacion: .';
+		const reservaRapidaText = 
+		'Hola me gustaria crear una reserva.\ndia de checkin:  y dia de checkout:  mes: \nhotel: \naño:  \nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(reservaRapidaText);
@@ -840,7 +841,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}
 
 	function handleCotizacionRapida() {
-		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion. dia de checkin:  y dia de checkout:  del mes:  para el hotel:  del año:  numero de personas:  nombre del titular: , tipo de documento: , correo:  , fecha de nacimiento: , telefono: +57 , numero de documento: , preferiblemente habitacion: .';
+		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion.\ndia de checkin:  y dia de checkout:  mes: \nhotel: \naño:  \nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(cotizacionRapidaText);
@@ -977,7 +978,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					{!isChatStarted ? (
 						<div className="container">
 							<h2>
-								Hola {agencyDisplayName}, de parte de Geh Suites ¿En que podemos ayudart	e hoy?
+								Hola {agencyDisplayName}, de parte de Geh Suites <br />¿En que podemos ayudarte hoy?
 							</h2>
 							<div className="input-box">
 								<textarea

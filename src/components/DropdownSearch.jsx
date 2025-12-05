@@ -203,6 +203,10 @@ const DropdownSearch = () => {
     }
   };
 
+  const handleSearchWithIA = () => {
+    window.location.href = "/BookingConnectIA";
+  };
+
   return (
     <div className={styles.dropdownSearchContainer}>
       <div className={styles.dateButtons}>
@@ -404,6 +408,14 @@ const DropdownSearch = () => {
         } /*Deshabilitar boton cuando se presiona y realiza la consulta */
       >
         {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
+      </button>
+      
+      {/* Botón de búsqueda con IA */}
+      <button
+        onClick={handleSearchWithIA}
+        className={styles.searchButton}
+      >
+        Consultar con IA
       </button>
       {/* Modal de carga */}
       <Modal
