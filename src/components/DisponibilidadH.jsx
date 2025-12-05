@@ -1345,17 +1345,25 @@ export const Cid = ({ id }) => {
                     <p className="price"></p>
                     <p className="price">
                       {(() => {
-                        // Filtrar productos únicos basándose en el roomName base (sin sufijos de booking)
-                        const productosUnicos = dato.products?.filter((product, idx, arr) => {
-                          if (!regexSeleccionado?.test(product.roomName)) return false;
-                          
+                        // Primero filtrar productos que coinciden con el regex seleccionado
+                        // Verificar tanto en roomName como en rateDescription
+                        const productosFiltrados = dato.products?.filter((product) => {
+                          return regexSeleccionado?.test(product.roomName) || 
+                                 regexSeleccionado?.test(product.rateDescription);
+                        });
+
+                        // Luego filtrar productos únicos basándose en el roomName base (sin sufijos de booking)
+                        const productosUnicos = productosFiltrados?.filter((product, idx, arr) => {
+                          // Obtener el texto del campo que contiene el sufijo (roomName o rateDescription)
+                          const textoCompleto = product.roomName || product.rateDescription || '';
                           // Extraer el nombre base de la habitación (sin los sufijos de booking)
-                          const roomNameBase = product.roomName.split('[')[0].trim();
+                          const roomNameBase = textoCompleto.split('[')[0].trim();
                           
-                          // Verificar si es el primer producto con este nombre base
-                          return arr.findIndex(p => 
-                            p.roomName.split('[')[0].trim() === roomNameBase
-                          ) === idx;
+                          // Verificar si es el primer producto con este nombre base en el array filtrado
+                          return arr.findIndex(p => {
+                            const textoP = p.roomName || p.rateDescription || '';
+                            return textoP.split('[')[0].trim() === roomNameBase;
+                          }) === idx;
                         });
 
                         return productosUnicos?.map((product, idx) => {
@@ -1426,7 +1434,8 @@ export const Cid = ({ id }) => {
                                 huespedes: adultos + ninos,
                                 precio: calculateTotalPrice(
                                   dato.products?.find((product) =>
-                                    regexSeleccionado.test(product.roomName)
+                                    regexSeleccionado.test(product.roomName) || 
+                                    regexSeleccionado.test(product.rateDescription)
                                   )?.baseRate?.[
                                     currentCurrency == "USD"
                                       ? "amountBeforeTaxUSD"
@@ -1440,7 +1449,8 @@ export const Cid = ({ id }) => {
                                   cantidadMascotas // Add this parameter
                                 ),
                                 precioBase: dato.products?.find((product) =>
-                                  regexSeleccionado.test(product.roomName)
+                                  regexSeleccionado.test(product.roomName) || 
+                                  regexSeleccionado.test(product.rateDescription)
                                 )?.baseRate?.[
                                   currentCurrency == "USD"
                                     ? "amountBeforeTaxUSD"
@@ -1452,7 +1462,8 @@ export const Cid = ({ id }) => {
                                 ciudad: habitaciones?.hotel?.city,
                                 hotelidAutocore: habitaciones?.hotel?.id,
                                 rateId: dato.products?.find((product) =>
-                                  regexSeleccionado.test(product.roomName)
+                                  regexSeleccionado.test(product.roomName) || 
+                                  regexSeleccionado.test(product.rateDescription)
                                 )?.rateId,
                                 mascotas: mostrarMascotas ? cantidadMascotas : 0,
                               },
