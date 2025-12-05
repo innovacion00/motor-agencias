@@ -918,7 +918,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							className="icon-btn" 
 							aria-label="Información"
 							data-tooltip-id="tooltip-booking-connect-info"
-							data-tooltip-content="BookingConnectsIA es la nueva herramienta de inteligencia artificial para agencias. Te brinda información sobre disponibilidad y planes, permite reservar, cotizar y cancelar reservas de BookingConnect."
+							data-tooltip-content="Lucia es la nueva herramienta de inteligencia artificial para agencias. Te brinda información sobre disponibilidad y planes, permite reservar, cotizar y cancelar reservas de BookingConnect."
 							data-tooltip-place="right"
 						>
 							<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -943,12 +943,12 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 						</svg>
 						<span>Buscar chats</span>
 					</div>
-					<div className="menu-item">
+					{/* <div className="menu-item">
 						<svg className="menu-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 							<path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z" />
 						</svg>
 						<span>Biblioteca</span>
-					</div>
+					</div> */}
 					<div className="history-section">
 						<p className="history-title">Historial</p>
 						{conversations.length === 0 && <p className="history-empty">Sin chats aún</p>}
@@ -983,7 +983,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 							<div className="input-box">
 								<textarea
 									ref={welcomeTextareaRef}
-									placeholder="Escribe un mensaje a BookingConnectsIA"
+									placeholder="Escribe un mensaje a Lucia"
 									maxLength={5000}
 									value={welcomePrompt}
 									onChange={handleWelcomeChange}
@@ -1069,7 +1069,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					) : (
 						<div className="chat-surface">
 							<header className="chat-header">
-								<h2>Chat con LucIA</h2>
+								<h2>Chat con Lucia</h2>
 								<p className="chat-subtitle">
 									Conversando como <strong>{agencyDisplayName}</strong>
 								</p>
