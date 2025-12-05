@@ -958,9 +958,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 									rows={1}
 									spellCheck={false}
 								/>
-								<span className="mic-icon" aria-label="Micrófono">
-									🎤
-								</span>
+								<img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/enviar.png" alt="enviar" width="20" height="20" style={{ cursor: 'pointer' }} />
 							</div>
 							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
 							<div className="button-group">
