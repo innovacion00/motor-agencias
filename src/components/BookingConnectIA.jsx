@@ -481,8 +481,9 @@ function ChatMessageContent({ content, role, onImageClick }) {
 export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [message, setMessage] = useState("");
 	const [welcomePrompt, setWelcomePrompt] = useState("");
-	const [conversations, setConversations] = useState(() => loadConversations());
-	const [activeId, setActiveId] = useState(() => loadActiveId());
+	// Inicializar con valores por defecto para evitar problemas de hidratación
+	const [conversations, setConversations] = useState([]);
+	const [activeId, setActiveId] = useState("");
 	const [isChatStarted, setIsChatStarted] = useState(false);
 	const [isResponding, setIsResponding] = useState(false);
 	const [galleryModal, setGalleryModal] = useState({
@@ -495,6 +496,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const welcomeTextareaRef = useRef(null);
 	const messagesEndRef = useRef(null);
 	const [agencyDisplayName, setAgencyDisplayName] = useState(agencyName);
+	const [isMounted, setIsMounted] = useState(false);
 	const prompts = [
 		"{prompt-recomend-hoteles_location}",
 		"{prompt-recomend-planes}",
@@ -559,7 +561,35 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		[conversations, activeId]
 	);
 
+	// Cargar datos del localStorage solo después del montaje para evitar problemas de hidratación
 	useEffect(() => {
+		setIsMounted(true);
+		// Cargar conversaciones y activeId del localStorage
+		const loadedConversations = loadConversations();
+		const loadedActiveId = loadActiveId();
+		
+		if (loadedConversations.length > 0) {
+			setConversations(loadedConversations);
+			// Establecer activeId
+			if (loadedActiveId && loadedConversations.some(conv => conv.id === loadedActiveId)) {
+				setActiveId(loadedActiveId);
+			} else {
+				// Si el activeId no existe o no es válido, usar la primera conversación
+				setActiveId(loadedConversations[0].id);
+			}
+		} else {
+			// Si no hay conversaciones, crear una nueva
+			const id = generateId();
+			const newConversation = {
+				id,
+				title: "Nuevo chat",
+				messages: [],
+			};
+			setConversations([newConversation]);
+			setActiveId(id);
+		}
+		
+		// Cargar nombre de agencia
 		try {
 			const raw = localStorage.getItem("datosUsuario");
 			if (raw) {
@@ -575,12 +605,18 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}, []);
 
 	useEffect(() => {
-		saveConversations(conversations);
-	}, [conversations]);
+		// Solo guardar si el componente está montado
+		if (isMounted) {
+			saveConversations(conversations);
+		}
+	}, [conversations, isMounted]);
 
 	useEffect(() => {
-		saveActiveId(activeId);
-	}, [activeId]);
+		// Solo guardar si el componente está montado
+		if (isMounted) {
+			saveActiveId(activeId);
+		}
+	}, [activeId, isMounted]);
 
 	useEffect(() => {
 		const intervalMs = 60 * 60 * 1000; // 1 hora
@@ -610,14 +646,20 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}, [activeConversation, isResponding]);
 
 	useEffect(() => {
+		// Solo ejecutar después de que el componente esté montado y los datos cargados
+		if (!isMounted || conversations.length === 0) return;
+		
+		// Verificar si el activeId existe en las conversaciones
 		const exists = conversations.some((conv) => conv.id === activeId);
-		if (!exists) {
-			handleNewChat();
-		} else {
+		if (!exists && activeId) {
+			// Si el activeId no existe, usar la primera conversación
+			setActiveId(conversations[0].id);
+		} else if (exists) {
+			// Actualizar el estado de isChatStarted basado en la conversación activa
 			setIsChatStarted((activeConversation?.messages.length || 0) > 0);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [isMounted, conversations, activeId]);
 
 	function autoResize(ref) {
 		const el = ref.current;
@@ -960,14 +1002,26 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 									onClick={() => activateConversation(conv.id)}
 								>
 									<span className="history-item-title">{conv.title}</span>
-									<button
+									<div
 										className="history-item-delete"
+										role="button"
+										tabIndex={0}
 										aria-label="Eliminar chat"
-										onClick={(evt) => handleDeleteConversation(conv.id, evt)}
+										onClick={(evt) => {
+											evt.stopPropagation();
+											handleDeleteConversation(conv.id, evt);
+										}}
+										onKeyDown={(evt) => {
+											if (evt.key === 'Enter' || evt.key === ' ') {
+												evt.preventDefault();
+												evt.stopPropagation();
+												handleDeleteConversation(conv.id, evt);
+											}
+										}}
 										title="Eliminar chat"
 									>
 										<FontAwesomeIcon icon={faTrash} />
-									</button>
+									</div>
 								</button>
 							))}
 						</div>
