@@ -220,6 +220,8 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
         }).format(value);
     };
 
+    const ocultarRteFuente = DatosReserva?.[0]?.hotelId === 13633 || DatosReserva?.[0]?.hotelid === "13633";
+
     return (
         <>
 
@@ -248,6 +250,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                         <div className='container_retenciones'>
                             <p><strong>IMPORTANTE:</strong> Los valores deben ingresarse en formato numérico, no como porcentajes. Por ejemplo: en lugar de "2%", solo escribe "2".</p>
                             <form onSubmit={(event) => handleSubmit(event)} className='formulario_retenciones'>
+                                    {!ocultarRteFuente &&
                                 <div>
                                     <label>Ingrese el porcentaje rete fuente</label>
                                     <input
@@ -258,6 +261,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                                         onChange={handleChange}
                                     />
                                 </div>
+                                }
                                 <div>
                                     <label>Ingrese el porcentaje rete ica</label>
                                     <input

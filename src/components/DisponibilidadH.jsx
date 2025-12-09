@@ -8,8 +8,7 @@ import { currency } from "../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
-import UpgradeModal from './UpgradeModal';
-import { searchFlights } from '../utils/flightSearch';
+import { Tooltip } from 'react-tooltip';
 
 const hotelesData = {
   9: {
@@ -161,6 +160,14 @@ const hotelesData = {
     leermas: "/infoboquilla",
     mapa: "google.com/maps/place/Hotel+Boquilla+Suites/@10.4704047,-75.501179,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef63ac94ada9efd:0xf15682aa17f6c6b6!5m2!4m1!1i2!8m2!3d10.4703994!4d-75.4986041!16s%2Fg%2F1yh9tpqwj?hl=es&entry=ttu&g_ep=EgoyMDI1MDEyMS4wIKXMDSoASAFQAw%3D%3D",
   },
+  123:{
+    name: "Hotel Playa Salguero",
+    direction: "CRA 4 N° 23F05 Gaira, 470002",
+    description:"El Hotel Playa Salguero By GEH Suites está ubicado en Santa Marta, a solo 12 minutos caminando de la playa Salguero, y ofrece alojamiento con aire acondicionado, Wi-Fi gratuito, piscina al aire libre, jardín y terraza. Las habitaciones cuentan con baño privado, TV de pantalla plana y algunas tienen vista a la piscina. Disfruta de desayuno tipo buffet o americano, cocina caribeña en su restaurante y organiza tus actividades con el servicio de tours. El hotel también ofrece recepción 24 horas, estacionamiento privado gratuito y está a pocos kilómetros de lugares turísticos como el Acuario del Rodadero y la Catedral de Santa Marta.",
+    image:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg",
+    leermas:"/infosalguero",
+    maps:"https://www.google.com/maps/place/Hotel+Playa+Salguero+By+GEH+Suites/@11.187723,-74.2300729,17z/data=!4m10!3m9!1s0x8ef458ac933bfdff:0x4e2c5201a79272a0!5m3!1s2025-11-19!4m1!1i2!8m2!3d11.187723!4d-74.225202!16s%2Fg%2F11yl4t64f3?entry=ttu&g_ep=EgoyMDI1MTExMS4wIKXMDSoASAFQAw%3D%3D"
+  }
 };
 
 const hotelIcons = {
@@ -283,6 +290,16 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+  ],
+  123: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
 };
@@ -431,6 +448,22 @@ const idRooms = {
     83801:
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/cuadruple1_boquilla.jpg", //
   },
+
+  //Salguero
+  123:{
+    // doble
+    164099:
+    "https://cf.bstatic.com/xdata/images/hotel/max1024x768/760635557.jpg?k=4f27fe4927417058fce420af7e61ceb23f36e26733c9f6bf7d0ef98514a43123&o=",
+    //triple
+    164100:
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_triple_salguero.jpg",
+    //Cuadruple
+    164101:
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_cuadruple_salguero.jpg",
+    //quintuple
+    164102:
+    ""
+  }
 };
 
 const quintuple = {
@@ -481,13 +514,21 @@ const trasladosBogotaDolares = {
   1: "35.4",
 };
 
+// Función para normalizar el nombre del hotel
+const getHotelName = (hotel) => {
+  if (hotel?.id === 123) {
+    return "Hotel Playa Salguero";
+  }
+  return hotel?.name || "Hotel no encontrado";
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
   6: false, //avexi
-  7: true, //bocagrande (proximamente)
+  7: true, //bocagrande 
   4: true, //aixo
-  5: true, //abi
+  5: false, //abi (Problemas con reservas de pocos huespedes)
   3: true, //madison
   10: true, //windsor
   8: false, //rodadero
@@ -497,6 +538,8 @@ const plan_alimentacion = {
   41: false, //Zulita
   56: false, // Boquilla,
 };
+
+const hotelesExentosIVA = new Set([56, 123]);
 
 // Add these constants near the top with other price constants
 const MASCOTA_PRECIO_COP = 50000;
@@ -529,50 +572,8 @@ export const Cid = ({ id }) => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [isSearchingFlights, setIsSearchingFlights] = useState(false);
-  const [infoVuelo, setinfoVuelo] = useState();
-  const [nochesyedades1, setnochesyedades] = useState({});
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
-  };
-  
-  const handleReservarClick = async () => {
-    // Solo mostrar el modal para hoteles específicos en Cartagena
-    if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
-      setShowUpgradeModal(true);
-    } else {
-      // Decidir destino según tipoBusqueda
-      const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-      if (tipoBusqueda === 1 || tipoBusqueda === 2) {
-        enviardatos();
-        window.location.href = "/reservas";
-        return;
-      }
-
-      // Realizar consulta de vuelos cuando tipoBusqueda === 3
-      setIsSearchingFlights(true);
-      try {
-        const success = await searchFlights();
-        if (success) {
-          enviardatos();
-          window.location.href = "/dispoVuelos";
-        }
-      } catch (error) {
-        console.error('Error en la búsqueda de vuelos:', error);
-      } finally {
-        setIsSearchingFlights(false);
-      }
-    }
-  };
-  const handleUpgradeSelect = (newHotelId) => {
-    // Redirigir a la página del nuevo hotel
-    window.location.href = `/hoteles/${newHotelId}`;
-  };
+  const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
+  const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
 
   function openModal(tour) {
     setIsOpen(true);
@@ -588,15 +589,81 @@ export const Cid = ({ id }) => {
   // console.log(selectedTours);
 
   const habitacionesRestringidas = [
+    //Hotel Abi/Rodadero
     "Familiar quintuple",
-    "Quintuple",
-    "QUINTUPLE",
-    "Habitacion Sextuple",
-    "Quíntuple",
-    "Habitacion Cuadruple Standard",
     "Cuadruple estandar ",
-    "Cuádruple"
+    "Triple estandar",
+    "Doble estandar ",
+    "Doble estándar",
+    //Hotel Axis
+    "Doble estandar", 
+    "Quíntuple",
+    "Cuádruple",
+    "Triple estándar",
+    //Hotel Sansiraka
+    "QUINTUPLE",
+    "CUADRUPLE",
+    "TRIPLE",
+    "DOBLE",
+    "TWIN",
+    "JUNIOR SUITE",
+    //Hotel avexi/azuan/Marina
+    "Habitacion Doble Standard",
+    "Habitacion Cuadruple Standard",
+    //Hotel Bocagrande
+    "Doble ",
+    "Triple ",
+    "Cuadruple ",
+    "Quintuple",
+    // Hotel Aixo
+    "Habitacion Doble Standard con vista al mar ",
+    "Habitacion Cuadruple standard con vista a la ciudad",
+    "Habitación Doble Standard con Vista a la Ciudad",
+    "Habitacion cuadruple superior con vista al mar ",
+    // Hotel Madison
+    "ESTANDAR",
+    "SUPERIOR CON TERRAZA",
+    "FAMILIAR 3PAX",
+    "SUITE BUSINESS",
+    "EJECUTIVA TWIN",
+    "FAMILIAR",
+    // Hotel Windsor
+    // "Doble Superior ",
+    // "Doble estandar twin",
+    "Triple estandar altillo con escaleras",
+    // "Doble junior Suites",
+    // "Doble junior twin",
+    "Suite matrimonial ",
+    //Hotel boquilla
+    "Habtiacion Doble Standard ",
+    "Habitacion Sextuple",
   ];
+
+  // Habitaciones que tienen un límite especial: count + 3
+  const habitacionesConLimiteEspecial = [
+    "Doble estandar",
+    "Doble estandar ",
+    "Doble estándar",
+    "DOBLE",
+    "Habitacion Doble Standard",
+    "Doble ",
+    "Habitacion Doble Standard con vista al mar ",
+    "Habitacion Doble Standard con vista al mar ",
+    "Habitación Doble Standard con Vista a la Ciudad",
+    "Doble Superior ",
+    "Doble estandar twin",
+    "Doble junior Suites",
+    "Doble junior twin",
+    "Habtiacion Doble Standard ",
+  ];
+
+  // Función para obtener el límite de habitaciones según el tipo
+  const obtenerLimiteHabitaciones = (roomName, count) => {
+    if (habitacionesConLimiteEspecial.includes(roomName)) {
+      return count + 3;
+    }
+    return count;
+  };
 
   //console.log("numero de camas:"camas)
   const formatCurrency = (value) => {
@@ -830,8 +897,33 @@ export const Cid = ({ id }) => {
   };
   console.log(mostrarTraslados);
 
+  // Cálculo de camas totales seleccionadas vs número de adultos
+  const totalBedsSeleccionadas = datohabitacion.reduce(
+    (acumulado, habitacion) => acumulado + (Number(habitacion.beds) || 0),
+    0
+  );
+  // OJO: en este componente, por cómo se cargan los datos desde localStorage,
+  // la variable "ninos" contiene realmente la cantidad de adultos.
+  const totalAdultos = Number(ninos) || 0;
+  const puedeReservar =
+    datohabitacion.length > 0 && totalBedsSeleccionadas >= totalAdultos;
+
   return (
     <>
+      <style>{`
+        #tooltip-generar-cotizacion {
+          background-color: white !important;
+          color: #1C3D5A !important;
+          border: 2px solid #1C3D5A !important;
+          border-radius: 8px !important;
+          padding: 12px 16px !important;
+          font-size: 14px !important;
+          max-width: 350px !important;
+          line-height: 1.5 !important;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+          opacity: 1 !important;
+        }
+      `}</style>
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
@@ -840,7 +932,7 @@ export const Cid = ({ id }) => {
         {/* Detalles del hotel */}
         <div className={styles.breadcrumb}>
           <a href="/">Inicio</a> / <a href="#">Resultados de búsqueda</a> /{" "}
-          {habitaciones?.hotel?.name}
+          {getHotelName(habitaciones?.hotel)}
         </div>
 
         {(infoVuelo?.active === true || infoVuelo?.activado === true) && (
@@ -875,7 +967,7 @@ export const Cid = ({ id }) => {
         )}
         <br />
         <div className={styles.hotel_title}>
-          {habitaciones?.hotel?.name || "Hotel no encontrado"}
+          {getHotelName(habitaciones?.hotel)}
         </div>
         <div className={styles.hotel_info}>
           <img
@@ -886,13 +978,15 @@ export const Cid = ({ id }) => {
           />
           <div className={styles.hotel_details}>
             <div className={styles.description}>
-              <h2>{habitaciones?.hotel?.name}</h2>
+              <h2>{getHotelName(habitaciones?.hotel)}</h2>
+             
               <p>
                 <i className={"fas fa_map_marke_alt"}></i> {hotel.direction} ||
                 <a href={hotel.mapa} target="_blank" rel="noopener noreferrer">
                   Ver mapa
                 </a>
               </p>
+              <br />
               <p>
                 {hotel.description}
                 <a
@@ -903,6 +997,7 @@ export const Cid = ({ id }) => {
                   Leer más
                 </a>
               </p>
+              <br />
               <div className={styles.icons}>{renderIcons()}</div>
             </div>
             <div className={styles.more_info}>
@@ -930,8 +1025,7 @@ export const Cid = ({ id }) => {
             <p>Húespedes</p>
             <strong>{ninos + adultos}</strong>
           </div>
-          {/* <div>
-            <p>Habitaciones disponibles</p>
+          {/* <div>  <p>Habitaciones disponibles</p>
             <strong>
               {habitaciones?.availability?.map(
                 (tipo) => tipo.available_rooms?.length
@@ -940,6 +1034,20 @@ export const Cid = ({ id }) => {
           </div> */}
           {/* <button>Modificar búsqueda</button> */}
         </div>
+        {esHotelExentoIVA && (
+          <div
+            style={{
+              backgroundColor: "#e0f0ff",
+              padding: "12px 16px",
+              borderRadius: "8px",
+              color: "#1f3b64",
+              marginTop: "16px",
+              fontWeight: 500,
+            }}
+          >
+            Este hotel está exento del cobro de IVA.
+          </div>
+        )}
         {/* Sección de Plan de Alimentación */}
         {mostrarseccion && (
           <div className={styles.plan_alimentacion}>
@@ -1160,7 +1268,7 @@ export const Cid = ({ id }) => {
                       />
                       <label htmlFor="A a H Y H a A">
                         {" "}
-                         {/* datos de persona en traslados bogota ahYha */}
+                         {/* datos de persona en traslados bogota ah/ha */}
                         Aeropuerto al hotel | Hotel al aeropuerto {" "} 
                         {selectedCity === 'CARTAGENA' 
                           ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
@@ -1182,7 +1290,7 @@ export const Cid = ({ id }) => {
                   </div>
                 )}
                 <br />
-                {/* ----------------------TOURES------------------- */}
+                {/*---------------------- TOURES -------------------*/}
                 <h3>¿Desea añadir tours a su reserva?</h3>
                 <input
                   type="radio"
@@ -1232,8 +1340,9 @@ export const Cid = ({ id }) => {
                                 {tour.title}
                               </label>
                               <button
-                                className="detail_btn"
+                                className={styles.btn_underline_anim}
                                 onClick={() => openModal(tour)}
+
                               >
                                 Ver detalle
                               </button>
@@ -1256,12 +1365,11 @@ export const Cid = ({ id }) => {
           </div>
         </div>
         
-        {/* habitaciones?.availability?.map((cam)=>
-  cam.available_rooms?.map((camas)=>(dato.beds))) */}
+        {/* habitaciones?.availability?.map((cam)=>cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
             {habitaciones?.availability?.map((tipo) =>
-              tipo.available_rooms?.map((dato) => (
+              tipo.available_rooms?.filter((dato) => dato.roomId != 164102).map((dato) => (
                 <div className={styles.room_card} key={dato.roomId}>
                   <img
                     alt="Standard double room with a double bed, TV, and modern decor"
@@ -1287,8 +1395,29 @@ export const Cid = ({ id }) => {
                     </p>
                     <p className="price"></p>
                     <p className="price">
-                      {dato.products?.map((product, idx) => {
-                        if (regexSeleccionado?.test(product.roomName)) {
+                      {(() => {
+                        // Primero filtrar productos que coinciden con el regex seleccionado
+                        // Verificar tanto en roomName como en rateDescription
+                        const productosFiltrados = dato.products?.filter((product) => {
+                          return regexSeleccionado?.test(product.roomName) || 
+                                 regexSeleccionado?.test(product.rateDescription);
+                        });
+
+                        // Luego filtrar productos únicos basándose en el roomName base (sin sufijos de booking)
+                        const productosUnicos = productosFiltrados?.filter((product, idx, arr) => {
+                          // Obtener el texto del campo que contiene el sufijo (roomName o rateDescription)
+                          const textoCompleto = product.roomName || product.rateDescription || '';
+                          // Extraer el nombre base de la habitación (sin los sufijos de booking)
+                          const roomNameBase = textoCompleto.split('[')[0].trim();
+                          
+                          // Verificar si es el primer producto con este nombre base en el array filtrado
+                          return arr.findIndex(p => {
+                            const textoP = p.roomName || p.rateDescription || '';
+                            return textoP.split('[')[0].trim() === roomNameBase;
+                          }) === idx;
+                        });
+
+                        return productosUnicos?.map((product, idx) => {
                           const price =
                             currentCurrency === "USD"
                               ? product?.baseRate?.amountBeforeTaxUSD
@@ -1305,15 +1434,14 @@ export const Cid = ({ id }) => {
                               <span> {currentCurrency}</span>
                             </span>
                           );
-                        }
-                        return null; // No renderiza nada si no cumple la condición
-                      })}
+                        });
+                      })()}
                     </p>
 
                     {/* Mostrar "Habitaciones disponibles" solo si la habitación está en la lista restringida */}
                     {habitacionesRestringidas.includes(dato.roomName) && (
                       <b style={{ marginTop: "100px", color: "red" }}>
-                        Habitaciones disponibles: {dato.count}
+                        Habitaciones disponibles: {obtenerLimiteHabitaciones(dato.roomName, dato.count)}
                       </b>
                     )}
                     <br />
@@ -1326,16 +1454,20 @@ export const Cid = ({ id }) => {
                         data-room="Doble Estándar"
                         data-price="#Valor"
                         onClick={() => {
+                          const limiteHabitaciones = habitacionesRestringidas.includes(dato.roomName)
+                            ? obtenerLimiteHabitaciones(dato.roomName, dato.count)
+                            : Infinity;
                           if (
                             !(
                               quintuple[habitaciones?.hotel?.id] &&
                               habitacionesRestringidas.includes(dato.roomName)
                             ) ||
-                            contadorHabitaciones < (dato.count || Infinity) // Verifica el límite de habitaciones
+                            contadorHabitaciones < limiteHabitaciones // Verifica el límite de habitaciones
                           ) {
                             setDatohabitacion((prevState) => [
                               ...prevState,
                               {
+                                exentoIVA: esHotelExentoIVA,
                                 incluirTraslado: mostrarTraslados, // Booleano que indica si se seleccionó traslado
                                 tipoTraslado: mostrarTraslados
                                   ? tipoTraslado
@@ -1353,7 +1485,8 @@ export const Cid = ({ id }) => {
                                 huespedes: adultos + ninos,
                                 precio: calculateTotalPrice(
                                   dato.products?.find((product) =>
-                                    regexSeleccionado.test(product.roomName)
+                                    regexSeleccionado.test(product.roomName) || 
+                                    regexSeleccionado.test(product.rateDescription)
                                   )?.baseRate?.[
                                     currentCurrency == "USD"
                                       ? "amountBeforeTaxUSD"
@@ -1366,21 +1499,22 @@ export const Cid = ({ id }) => {
                                   tipoTraslado,
                                   cantidadMascotas // Add this parameter
                                 ),
-                                precioBase:
-                                  dato.products?.find((product) =>
-                                    regexSeleccionado.test(product.roomName)
-                                  )?.baseRate?.[
-                                    currentCurrency == "USD"
-                                      ? "amountBeforeTaxUSD"
-                                      : "amountBeforeTax"
-                                  ] || "Sin precio disponible",
+                                precioBase: dato.products?.find((product) =>
+                                  regexSeleccionado.test(product.roomName) || 
+                                  regexSeleccionado.test(product.rateDescription)
+                                )?.baseRate?.[
+                                  currentCurrency == "USD"
+                                    ? "amountBeforeTaxUSD"
+                                    : "amountBeforeTax"
+                                ] || "Sin precio disponible",
                                 NombreH: dato.roomName,
                                 beds: dato.beds,
                                 hotelid: habitaciones?.hotel?.roomcloud_id,
                                 ciudad: habitaciones?.hotel?.city,
                                 hotelidAutocore: habitaciones?.hotel?.id,
                                 rateId: dato.products?.find((product) =>
-                                  regexSeleccionado.test(product.roomName)
+                                  regexSeleccionado.test(product.roomName) || 
+                                  regexSeleccionado.test(product.rateDescription)
                                 )?.rateId,
                                 mascotas: mostrarMascotas ? cantidadMascotas : 0,
                               },
@@ -1393,13 +1527,13 @@ export const Cid = ({ id }) => {
                         disabled={
                           quintuple[habitaciones?.hotel?.id] &&
                           habitacionesRestringidas.includes(dato.roomName) &&
-                          contadorHabitaciones >= dato.count
+                          contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
                         }
                         onMouseOver={() => {
                           if (
                             quintuple[habitaciones?.hotel?.id] &&
                             habitacionesRestringidas.includes(dato.roomName) &&
-                            contadorHabitaciones >= dato.count
+                            contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
                           ) {
                             setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
                           }
@@ -1439,7 +1573,7 @@ export const Cid = ({ id }) => {
             <h3>Reserva</h3>
             <hr />
             <br />
-            <h3>{habitaciones?.hotel?.name}</h3>
+            <h3>{getHotelName(habitaciones?.hotel)}</h3>
             <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
             <p>
               {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
@@ -1464,6 +1598,9 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
+                  {dato.exentoIVA && (
+                    <h5>Este hotel está exento del cobro de IVA.</h5>
+                  )}
                   {tipoTraslado && (
                     <h5>
                       Traslado seleccionado: {" "}
@@ -1526,69 +1663,52 @@ export const Cid = ({ id }) => {
               </div>
             ))}
 
-            {/* Reemplazar el anchor tag y modificar el botón */}
-            <button
-             name="vuelos"
-             onClick={handleReservarClick}
-              disabled={datohabitacion.length === 0 || isSearchingFlights}
-              style={{
-                width: '100%',
-                padding: '12px 20px',
-                fontSize: '16px',
-                fontWeight: '500',
-                backgroundColor: (datohabitacion.length === 0 || isSearchingFlights) ? "#d3d3d3" : "#26547B",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-                cursor: (datohabitacion.length === 0 || isSearchingFlights) ? "not-allowed" : "pointer",
-                transition: "background-color 0.3s ease",
-                marginTop: "20px",
-                marginBottom: "20px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "8px"
-              }}
-            >
-              {isSearchingFlights && (
-                <div style={{
-                  width: "16px",
-                  height: "16px",
-                  border: "2px solid #ffffff",
-                  borderTop: "2px solid transparent",
-                  borderRadius: "50%",
-                  animation: "spin 1s linear infinite"
-                }}></div>
-              )}
-              {isSearchingFlights ? "Buscando vuelos..." : "Reservar ahora"}
-            </button>
-            <UpgradeModal 
-              isOpen={showUpgradeModal}
-              onClose={() => setShowUpgradeModal(false)}
-              currentHotelId={Number(id)}
-               onSelectUpgrade={handleUpgradeSelect}
-              onContinue={async () => {
-                const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-                if (tipoBusqueda === 1 || tipoBusqueda === 2) {
-                  enviardatos();
-                  window.location.href = "/reservas";
-                  return;
+            <a href="/reservas">
+              <button
+                onClick={enviardatos}
+                disabled={!puedeReservar}
+                data-tooltip-id="tooltip-generar-cotizacion"
+                data-tooltip-content={
+                  !puedeReservar
+                    ? datohabitacion.length === 0
+                      ? "Selecciona las habitaciones que deseas reservar"
+                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                    : "Crear una reserva personalizada para el cliente."
                 }
-
-                setIsSearchingFlights(true);
-                try {
-                  const success = await searchFlights();
-                  if (success) {
-                    enviardatos();
-                    window.location.href = "/dispoVuelos";
-                  }
-                } catch (error) {
-                  console.error('Error en la búsqueda de vuelos:', error);
-                } finally {
-                  setIsSearchingFlights(false);
+                data-tooltip-place="left"
+                style={{
+                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+                  cursor: !puedeReservar ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                }}
+              >
+                Reservar ahora
+              </button>
+            </a>
+            <a href="/cotizacionpagina">
+              <button
+                onClick={enviardatos}
+                disabled={!puedeReservar}
+                data-tooltip-id="tooltip-generar-cotizacion"
+                data-tooltip-content={
+                  !puedeReservar
+                    ? datohabitacion.length === 0
+                      ? "Selecciona habitaciones para generar una cotización"
+                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                    : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."
                 }
-              }}
-            />
+                data-tooltip-place="left"
+                style={{
+                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
+                  cursor: !puedeReservar ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                }}
+              >
+                Generar cotización
+              </button>
+            </a>
+          <Tooltip 
+            id="tooltip-generar-cotizacion"
+            className="custom-tooltip"
+          />
           </div>
         </div>
       </div>

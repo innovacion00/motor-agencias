@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import RouteProtection from "../components/RouteProtection.astro";
+import Cotizacionesl from "../components/Cotizaciones.jsx";
+import CotizacionP from "../components/Cotizacion.jsx"
+---
+
+<html lang="es">
+  <BaseLayout title="Cotizaciones - BookingConnect">
+    <RouteProtection />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <head>
+      <title>Cotizaciones</title>
+      <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        rel="stylesheet"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet"
+      />
+    </head>
+    <body>
+      <!-- <Cotizacionesl client:load/> -->
+            <CotizacionP client:load />
+    </body>
+  </BaseLayout>
+</html>

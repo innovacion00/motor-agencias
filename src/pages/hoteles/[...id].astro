@@ -5,30 +5,32 @@ import DisponibilidadH from "../../components/DisponibilidadH.jsx";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CurrencySelector from "../../components/Cambiardivisas";
 import RouteProtection from "../../components/RouteProtection.astro";
-export const prerender = true;
+export const prerender = false;
 
 // const localS =  localStorage.getItem("dato")
-export async function getStaticPaths() {
-  return [
-    { params: { id: 9 } }, //Marina
-    { params: { id: 1 } }, //Azuan
-    { params: { id: 6 } }, //Avexi
-    { params: { id: 7 } }, //Bocagrande
-    { params: { id: 4 } }, //Aixo
-    { params: { id: 5 } }, //Abi
-    { params: { id: 3 } }, //Madisson
-    { params: { id: 10 } }, //Windsor
-    { params: { id: 8 } }, //Rodadero
-    { params: { id: 2 } }, //1525
-    { params: { id: 48 } }, //Axis
-    { params: { id: 44 } }, //Sansiraka
-    { params: { id: 41 } }, //Zulita
-    { params: { id: 56 } }, //Boquilla
-  ];
-  // return disponibilidad.get().map((idhotel) => ({
-  //   params: { id: idhotel.hotel.id }
-  // }))
-}
+// export async function getStaticPaths() {
+//   return [
+//     { params: { id: 9 } }, //Marina
+//     { params: { id: 1 } }, //Azuan
+//     { params: { id: 6 } }, //Avexi
+//     { params: { id: 7 } }, //Bocagrande
+//     { params: { id: 4 } }, //Aixo
+//     { params: { id: 5 } }, //Abi
+//     { params: { id: 3 } }, //Madisson
+//     { params: { id: 10 } }, //Windsor
+//     { params: { id: 8 } }, //Rodadero
+//     { params: { id: 2 } }, //1525
+//     { params: { id: 48 } }, //Axis
+//     { params: { id: 44 } }, //Sansiraka
+//     { params: { id: 41 } }, //Zulita
+//     { params: { id: 56 } }, //Boquilla
+//     { params: { id: 123 } }, //salguero
+    
+//   ];
+//   // return disponibilidad.get().map((idhotel) => ({
+//   //   params: { id: idhotel.hotel.id }
+//   // }))
+// }
 const { id } = Astro.params;
 const habitaciones = disponibilidad.get().find((vaina) => vaina.hotel.id == id);
 ---

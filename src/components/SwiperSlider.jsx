@@ -21,24 +21,30 @@ const SwiperSlider = () => {
       loop={true} // Habilitar bucle
       
     >
+      {/* Banner servicio temporalmente inactivo */}
+      {/* <SwiperSlide >
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ChatGPT%20Image%2024%20nov%202025,%2009_48_26%20a.m..png" alt="Banner servicio temporalmente inactivo" />
+      </SwiperSlide> */}
       <SwiperSlide >
-        
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner_tourtraslado.jpeg" alt="Banner toures y traslados" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner%20playa%20salguero.jpg" alt="Banner playa salguero" />
       </SwiperSlide>
       <SwiperSlide >
-        <a href="/tablerousuario">
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-prepagados.jpeg" alt="Banner saldos prepagados" /></a>
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20cotizador.jpg" alt="Banner cotizar 2" />
+      </SwiperSlide>
+      <SwiperSlide >
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20cotizador%202.jpg" alt="Banner cotizar" />
       </SwiperSlide>
       <SwiperSlide >
         <a href="/tablerousuario">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="Banner cashback" /></a>
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-grupos.jpeg" alt="Banner Grupos" />
-      </SwiperSlide>
-      <SwiperSlide>
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner plan de alimentacion" />
       </SwiperSlide>
+      <SwiperSlide>
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner_tourtraslado.jpeg" alt="Banner Grupos" />
+      </SwiperSlide>
+      
       <SwiperSlide>
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner principal" />
       </SwiperSlide>

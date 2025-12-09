@@ -1,6 +1,8 @@
 import React from "react";
 import "../../public/styles/ToursC.css";
 import Modal from "react-modal";
+import { useStore } from "@nanostores/react";
+import { currency } from "../stores/divisas";
 
 const customStyles = {
   overlay: {
@@ -24,6 +26,10 @@ const customStyles = {
 };
 
 const ToursCs = ({isOpen, onRequest, infoToures}) => {
+  const currentCurrency = useStore(currency);
+  const displayedPrice = currentCurrency === "USD"
+    ? (infoToures?.priceUSD || infoToures?.princeUSD || infoToures?.price)
+    : infoToures?.price;
   
   return (
     <Modal
@@ -71,7 +77,7 @@ const ToursCs = ({isOpen, onRequest, infoToures}) => {
               src="https://space-img.sfo3.digitaloceanspaces.com/Logos/dinero.png"
               alt="icon-value"
             />
-            <span className="detail-text">{infoToures.price}</span>
+            <span className="detail-text">{displayedPrice}</span>
           </div>
           <div className="detail-item">
             <img

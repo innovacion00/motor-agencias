@@ -1002,88 +1002,35 @@ flex-grow: 1;
 margin-right: 10px;
 }
 
-.detail_btn {
-background-color: #003f7f;
-color: white;
-border: none;
-border-radius: 4px;
-padding: 5px 10px;
-cursor: pointer;
-font-size: 14px;
-}
-
-.detail_btn:hover {
-background-color: #0069d9;
-}
-
-.stepper {
-  display: flex;
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-.step {
-  flex: 1;
-  padding: 20px;
+.btn_underline_anim {
   position: relative;
-  text-align: center;
+  color: #26547B;
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font: 600 16px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  cursor: pointer;
+  overflow: hidden;
 }
-.step:not(:last-child)::after {
+
+.btn_underline_anim::after {
   content: "";
   position: absolute;
-  top: 20%;
-  right: 0;
-  width: 1px;
-  height: 60%;
-  background: #ccc;
-}
-.stepnumberActive {
-  background-color: #002f4b;
-  color: white;
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-.stepnumber {
-  background-color: #585e61;
-  color: white;
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 14px;
-  margin-bottom: 8px;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background-color: #26547B;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
 }
 
-.steptitle {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #333;
-}
-.stepcontent {
-  font-size: 14px;
-  color: #555;
-}
-.steptitleActive {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #00263b;
-}
-.stepcontentActive {
-  font-size: 14px;
-  color: #00263b;
+.btn_underline_anim:hover::after {
+  transform: scaleX(1);
 }
 
-/* Animación para el spinner de carga */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.btn_underline_anim:focus-visible {
+  outline: 2px dashed #26547B;
+  outline-offset: 4px;
 }

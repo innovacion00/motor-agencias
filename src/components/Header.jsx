@@ -134,6 +134,7 @@ const Header = () => {
       
         <a href="/" className="reservations-link" onClick={handleClick}>Inicio</a>
         <a href="/misreservas" className="reservations-link">Gestionar reservas</a>
+        <a href="/cotizaciones" className="reservations-link">Cotizaciones</a>
         <a href="/tablerousuario" className="reservations-link">Mi perfil</a>
         <a href="/eventos" className="reservations-link">Eventos</a>
         

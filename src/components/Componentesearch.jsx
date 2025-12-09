@@ -38,9 +38,10 @@ const BusquedaCartagena = () => {
     8: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg", //rodadero
     2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525
     48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg", //axis
-    44: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg", //sansiraka
+    44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg", //sansiraka
     41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
     56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
+    123:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg", //Salguero
   };
 
   //Objeto con los arreglos de los iconos
@@ -162,12 +163,30 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
     ],
+    123: [
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+    ],
   };
 
   const cityMap = {
     CARTAGENA: "Cartagena de Indias",
     BOGOTA: "Bogotá",
     SANTA_MARTA: "Santa marta",
+  };
+
+  // Función para normalizar el nombre del hotel
+  const getHotelName = (hotel) => {
+    if (hotel.id === 123) {
+      return "Hotel Playa Salguero";
+    }
+    return hotel.name;
   };
 
   // Función para formatear valores como moneda colombiana
@@ -178,6 +197,20 @@ const BusquedaCartagena = () => {
       currency: "COP",
       minimumFractionDigits: 0,
     }).format(amount);
+  };
+
+  // Función para saber si aplica el descuento especial del 5% en Axis (id: 48)
+  const hasAxisDecemberDiscount = (hotelId, dateRange) => {
+    if (hotelId !== 48 || !dateRange?.startDate) return false;
+
+    const checkIn = new Date(dateRange.startDate);
+    const month = checkIn.getMonth(); // 0 = enero, 11 = diciembre
+    const day = checkIn.getDate();
+
+    // Fechas válidas: 4, 5, 6, 11 y 14 de diciembre (cualquier año)
+    const validDays = [4, 5, 6, 11, 14];
+
+    return month === 11 && validDays.includes(day);
   };
 
   // Función existente modificada
@@ -228,6 +261,16 @@ const BusquedaCartagena = () => {
       localStorage.setItem("cantNinos", ninos);
     }
     return ninos;
+  };
+
+  // Función para verificar si la fecha está entre el 01 y 11 de enero de 2026
+  const isDateInRange = (date) => {
+    if (!date) return false;
+    const checkDate = new Date(date);
+    const startDate = new Date("2026-01-01");
+    const endDate = new Date("2026-01-11");
+    // Verificar si la fecha está en el rango (incluyendo los límites)
+    return checkDate >= startDate && checkDate <= endDate;
   };
 
   // Usar useEffect para cargar datos de localStorage y la store
@@ -313,6 +356,11 @@ const BusquedaCartagena = () => {
             .filter(hotel => hotel.hotel.id !== 2 && hotel.hotel.id !== 41) // Filter out hotels with IDs 2 and 45
             .map((tipo) => (
             <div className={styles.hotel} key={tipo.hotel.id}>
+              {hasAxisDecemberDiscount(tipo.hotel.id, nochesyedades1?.dateRange) && (
+                <div className={styles.discount}>
+                  5%
+                </div>
+              )}
               <img
                 alt="Imagen del hotel"
                 height="200"
@@ -321,7 +369,7 @@ const BusquedaCartagena = () => {
               />
               <div className={styles.hotel_info}>
                 <h3>
-                  {tipo.hotel.name}{" "}
+                  {getHotelName(tipo.hotel)}{" "}
                   <a href={`/hoteles/${tipo.hotel.id}`}>Ver detalle de hotel</a>
                 </h3>
                 <div className={styles.icons}>
@@ -340,6 +388,11 @@ const BusquedaCartagena = () => {
                   {cantAdultos(tipo.availability)} Adultos{" "}
                   {cantNinos(tipo.availability) || 0} Niños
                 </div>
+                  {hasAxisDecemberDiscount(tipo.hotel.id, nochesyedades1?.dateRange) && (
+                    <span style={{ color: "#a0522d", fontSize: "14px", fontWeight: "bold" }}>
+                      Descuento especial del 5% en estas fechas
+                    </span>
+                  )}
                 <div className={styles.price}>
                   Desde:{" "}
                   {`${findMinBaseRate(tipo.availability) !== Infinity
@@ -347,6 +400,20 @@ const BusquedaCartagena = () => {
                     : "Sin Disponibilidad"} ${currentCurrency}`}{" "}
                   | Incluye desayuno y seguro
                 </div>
+                {/* Mensaje especial para Bocagrande (id: 7) entre el 01 y 11 de enero de 2026 */}
+                {/* Para eliminar este mensaje, simplemente elimina o comenta el siguiente bloque condicional */}
+                {(tipo.hotel.id === 7 || tipo.hotel.id === 9 || tipo.hotel.id === 1 || tipo.hotel.id === 6) && 
+                 nochesyedades1?.dateRange?.startDate && 
+                 isDateInRange(nochesyedades1.dateRange.startDate) && (
+                  <div style={{ 
+                    marginTop: "8px", 
+                    color: "#d32f2f", 
+                    fontSize: "14px",
+                    fontStyle: "italic"
+                  }}>
+                    Estas habitaciones solo están disponibles para dos noches o más
+                  </div>
+                )}
                 <a href={`/hoteles/${tipo.hotel.id}`}>
                   <button>Ver disponibilidad</button>
                 </a>

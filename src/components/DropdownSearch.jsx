@@ -32,43 +32,21 @@ const DropdownSearch = () => {
     MAX_ROOMS: 9,
   });
 
-  const [includesFlight, setIncludesFlight] = useState(false);
-  const [origin, setOrigin] = useState("");
-  const [originSuggestions, setOriginSuggestions] = useState([]);
-  const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
-  const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
-  const [selectedOriginIata, setSelectedOriginIata] = useState("");
-  
-  // Función para generar fechas bloqueadas desde el 26 de diciembre de 2025 hasta el 12 de enero de 2026
-  const generateBlockedDates = () => {
-    const blockedDates = [];
-    const startBlockDate = new Date(2025, 11, 26); // Diciembre es mes 11 (0-indexado)
-    const endBlockDate = new Date(2026, 0, 12); // Enero es mes 0 (0-indexado)
+  //  // Función para generar fechas bloqueadas desde el 26 de diciembre de 2025 hasta el 12 de enero de 2026
+  //  const generateBlockedDates = () => {
+  //   const blockedDates = [];
+  //   const startBlockDate = new Date(2025, 11, 26); // Diciembre es mes 11 (0-indexado)
+  //   const endBlockDate = new Date(2026, 0, 12); // Enero es mes 0 (0-indexado)
     
-    const currentDate = new Date(startBlockDate);
-    while (currentDate <= endBlockDate) {
-      blockedDates.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
+  //   const currentDate = new Date(startBlockDate);
+  //   while (currentDate <= endBlockDate) {
+  //     blockedDates.push(new Date(currentDate));
+  //     currentDate.setDate(currentDate.getDate() + 1);
+  //   }
     
-    return blockedDates;
-  };
-  
-  // Mapeo de destinos con sus códigos IATA y nombres
-  const destinationMapping = {
-    CARTAGENA: {
-      name: "Cartagena",
-      iataCode: "CTG"
-    },
-    BOGOTA: {
-      name: "Bogotá",
-      iataCode: "BOG"
-    },
-    SANTA_MARTA: {
-      name: "Santa Marta",
-      iataCode: "SMR"
-    }
-  };
+  //   return blockedDates;
+  // };
+
 
   // Función para mostrar tooltip con un mensaje y ocultarlo después de 2.5s
   const mostrarTooltip = (mensaje) => {
@@ -80,6 +58,15 @@ const DropdownSearch = () => {
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
   const originSuggestionsRef = useRef(null);
+
+  // Configurar el appElement para react-modal
+  useEffect(() => {
+    // Configurar el elemento de la aplicación para react-modal
+    // Esto es necesario para que los lectores de pantalla funcionen correctamente
+    if (typeof window !== "undefined") {
+      Modal.setAppElement(document.body);
+    }
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -395,14 +382,14 @@ const DropdownSearch = () => {
       };
       window.location.href = destinations[destination];
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error en la búsqueda",
-        text: "No se pudo obtener la disponibilidad. Por favor, intenta nuevamente mas tarde.",
-      });
+      // La alerta ya fue mostrada por getdisponibility; solo evitamos navegar
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSearchWithIA = () => {
+    window.location.href = "/BookingConnectIA";
   };
 
   return (
@@ -559,7 +546,7 @@ const DropdownSearch = () => {
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
               minDate={new Date()} //Limita la seleccion a partir de hoy
-              disabledDates={generateBlockedDates()} // Bloquea fechas desde 26 dic 2025 hasta 12 ene 2026
+              // disabledDates={generateBlockedDates()} // Bloquea fechas desde 26 dic 2025 hasta 12 ene 2026
             />
             <button
               onClick={() => setShowDateRange(false)}
@@ -699,6 +686,13 @@ const DropdownSearch = () => {
         {isLoading ? "Cargando..." : "Consultar"} {/* Indicador de carga */}
       </button>
       
+      {/* Botón de búsqueda con IA */}
+      <button
+        onClick={handleSearchWithIA}
+        className={styles.searchButton}
+      >
+        Consultar con IA
+      </button>
       {/* Modal de carga */}
       <Modal
         isOpen={isLoading}

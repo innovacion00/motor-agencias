@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Gestionar from "../../components/GestionarReservas/Gestionar";
+import CurrencySelector from "../../components/Cambiardivisas";
+import { getReservasServer } from "../../stores/disponibilidad";
+import { CotizacionCreada } from "../../components/CotizacionCreada";
+export const prerender = false;
+
+// Capturar el ID de la URL
+const { id } = Astro.params;
+
+
+
+
+
+
+---
+
+<BaseLayout title="Cotización generada - BookingConnect">
+  <CotizacionCreada client:load id={id} />
+</BaseLayout>

@@ -21,6 +21,9 @@ const UserDashboard = () => {
   const [ref, hovering] = useHover();
   const fileInputRef = useRef(null);
   const [displayValue, setDisplayValue] = useState(""); // Guardamos el valor formateado
+  const [isPoliciesModalOpen, setIsPoliciesModalOpen] = useState(false);
+  const [policiesText, setPoliciesText] = useState("");
+  const [policiesLoading, setPoliciesLoading] = useState(false);
   const dataejem = [
     { month: "Enero", reservas: 30 },
     { month: "Febrero", reservas: 45 },
@@ -41,7 +44,7 @@ const UserDashboard = () => {
     
   const handleLogout = () => {
     // Eliminar el token de autenticación
-    localStorage.removeItem("authToken");
+      Cookies.remove('accessToken');
 
     // Redirigir al usuario a la página de login
     window.location.href = "/login";
@@ -56,6 +59,84 @@ const UserDashboard = () => {
 
   const handleClick = () => {
     fileInputRef.current.click();
+  };
+
+  const openPoliciesModal = () => {
+    setIsPoliciesModalOpen(true);
+  };
+
+  const closePoliciesModal = () => {
+    setIsPoliciesModalOpen(false);
+  };
+
+  //#region Obtener políticas de la agencia
+  const obtenerPoliticasAgencia = async () => {
+    if (!userData?.agencia?._id) {
+      return;
+    }
+
+    try {
+      setPoliciesLoading(true);
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/agencias/${userData.agencia._id}/politicas`
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudieron obtener las políticas");
+      }
+
+      const data = await response.json();
+      setPoliciesText(data.politicasAgencia || "");
+    } catch (error) {
+      console.error("Error obteniendo políticas:", error);
+      // Si hay error, dejamos el textarea vacío en lugar de mostrar un error bloqueante
+      setPoliciesText("");
+    } finally {
+      setPoliciesLoading(false);
+    }
+  };
+
+  // useEffect para cargar las políticas cuando se abre el modal
+  useEffect(() => {
+    if (isPoliciesModalOpen && userData?.agencia?._id) {
+      obtenerPoliticasAgencia();
+    }
+  }, [isPoliciesModalOpen, userData?.agencia?._id]);
+
+  const handleUpdatePolicies = async () => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/auth/politicas-agencia`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ politicasAgencia: policiesText }),
+        }
+      );
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || "No se pudo actualizar las políticas");
+      }
+
+      await response.json().catch(() => ({}));
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Políticas actualizadas correctamente.",
+        icon: "success",
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Error al actualizar las políticas.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    }
   };
 
   const fetchWithToken = async (url, options = {}) => {
@@ -195,8 +276,8 @@ const UserDashboard = () => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 0, // Mínimo de decimales (0)
-      maximumFractionDigits: 0, // Máximo de decimales (0)
+      minimumFractionDigits: 2, // Mínimo de decimales (2)
+      maximumFractionDigits: 2, // Máximo de decimales (2)
     }).format(value);
   };
 
@@ -276,26 +357,27 @@ const UserDashboard = () => {
 
   return (
     <div className="container">
-        <h1 style={{fontSize:"20px"}}>Tablero de usuario</h1>
+        <h1 style={{fontSize:"25px"}}>Tablero de usuario</h1>
         <br />
       <div className="header">
         
-      <h1 style={{fontSize:"18px", paddingBottom:"10px"}}>Mi perfil</h1>
+      {/* <h1 style={{fontSize:"18px", paddingBottom:"10px"}}>Mi perfil</h1> */}
       </div>
       <div className="nav-tabs">
         <a className="active" href="/tablerousuario">
           Mi perfil
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-        {userData && userData?.role && userData?.role.includes("super-admin")&&(
+      {userData && userData?.role && userData?.role.includes("super-admin")&&(
         <a href="/estadisticas">Análisis de datos</a>
       )} 
+      <a href="/cotizaciones">Cotizaciones</a>
+      
+      <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         {/* Mostrar el enlace de configuración solo si el usuario tiene rol de admin */}
         {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
         <a href="/configuracion">Configuración</a>
       )}
-      
-      <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
         <button onClick={handleLogout}>
           Cerrar sesión
         </button>
@@ -329,7 +411,7 @@ const UserDashboard = () => {
               {userData?.role[0]}
             </span>
           </p>
-          {/* <button>Gestionar mi cuenta</button> */}
+          <button onClick={openPoliciesModal} className="btn btn-primary">Politicas de las agencias</button>
         </div>
         {/*--------------------------- Balance de Mi saldo ---------------------------*/}
         <div className="card wallet-card">
@@ -388,7 +470,7 @@ const UserDashboard = () => {
           </div>
         </div> */}
         <div className="card pending-payments-card">
-          <h3 className="Ultimasreservas">Ultimos movimientos</h3>
+          <h3 className="Ultimasreservas">Ultimas reservas</h3>
 
           <div className="pending-payments-list">
             <div className="pending-payment-item">
@@ -450,6 +532,64 @@ const UserDashboard = () => {
         
 
       </div>
+
+      {isPoliciesModalOpen && (
+        <div style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.4)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: "#fff",
+            width: "min(90vw, 720px)",
+            maxHeight: "85vh",
+            borderRadius: "8px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+            display: "flex",
+            flexDirection: "column",
+          }}>
+            <div style={{ padding: "16px 20px", borderBottom: "1px solid #eee" }}>
+              <h3 style={{ margin: 0, fontSize: "18px" }}>Políticas de la agencia</h3>
+            </div>
+            <div style={{ padding: "16px 20px" }}>
+              <label htmlFor="policies-textarea" style={{ display: "block", marginBottom: "8px", fontWeight: 600 }}>Escribe las políticas de tu agencia</label>
+              <textarea
+                id="policies-textarea"
+                value={policiesText}
+                onChange={(e) => setPoliciesText(e.target.value)}
+                placeholder={policiesLoading ? "Cargando políticas..." : "Ingresa aquí las políticas de tu agencia..."}
+                disabled={policiesLoading}
+                style={{
+                  width: "100%",
+                  minHeight: "260px",
+                  resize: "vertical",
+                  padding: "12px",
+                  border: "1px solid #cfd8dc",
+                  borderRadius: "6px",
+                  fontSize: "14px",
+                  lineHeight: 1.5,
+                  opacity: policiesLoading ? 0.6 : 1,
+                  cursor: policiesLoading ? "wait" : "text",
+                }}
+              />
+            </div>
+            <div style={{
+              padding: "12px 20px",
+              borderTop: "1px solid #eee",
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "10px",
+            }}>
+              <button onClick={closePoliciesModal} className="btn btn-secondary" disabled={policiesLoading}>Salir</button>
+              <button onClick={handleUpdatePolicies} className="btn btn-primary" disabled={policiesLoading}>Actualizar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     
   );

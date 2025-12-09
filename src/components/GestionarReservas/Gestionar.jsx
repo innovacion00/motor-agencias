@@ -22,6 +22,7 @@ const Gestionar = ({ reservas }) => {
   const checkout = format(reservas?.reservation.checkout, "D MMM", "es");
   const [isLoading, setisLoading] = useState(false);
   const [nota, setNota] = useState(reservas?.notasSuperAdmin || "");
+  const [notaAgencia, setNotaAgencia] = useState(reservas?.notasagencias || "");
   const [mostrarnota1, setmostrarnota1] = useState(false);
   const [mostrarnota2, setmostrarnota2] = useState(false);
   const [AvailableAmount, setAvailableAmount] = useState(null);
@@ -188,6 +189,11 @@ const Gestionar = ({ reservas }) => {
     setNota(event.target.value); // Guarda el valor del textarea en el estado
   };
 
+  //#region Texto del textarea para notas de agencias
+  const handleChangeAgencia = (event) => {
+    setNotaAgencia(event.target.value); // Guarda el valor del textarea en el estado
+  };
+
   //#region Obtener MI Saldo
   const fetchWithToken = async (url, options = {}) => {
     let token = Cookies.get('accessToken');
@@ -313,8 +319,8 @@ const Gestionar = ({ reservas }) => {
     if (
       reservas?.status == "1" ||
       reservas?.status == "3" ||
-      reservas?.status == "4" ||
-      reservas?.status == "5"
+      reservas?.status == "4" 
+      
     ) {
       return;
     }
@@ -382,11 +388,57 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
-  /*method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,*/
 
+  //#region editar reserva(nota de agencias)
+
+  const editarnotaAgencia = async (reservaId) => {
+    try {
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/editar-reserva/${reservaId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            notasagencias: notaAgencia,
+          }),
+        }
+      );
+
+      // //#region Noti erro editar reserva
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error al guardar la nota de agencia:", errorData);
+        Swal.fire(
+          "Error",
+          "No se pudo guardar la nota de agencia. Intente nuevamente.",
+          "error"
+        );
+        return;
+      }
+
+      //#region Exito editar reserva
+      const data = await response.json();
+      console.log("Nota de agencia guardada exitosamente:", data);
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Nota de agencia guardada exitosamente.",
+        icon: "success",
+        timer: 1000, // La alerta se cierra automáticamente en 2 segundos
+        showConfirmButton: false, // Ocultar botón de confirmación
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.reload(); // Recargar la página
+      });
+    } catch (error) {
+      console.error("Error al guardar la nota de agencia:", error);
+      //#region Noti fallo en la api de editar reserva
+      Swal.fire(
+        "Error",
+        "Ocurrió un error al guardar la nota de agencia. Intenta nuevamente.",
+        "error"
+      );
+    }
+  };
+  
   //#region Cancelar reservas
   const cancelarReserva = async (reservaId) => {
     try {
@@ -442,6 +494,7 @@ const Gestionar = ({ reservas }) => {
       title: "Seleccione el tipo de pago",
       text: "¿Qué porcentaje del valor total desea pagar?",
       icon: "question",
+      showConfirmButton: !(reservas?.status == 5 || reservas?.pagadoPrimeraMitad == true),
       showDenyButton: true,
       confirmButtonText: "Pagar Total",
       denyButtonText: "Pagar 50%",
@@ -691,6 +744,8 @@ const Gestionar = ({ reservas }) => {
     return currentDate > checkinDate || reservas?.status == "4";
   };
 
+        //Console log para ver la info de la reserva
+      console.log(reservas)
   return (
     <div className={styles.containerGestionar}>
       <p className={styles.title}>Consultar y gestionar reservas</p>
@@ -844,9 +899,10 @@ const Gestionar = ({ reservas }) => {
                       </p>
                     )}
                     <p>
-                      Contacto principal:{" "}
+                      Contacto del huesped:{" "}
                       {reservas.infoToures.firstContactNumber}
-                    </p>
+                    </p>  
+                    
                   </div>
                 )}
 
@@ -866,11 +922,11 @@ const Gestionar = ({ reservas }) => {
                           : "Aeropuerto - Hotel || Hotel - Aeropuerto"}
                     </p>
                     <p>
-                      Contacto: {reservas.infoTransporte.firstContactNumber}
-                    </p>
-                    <p>
                       Cantidad de personas:{" "}
                       {reservas.infoTransporte.cantidadPersonas}
+                    </p>
+                    <p>
+                      Contacto del huesped: {reservas.infoTransporte.firstContactNumber}
                     </p>
                   </div>
                 )}
@@ -899,18 +955,34 @@ const Gestionar = ({ reservas }) => {
                 )}
 
                 <p className={styles.plazoPago}>
-                  Tienes plazo de pagar hasta el {reservas?.fechaLimitePago}
+                  Tienes plazo de hacer el primero pago hasta el {reservas?.fechaLimitePago}
                 </p>
+                
+                <p className={styles.plazoPago}>
+                Tienes plazo de hacer el segundo pago hasta el {reservas?.fechaLimitePago2}
+              </p>
               </div>
-
+              
               <p className={styles.total}>
                 {reservas?.reservation.currency == "USD"
                   ? `$${reservas?.total} USD`
                   : `${formatCurrency(reservas?.total)} COP`}
               </p>
+              
             </div>
+            
           </div>
-        </div>
+          {(reservas?.infoToures || reservas?.infoTransporte) && (
+          <p style={{color: "red", fontWeight: "bold", paddingLeft:"10px"}}>
+            Contacto de tour o traslado: {
+              reservas?.reservation?.city === "SANTA_MARTA" 
+                ? "+57 304 3697601" 
+                : reservas?.reservation?.city === "CARTAGENA" 
+                ? "+57 318 5480909" 
+                : ""
+            }
+          </p>)}
+        </div>  
       </div>
 
       <div className={styles.contentHusped_pago}>
@@ -1154,7 +1226,7 @@ const Gestionar = ({ reservas }) => {
             <br />
             {datosDelUsuario?.role.includes("super-admin") ? (
               <div className={styles.textAreaNotas}>
-                <h3>Nota:</h3>
+                <h3>Notas de administrador:</h3>
 
                 <p
                   style={{
@@ -1171,7 +1243,7 @@ const Gestionar = ({ reservas }) => {
                   name="notas"
                   id="notaspropias"
                   value={nota}
-                  placeholder="Escriba sus notas aquí"
+                  placeholder="Escriba sus otras aquí"
                   onChange={handleChange}
                   maxLength={200}
                 ></textarea>
@@ -1188,6 +1260,39 @@ const Gestionar = ({ reservas }) => {
             ) : (
               <></>
             )}
+
+            {/* Apartado de notas de agencias - visible para todos los usuarios */}
+            <div className={styles.textAreaNotas}>
+              <h3>Notas de Agencia:</h3>
+
+              <p
+                style={{
+                  fontStyle: "normal",
+                  color: "black",
+                  fontSize: "14px",
+                }}
+              >
+                {reservas.notasagencias || "No hay notas de agencia"}
+              </p>
+
+              <h3 style={{ fontSize: "14px" }}>Ingrese la nota de agencia:</h3>
+              <textarea
+                name="notasAgencia"
+                id="notasagencias"
+                value={notaAgencia}
+                placeholder="Escriba las notas de agencia aquí"
+                onChange={handleChangeAgencia}
+                maxLength={200}
+              ></textarea>
+
+              <button onClick={() => editarnotaAgencia(reservas._id)}>
+                Actualizar nota de agencia
+              </button>
+
+              <p>
+                Atención: Estas notas son visibles para toda la agencia
+              </p>
+            </div>
           </div>
         </div>
         <div>
@@ -1331,15 +1436,13 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
-                  reservas?.status == "5" ||
-                  reservas?.pagadoPrimeraMitad ||
+                  
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
-                    reservas?.status == "4" ||
-                    reservas?.status == "5" ||
-                    reservas?.pagadoPrimeraMitad
+                    reservas?.status == "4" 
+                    
                     ? styles.disabledButtonp
                     : ""
                   }`}
