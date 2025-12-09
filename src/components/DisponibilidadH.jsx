@@ -9,6 +9,8 @@ import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
 import { Tooltip } from 'react-tooltip';
+import UpgradeModal from './UpgradeModal';
+import { searchFlights } from '../utils/flightSearch';
 
 const hotelesData = {
   9: {
@@ -545,13 +547,34 @@ const hotelesExentosIVA = new Set([56, 123]);
 const MASCOTA_PRECIO_COP = 50000;
 const MASCOTA_PRECIO_USD = 10;
 
+// Utilidad para formatear fechas cortas en el stepper
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const months = [
+    "Ene",
+    "Feb",
+    "Mar",
+    "Abr",
+    "May",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dic",
+  ];
+  return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+};
+
 // UseState
 
 export const Cid = ({ id }) => {
   const [tooltipActivo, setTooltipActivo] = useState(null);
   const currentCurrency = useStore(currency); // COP o USD
   const [divisaSelec, setdivisaSelec] = useState("COP");
-
   const hotel = hotelesData[id];
   const [habitaciones, setHabitaciones] = useState({});
   const [rangosfechas, setfechas] = useState({});
@@ -572,6 +595,14 @@ export const Cid = ({ id }) => {
   const [filteredTours, setFilteredTours] = useState([]);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
+  const [infoVuelo, setinfoVuelo] = useState(null);
+  const [nochesyedades1, setnochesyedades] = useState({
+    nights: 0,
+    dateRange: {},
+    layout: [],
+  });
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [isSearchingFlights, setIsSearchingFlights] = useState(false);
   const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
   const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
 
@@ -583,6 +614,41 @@ export const Cid = ({ id }) => {
   function closeModal() {
     setIsOpen(false);
   }
+
+  const handleReservarClick = async () => {
+    // Solo mostrar el modal para hoteles específicos en Cartagena
+    if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
+      setShowUpgradeModal(true);
+    } else {
+      // Decidir destino según tipoBusqueda
+      const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+      if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+        enviardatos();
+        window.location.href = "/reservas";
+        return;
+      }
+
+      // Realizar consulta de vuelos cuando tipoBusqueda === 3
+      setIsSearchingFlights(true);
+      try {
+        const success = await searchFlights();
+        if (success) {
+          enviardatos();
+          window.location.href = "/dispoVuelos";
+        }
+      } catch (error) {
+        console.error('Error en la búsqueda de vuelos:', error);
+      } finally {
+        setIsSearchingFlights(false);
+      }
+    }
+  };
+
+  const handleUpgradeSelect = (newHotelId) => {
+    // Redirigir a la página del nuevo hotel
+    window.location.href = `/hoteles/${newHotelId}`;
+  };
+
   const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
     useState("");
 
@@ -923,6 +989,10 @@ export const Cid = ({ id }) => {
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
           opacity: 1 !important;
         }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
       `}</style>
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
@@ -935,36 +1005,7 @@ export const Cid = ({ id }) => {
           {getHotelName(habitaciones?.hotel)}
         </div>
 
-        {(infoVuelo?.active === true || infoVuelo?.activado === true) && (
-        <div className={styles.stepper}>
-          <div className={styles.step}>
-            <div className={styles.stepnumberActive}>1</div>
-            <div className={styles.steptitleActive}>Alojamiento</div>
-            <div className={styles.stepcontentActive}>
-              Seleccione el alojamiento <br />
-              {nochesyedades1.nights} noches, {adultos} adultos, {ninos} niños
-            </div>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepnumber}>2</div>
-            <div className={styles.steptitle}>Vuelo</div>
-            <div className={styles.stepcontent}>
-              {infoVuelo?.origin} ⇆ {infoVuelo?.destinationName}<br/>
-              {nochesyedades1?.dateRange ? 
-                `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
-                'Fechas no seleccionadas'}
-            </div>
-          </div>
-          <div className={styles.step}>
-            <div className={styles.stepnumber}>3</div>
-            <div className={styles.steptitle}>Adicionales</div>
-            <div className={styles.stepcontent}>
-              ¡Disfruta al máximo tu viaje!
-              Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
-            </div>
-          </div>
-        </div>
-        )}
+       
         <br />
         <div className={styles.hotel_title}>
           {getHotelName(habitaciones?.hotel)}
@@ -1663,27 +1704,96 @@ export const Cid = ({ id }) => {
               </div>
             ))}
 
-            <a href="/reservas">
-              <button
-                onClick={enviardatos}
-                disabled={!puedeReservar}
-                data-tooltip-id="tooltip-generar-cotizacion"
-                data-tooltip-content={
-                  !puedeReservar
-                    ? datohabitacion.length === 0
-                      ? "Selecciona las habitaciones que deseas reservar"
-                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
-                    : "Crear una reserva personalizada para el cliente."
+            <button
+              onClick={handleReservarClick}
+              disabled={!puedeReservar || isSearchingFlights}
+              data-tooltip-id="tooltip-generar-cotizacion"
+              data-tooltip-content={
+                !puedeReservar
+                  ? datohabitacion.length === 0
+                    ? "Selecciona las habitaciones que deseas reservar"
+                    : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                  : "Crear una reserva personalizada para el cliente."
+              }
+              data-tooltip-place="left"
+              style={{
+                marginTop: "12px",
+                padding: "8px 16px",
+                backgroundColor: (!puedeReservar || isSearchingFlights) ? "#d3d3d3" : "#26547B",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: (!puedeReservar || isSearchingFlights) ? "not-allowed" : "pointer",
+                fontWeight: "bold",
+                transition: "background-color 0.3s ease, transform 0.2s ease",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                width: "100%"
+              }}
+              onMouseEnter={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#0056b3";
+                  e.target.style.transform = "scale(1.1)";
                 }
-                data-tooltip-place="left"
-                style={{
-                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
-                  cursor: !puedeReservar ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
-                }}
-              >
-                Reservar ahora
-              </button>
-            </a>
+              }}
+              onMouseLeave={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#26547B";
+                  e.target.style.transform = "scale(1)";
+                }
+              }}
+              onMouseDown={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#003f7f";
+                }
+              }}
+              onMouseUp={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#0056b3";
+                }
+              }}
+            >
+              {isSearchingFlights && (
+                <div style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid #ffffff",
+                  borderTop: "2px solid transparent",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite"
+                }}></div>
+              )}
+              {isSearchingFlights ? "Buscando vuelos..." : "Reservar ahora"}
+            </button>
+            <UpgradeModal 
+              isOpen={showUpgradeModal}
+              onClose={() => setShowUpgradeModal(false)}
+              currentHotelId={Number(id)}
+              onSelectUpgrade={handleUpgradeSelect}
+              onContinue={async () => {
+                const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+                if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+                  enviardatos();
+                  window.location.href = "/reservas";
+                  return;
+                }
+
+                setIsSearchingFlights(true);
+                try {
+                  const success = await searchFlights();
+                  if (success) {
+                    enviardatos();
+                    window.location.href = "/dispoVuelos";
+                  }
+                } catch (error) {
+                  console.error('Error en la búsqueda de vuelos:', error);
+                } finally {
+                  setIsSearchingFlights(false);
+                }
+              }}
+            />
             <a href="/cotizacionpagina">
               <button
                 onClick={enviardatos}
@@ -1698,8 +1808,38 @@ export const Cid = ({ id }) => {
                 }
                 data-tooltip-place="left"
                 style={{
-                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B", // Cambia a gris si está deshabilitado
-                  cursor: !puedeReservar ? "not-allowed" : "pointer", // Cambia el cursor si está deshabilitado
+                  marginTop: "12px",
+                  padding: "8px 16px",
+                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: !puedeReservar ? "not-allowed" : "pointer",
+                  fontWeight: "bold",
+                  transition: "background-color 0.3s ease, transform 0.2s ease",
+                  width: "100%"
+                }}
+                onMouseEnter={(e) => {
+                  if (!!puedeReservar) {
+                    e.target.style.backgroundColor = "#0056b3";
+                    e.target.style.transform = "scale(1.1)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!!puedeReservar) {
+                    e.target.style.backgroundColor = "#26547B";
+                    e.target.style.transform = "scale(1)";
+                  }
+                }}
+                onMouseDown={(e) => {
+                  if (!!puedeReservar) {
+                    e.target.style.backgroundColor = "#003f7f";
+                  }
+                }}
+                onMouseUp={(e) => {
+                  if (!!puedeReservar) {
+                    e.target.style.backgroundColor = "#0056b3";
+                  }
                 }}
               >
                 Generar cotización

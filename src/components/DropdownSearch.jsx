@@ -24,6 +24,18 @@ const DropdownSearch = () => {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [includesFlight, setIncludesFlight] = useState(false);
+  const [origin, setOrigin] = useState("");
+  const [originSuggestions, setOriginSuggestions] = useState([]);
+  const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
+  const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
+  const [selectedOriginIata, setSelectedOriginIata] = useState("");
+
+  const destinationMapping = {
+    CARTAGENA: { name: "Cartagena de Indias", iataCode: "CTG" },
+    BOGOTA: { name: "Bogotá", iataCode: "BOG" },
+    SANTA_MARTA: { name: "Santa Marta", iataCode: "SMR" },
+  };
 
   const [isLoading, setIsLoading] = useState(false);
 
