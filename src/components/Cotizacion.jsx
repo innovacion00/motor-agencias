@@ -427,6 +427,22 @@ export default function ReservaHotelComponent() {
     enviarCotizacion();
   };
 
+  // Función para generar la descripción según el tipo de pensión
+  const generarDescripcionPension = (planAlimentacion) => {
+    const plan = planAlimentacion?.toLowerCase() || "";
+    
+    if (plan.includes("solo desayuno") || plan === "solodesayuno") {
+      return "Incluye desayuno y servicios básicos";
+    } else if (plan.includes("media pension") || plan === "mediapension") {
+      return "Incluye desayuno y almuerzo o cena además de los servicios básicos";
+    } else if (plan.includes("pension completa") || plan === "pensioncompleta") {
+      return "Incluye desayuno, almuerzo y cena además de los servicios básicos";
+    } else {
+      // Por defecto, solo desayuno
+      return "Incluye desayuno y servicios básicos";
+    }
+  };
+
   // Función para generar HTML dinámico con datos de la reserva
   const generarLandingHtml = () => {
     const hotelName = nombreHotelId(datosReserva[0]?.hotelidAutocore);
@@ -881,14 +897,17 @@ export default function ReservaHotelComponent() {
 
         <section>
             <h2>Habitaciones Reservadas</h2>
-            ${datosReserva.map((habitacion, index) => `
+            ${datosReserva.map((habitacion, index) => {
+              const descripcionPension = generarDescripcionPension(planAlimentacion);
+              return `
             <div style="background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px;">
                 <h3>Habitación ${index + 1}: ${habitacion.NombreH || 'Habitación estándar'}</h3>
-                <p><strong>Descripción:</strong> ${habitacion.descripcion || 'Incluye desayuno y servicios básicos'}</p>
+                <p><strong>Descripción:</strong> ${habitacion.descripcion || descripcionPension}</p>
                 <p><strong>Precio por noche:</strong> $${precioPorNocheCalc.toLocaleString()}</p>
                 <p><strong>Total habitación:</strong> $${totalSinIvaConMarkup.toLocaleString()}</p>
             </div>
-            `).join('')}
+            `;
+            }).join('')}
         </section>
 <br>
 <br>
@@ -1501,15 +1520,19 @@ export default function ReservaHotelComponent() {
                     </tr>
                   </thead>
                   <tbody>
-                    {datosReserva.map((data, index) => (
+                    {datosReserva.map((data, index) => {
+                      const planAlimentacion = datosReserva[0]?.plandealimentacion || "Solo desayuno";
+                      const descripcionPension = generarDescripcionPension(planAlimentacion);
+                      return (
                       <tr key={data.roomId || index}>
                         <td className="td">{data.NombreH || 'Habitación estándar'}</td>
-                        <td className="td">{data.descripcion || 'Incluye desayuno y servicios básicos'}</td>
+                        <td className="td">{data.descripcion || descripcionPension}</td>
                         <td className="td">{data.nights}</td>
                         <td className="td">${data.precioBase ? data.precioBase.toLocaleString() : '0'}</td>
                         <td className="td">${data.precio ? data.precio.toLocaleString() : '0'}</td>
                       </tr>
-                    ))}
+                    );
+                    })}
                     <tr className="table-subtotal">
                       <td colSpan="4" className="td-total">Subtotal</td>
                       <td className="td-amount">${subtotal.toLocaleString()}</td>
