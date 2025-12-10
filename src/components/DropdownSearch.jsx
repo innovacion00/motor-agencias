@@ -325,9 +325,10 @@ const DropdownSearch = () => {
                           const updatedRooms = [...rooms];
                           updatedRooms[index].adults += 1;
                           setRooms(updatedRooms);
+                        } else {
+                          mostrarTooltip("El límite de adultos por habitación es 5");
                         }
                       }}
-                      disabled={room.adults >= 5}
                     >
                       +
                     </button>
@@ -380,9 +381,10 @@ const DropdownSearch = () => {
                           const updatedRooms = [...rooms];
                           updatedRooms[index].children5to17 += 1;
                           setRooms(updatedRooms);
+                        } else {
+                          mostrarTooltip("El límite de niños por habitación es 4");
                         }
                       }}
-                      disabled={room.children5to17 >= 4}
                     >
                       +
                     </button>
