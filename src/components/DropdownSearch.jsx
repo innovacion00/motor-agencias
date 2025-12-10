@@ -321,10 +321,13 @@ const DropdownSearch = () => {
                     <span>{room.adults}</span>
                     <button
                       onClick={() => {
-                        const updatedRooms = [...rooms];
-                        updatedRooms[index].adults += 1;
-                        setRooms(updatedRooms);
+                        if (room.adults < 5) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].adults += 1;
+                          setRooms(updatedRooms);
+                        }
                       }}
+                      disabled={room.adults >= 5}
                     >
                       +
                     </button>
@@ -373,10 +376,13 @@ const DropdownSearch = () => {
                     <span>{room.children5to17}</span>
                     <button
                       onClick={() => {
-                        const updatedRooms = [...rooms];
-                        updatedRooms[index].children5to17 += 1;
-                        setRooms(updatedRooms);
+                        if (room.children5to17 < 4) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].children5to17 += 1;
+                          setRooms(updatedRooms);
+                        }
                       }}
+                      disabled={room.children5to17 >= 4}
                     >
                       +
                     </button>
