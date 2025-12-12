@@ -249,7 +249,28 @@ main:has(.bcia-page) {
 	min-height: 32px;
 	max-height: 200px;
 	line-height: 1.4;
-	overflow: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(28, 61, 90, 0.3) rgba(28, 61, 90, 0.05);
+}
+
+.input-box textarea::-webkit-scrollbar {
+	width: 8px;
+}
+
+.input-box textarea::-webkit-scrollbar-track {
+	background: rgba(28, 61, 90, 0.05);
+	border-radius: 4px;
+}
+
+.input-box textarea::-webkit-scrollbar-thumb {
+	background: rgba(28, 61, 90, 0.3);
+	border-radius: 4px;
+}
+
+.input-box textarea::-webkit-scrollbar-thumb:hover {
+	background: rgba(28, 61, 90, 0.5);
 }
 
 .input-box textarea::placeholder {
@@ -512,8 +533,29 @@ main:has(.bcia-page) {
 	line-height: 1.4;
 	min-height: 36px;
 	max-height: 200px;
-	overflow: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
 	outline: none;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(28, 61, 90, 0.3) rgba(28, 61, 90, 0.05);
+}
+
+.chat-composer textarea::-webkit-scrollbar {
+	width: 8px;
+}
+
+.chat-composer textarea::-webkit-scrollbar-track {
+	background: rgba(28, 61, 90, 0.05);
+	border-radius: 4px;
+}
+
+.chat-composer textarea::-webkit-scrollbar-thumb {
+	background: rgba(28, 61, 90, 0.3);
+	border-radius: 4px;
+}
+
+.chat-composer textarea::-webkit-scrollbar-thumb:hover {
+	background: rgba(28, 61, 90, 0.5);
 }
 
 .chat-composer textarea::placeholder {

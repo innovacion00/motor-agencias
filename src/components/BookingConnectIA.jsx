@@ -312,6 +312,7 @@ function ChatMessageContent({ content, role, onImageClick }) {
 		'reserva confirmada',
 		'reserva procesada',
 		'reserva finalizada'
+
 	];
 	
 	// Detectar si el contenido contiene alguna de las frases de reserva
@@ -851,7 +852,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 
 	function handleReservaRapida() {
 		const reservaRapidaText = 
-		'Hola me gustaria crear una reserva.\ndia de checkin:  y dia de checkout:  mes: \nhotel: \naño:  \nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
+		'Hola me gustaria crear una reserva.\ndia  checkin:  y dia de checkout:  mes: \naño: \nhotel: \nnumero de personas:  \nnombre del titular:  \ntipo de documento: \nnumero de documento:  \nfecha de nacimiento: \ncorreo:  \ntelefono:+57  \nTipo de habitacion preferida: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(reservaRapidaText);
@@ -883,7 +884,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}
 
 	function handleCotizacionRapida() {
-		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion.\ndia de checkin:  y dia de checkout:  mes: \nhotel: \naño:  \nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
+		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion.\ndia de checkin:  y dia de checkout:  mes: año: \nhotel:\nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(cotizacionRapidaText);
@@ -1045,9 +1046,51 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 									rows={1}
 									spellCheck={false}
 								/>
-								<img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/enviar.png" alt="enviar" width="20" height="20" style={{ cursor: 'pointer' }} />
 							</div>
 							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
+							<button 
+								className="enviar-button"
+								onClick={() => sendMessage(welcomePrompt, true)}
+								disabled={!welcomePrompt.trim()}
+								style={{
+									backgroundColor: '#1c3d5a',
+									color: '#ffffff',
+									border: 'none',
+									borderRadius: '12px',
+									padding: '12px 24px',
+									fontSize: '15px',
+									fontWeight: '600',
+									cursor: welcomePrompt.trim() ? 'pointer' : 'not-allowed',
+									transition: 'all 0.3s ease',
+									width: '100%',
+									marginBottom: '12px',
+									boxShadow: '0 4px 12px rgba(28, 61, 90, 0.2)',
+									opacity: welcomePrompt.trim() ? 1 : 0.6,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									gap: '8px'
+								}}
+								onMouseEnter={(e) => {
+									if (welcomePrompt.trim()) {
+										e.target.style.backgroundColor = '#264b74';
+										e.target.style.transform = 'translateY(-2px)';
+										e.target.style.boxShadow = '0 6px 16px rgba(28, 61, 90, 0.3)';
+									}
+								}}
+								onMouseLeave={(e) => {
+									if (welcomePrompt.trim()) {
+										e.target.style.backgroundColor = '#1c3d5a';
+										e.target.style.transform = 'translateY(0)';
+										e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.2)';
+									}
+								}}
+							>
+								Enviar
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+								</svg>
+							</button>
 							<div className="button-group" style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
 								<button 
 									className="reserva-rapida-button"
