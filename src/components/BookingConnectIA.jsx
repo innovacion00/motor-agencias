@@ -487,6 +487,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [activeId, setActiveId] = useState("");
 	const [isChatStarted, setIsChatStarted] = useState(false);
 	const [isResponding, setIsResponding] = useState(false);
+	const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 	const [galleryModal, setGalleryModal] = useState({
 		open: false,
 		hotelName: "",
@@ -496,6 +497,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const textareaRef = useRef(null);
 	const welcomeTextareaRef = useRef(null);
 	const messagesEndRef = useRef(null);
+	const loadingIntervalRef = useRef(null);
 	const [agencyDisplayName, setAgencyDisplayName] = useState(agencyName);
 	const [isMounted, setIsMounted] = useState(false);
 	const prompts = [
@@ -504,6 +506,15 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		"{prompt-Hoteles-SantaMarta}",
 		"{prompt-Hoteles-Cartagena}",
 		"{prompt-Hoteles-Bogota}",
+	];
+
+	const loadingMessages = [
+		"Espera unos segundos, estoy consultando la disponibilidad...",
+		"Estoy haciendo la consulta lo más rápido posible...",
+		"Analizando tarifas y tipos de habitación para tu búsqueda...",
+		"Encontrando las mejores opciones y similitudes para ti...",
+		"Verificando políticas y condiciones de tu reserva...",
+		"Organizando la información para darte una respuesta clara..."
 	];
 
 	// Configuración de prompts: mapea el placeholder al texto del botón y al prompt real
@@ -661,6 +672,32 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMounted, conversations, activeId]);
+
+	useEffect(() => {
+		// Gestionar los mensajes dinámicos de "cargando" mientras el asistente responde
+		if (!isResponding) {
+			setLoadingMessageIndex(0);
+			if (loadingIntervalRef.current) {
+				clearInterval(loadingIntervalRef.current);
+				loadingIntervalRef.current = null;
+			}
+			return;
+		}
+
+		// Reiniciar al primer mensaje cada vez que empieza una nueva respuesta
+		setLoadingMessageIndex(0);
+
+		const intervalId = setInterval(() => {
+			setLoadingMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
+		}, 9200);
+
+		loadingIntervalRef.current = intervalId;
+
+		return () => {
+			clearInterval(intervalId);
+			loadingIntervalRef.current = null;
+		};
+	}, [isResponding, loadingMessages.length]);
 
 	function autoResize(ref) {
 		const el = ref.current;
@@ -884,7 +921,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}
 
 	function handleCotizacionRapida() {
-		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion.\ndia de checkin:  y dia de checkout:  mes: año: \nhotel:\nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
+		const cotizacionRapidaText = 'Hola me gustaria crear una cotización.\ndia  checkin:  y dia de checkout:  mes: \naño: \nhotel: \nnumero de personas:  \nnombre del titular:  \ntipo de documento: \nnumero de documento:  \nfecha de nacimiento: \ncorreo:  \ntelefono:+57  \nTipo de habitacion preferida: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(cotizacionRapidaText);
@@ -1188,9 +1225,10 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 								{isResponding && (
 									<div className="chat-bubble chat-bubble--assistant">
 										<div className="chat-typing">
-											<span className="dot" />
-											<span className="dot" />
-											<span className="dot" />
+											<div className="chat-typing-text">
+												{loadingMessages[loadingMessageIndex]}
+											</div>
+											<div className="chat-typing-spinner" aria-hidden="true" />
 										</div>
 									</div>
 								)}
@@ -1220,7 +1258,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					)}
 				</main>
 			</div>
-			{galleryModal.open && (
+			{galleryModal.open && ( 
 				<div className="hotel-gallery-modal" role="dialog" aria-modal="true" aria-label={`Galería ${galleryModal.hotelName}`}>
 					<div className="hotel-gallery-backdrop" onClick={closeGalleryModal} />
 					<div className="hotel-gallery-content">
