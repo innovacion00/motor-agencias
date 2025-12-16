@@ -416,7 +416,11 @@ const UserDashboard = () => {
         {/*--------------------------- Balance de Mi saldo ---------------------------*/}
         <div className="card wallet-card">
           <h3>Mi saldo</h3>
-          <div className="balance">{formatCurrency(availableAmount)}</div>
+          <div className="balance">
+            {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin"))
+              ? formatCurrency(availableAmount)
+              : "Visible solo por admin"}
+          </div>
           <br />
           <h2
             style={{
@@ -446,6 +450,7 @@ const UserDashboard = () => {
               fontSize: "10px",
             }}
           >
+            
             <input
               type="checkbox"
               checked={terminosaceptados}
