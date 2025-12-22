@@ -315,8 +315,23 @@ function ChatMessageContent({ content, role, onImageClick }) {
 
 	];
 	
+	// Frases que activan el botón "Ir a mis cotizaciones"
+	const cotizacionPhrases = [
+		'acceso a la cotización',
+		'link de la cotización',
+		'link de la cotizacion',
+		'acceso a la cotizacion'
+	];
+	
 	// Detectar si el contenido contiene alguna de las frases de reserva
 	const hasReservaCreada = reservaPhrases.some(phrase => {
+		// Crear una expresión regular flexible que permita espacios variables
+		const regex = new RegExp(phrase.replace(/\s+/g, '\\s+'), 'gi');
+		return regex.test(content);
+	});
+
+	// Detectar si el contenido contiene alguna de las frases de cotización
+	const hasCotizacionCreada = cotizacionPhrases.some(phrase => {
 		// Crear una expresión regular flexible que permita espacios variables
 		const regex = new RegExp(phrase.replace(/\s+/g, '\\s+'), 'gi');
 		return regex.test(content);
@@ -371,6 +386,38 @@ function ChatMessageContent({ content, role, onImageClick }) {
 							}}
 						>
 							Ir a mis reservas
+						</a>
+					</div>
+				)}
+				{hasCotizacionCreada && (
+					<div style={{ marginTop: '16px' }}>
+						<a 
+							href="/cotizaciones" 
+							className="cotizacion-button"
+							style={{
+								display: 'inline-block',
+								padding: '10px 20px',
+								backgroundColor: '#1c3d5a',
+								color: '#ffffff',
+								textDecoration: 'none',
+								borderRadius: '12px',
+								fontWeight: '600',
+								fontSize: '14px',
+								transition: 'all 0.2s ease',
+								cursor: 'pointer'
+							}}
+							onMouseEnter={(e) => {
+								e.target.style.backgroundColor = '#264b74';
+								e.target.style.transform = 'translateY(-1px)';
+								e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.3)';
+							}}
+							onMouseLeave={(e) => {
+								e.target.style.backgroundColor = '#1c3d5a';
+								e.target.style.transform = 'translateY(0)';
+								e.target.style.boxShadow = 'none';
+							}}
+						>
+							Ir a mis cotizaciones
 						</a>
 					</div>
 				)}
@@ -803,7 +850,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		
 		try {
 			// URL del endpoint
-			const apiUrl = "https://bookingconnectia.gehsuitesapps.com/api/v1/llm/chat";
+			const apiUrl = "http://localhost:4001/api/v1/llm/chat";
 			
 			// Preparar el cuerpo de la petición
 			const requestBody = {

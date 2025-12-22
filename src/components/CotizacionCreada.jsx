@@ -538,10 +538,6 @@ export const CotizacionCreada = ({ id }) => {
             <div className="layout">
                 {/* Columna Principal */}
                 <div className="main-content">
-                    {/* Header */}
-                    <div className="header">
-                    </div>
-
                     {/* Información del Huésped */}
                     <div className="card">
                         <div className="logos" style={{ justifyContent: "flex-end" }}>
