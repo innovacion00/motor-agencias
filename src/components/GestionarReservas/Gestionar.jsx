@@ -1163,20 +1163,27 @@ const Gestionar = ({ reservas }) => {
                 autenticado en una notaría.
               </p>
               <br />
-              {/* <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
+              <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
               <p style={{fontFamily:"Roboto"}}>
                 <br />
-                Las facturas serán emitidas a su empresa Reservas sin garantías
-                o con garantías vencidas serán canceladas .
-                En caso de ser viajeros con nacionalidad colombiana o extranjeros con
-                residencia en Colombia, o en su defecto, si han pasado más de 3
-                meses en el país, deberán abonar adicional el IVA del 19% en la
-                recepción al momento de su check-in. PDT: No- shows: Todo
-                pasajero que por cualquier motivo no se presente el día de su
-                viaje será considerado como “NO SHOW” y se le aplicará
-                penalidad, valor 1 noche. No dude en contactarnos a través de
-                llamadas y WhatsApp a la línea +57 3336025021.
-              </p> */}
+                Reservas con 24 a 72 horas de antelación penalidad del 50%.
+              </p>
+              <p style={{fontFamily:"Roboto"}}>
+                <br />
+                Reservas con 4 a 10 días de antelación penalidad del 20%.
+              </p>
+              <p style={{fontFamily:"Roboto"}}>
+                <br />
+                Reservas con 11 a 30 días de antelación penalidad del 10%.
+              </p>
+              <p style={{fontFamily:"Roboto"}}>
+                <br />
+                Reservas con 31 días o más grupos de 30, 40 o 50 personas, sin penalidad.
+              </p>
+              <p style={{fontFamily:"Roboto", fontWeight:"bold"}}>
+                <br />
+                NOTA:La cancelación de reservas estará sujeta a validación, de acuerdo con el motivo expuesto, para establecer la procedencia de la penalidad.
+              </p>
               <br />
               <p>
                 <b>Política de mascotas: </b>
