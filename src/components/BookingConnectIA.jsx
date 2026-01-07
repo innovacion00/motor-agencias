@@ -282,12 +282,9 @@ function detectToursInText(text) {
 	return detectedTours;
 }
 
-// Componente para renderizar mensajes con imágenes de hoteles
-function ChatMessageContent({ content, role, onImageClick }) {
-	// Solo procesar diseño enriquecido para el asistente
-	if (role !== 'assistant') {
-		return <div className="chat-bubble-content">{content}</div>;
-	}
+// Contenido enriquecido solo para mensajes del asistente
+function AssistantMessageContent({ content, onImageClick }) {
+	const [openOptions, setOpenOptions] = useState({});
 
 	const detectedHotels = detectHotelsInText(content).map((hotel) => ({
 		...hotel,
@@ -337,6 +334,60 @@ function ChatMessageContent({ content, role, onImageClick }) {
 		return regex.test(content);
 	});
 
+	const toggleOption = (optionKey) => {
+		setOpenOptions((prev) => ({
+			...prev,
+			[optionKey]: !prev[optionKey],
+		}));
+	};
+
+	// Cualquier línea que comience con "1)", "2)", etc. será tratada como opción colapsable
+	const optionHeaderRegex = /^\s*(\d+)\)\s*/i;
+
+	// Agrupar líneas en bloques normales y bloques de "Opción X)"
+	const parsedBlocks = [];
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+		const headerMatch = line.match(optionHeaderRegex);
+
+		if (headerMatch) {
+			const optionNumber = headerMatch[1];
+			const details = [];
+			let j = i + 1;
+
+			while (j < lines.length) {
+				const nextLine = lines[j];
+				// Si encontramos otra opción, detenemos el bloque actual
+				if (optionHeaderRegex.test(nextLine)) {
+					break;
+				}
+				// Cortar el bloque al primer salto de línea en blanco,
+				// pero lo incluimos para mantener el espaciado
+				if (nextLine.trim() === '') {
+					details.push(nextLine);
+					j++;
+					break;
+				}
+				details.push(nextLine);
+				j++;
+			}
+
+			parsedBlocks.push({
+				type: 'option',
+				optionKey: optionNumber,
+				header: line,
+				details,
+			});
+
+			i = j - 1; // Ajustar índice principal
+		} else {
+			parsedBlocks.push({
+				type: 'line',
+				line,
+			});
+		}
+	}
+
 	const formatMarkdownLine = (line) =>
 		line
 			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -348,15 +399,76 @@ function ChatMessageContent({ content, role, onImageClick }) {
 	return (
 		<div className={`chat-bubble-content ${hasContent ? 'chat-bubble-content--with-hotels' : ''}`}>
 			<div className="chat-text-column">
-				{lines.map((line, idx) => (
-					<div
-						key={`line-${idx}`}
-						className="chat-message-text"
-						dangerouslySetInnerHTML={{
-							__html: formatMarkdownLine(line) || '<br />'
-						}}
-					/>
-				))}
+				{parsedBlocks.map((block, idx) => {
+					if (block.type === 'line') {
+						return (
+							<div
+								key={`line-${idx}`}
+								className="chat-message-text"
+								dangerouslySetInnerHTML={{
+									__html: formatMarkdownLine(block.line) || '<br />'
+								}}
+							/>
+						);
+					}
+
+					const isOpen = !!openOptions[block.optionKey];
+
+					return (
+						<div
+							key={`option-${idx}`}
+							className="chat-option-block"
+							style={{ marginBottom: '4px' }}
+						>
+							<button
+								type="button"
+								onClick={() => toggleOption(block.optionKey)}
+								className="chat-option-header"
+								style={{
+									background: 'transparent',
+									border: 'none',
+									padding: 0,
+									margin: 0,
+									color: 'inherit',
+									textAlign: 'left',
+									cursor: 'pointer',
+									font: 'inherit',
+									display: 'inline-flex',
+									alignItems: 'center',
+								}}
+							>
+								<span
+									className="chat-message-text"
+									dangerouslySetInnerHTML={{
+										__html: formatMarkdownLine(block.header) || '&nbsp;'
+									}}
+								/>
+								<span
+									className="chat-option-toggle-indicator"
+									style={{ marginLeft: '8px', fontWeight: 600 }}
+								>
+									{isOpen ? '−' : '+'}
+								</span>
+							</button>
+							{isOpen && (
+								<div
+									className="chat-option-details"
+									style={{ marginTop: '4px', paddingLeft: '8px' }}
+								>
+									{block.details.map((detailLine, detailIdx) => (
+										<div
+											key={`option-${idx}-detail-${detailIdx}`}
+											className="chat-message-text"
+											dangerouslySetInnerHTML={{
+												__html: formatMarkdownLine(detailLine) || '<br />'
+											}}
+										/>
+									))}
+								</div>
+							)}
+						</div>
+					);
+				})}
 				{hasReservaCreada && (
 					<div style={{ marginTop: '16px' }}>
 						<a 
@@ -417,7 +529,7 @@ function ChatMessageContent({ content, role, onImageClick }) {
 								e.target.style.boxShadow = 'none';
 							}}
 						>
-							Ir a mis cotizaciones
+							Ver mis cotizaciones 
 						</a>
 					</div>
 				)}
@@ -523,6 +635,21 @@ function ChatMessageContent({ content, role, onImageClick }) {
 				</div>
 			)}
 		</div>
+	);
+}
+
+// Componente para renderizar mensajes con imágenes de hoteles
+function ChatMessageContent({ content, role, onImageClick }) {
+	// Solo procesar diseño enriquecido para el asistente
+	if (role !== 'assistant') {
+		return <div className="chat-bubble-content">{content}</div>;
+	}
+
+	return (
+		<AssistantMessageContent
+			content={content}
+			onImageClick={onImageClick}
+		/>
 	);
 }
 
