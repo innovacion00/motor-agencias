@@ -1403,6 +1403,11 @@ export const Cid = ({ id }) => {
                         data-room="Doble Estándar"
                         data-price="#Valor"
                         onClick={() => {
+                          // Contar cuántas habitaciones de este tipo específico ya están seleccionadas
+                          const habitacionesDelMismoTipo = datohabitacion.filter(
+                            (hab) => hab.roomId === dato.roomId
+                          ).length;
+                          
                           const limiteHabitaciones = habitacionesRestringidas.includes(dato.roomName)
                             ? obtenerLimiteHabitaciones(dato.roomName, dato.count)
                             : Infinity;
@@ -1411,7 +1416,7 @@ export const Cid = ({ id }) => {
                               quintuple[habitaciones?.hotel?.id] &&
                               habitacionesRestringidas.includes(dato.roomName)
                             ) ||
-                            contadorHabitaciones < limiteHabitaciones // Verifica el límite de habitaciones
+                            habitacionesDelMismoTipo < limiteHabitaciones // Verifica el límite de habitaciones de este tipo específico
                           ) {
                             setDatohabitacion((prevState) => [
                               ...prevState,
@@ -1476,13 +1481,25 @@ export const Cid = ({ id }) => {
                         disabled={
                           quintuple[habitaciones?.hotel?.id] &&
                           habitacionesRestringidas.includes(dato.roomName) &&
-                          contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
+                          (() => {
+                            // Contar cuántas habitaciones de este tipo específico ya están seleccionadas
+                            const habitacionesDelMismoTipo = datohabitacion.filter(
+                              (hab) => hab.roomId === dato.roomId
+                            ).length;
+                            return habitacionesDelMismoTipo >= obtenerLimiteHabitaciones(dato.roomName, dato.count);
+                          })()
                         }
                         onMouseOver={() => {
                           if (
                             quintuple[habitaciones?.hotel?.id] &&
                             habitacionesRestringidas.includes(dato.roomName) &&
-                            contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
+                            (() => {
+                              // Contar cuántas habitaciones de este tipo específico ya están seleccionadas
+                              const habitacionesDelMismoTipo = datohabitacion.filter(
+                                (hab) => hab.roomId === dato.roomId
+                              ).length;
+                              return habitacionesDelMismoTipo >= obtenerLimiteHabitaciones(dato.roomName, dato.count);
+                            })()
                           ) {
                             setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
                           }
