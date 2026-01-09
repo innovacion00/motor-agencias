@@ -526,7 +526,7 @@ const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
   6: false, //avexi
-  7: true, //bocagrande 
+  7: false, //bocagrande 
   4: true, //aixo
   5: false, //abi (Problemas con reservas de pocos huespedes)
   3: true, //madison
