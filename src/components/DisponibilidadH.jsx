@@ -1317,9 +1317,24 @@ export const Cid = ({ id }) => {
         {/* habitaciones?.availability?.map((cam)=>cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
-            {habitaciones?.availability?.map((tipo) =>
-              tipo.available_rooms?.filter((dato) => dato.roomId != 164102).map((dato) => (
-                <div className={styles.room_card} key={dato.roomId}>
+            {(() => {
+              // Consolidar todas las habitaciones de todos los elementos de availability
+              const todasLasHabitaciones = habitaciones?.availability?.flatMap(
+                (tipo) => tipo.available_rooms || []
+              ) || [];
+              
+              // Eliminar duplicados basándose en roomId Y roomName (mantener la primera ocurrencia)
+              // Esto permite mostrar habitaciones con el mismo roomId pero diferente roomName
+              const habitacionesUnicas = todasLasHabitaciones.filter(
+                (dato, index, self) =>
+                  dato.roomId != 164102 && // Filtrar el roomId específico
+                  index === self.findIndex((h) => 
+                    h.roomId === dato.roomId && h.roomName === dato.roomName
+                  )
+              );
+              
+              return habitacionesUnicas.map((dato, index) => (
+                <div className={styles.room_card} key={`${dato.roomId}-${dato.roomName}-${index}`}>
                   <img
                     alt="Standard double room with a double bed, TV, and modern decor"
                     height="200"
@@ -1532,8 +1547,8 @@ export const Cid = ({ id }) => {
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              ));
+            })()}
           </div>
           <div className={styles.reservation}>
             <h3>Reserva</h3>
