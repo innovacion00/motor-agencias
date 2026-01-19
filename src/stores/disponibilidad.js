@@ -6,6 +6,12 @@ const token = Cookies.get("accessToken");
 // Crear una store para almacenar la disponibilidad
 export const disponibilidad = atom([]);
 export const reservasNano = atom([]);
+export const reservasMeta = atom({
+  total: 0,
+  page: 1,
+  pageSize: 25,
+  totalPages: 1,
+});
 
 // Store para almacenar las noches
 export const nightsStore = atom(0);
@@ -61,23 +67,26 @@ export const getdisponibility = async (objetohotel) => {
   }
 };
 
-export const getReservas = async ( datosUsuario) => {
-  const rol = () => {
-    if (datosUsuario.includes("super-admin")) {
+export const getReservas = async (rolUsuario, page = 1, pageSize = 15) => {
+  const buildUrl = () => {
+    if (rolUsuario?.includes("super-admin")) {
       return `${URL}/agencias/v1/reservas`;
-    } else if (datosUsuario.includes("admin")) {
-      return `${URL}/agencias/v1/reservas/reservas-by-agencia`;
-    } else {
-      return `${URL}/agencias/v1/reservas/reservas-by-user`;
     }
+    if (rolUsuario?.includes("admin")) {
+      return `${URL}/agencias/v1/reservas/reservas-by-agencia`;
+    }
+    return `${URL}/agencias/v1/reservas/reservas-by-user`;
   };
 
-  const urlrol = rol();
+  const urlBase = buildUrl();
+  const separator = urlBase.includes("?") ? "&" : "?";
+  const urlWithPagination = `${urlBase}${separator}page=${page}&pageSize=${pageSize}`;
+
   const fetchReservas = async (accessToken) => {
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${accessToken}`);
 
-    const response = await fetch(urlrol, {
+    const response = await fetch(urlWithPagination, {
       method: "GET",
       headers: myHeaders,
     });
@@ -85,38 +94,56 @@ export const getReservas = async ( datosUsuario) => {
   };
 
   try {
-    // console.log(token);
-    let response = await fetchReservas((token));
+    let response = await fetchReservas(token);
 
     if (response.status === 401) {
-      // Intentar renovar el token
       const newToken = await refreshToken();
       if (newToken) {
-        // Reintentar la petición con el nuevo token
         response = await fetchReservas(newToken);
       }
-      // Si newToken es null, refreshToken ya se encargó de la redirección
     }
 
     if (response.ok) {
       const data = await response.json();
-      if (data.reservas) {
-        reservasNano.set(data.reservas);
+      
+      const reservasData =
+        data?.data ?? data?.reservas ?? (Array.isArray(data) ? data : []);
+      
+      // Si el servidor envía meta, usarla pero recalcular totalPages basándose en el total
+      let metaData;
+      if (data?.meta) {
+        metaData = {
+          ...data.meta,
+          // Recalcular totalPages basándose en el total que viene del servidor
+          // Esto corrige casos donde el backend calcula mal totalPages
+          totalPages: Math.max(1, Math.ceil((data.meta.total || 0) / (data.meta.pageSize || pageSize)))
+        };
       } else {
-        reservasNano.set(data);
+        // Fallback si no viene meta del servidor
+        const total = Array.isArray(reservasData) ? reservasData.length : 0;
+        metaData = {
+          total,
+          page,
+          pageSize,
+          totalPages: Math.max(1, Math.ceil(total / pageSize)),
+        };
       }
-      return data;
-    } else {
-      console.log("Error al obtener los datos de la reserva");
-      return null;
+
+      reservasNano.set(Array.isArray(reservasData) ? reservasData : []);
+      reservasMeta.set(metaData);
+
+      return { data: reservasNano.get(), meta: metaData };
     }
+
+      console.log("Error al obtener los datos de la reserva");
+    return { data: [], meta: null };
   } catch (error) {
     console.log("Error en la peticion obtener reservas:", error);
-    return null;
+    return { data: [], meta: null };
   }
 };
 
-export const getReservasServer = async (token, role) => {
+export const getReservasServer = async (token, role, page = 1, pageSize = 25) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   
   const getUrl = (role) => {
@@ -129,7 +156,11 @@ export const getReservasServer = async (token, role) => {
   };
 
   try {
-    const response = await fetch(getUrl(role), {
+    const urlBase = getUrl(role);
+    const separator = urlBase.includes("?") ? "&" : "?";
+    const urlWithPagination = `${urlBase}${separator}page=${page}&pageSize=${pageSize}`;
+    
+    const response = await fetch(urlWithPagination, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -142,9 +173,200 @@ export const getReservasServer = async (token, role) => {
     }
 
     const data = await response.json();
-    return data.reservas || data;
+    // Manejar la nueva estructura paginada: {data: [...], meta: {...}}
+    const reservasData = data?.data ?? data?.reservas ?? (Array.isArray(data) ? data : []);
+    const metaData = data?.meta ?? null;
+    
+    return {
+      data: Array.isArray(reservasData) ? reservasData : [],
+      meta: metaData
+    };
   } catch (error) {
     console.error("Error servidor:", error);
     return null;
   }
+};
+
+// Función auxiliar para buscar una reserva específica usando el endpoint de búsqueda por código
+// Esto es mucho más eficiente que iterar por todas las páginas
+export const getReservaByIdServer = async (token, role, reservaChatbotId) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const url = `${URL}/agencias/v1/reservas/buscar/chatbot-id?reservaChatbotId=${encodeURIComponent(reservaChatbotId)}`;
+  
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      // Si el endpoint de búsqueda falla, intentar búsqueda por páginas como fallback
+      // pero limitando a las primeras 10 páginas para evitar sobrecarga
+      console.log("Búsqueda por código falló, intentando búsqueda por páginas (limitada)...");
+      return await getReservaByIdServerFallback(token, role, reservaChatbotId);
+    }
+
+    const responseData = await response.json();
+    
+    // Extraer la reserva de la respuesta
+    let reserva = null;
+    if (responseData?.data) {
+      if (Array.isArray(responseData.data)) {
+        reserva = responseData.data.find((r) => r.reservaChatbotId == reservaChatbotId) || responseData.data[0];
+      } else {
+        reserva = responseData.data;
+      }
+    } else if (responseData) {
+      reserva = responseData;
+    }
+    
+    return reserva;
+  } catch (error) {
+    console.error("Error al buscar reserva por código:", error);
+    // Fallback a búsqueda por páginas limitada
+    return await getReservaByIdServerFallback(token, role, reservaChatbotId);
+  }
+};
+
+// Función de fallback que busca en las primeras páginas (limitada para evitar sobrecarga)
+const getReservaByIdServerFallback = async (token, role, reservaChatbotId) => {
+  const MAX_PAGES_TO_SEARCH = 10; // Limitar a las primeras 10 páginas
+  const pageSize = 25;
+  
+  for (let page = 1; page <= MAX_PAGES_TO_SEARCH; page++) {
+    const result = await getReservasServer(token, role, page, pageSize);
+    
+    if (!result || !result.data || result.data.length === 0) {
+      break;
+    }
+    
+    // Buscar la reserva en la página actual
+    const reserva = result.data.find((dato) => dato.reservaChatbotId == reservaChatbotId);
+    if (reserva) {
+      return reserva;
+    }
+  }
+  
+  return null;
+};
+
+// Función auxiliar para procesar la respuesta de búsqueda y extraer datos
+const extraerDatosDeRespuesta = (responseData) => {
+  let reservasData = [];
+  
+  if (responseData?.data) {
+    // Si data existe, verificar si es un array o un objeto único
+    if (Array.isArray(responseData.data)) {
+      reservasData = responseData.data;
+    } else {
+      // Si es un objeto único, convertirlo a array
+      reservasData = [responseData.data];
+    }
+  } else if (Array.isArray(responseData)) {
+    reservasData = responseData;
+  } else if (responseData) {
+    // Si responseData es un objeto directo, convertirlo a array
+    reservasData = [responseData];
+  }
+  
+  return reservasData;
+};
+
+// Función genérica para buscar UNA página específica (lazy loading)
+const buscarUnaPagina = async (urlBase, accessToken, refreshTokenFn, pageNum = 1, pageSize = 15) => {
+  const fetchBusqueda = async (accessToken, pageNum) => {
+    const separator = urlBase.includes("?") ? "&" : "?";
+    const url = `${urlBase}${separator}page=${pageNum}&pageSize=${pageSize}`;
+    
+    const myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${accessToken}`);
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: myHeaders,
+    });
+    return response;
+  };
+
+  try {
+    let response = await fetchBusqueda(accessToken, pageNum);
+
+    if (response.status === 401) {
+      const newToken = await refreshTokenFn();
+      if (newToken) {
+        accessToken = newToken;
+        response = await fetchBusqueda(accessToken, pageNum);
+      }
+    }
+
+    if (!response.ok) {
+      console.log("Error en la búsqueda");
+      return { data: [], meta: null, page: pageNum };
+    }
+
+    const responseData = await response.json();
+    const pageData = extraerDatosDeRespuesta(responseData);
+    
+    // Obtener metadata
+    let metaData = null;
+    if (responseData?.meta) {
+      const total = responseData.meta.total || 0;
+      const pageSizeFromServer = responseData.meta.pageSize || pageSize;
+      const totalPages = Math.max(1, Math.ceil(total / pageSizeFromServer));
+      
+      metaData = {
+        total: total,
+        page: pageNum,
+        pageSize: pageSizeFromServer,
+        totalPages: totalPages,
+      };
+    } else {
+      metaData = {
+        total: pageData.length,
+        page: pageNum,
+        pageSize: pageSize,
+        totalPages: 1,
+      };
+    }
+
+    // Actualizar stores con la página actual
+    reservasNano.set(pageData);
+    reservasMeta.set(metaData);
+    
+    return { 
+      data: pageData, 
+      meta: metaData,
+      page: pageNum 
+    };
+  } catch (error) {
+    console.log("Error en la búsqueda:", error);
+    return { data: [], meta: null, page: pageNum };
+  }
+};
+
+// Función para buscar reservas por código de reserva (chatbot-id) - Lazy loading
+export const buscarReservaPorCodigo = async (reservaChatbotId, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const urlBase = `${URL}/agencias/v1/reservas/buscar/chatbot-id?reservaChatbotId=${encodeURIComponent(reservaChatbotId)}`;
+  
+  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+};
+
+// Función para buscar reservas por nombre de huésped - Lazy loading
+export const buscarReservaPorHuesped = async (nombre, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const urlBase = `${URL}/agencias/v1/reservas/buscar/huesped?nombre=${encodeURIComponent(nombre)}`;
+  
+  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+};
+
+// Función para buscar reservas por nombre de agente - Lazy loading
+export const buscarReservaPorAgente = async (nombre, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const urlBase = `${URL}/agencias/v1/reservas/buscar/agente?nombre=${encodeURIComponent(nombre)}`;
+  
+  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
 };

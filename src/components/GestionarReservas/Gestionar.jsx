@@ -686,7 +686,7 @@ const Gestionar = ({ reservas }) => {
           doc.setTextColor(0, 0, 0);
 
           // Valores de habitaciones
-          reservas?.reservation.roomsData.forEach((dato) => {
+          (reservas?.reservation?.roomsData || []).forEach((dato) => {
             const precioIncrementado = dato.unitaryPrice * incremento;
             doc.text(
               `${habitaciones[dato.id].name}: ${reservas.reservation.currency == "USD"
@@ -853,7 +853,7 @@ const Gestionar = ({ reservas }) => {
             </div>
             <br />
             <div className={styles.habitaciones}>
-              {reservas?.reservation.roomsData.map((dato, index) => (
+              {(reservas?.reservation?.roomsData || []).map((dato, index) => (
                 <div className={styles.cardHabi} key={index}>
                   <div className={styles.contenHabi}>
                     <div className={styles.imgHabi}>
@@ -1315,7 +1315,7 @@ const Gestionar = ({ reservas }) => {
                 </p>
               </div>
             </div>
-            {reservas?.reservation.roomsData.map((dato, index) => (
+            {(reservas?.reservation?.roomsData || []).map((dato, index) => (
               <div className={styles.cardHabitacionesPago} key={index}>
                 <p>Habitación {contador++}:</p>
                 {/* <p>{primerPlan}</p> */}

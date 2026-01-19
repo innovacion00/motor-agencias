@@ -1,46 +1,221 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styles from "./styles/tabla.module.css";
-import { getReservas, reservasNano } from "../../stores/disponibilidad";
+  import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente } from "../../stores/disponibilidad";
 import { format } from "@formkit/tempo";
-import { Calendar } from "react-date-range";
-import "react-date-range/dist/styles.css";
-import "react-date-range/dist/theme/default.css";
 
 const Tabla = () => {
   const [reservas, setReservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("codigo"); // Tipo de búsqueda: "codigo", "agente", "huesped", "agencia"
   const [filteredReservas, setFilteredReservas] = useState([]); //Filtro por agencia, hotel, huésped o código
-  const [currentPage, setCurrentPage] = useState(1); // Página actual
-  const [itemsPerPage] = useState(15); // Número de elementos por página
+  const [currentPage, setCurrentPage] = useState(1); // Página actual (servidor)
+  const [itemsPerPage] = useState(15); // Máximo 15 reservas por página
   const [selectedStatus, setselectedStatus] = useState("all"); //Filtro por estado
   const [isLoading, setIsLoading] = useState(true);
-  const [showDateFilter, setShowDateFilter] = useState(false);
-  const [dateFilter, setDateFilter] = useState(null);
-  const dateFilterRef = useRef(null);
+  const [paginationMeta, setPaginationMeta] = useState({
+    total: 0,
+    page: 1,
+    pageSize: 15,
+    totalPages: 1,
+  });
+  const [userRole, setUserRole] = useState(null);
+  const [hasActiveSearch, setHasActiveSearch] = useState(false); // Indica si hay una búsqueda activa
+  const [searchCache, setSearchCache] = useState(new Map()); // Caché local: { page: [reservas] }
+  const [currentSearchTerm, setCurrentSearchTerm] = useState(""); // Término de búsqueda actual
+  const [currentSearchType, setCurrentSearchType] = useState(""); // Tipo de búsqueda actual
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    ObtenerReservas(datosUsuario.accessToken, datosUsuario.role[0]);
+    setUserRole(datosUsuario.role[0]);
     setTokenUrl(datosUsuario.accessToken);
+    
+    // Intentar restaurar el estado de la página desde sessionStorage
+    const savedPage = sessionStorage.getItem('reservasCurrentPage');
+    const savedSearchTerm = sessionStorage.getItem('reservasSearchTerm');
+    const savedSearchType = sessionStorage.getItem('reservasSearchType');
+    const savedHasSearch = sessionStorage.getItem('reservasHasActiveSearch') === 'true';
+    
+    if (savedHasSearch && savedSearchTerm && savedSearchType) {
+      // Si había una búsqueda activa, restaurarla y cargar la página guardada
+      setSearchTerm(savedSearchTerm);
+      setSearchType(savedSearchType);
+      setCurrentSearchTerm(savedSearchTerm);
+      setCurrentSearchType(savedSearchType);
+      setHasActiveSearch(true);
+      const pageToLoad = savedPage ? parseInt(savedPage) : 1;
+      setCurrentPage(pageToLoad);
+      
+      // Cargar la página de búsqueda guardada
+      setIsLoading(true);
+      const loadSavedSearch = async () => {
+        try {
+          let result;
+          if (savedSearchType === "codigo") {
+            result = await buscarReservaPorCodigo(savedSearchTerm, pageToLoad);
+          } else if (savedSearchType === "huesped") {
+            result = await buscarReservaPorHuesped(savedSearchTerm, pageToLoad);
+          } else if (savedSearchType === "agente") {
+            result = await buscarReservaPorAgente(savedSearchTerm, pageToLoad);
+          }
+          
+          if (result) {
+            const reservasArray = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : []);
+            const newCache = new Map();
+            newCache.set(pageToLoad, reservasArray);
+            setSearchCache(newCache);
+            setReservas(reservasArray);
+            setFilteredReservas(reservasArray);
+            if (result.meta) {
+              setPaginationMeta(result.meta);
+            }
+          }
+        } catch (error) {
+          console.error("Error al restaurar búsqueda:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      loadSavedSearch();
+    } else {
+      // Si no hay búsqueda activa, cargar la página guardada o la página 1
+      const pageToLoad = savedPage ? parseInt(savedPage) : 1;
+      setCurrentPage(pageToLoad);
+      ObtenerReservas(datosUsuario.role[0], pageToLoad);
+    }
   }, []);
-
-  // useEffect para manejar clicks fuera del selector de fechas
+  
+  // Guardar el estado de la página en sessionStorage cuando cambia
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        dateFilterRef.current &&
-        !dateFilterRef.current.contains(event.target)
-      ) {
-        setShowDateFilter(false);
-      }
-    };
+    if (currentPage && !hasActiveSearch) {
+      sessionStorage.setItem('reservasCurrentPage', currentPage.toString());
+    }
+  }, [currentPage, hasActiveSearch]);
+  
+  // Guardar el estado de búsqueda en sessionStorage
+  useEffect(() => {
+    if (hasActiveSearch && currentSearchTerm) {
+      sessionStorage.setItem('reservasSearchTerm', currentSearchTerm);
+      sessionStorage.setItem('reservasSearchType', currentSearchType);
+      sessionStorage.setItem('reservasHasActiveSearch', 'true');
+      sessionStorage.setItem('reservasCurrentPage', currentPage.toString());
+    } else {
+      sessionStorage.removeItem('reservasSearchTerm');
+      sessionStorage.removeItem('reservasSearchType');
+      sessionStorage.removeItem('reservasHasActiveSearch');
+    }
+  }, [hasActiveSearch, currentSearchTerm, currentSearchType, currentPage]);
 
-    document.addEventListener("mousedown", handleOutsideClick);
+  // Función reutilizable para ejecutar la búsqueda (usando useCallback para evitar recreaciones)
+  const ejecutarBusqueda = useCallback(async (termino, tipo) => {
+    if (!termino.trim()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Limpiar caché cuando se hace una nueva búsqueda
+      setSearchCache(new Map());
+      setCurrentSearchTerm(termino.trim());
+      setCurrentSearchType(tipo);
+      setCurrentPage(1);
+
+      let result;
+      if (tipo === "codigo") {
+        // Búsqueda por código de reserva - Lazy loading (solo página 1)
+        result = await buscarReservaPorCodigo(termino.trim(), 1);
+      } else if (tipo === "huesped") {
+        // Búsqueda por nombre de huésped - Lazy loading (solo página 1)
+        result = await buscarReservaPorHuesped(termino.trim(), 1);
+      } else if (tipo === "agente") {
+        // Búsqueda por nombre de agente - Lazy loading (solo página 1)
+        result = await buscarReservaPorAgente(termino.trim(), 1);
+      } else {
+        setIsLoading(false);
+        return;
+      }
+
+      // Procesar resultado y filtrar solo objetos válidos con estructura completa
+      let reservasArray = [];
+      if (Array.isArray(result.data)) {
+        reservasArray = result.data.filter(dato => dato && dato.reservation && dato.reservation.checkin && dato.reservation.checkout);
+      } else if (result.data && result.data.reservation && result.data.reservation.checkin && result.data.reservation.checkout) {
+        reservasArray = [result.data];
+      }
+      
+      // Guardar en caché local
+      const newCache = new Map();
+      newCache.set(1, reservasArray);
+      setSearchCache(newCache);
+      
+      setReservas(reservasArray);
+      setFilteredReservas(reservasArray);
+      setHasActiveSearch(true);
+      
+      // Actualizar metadata con el total real de reservas válidas
+      if (result.meta) {
+        setPaginationMeta({
+          ...result.meta,
+          total: reservasArray.length,
+          totalPages: Math.max(1, Math.ceil(reservasArray.length / (result.meta.pageSize || 15)))
+        });
+      } else {
+        setPaginationMeta({
+          total: reservasArray.length,
+          page: 1,
+          pageSize: 15,
+          totalPages: Math.max(1, Math.ceil(reservasArray.length / 15))
+        });
+      }
+      setCurrentPage(1);
+    } catch (error) {
+      console.error("Error en la búsqueda:", error);
+      setReservas([]);
+      setFilteredReservas([]);
+      setHasActiveSearch(false);
+      setPaginationMeta({
+        total: 0,
+        page: 1,
+        pageSize: 15,
+        totalPages: 1
+      });
+      setCurrentPage(1);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []); // Sin dependencias ya que usa funciones estables
+
+  // useEffect para búsqueda automática con debounce (2.5 segundos)
+  useEffect(() => {
+    // Si no hay término de búsqueda, no hacer nada
+    if (!searchTerm.trim()) {
+      // Si se limpia el campo y había una búsqueda activa, recargar todas las reservas
+      if (hasActiveSearch && userRole) {
+        setHasActiveSearch(false);
+        setCurrentSearchTerm("");
+        setCurrentSearchType("");
+        setSearchCache(new Map());
+        setCurrentPage(1);
+        ObtenerReservas(userRole, 1);
+      }
+      return;
+    }
+
+    // Si no hay tipo de búsqueda válido, no hacer nada
+    if (!searchType || (searchType !== "codigo" && searchType !== "huesped" && searchType !== "agente")) {
+      return;
+    }
+
+    // Configurar el timeout de 2.5 segundos
+    const debounceTimer = setTimeout(() => {
+      ejecutarBusqueda(searchTerm, searchType);
+    }, 2500); // 2.5 segundos de delay
+
+    // Limpiar el timeout si el usuario sigue escribiendo o cambia el tipo
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      clearTimeout(debounceTimer);
     };
-  }, []);
+  }, [searchTerm, searchType, ejecutarBusqueda, hasActiveSearch, userRole]); // Dependencias del useEffect
 
   const SkeletonRow = () => (
     <tr style={{ borderBottom: "1px solid #eee" }}>
@@ -60,22 +235,43 @@ const Tabla = () => {
     </tr>
   );
 
-  const ObtenerReservas = async (token, nombreAgencia) => {
+  const ObtenerReservas = async (role, page = 1) => {
     setIsLoading(true);
     try {
-      await getReservas(nombreAgencia);
-      const reservasObtenidas = reservasNano.get();
+      const { data, meta } = await getReservas(role, page, itemsPerPage);
+      const reservasObtenidas = data ?? reservasNano.get();
+      
       setReservas(reservasObtenidas);
       setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
+      
+      // Si meta viene del servidor, usarla; si no, calcular fallback
+      const finalMeta = meta || {
+        total: reservasObtenidas?.length || 0,
+        page,
+        pageSize: itemsPerPage,
+        totalPages: Math.max(
+          1,
+          Math.ceil((reservasObtenidas?.length || 0) / itemsPerPage)
+        ),
+      };
+      
+      setPaginationMeta(finalMeta);
+      setCurrentPage(finalMeta.page || page);
+      
+      // Mostrar información de la página actual
+      console.log(`Página ${finalMeta.page || page} de ${finalMeta.totalPages || 1} - ${reservasObtenidas?.length || 0} reservas`);
     } finally {
       setIsLoading(false);
     }
   };
-  console.log(filteredReservas);
+  console.log("Reservas filtradas:", filteredReservas);
   // Calcular la suma total de "Valor a pagar"
-  const totalAmount = filteredReservas.reduce((acc, reserva) => {
-    return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
-  }, 0);
+  // Asegurarse de que filteredReservas sea un array antes de usar reduce
+  const totalAmount = Array.isArray(filteredReservas) 
+    ? filteredReservas.reduce((acc, reserva) => {
+        return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
+      }, 0)
+    : 0;
 
   const formatCurrency = (value) => {
     if (!value || isNaN(value)) return "$$$";
@@ -87,13 +283,112 @@ const Tabla = () => {
     }).format(value);
   };
 
-  const handleSearch = (event) => {
-    const searchValue = event.target.value.toLowerCase();
-    setSearchTerm(searchValue);
-    applyFilters(searchValue, selectedStatus, dateFilter);
+  const handleSearchTypeChange = (event) => {
+    setSearchType(event.target.value);
+    // Limpiar búsqueda cuando cambia el tipo, pero NO hacer consulta automática
+    setSearchTerm("");
+    // Limpiar el estado de búsqueda activa
+    setHasActiveSearch(false);
+    setCurrentSearchTerm("");
+    setCurrentSearchType("");
+    setSearchCache(new Map());
+    // NO hacer consulta al endpoint hasta que el usuario presione el botón de buscar
   };
 
-  const applyFilters = (searchTerm = "", status = "all", selectedDate = null) => {
+  const handleSearchInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = async (event) => {
+    event.preventDefault();
+    
+    if (!searchTerm.trim()) {
+      // Si no hay término de búsqueda, recargar todas las reservas
+      if (userRole) {
+        setHasActiveSearch(false);
+        setCurrentSearchTerm("");
+        setCurrentSearchType("");
+        setSearchCache(new Map());
+        setCurrentPage(1);
+        ObtenerReservas(userRole, 1);
+      }
+      return;
+    }
+
+    // Si el usuario presiona el botón, ejecutar búsqueda inmediata (sin esperar el debounce)
+    await ejecutarBusqueda(searchTerm, searchType);
+  };
+
+  // Función para cargar una página específica cuando el usuario navega (lazy loading)
+  const cargarPaginaBusqueda = async (pageNumber) => {
+    if (!currentSearchTerm || !currentSearchType) return;
+    
+    // Verificar si la página ya está en caché
+    if (searchCache.has(pageNumber)) {
+      const cachedReservas = searchCache.get(pageNumber);
+      setFilteredReservas(cachedReservas);
+      setCurrentPage(pageNumber);
+      return;
+    }
+    
+    // Si no está en caché, cargarla del servidor
+    setIsLoading(true);
+    try {
+      let result;
+      if (currentSearchType === "codigo") {
+        result = await buscarReservaPorCodigo(currentSearchTerm, pageNumber);
+      } else if (currentSearchType === "huesped") {
+        result = await buscarReservaPorHuesped(currentSearchTerm, pageNumber);
+      } else if (currentSearchType === "agente") {
+        result = await buscarReservaPorAgente(currentSearchTerm, pageNumber);
+      } else {
+        setIsLoading(false);
+        return;
+      }
+
+      const reservasArray = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : []);
+      
+      // Guardar en caché
+      const newCache = new Map(searchCache);
+      newCache.set(pageNumber, reservasArray);
+      setSearchCache(newCache);
+      
+      setFilteredReservas(reservasArray);
+      if (result.meta) {
+        setPaginationMeta(result.meta);
+      }
+      setCurrentPage(pageNumber);
+    } catch (error) {
+      console.error("Error al cargar página:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSearchClear = () => {
+    setSearchTerm("");
+    setCurrentSearchTerm("");
+    setCurrentSearchType("");
+    setSearchCache(new Map());
+    setHasActiveSearch(false);
+    if (userRole) {
+      setCurrentPage(1);
+      ObtenerReservas(userRole, 1);
+    }
+  };
+
+  const applyFilters = (searchTerm = "", status = "all") => {
+    // Si no hay filtros activos, recargar desde el servidor
+    const hasFilters = !!(searchTerm || status !== "all");
+    
+    if (!hasFilters && userRole) {
+      // Limpiar filtros: volver a cargar página 1 del servidor
+      setCurrentPage(1);
+      ObtenerReservas(userRole, 1);
+      return;
+    }
+
+    // Aplicar filtros del cliente sobre las reservas actuales
     let filtered = reservas;
 
     // Filtro por texto de búsqueda
@@ -113,23 +408,6 @@ const Tabla = () => {
       filtered = filtered.filter((reserva) => reserva.status.toString() === status);
     }
 
-    // Filtro por fecha de check-in específica (comparación segura por zona horaria)
-    if (selectedDate) {
-      const formatDateLocal = (date) => {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, "0");
-        const d = String(date.getDate()).padStart(2, "0");
-        return `${y}-${m}-${d}`;
-      };
-
-      const selectedLocal = formatDateLocal(new Date(selectedDate));
-
-      filtered = filtered.filter((reserva) => {
-        const checkinStr = reserva?.reservation?.checkin; // ya viene como YYYY-MM-DD
-        return checkinStr === selectedLocal;
-      });
-    }
-
     setFilteredReservas(filtered);
     setCurrentPage(1);
   };
@@ -138,33 +416,130 @@ const Tabla = () => {
 
   const handleStatusFilter = (status) => {
     setselectedStatus(status);
-    applyFilters(searchTerm, status, dateFilter);
+    applyFilters(searchTerm, status);
   };
 
-  const handleDateChange = (date) => {
-    setDateFilter(date);
-    applyFilters(searchTerm, selectedStatus, date);
-  };
-
-  const clearDateFilter = () => {
-    setDateFilter(null);
-    applyFilters(searchTerm, selectedStatus, null);
-  };
-
-  // Cálculo de los índices de elementos para la paginación
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredReservas.slice(
-    indexOfFirstItem,
-    indexOfLastItem
+  const isUsingFilters = !!(
+    searchTerm ||
+    selectedStatus !== "all"
   );
+  
+  // Determinar si debemos usar paginación del cliente
+  // NOTA: Con lazy loading, las búsquedas usan paginación del servidor, no del cliente
+  const useClientPagination = !hasActiveSearch && isUsingFilters;
+  
+  // Cuando hay búsqueda activa, usar metadata del servidor
+  // Cuando hay filtros locales (sin búsqueda), usar datos del cliente
+  // Cuando no hay filtros, usar paginación del servidor
+  const totalReservations = hasActiveSearch
+    ? (paginationMeta.total || 0)
+    : useClientPagination
+    ? (Array.isArray(filteredReservas) ? filteredReservas.length : 0)
+    : paginationMeta.total || 0;
+  
+  // Calcular totalPages basándose en el total del servidor o del cliente
+  const calculateEffectiveTotalPages = () => {
+    // Si hay búsqueda activa, usar metadata del servidor (lazy loading)
+    if (hasActiveSearch) {
+      const total = paginationMeta.total || 0;
+      const pageSize = paginationMeta.pageSize || itemsPerPage;
+      return Math.max(1, Math.ceil(total / pageSize));
+    }
+    
+    // Si hay filtros locales (sin búsqueda), usar paginación del cliente
+    if (useClientPagination) {
+      const filteredLength = Array.isArray(filteredReservas) ? filteredReservas.length : 0;
+      return Math.max(
+        1,
+        Math.ceil(
+          filteredLength / itemsPerPage
+        )
+      );
+    }
+    
+    // Sin filtros: recalcular totalPages basándose en el total que viene del servidor
+    const total = paginationMeta.total || 0;
+    const pageSize = paginationMeta.pageSize || itemsPerPage;
+    const calculatedTotalPages = Math.max(1, Math.ceil(total / pageSize));
+    
+    return calculatedTotalPages;
+  };
+  
+  const effectiveTotalPages = calculateEffectiveTotalPages();
+  
+  // Con lazy loading, filteredReservas ya contiene solo la página actual para búsquedas
+  // Para filtros locales, necesitamos paginar del lado del cliente
+  const getPaginatedReservas = () => {
+    // Si hay búsqueda activa, filteredReservas ya está paginado por el servidor
+    if (hasActiveSearch) {
+      return filteredReservas;
+    }
+    
+    // Si hay filtros locales, paginar del lado del cliente
+    if (useClientPagination && Array.isArray(filteredReservas)) {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      return filteredReservas.slice(startIndex, endIndex);
+    }
+    
+    // Sin filtros ni búsqueda, usar directamente filteredReservas
+    return filteredReservas;
+  };
+  
+  const paginatedReservasRaw = getPaginatedReservas();
+  
+  // Filtrar solo reservas válidas con estructura completa antes de renderizar
+  const paginatedReservas = Array.isArray(paginatedReservasRaw) 
+    ? paginatedReservasRaw.filter(dato => 
+        dato && 
+        dato.reservation && 
+        dato.reservation.checkin && 
+        dato.reservation.checkout
+      )
+    : [];
+  
+  // Efecto para manejar cuando el servidor devuelve datos vacíos en una página inválida
+  useEffect(() => {
+    const filteredLength = Array.isArray(filteredReservas) ? filteredReservas.length : 0;
+    if (!useClientPagination && filteredLength === 0 && currentPage > effectiveTotalPages && effectiveTotalPages > 0 && userRole) {
+      setCurrentPage(effectiveTotalPages);
+      ObtenerReservas(userRole, effectiveTotalPages);
+    }
+  }, [filteredReservas, currentPage, effectiveTotalPages, useClientPagination, userRole]);
+  
+  const pageNumbers = [...Array(effectiveTotalPages).keys()].map((i) => i + 1);
 
   // Cambio de página
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Generación de números de página
-  const totalPages = Math.ceil(filteredReservas.length / itemsPerPage);
-  const pageNumbers = [...Array(totalPages).keys()].map((i) => i + 1);
+  const paginate = (pageNumber) => {
+    if (!userRole) return;
+    
+    // Si hay búsqueda activa, usar lazy loading (cargar página del servidor)
+    if (hasActiveSearch && currentSearchTerm) {
+      if (pageNumber < 1 || pageNumber > effectiveTotalPages) return;
+      cargarPaginaBusqueda(pageNumber);
+      return;
+    }
+    
+    // Si hay filtros locales (pero no búsqueda), usar paginación del cliente
+    if (useClientPagination) {
+      if (pageNumber < 1 || pageNumber > effectiveTotalPages) return;
+      setCurrentPage(pageNumber);
+      // Con filtros locales, no necesitamos hacer petición al servidor
+      return;
+    }
+    
+    // Si no hay filtros ni búsqueda, usar paginación del servidor normal
+    if (pageNumber < 1) return;
+    
+    // Si intentamos ir más allá de lo que el servidor dice, intentar de todas formas
+    // pero solo hasta un límite razonable (por ejemplo, 10 páginas)
+    if (pageNumber > effectiveTotalPages && pageNumber > 10) {
+      return;
+    }
+    
+    setCurrentPage(pageNumber);
+    ObtenerReservas(userRole, pageNumber);
+  };
 
   /*
   ? 0 Pendiente de pago
@@ -189,54 +564,51 @@ const Tabla = () => {
       <h1>Consultar mis reservas</h1>
       <br />
       <div className={styles.containerfilters}>
-      {/* Filtro de búsqueda */}
-      <div className={styles.filters}>
+      {/* Filtro de búsqueda con selector de tipo */}
+      <form onSubmit={handleSearchSubmit} className={styles.filters}>
+        <select
+          value={searchType}
+          onChange={handleSearchTypeChange}
+          className={styles.searchTypeSelect}
+        >
+          <option value="codigo">Código de reserva</option>
+          <option value="huesped">Nombre de huésped</option>
+          <option value="agente">Nombre de agente</option>
+          {/* Se agregarán más opciones cuando se proporcionen los endpoints */}
+        </select>
         <input
           type="text"
-          placeholder="Buscar por agencia, hotel, huésped o código..."
+          placeholder={
+            searchType === "codigo"
+              ? "Ingrese el código de reserva..."
+              : searchType === "huesped"
+              ? "Ingrese el nombre del huésped..."
+              : searchType === "agente"
+              ? "Ingrese el nombre del agente..."
+              : "Ingrese el término de búsqueda..."
+          }
           value={searchTerm}
-          onChange={handleSearch}
+          onChange={handleSearchInputChange}
           className={styles.searchInput}
         />
-      </div>
-
-      {/* Filtro por fecha de check-in */}
-      <div className={styles.dateFilterContainer} ref={dateFilterRef}>
-        <div className={styles.dateFilterInput}>
-          <input
-            type="text"
-            placeholder="Ingrese la fecha de check-in"
-            value={dateFilter ? `${dateFilter.getFullYear()}-${String(dateFilter.getMonth()+1).padStart(2,"0")}-${String(dateFilter.getDate()).padStart(2,"0")}` : ""}
-            onFocus={() => setShowDateFilter(true)}
-            readOnly
-            className={styles.dateFilterInputField}
-          />
+        <button
+          type="submit"
+          className={styles.searchButton}
+          disabled={isLoading}
+        >
+          {isLoading ? "Buscando..." : "Buscar"}
+        </button>
+        {searchTerm && (
           <button
-            onClick={clearDateFilter}
-            className={styles.clearDateButton}
-            title="Limpiar filtro de fecha"
-            disabled={!dateFilter}
+            type="button"
+            onClick={handleSearchClear}
+            className={styles.clearSearchButton}
+            title="Limpiar búsqueda"
           >
             ✕
           </button>
-        </div>
-
-        {showDateFilter && (
-          <div className={styles.dateRangePicker}>
-            <Calendar
-              date={dateFilter || new Date()}
-              onChange={handleDateChange}
-            />
-            <button
-              onClick={() => setShowDateFilter(false)}
-              className={styles.confirmDateButton}
-            >
-              Confirmar selección
-            </button>
-          </div>
         )}
-      </div>
-
+      </form>
       </div>
       
       <div className={styles.statusFilter}>
@@ -303,12 +675,22 @@ const Tabla = () => {
         </thead>
         <tbody>
           {isLoading ? (
-            // Mostrar 15 filas de skeleton loader
-            [...Array(15)].map((_, index) => <SkeletonRow key={index} />)
+            // Mostrar skeleton loader del tamaño de la página
+            [...Array(paginationMeta.pageSize || itemsPerPage)].map((_, index) => (
+              <SkeletonRow key={index} />
+            ))
+          ) : paginatedReservas.length === 0 ? (
+            <tr>
+              <td colSpan="12" style={{ textAlign: "center", padding: "2rem" }}>
+                <p style={{ fontSize: "1.1rem", color: "#666" }}>
+                  No se encontraron reservas con los criterios de búsqueda especificados.
+                </p>
+              </td>
+            </tr>
           ) : (
             <>
-              {currentItems.map((dato, index) => (
-                <tr key={index}>
+              {paginatedReservas.map((dato, index) => (
+                <tr key={dato._id || dato.reservaChatbotId || index}>
                   <td>
                     {format(dato.createdAt, "h:mm a DD/MM/YYYY ", "es")}
                   </td>{""}
@@ -456,7 +838,7 @@ const Tabla = () => {
                 <td colSpan="1" style={{ textAlign: "left", fontWeight: "bold" }}>
                   Total de reservas realizadas:
                 </td>
-                <td style={{ fontWeight: "bold" }}>{filteredReservas.length}</td>
+                <td style={{ fontWeight: "bold" }}>{totalReservations}</td>
                 <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
                   Total:
                 </td>
@@ -485,7 +867,7 @@ const Tabla = () => {
             .filter(
               (number) =>
                 number === 1 || // Siempre muestra la primera página
-                number === totalPages || // Siempre muestra la última página
+                number === effectiveTotalPages || // Siempre muestra la última página
                 (number >= currentPage - 2 && number <= currentPage + 2) // Muestra un rango de 5 páginas alrededor de la actual
             )
             .map((number, index, filtered) => (
@@ -510,7 +892,7 @@ const Tabla = () => {
 
           <button
             onClick={() => paginate(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === effectiveTotalPages}
             className={styles.pageNav}
           >
             &raquo; {/* Símbolo para "siguiente" */}

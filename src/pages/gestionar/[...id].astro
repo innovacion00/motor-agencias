@@ -2,7 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Gestionar from "../../components/GestionarReservas/Gestionar";
 import CurrencySelector from "../../components/Cambiardivisas";
-import { getReservasServer } from "../../stores/disponibilidad";
+import { getReservaByIdServer } from "../../stores/disponibilidad";
 
 export const prerender = false;
 
@@ -16,15 +16,10 @@ if (!cookieToken || !cookieUser) {
 }
 
 const userData = JSON.parse(cookieUser.value);
-const reservas = await getReservasServer(cookieToken.value, userData.role);
-
-// Si no hay reservas o hubo error, redirigir
-if (!reservas) {
-  return Astro.redirect("/login");
-}
-
 const { id } = Astro.params;
-const reserva = reservas.find((dato) => dato.reservaChatbotId == id);
+
+// Buscar la reserva específica por ID (busca en todas las páginas si es necesario)
+const reserva = await getReservaByIdServer(cookieToken.value, userData.role, id);
 
 // Si no se encuentra la reserva específica, redirigir
 if (!reserva) {
