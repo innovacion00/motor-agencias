@@ -370,3 +370,11 @@ export const buscarReservaPorAgente = async (nombre, page = 1) => {
   
   return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
 };
+
+// Función para buscar reservas por hotel - Lazy loading
+export const buscarReservaPorHotel = async (hotel, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const urlBase = `${URL}/agencias/v1/reservas?hotel=${encodeURIComponent(hotel)}`;
+  
+  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+};

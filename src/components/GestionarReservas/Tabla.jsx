@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./styles/tabla.module.css";
-  import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente } from "../../stores/disponibilidad";
+  import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente, buscarReservaPorHotel } from "../../stores/disponibilidad";
 import { format } from "@formkit/tempo";
 
 const Tabla = () => {
   const [reservas, setReservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchType, setSearchType] = useState("codigo"); // Tipo de búsqueda: "codigo", "agente", "huesped", "agencia"
+  const [searchType, setSearchType] = useState("codigo"); // Tipo de búsqueda: "codigo", "agente", "huesped", "hotel"
   const [filteredReservas, setFilteredReservas] = useState([]); //Filtro por agencia, hotel, huésped o código
   const [currentPage, setCurrentPage] = useState(1); // Página actual (servidor)
   const [itemsPerPage] = useState(15); // Máximo 15 reservas por página
@@ -57,6 +57,8 @@ const Tabla = () => {
             result = await buscarReservaPorHuesped(savedSearchTerm, pageToLoad);
           } else if (savedSearchType === "agente") {
             result = await buscarReservaPorAgente(savedSearchTerm, pageToLoad);
+          } else if (savedSearchType === "hotel") {
+            result = await buscarReservaPorHotel(savedSearchTerm, pageToLoad);
           }
           
           if (result) {
@@ -130,6 +132,9 @@ const Tabla = () => {
       } else if (tipo === "agente") {
         // Búsqueda por nombre de agente - Lazy loading (solo página 1)
         result = await buscarReservaPorAgente(termino.trim(), 1);
+      } else if (tipo === "hotel") {
+        // Búsqueda por nombre de hotel - Lazy loading (solo página 1)
+        result = await buscarReservaPorHotel(termino.trim(), 1);
       } else {
         setIsLoading(false);
         return;
@@ -152,14 +157,17 @@ const Tabla = () => {
       setFilteredReservas(reservasArray);
       setHasActiveSearch(true);
       
-      // Actualizar metadata con el total real de reservas válidas
+      // Actualizar metadata usando el total del servidor (no solo las reservas de la primera página)
       if (result.meta) {
+        const totalFromServer = result.meta.total || 0;
+        const pageSizeFromServer = result.meta.pageSize || 15;
         setPaginationMeta({
           ...result.meta,
-          total: reservasArray.length,
-          totalPages: Math.max(1, Math.ceil(reservasArray.length / (result.meta.pageSize || 15)))
+          total: totalFromServer, // Usar el total del servidor, no solo las reservas de la página actual
+          totalPages: Math.max(1, Math.ceil(totalFromServer / pageSizeFromServer))
         });
       } else {
+        // Fallback: si no hay metadata, usar el número de reservas de la primera página
         setPaginationMeta({
           total: reservasArray.length,
           page: 1,
@@ -186,6 +194,7 @@ const Tabla = () => {
   }, []); // Sin dependencias ya que usa funciones estables
 
   // useEffect para búsqueda automática con debounce (2.5 segundos)
+  // NOTA: La búsqueda por hotel NO tiene debounce automático, solo se ejecuta al presionar el botón
   useEffect(() => {
     // Si no hay término de búsqueda, no hacer nada
     if (!searchTerm.trim()) {
@@ -202,11 +211,17 @@ const Tabla = () => {
     }
 
     // Si no hay tipo de búsqueda válido, no hacer nada
-    if (!searchType || (searchType !== "codigo" && searchType !== "huesped" && searchType !== "agente")) {
+    if (!searchType || (searchType !== "codigo" && searchType !== "huesped" && searchType !== "agente" && searchType !== "hotel")) {
       return;
     }
 
-    // Configurar el timeout de 2.5 segundos
+    // Desactivar debounce automático para búsqueda por hotel
+    // La búsqueda por hotel solo se ejecuta cuando el usuario presiona el botón "Buscar"
+    if (searchType === "hotel") {
+      return;
+    }
+
+    // Configurar el timeout de 2.5 segundos solo para otros tipos de búsqueda
     const debounceTimer = setTimeout(() => {
       ejecutarBusqueda(searchTerm, searchType);
     }, 2500); // 2.5 segundos de delay
@@ -341,6 +356,8 @@ const Tabla = () => {
         result = await buscarReservaPorHuesped(currentSearchTerm, pageNumber);
       } else if (currentSearchType === "agente") {
         result = await buscarReservaPorAgente(currentSearchTerm, pageNumber);
+      } else if (currentSearchType === "hotel") {
+        result = await buscarReservaPorHotel(currentSearchTerm, pageNumber);
       } else {
         setIsLoading(false);
         return;
@@ -574,6 +591,7 @@ const Tabla = () => {
           <option value="codigo">Código de reserva</option>
           <option value="huesped">Nombre de huésped</option>
           <option value="agente">Nombre de agente</option>
+          <option value="hotel">Hotel</option>
           {/* Se agregarán más opciones cuando se proporcionen los endpoints */}
         </select>
         <input
@@ -585,6 +603,8 @@ const Tabla = () => {
               ? "Ingrese el nombre del huésped..."
               : searchType === "agente"
               ? "Ingrese el nombre del agente..."
+              : searchType === "hotel"
+              ? "Ingrese el nombre del hotel..."
               : "Ingrese el término de búsqueda..."
           }
           value={searchTerm}
