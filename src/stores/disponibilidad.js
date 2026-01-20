@@ -386,3 +386,39 @@ export const buscarReservaPorAgencia = async (nombreAgencia, page = 1) => {
   
   return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
 };
+
+// Función para buscar reservas por fecha desde - Lazy loading
+export const buscarReservaPorFecha = async (fechaDesde, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  
+  // Formatear la fecha como YYYY-MM-DD usando la zona horaria local
+  // Esto evita problemas con toISOString() que puede cambiar la fecha por la zona horaria
+  let fechaFormateada;
+  if (fechaDesde instanceof Date) {
+    const year = fechaDesde.getFullYear();
+    const month = String(fechaDesde.getMonth() + 1).padStart(2, '0');
+    const day = String(fechaDesde.getDate()).padStart(2, '0');
+    fechaFormateada = `${year}-${month}-${day}`;
+  } else {
+    fechaFormateada = fechaDesde;
+  }
+  
+  const urlBase = `${URL}/agencias/v1/reservas?fechaDesde=${encodeURIComponent(fechaFormateada)}`;
+  
+  console.log('🔍 Búsqueda por fecha - URL:', urlBase);
+  console.log('📅 Fecha formateada:', fechaFormateada);
+  
+  const result = await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+  
+  console.log('📦 Respuesta del endpoint (búsqueda por fecha):', {
+    url: urlBase,
+    fechaBuscada: fechaFormateada,
+    pagina: page,
+    totalResultados: result?.meta?.total || 0,
+    resultadosEnPagina: Array.isArray(result?.data) ? result.data.length : (result?.data ? 1 : 0),
+    data: result?.data,
+    meta: result?.meta
+  });
+  
+  return result;
+};

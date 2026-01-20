@@ -530,3 +530,93 @@ th {
     width: 100%;
   }
 }
+
+/* Estilos para el filtro de fecha */
+.dateFilterContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dateInput {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  background-color: white;
+}
+
+.dateInput:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+.dateInput::placeholder {
+  color: #666;
+  font-size: 14px;
+}
+
+.clearDateButton {
+  padding: 10px 12px;
+  background-color: #dc3546;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  min-width: 40px;
+}
+
+.clearDateButton:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 8px rgba(220, 53, 70, 0.3);
+  transform: translateY(-1px);
+}
+
+.clearDateButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 53, 70, 0.3);
+}
+
+.datePickerWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  margin-top: 5px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+}
+
+/* Responsive para el filtro de fecha */
+@media (max-width: 768px) {
+  .dateFilterContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .dateInput {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .clearDateButton {
+    width: 100%;
+  }
+  
+  .datePickerWrapper {
+    position: relative;
+    margin-top: 10px;
+  }
+}
