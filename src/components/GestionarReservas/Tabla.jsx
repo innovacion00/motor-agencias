@@ -1,18 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import styles from "./styles/tabla.module.css";
-  import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente, buscarReservaPorHotel } from "../../stores/disponibilidad";
+
+  import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente, buscarReservaPorHotel, buscarReservaPorAgencia } from "../../stores/disponibilidad";
 import { format } from "@formkit/tempo";
 
 const Tabla = () => {
   const [reservas, setReservas] = useState([]);
   const [tokenUrl, setTokenUrl] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+
   const [searchType, setSearchType] = useState("codigo"); // Tipo de búsqueda: "codigo", "agente", "huesped", "hotel"
   const [filteredReservas, setFilteredReservas] = useState([]); //Filtro por agencia, hotel, huésped o código
+
   const [currentPage, setCurrentPage] = useState(1); // Página actual (servidor)
   const [itemsPerPage] = useState(15); // Máximo 15 reservas por página
   const [selectedStatus, setselectedStatus] = useState("all"); //Filtro por estado
   const [isLoading, setIsLoading] = useState(true);
+
   const [paginationMeta, setPaginationMeta] = useState({
     total: 0,
     page: 1,
@@ -27,8 +31,10 @@ const Tabla = () => {
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
+
     setUserRole(datosUsuario.role[0]);
     setTokenUrl(datosUsuario.accessToken);
+
     
     // Intentar restaurar el estado de la página desde sessionStorage
     const savedPage = sessionStorage.getItem('reservasCurrentPage');
@@ -59,6 +65,8 @@ const Tabla = () => {
             result = await buscarReservaPorAgente(savedSearchTerm, pageToLoad);
           } else if (savedSearchType === "hotel") {
             result = await buscarReservaPorHotel(savedSearchTerm, pageToLoad);
+          } else if (savedSearchType === "agencia") {
+            result = await buscarReservaPorAgencia(savedSearchTerm, pageToLoad);
           }
           
           if (result) {
@@ -86,7 +94,8 @@ const Tabla = () => {
       ObtenerReservas(datosUsuario.role[0], pageToLoad);
     }
   }, []);
-  
+
+
   // Guardar el estado de la página en sessionStorage cuando cambia
   useEffect(() => {
     if (currentPage && !hasActiveSearch) {
@@ -135,6 +144,9 @@ const Tabla = () => {
       } else if (tipo === "hotel") {
         // Búsqueda por nombre de hotel - Lazy loading (solo página 1)
         result = await buscarReservaPorHotel(termino.trim(), 1);
+      } else if (tipo === "agencia") {
+        // Búsqueda por nombre de agencia - Lazy loading (solo página 1)
+        result = await buscarReservaPorAgencia(termino.trim(), 1);
       } else {
         setIsLoading(false);
         return;
@@ -196,6 +208,7 @@ const Tabla = () => {
   // useEffect para búsqueda automática con debounce (2.5 segundos)
   // NOTA: La búsqueda por hotel NO tiene debounce automático, solo se ejecuta al presionar el botón
   useEffect(() => {
+
     // Si no hay término de búsqueda, no hacer nada
     if (!searchTerm.trim()) {
       // Si se limpia el campo y había una búsqueda activa, recargar todas las reservas
@@ -211,7 +224,7 @@ const Tabla = () => {
     }
 
     // Si no hay tipo de búsqueda válido, no hacer nada
-    if (!searchType || (searchType !== "codigo" && searchType !== "huesped" && searchType !== "agente" && searchType !== "hotel")) {
+    if (!searchType || (searchType !== "codigo" && searchType !== "huesped" && searchType !== "agente" && searchType !== "hotel" && searchType !== "agencia")) {
       return;
     }
 
@@ -219,7 +232,8 @@ const Tabla = () => {
     // La búsqueda por hotel solo se ejecuta cuando el usuario presiona el botón "Buscar"
     if (searchType === "hotel") {
       return;
-    }
+      }
+
 
     // Configurar el timeout de 2.5 segundos solo para otros tipos de búsqueda
     const debounceTimer = setTimeout(() => {
@@ -228,8 +242,10 @@ const Tabla = () => {
 
     // Limpiar el timeout si el usuario sigue escribiendo o cambia el tipo
     return () => {
+
       clearTimeout(debounceTimer);
     };
+
   }, [searchTerm, searchType, ejecutarBusqueda, hasActiveSearch, userRole]); // Dependencias del useEffect
 
   const SkeletonRow = () => (
@@ -250,14 +266,17 @@ const Tabla = () => {
     </tr>
   );
 
+
   const ObtenerReservas = async (role, page = 1) => {
     setIsLoading(true);
     try {
+
       const { data, meta } = await getReservas(role, page, itemsPerPage);
       const reservasObtenidas = data ?? reservasNano.get();
       
       setReservas(reservasObtenidas);
       setFilteredReservas(reservasObtenidas); // Inicializar reservas filtradas
+
       
       // Si meta viene del servidor, usarla; si no, calcular fallback
       const finalMeta = meta || {
@@ -279,12 +298,15 @@ const Tabla = () => {
       setIsLoading(false);
     }
   };
+
   console.log("Reservas filtradas:", filteredReservas);
   // Calcular la suma total de "Valor a pagar"
+
   // Asegurarse de que filteredReservas sea un array antes de usar reduce
   const totalAmount = Array.isArray(filteredReservas) 
     ? filteredReservas.reduce((acc, reserva) => {
-        return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
+    return reserva.status != "4" ? acc + (reserva.total || 0) : acc;
+
       }, 0)
     : 0;
 
@@ -297,6 +319,7 @@ const Tabla = () => {
       minimumFractionDigits: 0,
     }).format(value);
   };
+
 
   const handleSearchTypeChange = (event) => {
     setSearchType(event.target.value);
@@ -311,13 +334,7 @@ const Tabla = () => {
   };
 
   const handleSearchInputChange = (event) => {
-    const value = event.target.value;
-    // Si el tipo de búsqueda es "codigo", forzar mayúsculas
-    if (searchType === "codigo") {
-      setSearchTerm(value.toUpperCase());
-    } else {
-      setSearchTerm(value);
-    }
+    setSearchTerm(event.target.value);
   };
 
   const handleSearchSubmit = async (event) => {
@@ -364,6 +381,8 @@ const Tabla = () => {
         result = await buscarReservaPorAgente(currentSearchTerm, pageNumber);
       } else if (currentSearchType === "hotel") {
         result = await buscarReservaPorHotel(currentSearchTerm, pageNumber);
+      } else if (currentSearchType === "agencia") {
+        result = await buscarReservaPorAgencia(currentSearchTerm, pageNumber);
       } else {
         setIsLoading(false);
         return;
@@ -399,6 +418,7 @@ const Tabla = () => {
       ObtenerReservas(userRole, 1);
     }
   };
+
 
   const applyFilters = (searchTerm = "", status = "all") => {
     // Si no hay filtros activos, recargar desde el servidor
@@ -439,8 +459,10 @@ const Tabla = () => {
 
   const handleStatusFilter = (status) => {
     setselectedStatus(status);
+
     applyFilters(searchTerm, status);
   };
+
 
   const isUsingFilters = !!(
     searchTerm ||
@@ -487,7 +509,8 @@ const Tabla = () => {
     
     return calculatedTotalPages;
   };
-  
+
+
   const effectiveTotalPages = calculateEffectiveTotalPages();
   
   // Con lazy loading, filteredReservas ya contiene solo la página actual para búsquedas
@@ -533,6 +556,7 @@ const Tabla = () => {
   const pageNumbers = [...Array(effectiveTotalPages).keys()].map((i) => i + 1);
 
   // Cambio de página
+
   const paginate = (pageNumber) => {
     if (!userRole) return;
     
@@ -587,6 +611,7 @@ const Tabla = () => {
       <h1>Consultar mis reservas</h1>
       <br />
       <div className={styles.containerfilters}>
+
       {/* Filtro de búsqueda con selector de tipo */}
       <form onSubmit={handleSearchSubmit} className={styles.filters}>
         <select
@@ -598,10 +623,11 @@ const Tabla = () => {
           <option value="huesped">Nombre de huésped</option>
           <option value="agente">Nombre de agente</option>
           <option value="hotel">Hotel</option>
-          {/* Se agregarán más opciones cuando se proporcionen los endpoints */}
+          <option value="agencia">Agencia</option>
         </select>
         <input
           type="text"
+
           placeholder={
             searchType === "codigo"
               ? "Ingrese el código de reserva..."
@@ -611,12 +637,16 @@ const Tabla = () => {
               ? "Ingrese el nombre del agente..."
               : searchType === "hotel"
               ? "Ingrese el nombre del hotel..."
+              : searchType === "agencia"
+              ? "Ingrese el nombre de la agencia..."
               : "Ingrese el término de búsqueda..."
           }
           value={searchTerm}
+
           onChange={handleSearchInputChange}
           className={styles.searchInput}
         />
+
         <button
           type="submit"
           className={styles.searchButton}
@@ -626,6 +656,7 @@ const Tabla = () => {
         </button>
         {searchTerm && (
           <button
+
             type="button"
             onClick={handleSearchClear}
             className={styles.clearSearchButton}
@@ -634,6 +665,7 @@ const Tabla = () => {
             ✕
           </button>
         )}
+
       </form>
       </div>
       
@@ -701,6 +733,7 @@ const Tabla = () => {
         </thead>
         <tbody>
           {isLoading ? (
+
             // Mostrar skeleton loader del tamaño de la página
             [...Array(paginationMeta.pageSize || itemsPerPage)].map((_, index) => (
               <SkeletonRow key={index} />
@@ -715,6 +748,7 @@ const Tabla = () => {
             </tr>
           ) : (
             <>
+
               {paginatedReservas.map((dato, index) => (
                 <tr key={dato._id || dato.reservaChatbotId || index}>
                   <td>
@@ -864,6 +898,7 @@ const Tabla = () => {
                 <td colSpan="1" style={{ textAlign: "left", fontWeight: "bold" }}>
                   Total de reservas realizadas:
                 </td>
+
                 <td style={{ fontWeight: "bold" }}>{totalReservations}</td>
                 <td colSpan="7" style={{ textAlign: "right", fontWeight: "bold" }}>
                   Total:
@@ -893,6 +928,7 @@ const Tabla = () => {
             .filter(
               (number) =>
                 number === 1 || // Siempre muestra la primera página
+
                 number === effectiveTotalPages || // Siempre muestra la última página
                 (number >= currentPage - 2 && number <= currentPage + 2) // Muestra un rango de 5 páginas alrededor de la actual
             )
@@ -918,6 +954,7 @@ const Tabla = () => {
 
           <button
             onClick={() => paginate(currentPage + 1)}
+
             disabled={currentPage === effectiveTotalPages}
             className={styles.pageNav}
           >
@@ -930,3 +967,4 @@ const Tabla = () => {
 };
 
 export default Tabla;
+

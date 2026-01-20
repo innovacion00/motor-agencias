@@ -75,7 +75,7 @@ export const getReservas = async (rolUsuario, page = 1, pageSize = 15) => {
     if (rolUsuario?.includes("admin")) {
       return `${URL}/agencias/v1/reservas/reservas-by-agencia`;
     }
-    return `${URL}/agencias/v1/reservas/reservas-by-user`;
+      return `${URL}/agencias/v1/reservas/reservas-by-user`;
   };
 
   const urlBase = buildUrl();
@@ -375,6 +375,14 @@ export const buscarReservaPorAgente = async (nombre, page = 1) => {
 export const buscarReservaPorHotel = async (hotel, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas?hotel=${encodeURIComponent(hotel)}`;
+  
+  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+};
+
+// Función para buscar reservas por nombre de agencia - Lazy loading
+export const buscarReservaPorAgencia = async (nombreAgencia, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const urlBase = `${URL}/agencias/v1/reservas?nombreAgencia=${encodeURIComponent(nombreAgencia)}`;
   
   return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
 };
