@@ -311,7 +311,13 @@ const Tabla = () => {
   };
 
   const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value);
+    const value = event.target.value;
+    // Si el tipo de búsqueda es "codigo", forzar mayúsculas
+    if (searchType === "codigo") {
+      setSearchTerm(value.toUpperCase());
+    } else {
+      setSearchTerm(value);
+    }
   };
 
   const handleSearchSubmit = async (event) => {
