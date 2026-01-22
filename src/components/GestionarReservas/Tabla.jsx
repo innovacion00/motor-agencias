@@ -250,7 +250,6 @@ const Tabla = () => {
     }
   };
 
-  console.log("Reservas filtradas:", filteredReservas);
   // Calcular la suma total de "Valor a pagar"
 
   // Asegurarse de que filteredReservas sea un array antes de usar reduce
@@ -477,7 +476,7 @@ const Tabla = () => {
         pageSize: 15,
         totalPages: 1
       });
-      setCurrentPage(1);
+    setCurrentPage(1);
     } finally {
       setIsLoading(false);
     }
@@ -574,21 +573,6 @@ const Tabla = () => {
         dato.reservation.checkout
       )
     : [];
-  
-  // Debug: Log cuando cambian los datos paginados (solo para búsqueda por fecha)
-  useEffect(() => {
-    if (hasActiveSearch && currentSearchType === "fecha") {
-      console.log('📊 Estado actual de paginación:', {
-        hasActiveSearch,
-        currentSearchType,
-        filteredReservasLength: Array.isArray(filteredReservas) ? filteredReservas.length : 0,
-        paginatedReservasLength: paginatedReservas.length,
-        currentPage,
-        totalPages: effectiveTotalPages,
-        reservasRawLength: Array.isArray(paginatedReservasRaw) ? paginatedReservasRaw.length : 0
-      });
-    }
-  }, [filteredReservas, paginatedReservas, hasActiveSearch, currentSearchType, currentPage, effectiveTotalPages, paginatedReservasRaw]);
   
   // Efecto para manejar cuando el servidor devuelve datos vacíos en una página inválida
   // IMPORTANTE: Solo ejecutar si NO hay búsqueda activa para evitar sobrescribir resultados
@@ -720,14 +704,14 @@ const Tabla = () => {
 
       {/* Filtro por fecha */}
       <div className={styles.dateFilterContainer} ref={datePickerRef}>
-        <input
-          type="text"
+          <input
+            type="text"
           value={selectedDate ? format(selectedDate, "DD/MM/YYYY", "es") : ""}
           placeholder="Filtrar por fecha desde..."
-          readOnly
+            readOnly
           onClick={() => setShowDatePicker(!showDatePicker)}
           className={styles.dateInput}
-        />
+          />
         {selectedDate && (
           <button
             type="button"
