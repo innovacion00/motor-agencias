@@ -94,6 +94,14 @@ const DropdownSearch = () => {
     );
   };
 
+  // Función para obtener la fecha mínima (mañana)
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Establecer a medianoche para evitar problemas de hora
+    return tomorrow;
+  };
+
   const handleDateRangeChange = (ranges) => {
     const { startDate, endDate } = ranges.selection;
 
@@ -278,7 +286,7 @@ const DropdownSearch = () => {
               ]}
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
-              minDate={new Date()} //Limita la seleccion a partir de hoy
+              minDate={getTomorrowDate()} //Limita la seleccion a partir de mañana
               // disabledDates={generateBlockedDates()} // Bloquea fechas desde 26 dic 2025 hasta 12 ene 2026
             />
             <button
