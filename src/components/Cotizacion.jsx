@@ -427,6 +427,22 @@ export default function ReservaHotelComponent() {
     enviarCotizacion();
   };
 
+  // Función para generar la descripción según el tipo de pensión
+  const generarDescripcionPension = (planAlimentacion) => {
+    const plan = planAlimentacion?.toLowerCase() || "";
+    
+    if (plan.includes("solo desayuno") || plan === "solodesayuno") {
+      return "Incluye desayuno y servicios básicos";
+    } else if (plan.includes("media pension") || plan === "mediapension") {
+      return "Incluye desayuno y almuerzo o cena además de los servicios básicos";
+    } else if (plan.includes("pension completa") || plan === "pensioncompleta") {
+      return "Incluye desayuno, almuerzo y cena además de los servicios básicos";
+    } else {
+      // Por defecto, solo desayuno
+      return "Incluye desayuno y servicios básicos";
+    }
+  };
+
   // Función para generar HTML dinámico con datos de la reserva
   const generarLandingHtml = () => {
     const hotelName = nombreHotelId(datosReserva[0]?.hotelidAutocore);
@@ -451,523 +467,473 @@ export default function ReservaHotelComponent() {
     const emailCliente = formData.email;
     const telefonoCliente = formData.celular;
 
-    return `<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmación de Reserva - ${hotelName}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', 'Helvetica', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-        }
-
-        .header-logo {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .header-logo img {
-            max-width: 200px;
-            height: auto;
-        }
-
-        header {
-            text-align: center;
-            border-bottom: 3px solid #886b43;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        h1 {
-            color: #886b43;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        h2 {
-            color: #886b43;
-            font-size: 22px;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
-
-        h3 {
-            color: #444;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: #666;
-            font-size: 16px;
-            font-style: italic;
-        }
-
-        .hotel-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #886b43;
-            margin-bottom: 5px;
-        }
-
-        .greeting {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-left: 4px solid #886b43;
-            margin: 20px 0;
-        }
-
-        .greeting strong {
-            color: #886b43;
-        }
-
-        ul {
-            list-style-position: inside;
-            margin: 15px 0;
-            padding-left: 20px;
-        }
-
-        li {
-            margin: 8px 0;
-            line-height: 1.8;
-        }
-
-        .address {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-
-        .pricing-section {
-            background-color: #f0f7ff;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .price-row:last-child {
-            border-bottom: none;
-            font-weight: bold;
-            font-size: 18px;
-            color: #886b43;
-            margin-top: 10px;
-            padding-top: 15px;
-            border-top: 2px solid #886b43;
-        }
-
-        .info-box {
-            background-color: #fff3cd;
-            border: 1px solid #ffc107;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-
-        .info-box strong {
-            color: #856404;
-        }
-
-        .payment-section {
-            background-color: #e8f5e9;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-
-        .bank-details {
-            background-color: #fff;
-            padding: 15px;
-            border-left: 4px solid #4caf50;
-            margin: 10px 0;
-        }
-
-        .link {
-            color: #886b43;
-            word-break: break-all;
-            text-decoration: none;
-        }
-
-        .link:hover {
-            text-decoration: underline;
-        }
-
-        .signature-section {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border: 2px dashed #886b43;
-            border-radius: 5px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .terms-section {
-            margin-top: 30px;
-        }
-
-        .warning {
-            color: #d32f2f;
-            font-weight: bold;
-        }
-
-        .contact-section {
-            background-color: #886b43;
-            color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .contact-section h2 {
-            color: #fff;
-            border-bottom: 2px solid #fff;
-        }
-
-        .contact-section a {
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-
-        .contact-section a:hover {
-            text-decoration: underline;
-        }
-
-        .reservation-details {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* una sola columna */
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .detail-item {
-            background-color: transparent; /* quitar tarjetas */
-            padding: 0;
-            border-radius: 0;
-            border-left: none;
-        }
-
-        .detail-label {
-            font-weight: bold;
-            color: #886b43;
-            font-size: 14px;
-        }
-
-        .detail-value {
-            color: #333;
-            margin-top: 5px;
-        }
-
-        .hotel-gallery {
-            margin: 30px 0;
-        }
-
-        .gallery-container {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .main-gallery-image {
-            width: 100%;
-        }
-
-        .main-gallery-image img {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        .secondary-gallery-images {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .gallery-image {
-            width: 100%;
-        }
-
-        .gallery-image img {
-            width: 100%;
-            height: 320px;
-            object-fit: cover;
-            border-radius: 0;
-            box-shadow: none;
-        }
-
-        @media print {
-            body {
-                background-color: #fff;
-                padding: 0;
-            }
-
-            .container {
-                box-shadow: none;
-                padding: 20px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 24px;
-            }
-
-            h2 {
-                font-size: 20px;
-            }
-
-            .price-row {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .detail-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gallery-container {
-                grid-template-columns: 1fr;
-                gap: 5px;
-            }
-
-            .main-gallery-image img {
-                height: 300px;
-                object-fit: cover;
-            }
-
-            .gallery-image img {
-                height: 300px;
-                object-fit: cover;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header-logo">
-            <img src="${logoAgenciaUrl}" alt="Logo Agencia" />
-        </div>
-
-        <header>
-            <h1>Cotización del ${checkin} al ${checkout}</h1>
-            <p class="hotel-name">${hotelName}</p>
-            <p class="subtitle">Disfrute una estadía confortable en nuestras instalaciones</p>
-        </header>
-
-        <div class="greeting">
-            <p><strong>Estimado/a ${nombreCompleto}</strong></p>
-            <p>Gracias por contactar a ${nombreAgencia} para gestionar su reserva.</p>
-        </div>
-
-        <div class="reservation-details">
-            <h2>Detalles de la Reserva</h2>
-            <div class="detail-grid">
-                <div class="detail-item">
-                    <div class="detail-label">Check-in</div>
-                    <div class="detail-value">${checkin}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Check-out</div>
-                    <div class="detail-value">${checkout}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Noches</div>
-                    <div class="detail-value">${noches}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Huéspedes</div>
-                    <div class="detail-value">${totalHuespedes} (${cantadultos} adultos, ${cantninos} niños)</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Habitaciones</div>
-                    <div class="detail-value">${habitaciones}</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Plan de Alimentación</div>
-                    <div class="detail-value">${planAlimentacion}</div>
-                </div>
-                ${mascotas > 0 ? `
-                <div class="detail-item">
-                    <div class="detail-label">Mascotas</div>
-                    <div class="detail-value">${mascotas} mascota(s) permitida(s)</div>
-                </div>
-                ` : ''}
-            </div>
-        </div>
-
-        <section class="hotel-gallery">
-            <h2>Galería del Hotel</h2>
-            <div class="gallery-container">
-                <div class="main-gallery-image">
-                    <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).main}" alt="Vista principal del ${hotelName}" />
-                </div>
-                <div class="secondary-gallery-images">
-                    <div class="gallery-image">
-                        <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).secondary1}" alt="Vista del hotel ${hotelName}" />
-                    </div>
-                    <div class="gallery-image">
-                        <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).secondary2}" alt="Vista del hotel ${hotelName}" />
-                    </div>
-                </div>
-            </div>
-        </section>
-<br>
-        <section>
-            <h2>Descripción general</h2>
-            <p>De acuerdo a conversaciones, enviamos cotización detallada de la siguiente manera:</p>
-            <ul>
-                <li>Estancia de ${noches} noche(s) del ${checkin} al ${checkout}</li>
-                <li>Habitaciones confortables, dotadas con cajillas de seguridad, Tv moderno, duchas con agua caliente, wifi en todas las áreas del hotel.</li>
-                <li>${planAlimentacion} incluido</li>
-                <li>Check-in 3:00 pm y check-out 12:00 pm</li>
-                <li>Servicio de guarda equipaje sin costo adicional</li>
-                <li>Baño privado con ducha o bañera</li>
-                <li>Amenities de baño</li>
-                <li>Tv Smart</li>
-                <li>Escritorio</li>
-                <li>Silla</li>
-                <li>Closet</li>
-                <li>Servicio de wifi de cortesía</li>
-                <li>Cajillas de seguridad</li>
-                <li>Servicio de recepción durante 24 horas</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Habitaciones Reservadas</h2>
-            ${datosReserva.map((habitacion, index) => `
-            <div style="background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px;">
-                <h3>Habitación ${index + 1}: ${habitacion.NombreH || 'Habitación estándar'}</h3>
-                <p><strong>Descripción:</strong> ${habitacion.descripcion || 'Incluye desayuno y servicios básicos'}</p>
-                <p><strong>Precio por noche:</strong> $${precioPorNocheCalc.toLocaleString()}</p>
-                <p><strong>Total habitación:</strong> $${totalSinIvaConMarkup.toLocaleString()}</p>
-            </div>
-            `).join('')}
-        </section>
-<br>
-<br>
-<br>
-        <section>
-        <br>
-        <br>
-
-            <h2>Tarifas</h2>
-            <div class="pricing-section">
-                <div class="price-row">
-                    <span>${exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
-                    <span>$${ivaFormateado}</span>
-                </div>
-                <div class="price-row">
-                    <span>Total:</span>
-                    <span>$${totalConMarkupFormateado}</span>
-                </div>
-            </div>
-        </section>
-
-        <div class="info-box">
-            <p><strong>Información importante:</strong></p>
-            <p>Los valores de las tarifas enviadas en la siguiente cotización estarán vigentes durante los próximos 5 días a partir de la fecha de envío.</p>
-            <p><strong>Nota:</strong> En caso de solicitar factura a nombre de la empresa, debe enviar el RUT al momento de realizar el check-in y antes de realizar el check-out, de lo contrario, la reserva se facturará a nombre del huésped o titular de la reserva perdiendo el derecho a solicitar modificación o corrección del documento.</p>
-        </div>
-
-        
-
-        <section class="terms-section">
-            <h2>Términos y condiciones</h2>
-            
-            <h3>Cancelaciones</h3>
-            <ul>
-                <li>En caso de cancelar o modificar su reserva deberá notificar con 72 horas de anticipación a la fecha de entrada al hotel, para no recibir penalización.</li>
-                <li>Si el hotel no recibe información de cancelación o modificación de su alojamiento, dentro de las 72 horas, el hotel podrá realizar la penalización parcial o total del monto de su reserva.</li>
-            </ul>
-
-            <h3>Tener en cuenta</h3>
-            <p>El NO envío del comprobante en la fecha estipulada o anterior a esta, puede causar la apertura de disponibilidad o venta de la habitación sin previo aviso, por lo tanto, es de suma importancia hacer el envío de la foto o escáner del comprobante por el presente medio como prueba de garantía.</p>
-
-            <h3>Grupos mínimo 30 personas</h3>
-            <ul>
-                <li>Deben notificar cualquier tipo de modificación antes de ingresar al hotel.</li>
-                <li>En caso de cancelar una reserva de grupo deberá notificar 720 horas de anticipación a la fecha de entrada al hotel, para no recibir personalización.</li>
-            </ul>
-
-            <h3>Estadía con menores de edad:</h3>
-            <ul>
-                <li>${hotelName} protege a los niños, niñas y adolescentes de la explotación sexual y comercial Ley 679 de 2001.</li>
-                <li>Recuerde; todo niño que viaje debe contar sus documentos de identidad (Registro civil o tarjeta de identidad)</li>
-                <li>Si los niños que viajan no son hijos de los adultos que los representan deben contar con un permiso de los padres, autenticado en una notaría.</li>
-            </ul>
-
-            <h3>Turismo sostenible</h3>
-            <ul>
-                <li>El tráfico, comercio, consumo, colección y cualquier tipo de actividad que genere un impacto negativo en la flora y fauna está prohibida por la Ley 1333 de 2009. Quienes realicen estas actividades ilícitas incurrirán en prisión de 4 a 9 años y multas hasta de 35.000 SMLV de acuerdo a la Ley 1453 de 2011.</li>
-                <li>Está prohibido el tráfico y comercialización ilegal de bienes de interés cultural de acuerdo a lo establecido en la Ley 1185 de 2008</li>
-            </ul>
-        </section>
-        
-                ${policiesText ? `
-                <section class="terms-section" style="margin-top: 30px;">
-                    <h2>Políticas de la agencia</h2>
-                    <div style="background-color: #f9fafb; padding: 20px; border-radius: 5px; border: 1px solid #d1d5db; margin: 20px 0;">
-                        <p style="white-space: pre-wrap; line-height: 1.8; color: #333; margin: 0; font-family: 'Roboto', 'Arial', 'Helvetica', sans-serif;">${policiesText}</p>
-                    </div>
-                </section>
-                ` : ''}
-
-        <div class="contact-section">
-            <h2>¿Preguntas?</h2>
-            <p><strong>Contáctanos</strong></p>
-            <p>Whatsapp y Llamadas: <a href="tel:${telefonoAgencia}">${telefonoAgencia}</a></p>
-            
-        </div>
-    </div>
-</body>
-</html>`;
+        return `<!DOCTYPE html>
+  <html lang="es">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Confirmación de Reserva - ${hotelName}</title>
+      <style>
+          :root {
+              --primary-color: #C5A065; /* Color dorado del diseño PDF */
+              --primary-dark: #886b43;  /* Variación más oscura para textos */
+              --text-dark: #333333;
+              --text-light: #666666;
+              --bg-light: #f9f9f9;
+              --bg-accent: #fffbf0;
+              --white: #ffffff;
+          }
+
+          body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              line-height: 1.6;
+              color: var(--text-dark);
+              margin: 0;
+              padding: 0;
+              background-color: var(--bg-light);
+          }
+
+          .container {
+              max-width: 900px;
+              margin: 20px auto;
+              background-color: var(--white);
+              box-shadow: 0 0 20px rgba(0,0,0,0.05);
+              overflow: hidden;
+          }
+
+          /* --- HEADER & LOGO --- */
+          header {
+              background-color: var(--white);
+              padding: 30px 40px;
+              text-align: center;
+              border-bottom: 4px solid var(--primary-color);
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .header-logo img {
+              max-height: 80px;
+              width: auto;
+              margin-bottom: 15px;
+          }
+
+          h1 {
+              color: var(--primary-color);
+              margin: 0;
+              font-size: 1.8rem;
+              text-transform: uppercase;
+              letter-spacing: 1px;
+          }
+
+          .hotel-name-sub {
+              color: var(--text-light);
+              font-size: 1.2rem;
+              margin-top: 5px;
+              font-weight: 300;
+          }
+
+          /* --- HERO & GREETING --- */
+          .hero {
+              padding: 25px 40px;
+              text-align: center;
+              background-color: var(--bg-accent);
+              border-bottom: 1px dashed #ddd;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .tagline {
+              font-style: italic;
+              color: var(--primary-dark);
+              margin-bottom: 10px;
+          }
+
+          .greeting-text {
+              font-size: 1.05rem;
+          }
+
+          /* --- SECTIONS GENERAL --- */
+          .section {
+              padding: 25px 40px;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          h2 {
+              color: var(--primary-color);
+              font-size: 1.4rem;
+              border-bottom: 1px solid #eee;
+              padding-bottom: 10px;
+              margin-top: 30px;
+              margin-bottom: 20px;
+          }
+
+          h3 {
+              color: var(--primary-dark);
+              font-size: 1.1rem;
+              margin-top: 20px;
+              margin-bottom: 10px;
+          }
+
+          /* --- RESERVATION DETAILS GRID --- */
+          .reservation-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 15px;
+              background-color: var(--bg-light);
+              padding: 20px;
+              border-radius: 8px;
+              border-left: 4px solid var(--primary-color);
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .detail-item label {
+              display: block;
+              font-size: 0.85rem;
+              color: var(--primary-dark);
+              font-weight: bold;
+              text-transform: uppercase;
+          }
+
+          .detail-item span {
+              display: block;
+              font-size: 1rem;
+              color: var(--text-dark);
+              font-weight: 500;
+          }
+
+          /* --- GALLERY (Custom layout for 1 main + 2 side) --- */
+          .gallery-container {
+              display: grid;
+              grid-template-columns: 2fr 1fr;
+              gap: 8px; /* antes 10px */
+              margin-top: 10px; /* antes 20px */
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .main-gallery-image img, 
+          .gallery-image img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              display: block;
+              border-radius: 4px;
+          }
+
+          .main-gallery-image {
+              height: 240px; /* antes 320px */
+          }
+
+          .secondary-gallery-images {
+              display: flex;
+              flex-direction: column;
+              gap: 8px; /* antes 10px */
+              height: 240px; /* antes 320px */
+          }
+
+          .gallery-image {
+              height: calc(50% - 5px);
+          }
+
+          /* --- ROOM CARDS --- */
+          .room-card {
+              background-color: var(--white);
+              border: 1px solid #eee;
+              border-left: 4px solid var(--primary-dark);
+              padding: 16px; /* antes 20px */
+              margin-bottom: 10px; /* antes 15px */
+              box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+              border-radius: 0 5px 5px 0;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .room-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 1px dashed #ddd;
+              padding-bottom: 10px;
+              margin-bottom: 10px;
+          }
+
+          .room-price {
+              font-weight: bold;
+              color: var(--primary-color);
+              font-size: 1.1rem;
+          }
+
+          /* --- LISTS --- */
+          ul {
+              list-style: none;
+              padding: 0;
+          }
+
+          ul li {
+              position: relative;
+              padding-left: 25px;
+              margin-bottom: 8px;
+              color: var(--text-light);
+          }
+
+          ul li::before {
+              content: "✓";
+              color: var(--primary-color);
+              position: absolute;
+              left: 0;
+              font-weight: bold;
+          }
+
+          /* --- PRICING TABLE LOOK --- */
+          .pricing-box {
+              background-color: var(--bg-light);
+              padding: 16px; /* antes 20px */
+              border-radius: 8px;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .price-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0; /* antes 10px */
+              border-bottom: 1px solid #ddd;
+          }
+
+          .price-row.total {
+              border-bottom: none;
+              border-top: 2px solid var(--primary-color);
+              margin-top: 10px;
+              padding-top: 15px;
+              font-size: 1.3rem;
+              color: var(--primary-dark);
+              font-weight: bold;
+          }
+
+          /* --- INFO BOX (Warning/Important) --- */
+          .info-box {
+              background-color: #fff3cd;
+              color: #856404;
+              padding: 12px; /* antes 15px */
+              border-radius: 5px;
+              margin: 14px 0; /* antes 20px */
+              font-size: 0.9rem;
+              border-left: 4px solid #ffeeba;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          /* --- FOOTER --- */
+          footer {
+              background-color: var(--text-dark);
+              color: var(--white);
+              text-align: center;
+              padding: 30px 20px;
+              margin-top: 30px;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .whatsapp-btn {
+              display: inline-block;
+              background-color: #25D366;
+              color: white;
+              padding: 12px 25px;
+              border-radius: 50px;
+              text-decoration: none;
+              font-weight: bold;
+              margin-top: 15px;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+          }
+
+          .whatsapp-btn:hover {
+              background-color: #1ebc57;
+          }
+
+          /* --- RESPONSIVE --- */
+          @media (max-width: 600px) {
+              .gallery-container { grid-template-columns: 1fr; }
+              .secondary-gallery-images { flex-direction: row; height: 150px; }
+              .main-gallery-image { height: 200px; }
+              .reservation-grid { grid-template-columns: 1fr; }
+              .container { width: 100%; margin: 0; }
+              header, .section { padding: 20px; }
+          }
+      </style>
+  </head>
+  <body>
+
+  <div class="container">
+
+      <header>
+          <div class="header-logo">
+              <img src="${logoAgenciaUrl}" alt="Logo Agencia" />
+          </div>
+          <h1>Cotización de Reserva</h1>
+          <div class="hotel-name-sub">${hotelName}</div>
+      </header>
+
+      <div class="hero">
+          <p class="tagline">"Disfrute una estadía confortable en nuestras instalaciones"</p>
+          <div class="greeting-text">
+              <p><strong>Estimado/a ${nombreCompleto},</strong></p>
+              <p>Gracias por contactar a ${nombreAgencia} para gestionar su reserva.</p>
+          </div>
+      </div>
+
+      <div class="section">
+          <h2>Detalles de la Reserva</h2>
+          <div class="reservation-grid">
+              <div class="detail-item">
+                  <label>Check-in</label>
+                  <span>${checkin}</span>
+              </div>
+              <div class="detail-item">
+                  <label>Check-out</label>
+                  <span>${checkout}</span>
+              </div>
+              <div class="detail-item">
+                  <label>Duración</label>
+                  <span>${noches} Noche(s)</span>
+              </div>
+              <div class="detail-item">
+                  <label>Huéspedes</label>
+                  <span>${totalHuespedes} (${cantadultos} Adultos, ${cantninos} Niños)</span>
+              </div>
+              <div class="detail-item">
+                  <label>Habitaciones</label>
+                  <span>${habitaciones}</span>
+              </div>
+              <div class="detail-item">
+                  <label>Alimentación</label>
+                  <span>${planAlimentacion}</span>
+              </div>
+              ${mascotas > 0 ? `
+              <div class="detail-item">
+                  <label>Mascotas</label>
+                  <span>${mascotas} permitida(s)</span>
+              </div>
+              ` : ''}
+          </div>
+      </div>
+
+      <div class="section" style="padding-top: 0;">
+          <div class="gallery-container">
+              <div class="main-gallery-image">
+                  <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).main}" alt="Vista principal" />
+              </div>
+              <div class="secondary-gallery-images">
+                  <div class="gallery-image">
+                      <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).secondary1}" alt="Vista secundaria 1" />
+                  </div>
+                  <div class="gallery-image">
+                      <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).secondary2}" alt="Vista secundaria 2" />
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="section">
+          <h2>Descripción General</h2>
+          <p>De acuerdo a conversaciones, enviamos cotización detallada de la siguiente manera:</p>
+          <ul>
+              <li>Estancia de ${noches} noche(s) del ${checkin} al ${checkout}.</li>
+              <li>Habitaciones confortables con Aire Acondicionado y TV moderno.</li>
+              <li><strong>${planAlimentacion} incluido.</strong></li>
+              <li>Wifi de cortesía en todas las áreas del hotel.</li>
+              <li>Check-in 3:00 pm y Check-out 12:00 pm.</li>
+              <li>Recepción 24 horas.</li>
+              <li>Cajillas de seguridad.</li>
+              <li>Baño privado con ducha y amenities.</li>
+              <li>Servicio de guarda equipaje sin costo adicional.</li>
+          </ul>
+      </div>
+
+      <div class="section">
+          <h2>Habitaciones Seleccionadas</h2>
+          ${datosReserva.map((habitacion, index) => {
+              const descripcionPension = generarDescripcionPension(planAlimentacion);
+              return `
+              <div class="room-card">
+                  <div class="room-header">
+                      <h3 style="margin:0;">Habitación ${index + 1}: ${habitacion.NombreH || 'Habitación estándar'}</h3>
+                  </div>
+                  <p style="color: #666; margin-bottom: 15px;">${habitacion.descripcion || descripcionPension}</p>
+                  <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                      <span>Precio por noche: <strong>$${precioPorNocheCalc.toLocaleString()}</strong></span>
+                      <span>Total Habitación: <strong>$${totalSinIvaConMarkup.toLocaleString()}</strong></span>
+                  </div>
+              </div>
+              `;
+          }).join('')}
+          <br />
+          <br />
+          <br />
+          <h2 style="margin-top: 30px;">Resumen de Tarifas</h2>
+          <div class="pricing-box">
+              <div class="price-row">
+                  <span>${exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</span>
+                  <span>$${ivaFormateado}</span>
+              </div>
+              <div class="price-row total">
+                  <span>Total a Pagar</span>
+                  <span>$${totalConMarkupFormateado}</span>
+              </div>
+          </div>
+
+          <div class="info-box">
+              <strong>Información importante:</strong><br>
+              Los valores cotizados están vigentes durante 5 días. Para facturación a nombre de empresa, enviar RUT al check-in; de lo contrario se facturará al huésped titular sin cambios posteriores.
+          </div>
+      </div>
+
+      <div class="section">
+          <h2>Términos y Condiciones</h2>
+          
+          <h3>Cancelaciones y Modificaciones</h3>
+          <ul>
+              <li><strong>Individuales:</strong> Notificar con 72 horas de anticipación al check-in para evitar penalidad.</li>
+             
+          </ul>
+
+          <h3>Comprobante de Pago</h3>
+          <p style="font-size: 0.9rem;">El NO envío del comprobante de pago puede causar la pérdida de la disponibilidad. Es obligatorio enviar el soporte por este medio como garantía.</p>
+
+          <h3>Menores de Edad (Ley 679 de 2001)</h3>
+          <ul>
+              <li>Protegemos a niños, niñas y adolescentes de la explotación sexual.</li>
+              <li>Todo menor debe presentar Registro Civil o Tarjeta de Identidad.</li>
+              <li>Si no viaja con sus padres, requiere permiso autenticado en notaría.</li>
+          </ul>
+
+          <h3>Turismo Sostenible</h3>
+          <ul>
+              <li>Prohibido el tráfico de flora y fauna (Ley 1333 de 2009).</li>
+              <li>Prohibido el tráfico de bienes de interés cultural (Ley 1185 de 2008).</li>
+          </ul>
+
+          ${policiesText ? `
+          <div style="margin-top: 30px; padding: 20px; background-color: #f4f4f4; border-radius: 5px;">
+              <h3 style="margin-top:0;">Políticas de la Agencia</h3>
+              <p style="white-space: pre-wrap; font-size: 0.9rem;">${policiesText}</p>
+          </div>
+          ` : ''}
+          
+          <div style="background-color: var(--text-dark); color: var(--white); text-align: center; padding: 30px 20px; margin-top: 30px; border-radius: 5px;">
+              <h3 style="color: var(--white); margin-top: 0;">¿Tienes preguntas?</h3>
+              <p>Contáctanos para finalizar tu reserva</p>
+              <a href="tel:${telefonoAgencia}" class="whatsapp-btn">
+                  Llamar o Whatsapp: ${telefonoAgencia}
+              </a>
+          </div>
+      </div>
+
+  </div>
+
+  </body>
+  </html>`;
   };
 
   // Función para enviar la cotización
@@ -1171,9 +1137,6 @@ export default function ReservaHotelComponent() {
       <div className="layout">
         {/* Columna Principal */}
         <div className="main-content">
-          {/* Header */}
-          <div className="header">
-          </div>
 
           {/* Formulario de Información del Huésped */}
           <div className="card">
@@ -1501,15 +1464,19 @@ export default function ReservaHotelComponent() {
                     </tr>
                   </thead>
                   <tbody>
-                    {datosReserva.map((data, index) => (
+                    {datosReserva.map((data, index) => {
+                      const planAlimentacion = datosReserva[0]?.plandealimentacion || "Solo desayuno";
+                      const descripcionPension = generarDescripcionPension(planAlimentacion);
+                      return (
                       <tr key={data.roomId || index}>
                         <td className="td">{data.NombreH || 'Habitación estándar'}</td>
-                        <td className="td">{data.descripcion || 'Incluye desayuno y servicios básicos'}</td>
+                        <td className="td">{data.descripcion || descripcionPension}</td>
                         <td className="td">{data.nights}</td>
                         <td className="td">${data.precioBase ? data.precioBase.toLocaleString() : '0'}</td>
                         <td className="td">${data.precio ? data.precio.toLocaleString() : '0'}</td>
                       </tr>
-                    ))}
+                    );
+                    })}
                     <tr className="table-subtotal">
                       <td colSpan="4" className="td-total">Subtotal</td>
                       <td className="td-amount">${subtotal.toLocaleString()}</td>

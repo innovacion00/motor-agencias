@@ -368,16 +368,11 @@ const UserDashboard = () => {
           Mi perfil
         </a>
         <a href="/misreservas">Gestionar reservas</a>
-      {userData && userData?.role && userData?.role.includes("super-admin")&&(
         <a href="/estadisticas">Análisis de datos</a>
-      )} 
       <a href="/cotizaciones">Cotizaciones</a>
       
       <a href="/ultimosmovimientos" target="_blank" rel="noopener noreferrer">Ultimo movimientos</a>
-        {/* Mostrar el enlace de configuración solo si el usuario tiene rol de admin */}
-        {userData && userData?.role && (userData?.role.includes("admin") || userData?.role.includes("super-admin")) && (
         <a href="/configuracion">Configuración</a>
-      )}
         <button onClick={handleLogout}>
           Cerrar sesión
         </button>
@@ -416,49 +411,54 @@ const UserDashboard = () => {
         {/*--------------------------- Balance de Mi saldo ---------------------------*/}
         <div className="card wallet-card">
           <h3>Mi saldo</h3>
-          <div className="balance">{formatCurrency(availableAmount)}</div>
-          <br />
-          <h2
-            style={{
-              fontSize: "13px",
-              paddingTop: "10px",
-              paddingBottom: "10px",
-            }}
-          >
-            Ingrese un monto superior a $50.000 COP
-          </h2>
-          <input
-            type="text"
-            value={displayValue}
-            onChange={handleChangedinero}
-            placeholder="$0"
-            className="recharge-input"
-          />
-          <br />
-          <br />
-          <button onClick={handleRecharge}>Recargar saldo</button>
-          <br />
-          <label
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "5px",
-              fontSize: "10px",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={terminosaceptados}
-              onChange={(e) => setterminosaceptados(e.target.checked)}
-            />
-            Para utilizar este apartado debe aceptar los{" "}
-            <a
-              href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/POLI%CC%81TICA%20Y%20CONDICIONES%20DE%20USO%20DEL%20PROGRAMA%20DE%20PREPAGOS%20Y%20CASHBACK.pdf%20BC.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
+          <div className="balance">
+            {formatCurrency(availableAmount)}
+          </div>
+          <>
+            <br />
+            <h2
+              style={{
+                fontSize: "13px",
+                paddingTop: "10px",
+                paddingBottom: "10px",
+              }}
             >
-              Términos y condiciones</a>
-          </label>
+              Ingrese un monto superior a $50.000 COP
+            </h2>
+            <input
+              type="text"
+              value={displayValue}
+              onChange={handleChangedinero}
+              placeholder="$0"
+              className="recharge-input"
+            />
+            <br />
+            <br />
+            <button onClick={handleRecharge}>Recargar saldo</button>
+            <br />
+            <label
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                fontSize: "10px",
+              }}
+            >
+              
+              <input
+                type="checkbox"
+                checked={terminosaceptados}
+                onChange={(e) => setterminosaceptados(e.target.checked)}
+              />
+              Para utilizar este apartado debe aceptar los{" "}
+              <a
+                href="https://space-img.sfo3.digitaloceanspaces.com/Agencias/POLI%CC%81TICA%20Y%20CONDICIONES%20DE%20USO%20DEL%20PROGRAMA%20DE%20PREPAGOS%20Y%20CASHBACK.pdf%20BC.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Términos y condiciones</a>
+            </label>
+          </>
         </div>
 
         {/* <div className="card agency-card">

@@ -528,7 +528,7 @@ const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
   6: false, //avexi
-  7: true, //bocagrande 
+  7: false, //bocagrande 
   4: true, //aixo
   5: false, //abi (Problemas con reservas de pocos huespedes)
   3: true, //madison
@@ -1409,9 +1409,24 @@ export const Cid = ({ id }) => {
         {/* habitaciones?.availability?.map((cam)=>cam.available_rooms?.map((camas)=>(dato.beds))) */}
         <div className={styles.room_section}>
           <div className={styles.cards}>
-            {habitaciones?.availability?.map((tipo) =>
-              tipo.available_rooms?.filter((dato) => dato.roomId != 164102).map((dato) => (
-                <div className={styles.room_card} key={dato.roomId}>
+            {(() => {
+              // Consolidar todas las habitaciones de todos los elementos de availability
+              const todasLasHabitaciones = habitaciones?.availability?.flatMap(
+                (tipo) => tipo.available_rooms || []
+              ) || [];
+              
+              // Eliminar duplicados basándose en roomId Y roomName (mantener la primera ocurrencia)
+              // Esto permite mostrar habitaciones con el mismo roomId pero diferente roomName
+              const habitacionesUnicas = todasLasHabitaciones.filter(
+                (dato, index, self) =>
+                  dato.roomId != 164102 && // Filtrar el roomId específico
+                  index === self.findIndex((h) => 
+                    h.roomId === dato.roomId && h.roomName === dato.roomName
+                  )
+              );
+              
+              return habitacionesUnicas.map((dato, index) => (
+                <div className={styles.room_card} key={`${dato.roomId}-${dato.roomName}-${index}`}>
                   <img
                     alt="Standard double room with a double bed, TV, and modern decor"
                     height="200"
@@ -1495,6 +1510,11 @@ export const Cid = ({ id }) => {
                         data-room="Doble Estándar"
                         data-price="#Valor"
                         onClick={() => {
+                          // Contar cuántas habitaciones de este tipo específico ya están seleccionadas
+                          const habitacionesDelMismoTipo = datohabitacion.filter(
+                            (hab) => hab.roomId === dato.roomId
+                          ).length;
+                          
                           const limiteHabitaciones = habitacionesRestringidas.includes(dato.roomName)
                             ? obtenerLimiteHabitaciones(dato.roomName, dato.count)
                             : Infinity;
@@ -1503,7 +1523,7 @@ export const Cid = ({ id }) => {
                               quintuple[habitaciones?.hotel?.id] &&
                               habitacionesRestringidas.includes(dato.roomName)
                             ) ||
-                            contadorHabitaciones < limiteHabitaciones // Verifica el límite de habitaciones
+                            habitacionesDelMismoTipo < limiteHabitaciones // Verifica el límite de habitaciones de este tipo específico
                           ) {
                             setDatohabitacion((prevState) => [
                               ...prevState,
@@ -1568,13 +1588,25 @@ export const Cid = ({ id }) => {
                         disabled={
                           quintuple[habitaciones?.hotel?.id] &&
                           habitacionesRestringidas.includes(dato.roomName) &&
-                          contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
+                          (() => {
+                            // Contar cuántas habitaciones de este tipo específico ya están seleccionadas
+                            const habitacionesDelMismoTipo = datohabitacion.filter(
+                              (hab) => hab.roomId === dato.roomId
+                            ).length;
+                            return habitacionesDelMismoTipo >= obtenerLimiteHabitaciones(dato.roomName, dato.count);
+                          })()
                         }
                         onMouseOver={() => {
                           if (
                             quintuple[habitaciones?.hotel?.id] &&
                             habitacionesRestringidas.includes(dato.roomName) &&
-                            contadorHabitaciones >= obtenerLimiteHabitaciones(dato.roomName, dato.count)
+                            (() => {
+                              // Contar cuántas habitaciones de este tipo específico ya están seleccionadas
+                              const habitacionesDelMismoTipo = datohabitacion.filter(
+                                (hab) => hab.roomId === dato.roomId
+                              ).length;
+                              return habitacionesDelMismoTipo >= obtenerLimiteHabitaciones(dato.roomName, dato.count);
+                            })()
                           ) {
                             setTooltipActivo(dato.roomId); // Activa el tooltip solo para este botón
                           }
@@ -1607,8 +1639,8 @@ export const Cid = ({ id }) => {
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              ));
+            })()}
           </div>
           <div className={styles.reservation}>
             <h3>Reserva</h3>

@@ -202,6 +202,14 @@ const DropdownSearch = () => {
     localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
   };
 
+  // Función para obtener la fecha mínima (mañana)
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0); // Establecer a medianoche para evitar problemas de hora
+    return tomorrow;
+  };
+
   const handleDateRangeChange = (ranges) => {
     const { startDate, endDate } = ranges.selection;
 
@@ -557,7 +565,7 @@ const DropdownSearch = () => {
               ]}
               onChange={handleDateRangeChange}
               moveRangeOnFirstSelection={false}
-              minDate={new Date()} //Limita la seleccion a partir de hoy
+              minDate={getTomorrowDate()} //Limita la seleccion a partir de mañana
               // disabledDates={generateBlockedDates()} // Bloquea fechas desde 26 dic 2025 hasta 12 ene 2026
             />
             <button
@@ -600,9 +608,13 @@ const DropdownSearch = () => {
                     <span>{room.adults}</span>
                     <button
                       onClick={() => {
-                        const updatedRooms = [...rooms];
-                        updatedRooms[index].adults += 1;
-                        setRooms(updatedRooms);
+                        if (room.adults < 5) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].adults += 1;
+                          setRooms(updatedRooms);
+                        } else {
+                          mostrarTooltip("El límite de adultos por habitación es 5");
+                        }
                       }}
                     >
                       +
@@ -652,9 +664,13 @@ const DropdownSearch = () => {
                     <span>{room.children5to17}</span>
                     <button
                       onClick={() => {
-                        const updatedRooms = [...rooms];
-                        updatedRooms[index].children5to17 += 1;
-                        setRooms(updatedRooms);
+                        if (room.children5to17 < 4) {
+                          const updatedRooms = [...rooms];
+                          updatedRooms[index].children5to17 += 1;
+                          setRooms(updatedRooms);
+                        } else {
+                          mostrarTooltip("El límite de niños por habitación es 4");
+                        }
                       }}
                     >
                       +

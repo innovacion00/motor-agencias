@@ -144,6 +144,22 @@ const getHotelIdByName = (hotelName) => {
     return nameToId[normalized];
 };
 
+// Función para generar la descripción según el tipo de pensión
+const generarDescripcionPension = (planAlimentacion) => {
+    const plan = planAlimentacion?.toLowerCase() || "";
+    
+    if (plan.includes("solo desayuno") || plan === "solodesayuno") {
+        return "Incluye desayuno y servicios básicos";
+    } else if (plan.includes("media pension") || plan === "mediapension") {
+        return "Incluye desayuno y almuerzo o cena además de los servicios básicos";
+    } else if (plan.includes("pension completa") || plan === "pensioncompleta") {
+        return "Incluye desayuno, almuerzo y cena además de los servicios básicos";
+    } else {
+        // Por defecto, solo desayuno
+        return "Incluye desayuno y servicios básicos";
+    }
+};
+
 export const CotizacionCreada = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
@@ -522,10 +538,6 @@ export const CotizacionCreada = ({ id }) => {
             <div className="layout">
                 {/* Columna Principal */}
                 <div className="main-content">
-                    {/* Header */}
-                    <div className="header">
-                    </div>
-
                     {/* Información del Huésped */}
                     <div className="card">
                         <div className="logos" style={{ justifyContent: "flex-end" }}>
@@ -713,15 +725,19 @@ export const CotizacionCreada = ({ id }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {roomsData.map((room, index) => (
+                                        {roomsData.map((room, index) => {
+                                            const planAlimentacion = roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Solo desayuno';
+                                            const descripcionPension = generarDescripcionPension(planAlimentacion);
+                                            return (
                                             <tr key={room.id || index}>
                                                 <td className="td">{room.nombreHabitacion || 'Habitación estándar'}</td>
-                                                <td className="td">Incluye desayuno y servicios básicos</td>
+                                                <td className="td">{descripcionPension}</td>
                                                 <td className="td">{reservaInfo.nights || '1'}</td>
                                                 <td className="td">${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</td>
                                                 <td className="td">${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</td>
                                             </tr>
-                                        ))}
+                                        );
+                                        })}
                                         <tr className="table-subtotal">
                                             <td colSpan="4" className="td-total">Subtotal</td>
                                             <td className="td-amount">${subtotal.toLocaleString()}</td>

@@ -140,6 +140,22 @@ const getHotelIdByName = (hotelName) => {
     return nameToId[normalized];
 };
 
+// Función para generar la descripción según el tipo de pensión
+const generarDescripcionPension = (planAlimentacion) => {
+    const plan = planAlimentacion?.toLowerCase() || "";
+    
+    if (plan.includes("solo desayuno") || plan === "solodesayuno") {
+        return "Incluye desayuno y servicios básicos";
+    } else if (plan.includes("media pension") || plan === "mediapension") {
+        return "Incluye desayuno y almuerzo o cena además de los servicios básicos";
+    } else if (plan.includes("pension completa") || plan === "pensioncompleta") {
+        return "Incluye desayuno, almuerzo y cena además de los servicios básicos";
+    } else {
+        // Por defecto, solo desayuno
+        return "Incluye desayuno y servicios básicos";
+    }
+};
+
 export const CotizacionPublica = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
@@ -533,14 +549,18 @@ export const CotizacionPublica = ({ id }) => {
                 {/* HABITACIONES RESERVADAS */}
                 <section>
                     <h2 style={{ color: '#886b43', fontSize: '22px', marginTop: '30px', marginBottom: '15px', borderBottom: '2px solid #e0e0e0', paddingBottom: '10px' }}>Habitaciones Reservadas</h2>
-                    {roomsData.map((room, index) => (
+                    {roomsData.map((room, index) => {
+                        const planAlimentacion = roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Solo desayuno';
+                        const descripcionPension = generarDescripcionPension(planAlimentacion);
+                        return (
                         <div key={room.id || index} style={{ backgroundColor: '#f8f9fa', padding: '15px', margin: '10px 0', borderRadius: '5px' }}>
                             <h3 style={{ color: '#444', fontSize: '18px', margin: '0 0 10px 0' }}>Habitación {index + 1}: {room.nombreHabitacion || 'Habitación estándar'}</h3>
-                            <p><strong>Descripción:</strong> Incluye desayuno y servicios básicos</p>
+                            <p><strong>Descripción:</strong> {descripcionPension}</p>
 							<p><strong>Precio por noche:</strong> ${ (totalConMarkup && nights > 0 ? (totalConMarkup / nights) : 0).toLocaleString() }</p>
 							<p><strong>Total habitación:</strong> ${ totalSinIvaConMarkup.toLocaleString() }</p>
                         </div>
-                    ))}
+                    );
+                    })}
                 </section>
 
           

@@ -17,6 +17,40 @@ const Cotizaciones = () => {
         return null;
     };
 
+    // Función para cargar todas las páginas de cotizaciones
+    const fetchAllCotizaciones = async (token, totalPages) => {
+        try {
+            const url = import.meta.env.PUBLIC_API_URL;
+            const allCotizaciones = [];
+            
+            // Cargar todas las páginas
+            for (let page = 1; page <= totalPages; page++) {
+                const response = await fetch(`${url}/agencias/v1/cotizaciones/?page=${page}&pageSize=25`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const responseData = await response.json();
+                    if (responseData.data && Array.isArray(responseData.data)) {
+                        allCotizaciones.push(...responseData.data);
+                    }
+                } else {
+                    console.error(`Error al obtener la página ${page}:`, response.status);
+                }
+            }
+            
+            setCotizaciones(allCotizaciones);
+            console.log(`Total de cotizaciones cargadas: ${allCotizaciones.length}`);
+        } catch (error) {
+            console.error('Error al cargar todas las cotizaciones:', error);
+            setCotizaciones([]);
+        }
+    };
+
     // Función para traer todas las cotizaciones
     const fetchCotizaciones = async () => {
         try {
@@ -28,7 +62,7 @@ const Cotizaciones = () => {
             }
 
             const url = import.meta.env.PUBLIC_API_URL;
-            const response = await fetch(`${url}/agencias/v1/cotizaciones/`, {
+            const response = await fetch(`${url}/agencias/v1/cotizaciones/?page=1&pageSize=25`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,14 +71,31 @@ const Cotizaciones = () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                console.log('Cotizaciones obtenidas:', data);
-                setCotizaciones(data);
+                const responseData = await response.json();
+                console.log('Cotizaciones obtenidas:', responseData);
+                
+                // Manejar respuesta paginada: {data: [...], meta: {...}}
+                if (responseData.data && Array.isArray(responseData.data)) {
+                    // Si hay metadata y más páginas, cargar todas las páginas
+                    if (responseData.meta && responseData.meta.totalPages > 1) {
+                        await fetchAllCotizaciones(token, responseData.meta.totalPages);
+                    } else {
+                        setCotizaciones(responseData.data);
+                    }
+                } else if (Array.isArray(responseData)) {
+                    // Fallback: si la respuesta es un array directo (compatibilidad hacia atrás)
+                    setCotizaciones(responseData);
+                } else {
+                    console.error('Formato de respuesta no reconocido:', responseData);
+                    setCotizaciones([]);
+                }
             } else {
                 console.error('Error al obtener las cotizaciones:', response.status, response.statusText);
+                setCotizaciones([]);
             }
         } catch (error) {
             console.error('Error en la consulta de cotizaciones:', error);
+            setCotizaciones([]);
         }
     };
 
@@ -79,6 +130,11 @@ const Cotizaciones = () => {
                 return;
             }
 
+            // Asegurarse de que cotizaciones sea un array antes de usar map
+            if (!Array.isArray(cotizaciones)) {
+                return;
+            }
+            
             const agenciesInData = cotizaciones
                 .map(cotizacion => cotizacion?.agenciaId?._id)
                 .filter(Boolean);
@@ -124,6 +180,10 @@ const Cotizaciones = () => {
 
     // Función para filtrar cotizaciones por status
     const getCotizacionesByStatus = (status) => {
+        // Asegurarse de que cotizaciones sea un array antes de usar filter
+        if (!Array.isArray(cotizaciones)) {
+            return [];
+        }
         return cotizaciones.filter(cotizacion => cotizacion.status === status);
     };
 

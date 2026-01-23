@@ -282,12 +282,9 @@ function detectToursInText(text) {
 	return detectedTours;
 }
 
-// Componente para renderizar mensajes con imágenes de hoteles
-function ChatMessageContent({ content, role, onImageClick }) {
-	// Solo procesar diseño enriquecido para el asistente
-	if (role !== 'assistant') {
-		return <div className="chat-bubble-content">{content}</div>;
-	}
+// Contenido enriquecido solo para mensajes del asistente
+function AssistantMessageContent({ content, onImageClick }) {
+	const [openOptions, setOpenOptions] = useState({});
 
 	const detectedHotels = detectHotelsInText(content).map((hotel) => ({
 		...hotel,
@@ -312,6 +309,15 @@ function ChatMessageContent({ content, role, onImageClick }) {
 		'reserva confirmada',
 		'reserva procesada',
 		'reserva finalizada'
+
+	];
+	
+	// Frases que activan el botón "Ir a mis cotizaciones"
+	const cotizacionPhrases = [
+		'acceso a la cotización',
+		'link de la cotización',
+		'link de la cotizacion',
+		'acceso a la cotizacion'
 	];
 	
 	// Detectar si el contenido contiene alguna de las frases de reserva
@@ -320,6 +326,67 @@ function ChatMessageContent({ content, role, onImageClick }) {
 		const regex = new RegExp(phrase.replace(/\s+/g, '\\s+'), 'gi');
 		return regex.test(content);
 	});
+
+	// Detectar si el contenido contiene alguna de las frases de cotización
+	const hasCotizacionCreada = cotizacionPhrases.some(phrase => {
+		// Crear una expresión regular flexible que permita espacios variables
+		const regex = new RegExp(phrase.replace(/\s+/g, '\\s+'), 'gi');
+		return regex.test(content);
+	});
+
+	const toggleOption = (optionKey) => {
+		setOpenOptions((prev) => ({
+			...prev,
+			[optionKey]: !prev[optionKey],
+		}));
+	};
+
+	// Cualquier línea que comience con "1)", "2)", etc. será tratada como opción colapsable
+	const optionHeaderRegex = /^\s*(\d+)\)\s*/i;
+
+	// Agrupar líneas en bloques normales y bloques de "Opción X)"
+	const parsedBlocks = [];
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+		const headerMatch = line.match(optionHeaderRegex);
+
+		if (headerMatch) {
+			const optionNumber = headerMatch[1];
+			const details = [];
+			let j = i + 1;
+
+			while (j < lines.length) {
+				const nextLine = lines[j];
+				// Si encontramos otra opción, detenemos el bloque actual
+				if (optionHeaderRegex.test(nextLine)) {
+					break;
+				}
+				// Cortar el bloque al primer salto de línea en blanco,
+				// pero lo incluimos para mantener el espaciado
+				if (nextLine.trim() === '') {
+					details.push(nextLine);
+					j++;
+					break;
+				}
+				details.push(nextLine);
+				j++;
+			}
+
+			parsedBlocks.push({
+				type: 'option',
+				optionKey: optionNumber,
+				header: line,
+				details,
+			});
+
+			i = j - 1; // Ajustar índice principal
+		} else {
+			parsedBlocks.push({
+				type: 'line',
+				line,
+			});
+		}
+	}
 
 	const formatMarkdownLine = (line) =>
 		line
@@ -332,15 +399,76 @@ function ChatMessageContent({ content, role, onImageClick }) {
 	return (
 		<div className={`chat-bubble-content ${hasContent ? 'chat-bubble-content--with-hotels' : ''}`}>
 			<div className="chat-text-column">
-				{lines.map((line, idx) => (
-					<div
-						key={`line-${idx}`}
-						className="chat-message-text"
-						dangerouslySetInnerHTML={{
-							__html: formatMarkdownLine(line) || '<br />'
-						}}
-					/>
-				))}
+				{parsedBlocks.map((block, idx) => {
+					if (block.type === 'line') {
+						return (
+							<div
+								key={`line-${idx}`}
+								className="chat-message-text"
+								dangerouslySetInnerHTML={{
+									__html: formatMarkdownLine(block.line) || '<br />'
+								}}
+							/>
+						);
+					}
+
+					const isOpen = !!openOptions[block.optionKey];
+
+					return (
+						<div
+							key={`option-${idx}`}
+							className="chat-option-block"
+							style={{ marginBottom: '4px' }}
+						>
+							<button
+								type="button"
+								onClick={() => toggleOption(block.optionKey)}
+								className="chat-option-header"
+								style={{
+									background: 'transparent',
+									border: 'none',
+									padding: 0,
+									margin: 0,
+									color: 'inherit',
+									textAlign: 'left',
+									cursor: 'pointer',
+									font: 'inherit',
+									display: 'inline-flex',
+									alignItems: 'center',
+								}}
+							>
+								<span
+									className="chat-message-text"
+									dangerouslySetInnerHTML={{
+										__html: formatMarkdownLine(block.header) || '&nbsp;'
+									}}
+								/>
+								<span
+									className="chat-option-toggle-indicator"
+									style={{ marginLeft: '8px', fontWeight: 600 }}
+								>
+									{isOpen ? '−' : '+'}
+								</span>
+							</button>
+							{isOpen && (
+								<div
+									className="chat-option-details"
+									style={{ marginTop: '4px', paddingLeft: '8px' }}
+								>
+									{block.details.map((detailLine, detailIdx) => (
+										<div
+											key={`option-${idx}-detail-${detailIdx}`}
+											className="chat-message-text"
+											dangerouslySetInnerHTML={{
+												__html: formatMarkdownLine(detailLine) || '<br />'
+											}}
+										/>
+									))}
+								</div>
+							)}
+						</div>
+					);
+				})}
 				{hasReservaCreada && (
 					<div style={{ marginTop: '16px' }}>
 						<a 
@@ -370,6 +498,38 @@ function ChatMessageContent({ content, role, onImageClick }) {
 							}}
 						>
 							Ir a mis reservas
+						</a>
+					</div>
+				)}
+				{hasCotizacionCreada && (
+					<div style={{ marginTop: '16px' }}>
+						<a 
+							href="/cotizaciones" 
+							className="cotizacion-button"
+							style={{
+								display: 'inline-block',
+								padding: '10px 20px',
+								backgroundColor: '#1c3d5a',
+								color: '#ffffff',
+								textDecoration: 'none',
+								borderRadius: '12px',
+								fontWeight: '600',
+								fontSize: '14px',
+								transition: 'all 0.2s ease',
+								cursor: 'pointer'
+							}}
+							onMouseEnter={(e) => {
+								e.target.style.backgroundColor = '#264b74';
+								e.target.style.transform = 'translateY(-1px)';
+								e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.3)';
+							}}
+							onMouseLeave={(e) => {
+								e.target.style.backgroundColor = '#1c3d5a';
+								e.target.style.transform = 'translateY(0)';
+								e.target.style.boxShadow = 'none';
+							}}
+						>
+							Ver mis cotizaciones 
 						</a>
 					</div>
 				)}
@@ -478,6 +638,21 @@ function ChatMessageContent({ content, role, onImageClick }) {
 	);
 }
 
+// Componente para renderizar mensajes con imágenes de hoteles
+function ChatMessageContent({ content, role, onImageClick }) {
+	// Solo procesar diseño enriquecido para el asistente
+	if (role !== 'assistant') {
+		return <div className="chat-bubble-content">{content}</div>;
+	}
+
+	return (
+		<AssistantMessageContent
+			content={content}
+			onImageClick={onImageClick}
+		/>
+	);
+}
+
 export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [message, setMessage] = useState("");
 	const [welcomePrompt, setWelcomePrompt] = useState("");
@@ -486,6 +661,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const [activeId, setActiveId] = useState("");
 	const [isChatStarted, setIsChatStarted] = useState(false);
 	const [isResponding, setIsResponding] = useState(false);
+	const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 	const [galleryModal, setGalleryModal] = useState({
 		open: false,
 		hotelName: "",
@@ -495,6 +671,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	const textareaRef = useRef(null);
 	const welcomeTextareaRef = useRef(null);
 	const messagesEndRef = useRef(null);
+	const loadingIntervalRef = useRef(null);
 	const [agencyDisplayName, setAgencyDisplayName] = useState(agencyName);
 	const [isMounted, setIsMounted] = useState(false);
 	const prompts = [
@@ -503,6 +680,15 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		"{prompt-Hoteles-SantaMarta}",
 		"{prompt-Hoteles-Cartagena}",
 		"{prompt-Hoteles-Bogota}",
+	];
+
+	const loadingMessages = [
+		"Espera unos segundos, estoy consultando la disponibilidad...",
+		"Estoy haciendo la consulta lo más rápido posible...",
+		"Analizando tarifas y tipos de habitación para tu búsqueda...",
+		"Encontrando las mejores opciones y similitudes para ti...",
+		"Verificando políticas y condiciones de tu reserva...",
+		"Organizando la información para darte una respuesta clara..."
 	];
 
 	// Configuración de prompts: mapea el placeholder al texto del botón y al prompt real
@@ -660,6 +846,32 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isMounted, conversations, activeId]);
+
+	useEffect(() => {
+		// Gestionar los mensajes dinámicos de "cargando" mientras el asistente responde
+		if (!isResponding) {
+			setLoadingMessageIndex(0);
+			if (loadingIntervalRef.current) {
+				clearInterval(loadingIntervalRef.current);
+				loadingIntervalRef.current = null;
+			}
+			return;
+		}
+
+		// Reiniciar al primer mensaje cada vez que empieza una nueva respuesta
+		setLoadingMessageIndex(0);
+
+		const intervalId = setInterval(() => {
+			setLoadingMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
+		}, 9200);
+
+		loadingIntervalRef.current = intervalId;
+
+		return () => {
+			clearInterval(intervalId);
+			loadingIntervalRef.current = null;
+		};
+	}, [isResponding, loadingMessages.length]);
 
 	function autoResize(ref) {
 		const el = ref.current;
@@ -851,7 +1063,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 
 	function handleReservaRapida() {
 		const reservaRapidaText = 
-		'Hola me gustaria crear una reserva.\ndia de checkin:  y dia de checkout:  mes: \nhotel: \naño:  \nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
+		'Hola me gustaria crear una reserva.\ndia  checkin:  y dia de checkout:  mes: \naño: \nhotel: \nnumero de personas:  \nnombre del titular:  \ntipo de documento: \nnumero de documento:  \nfecha de nacimiento: \ncorreo:  \ntelefono:+57  \nTipo de habitacion preferida: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(reservaRapidaText);
@@ -883,7 +1095,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 	}
 
 	function handleCotizacionRapida() {
-		const cotizacionRapidaText = 'Hola me gustaria crear una cotizacion.\ndia de checkin:  y dia de checkout:  mes: \nhotel: \naño:  \nnumero de personas:  \nnombre del titular:  \ntipo de documento:  correo:  \nfecha de nacimiento:  telefono:+57  \nnumero de documento:  Tipo de habitacion: ';
+		const cotizacionRapidaText = 'Hola me gustaria crear una cotización.\ndia  checkin:  y dia de checkout:  mes: \naño: \nhotel: \nnumero de personas:  \nnombre del titular:  \ntipo de documento: \nnumero de documento:  \nfecha de nacimiento: \ncorreo:  \ntelefono:+57  \nTipo de habitacion preferida: ';
 		
 		if (!isChatStarted) {
 			setWelcomePrompt(cotizacionRapidaText);
@@ -1045,9 +1257,51 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 									rows={1}
 									spellCheck={false}
 								/>
-								<img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/enviar.png" alt="enviar" width="20" height="20" style={{ cursor: 'pointer' }} />
 							</div>
 							<div className="welcome-hint">Enter para enviar • Shift+Enter para salto de línea</div>
+							<button 
+								className="enviar-button"
+								onClick={() => sendMessage(welcomePrompt, true)}
+								disabled={!welcomePrompt.trim()}
+								style={{
+									backgroundColor: '#1c3d5a',
+									color: '#ffffff',
+									border: 'none',
+									borderRadius: '12px',
+									padding: '12px 24px',
+									fontSize: '15px',
+									fontWeight: '600',
+									cursor: welcomePrompt.trim() ? 'pointer' : 'not-allowed',
+									transition: 'all 0.3s ease',
+									width: '100%',
+									marginBottom: '12px',
+									boxShadow: '0 4px 12px rgba(28, 61, 90, 0.2)',
+									opacity: welcomePrompt.trim() ? 1 : 0.6,
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									gap: '8px'
+								}}
+								onMouseEnter={(e) => {
+									if (welcomePrompt.trim()) {
+										e.target.style.backgroundColor = '#264b74';
+										e.target.style.transform = 'translateY(-2px)';
+										e.target.style.boxShadow = '0 6px 16px rgba(28, 61, 90, 0.3)';
+									}
+								}}
+								onMouseLeave={(e) => {
+									if (welcomePrompt.trim()) {
+										e.target.style.backgroundColor = '#1c3d5a';
+										e.target.style.transform = 'translateY(0)';
+										e.target.style.boxShadow = '0 4px 12px rgba(28, 61, 90, 0.2)';
+									}
+								}}
+							>
+								Enviar
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/>
+								</svg>
+							</button>
 							<div className="button-group" style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
 								<button 
 									className="reserva-rapida-button"
@@ -1145,9 +1399,10 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 								{isResponding && (
 									<div className="chat-bubble chat-bubble--assistant">
 										<div className="chat-typing">
-											<span className="dot" />
-											<span className="dot" />
-											<span className="dot" />
+											<div className="chat-typing-text">
+												{loadingMessages[loadingMessageIndex]}
+											</div>
+											<div className="chat-typing-spinner" aria-hidden="true" />
 										</div>
 									</div>
 								)}
@@ -1177,7 +1432,7 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 					)}
 				</main>
 			</div>
-			{galleryModal.open && (
+			{galleryModal.open && ( 
 				<div className="hotel-gallery-modal" role="dialog" aria-modal="true" aria-label={`Galería ${galleryModal.hotelName}`}>
 					<div className="hotel-gallery-backdrop" onClick={closeGalleryModal} />
 					<div className="hotel-gallery-content">

@@ -11,16 +11,9 @@ h1 {
 .filters {
   display: flex;
   margin-bottom: 20px;
-  
-}
-
-.filters button {
-  background-color: #2c3e50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .tabs {
@@ -234,6 +227,42 @@ th {
   gap: 20px;
   margin-bottom: 20px;
 }
+.searchTypeSelect {
+  min-width: 180px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  background-color: white;
+  color: #2c4c6d;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c4c6d' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 40px;
+}
+
+.searchTypeSelect:hover:not(:disabled) {
+  border-color: #9F6118;
+  box-shadow: 0 0 5px rgba(159, 97, 24, 0.2);
+}
+
+.searchTypeSelect:focus:not(:disabled) {
+  border-color: #9F6118;
+  box-shadow: 0 0 8px rgba(159, 97, 24, 0.4);
+}
+
+.searchTypeSelect:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .searchInput {
   flex: 1;
   min-width: 300px;
@@ -245,14 +274,84 @@ th {
   transition: all 0.3s ease-in-out;
 }
 
-.searchInput:focus {
+.searchInput:focus:not(:disabled) {
   border-color: #2c3e50;
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+.searchInput:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .searchInput::placeholder {
   color: #666;
   font-size: 14px;
+}
+
+.searchButton {
+  padding: 10px 25px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #9F6118;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.searchButton:hover:not(:disabled) {
+  background-color: #be6703;
+  box-shadow: 0 4px 8px rgba(159, 97, 24, 0.3);
+  transform: translateY(-1px);
+}
+
+.searchButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(159, 97, 24, 0.3);
+}
+
+.searchButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.searchButton:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.clearSearchButton {
+  padding: 10px 12px;
+  background-color: #dc3546;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearSearchButton:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 8px rgba(220, 53, 70, 0.3);
+  transform: translateY(-1px);
+}
+
+.clearSearchButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 53, 70, 0.3);
 }
 
 /* Contenedor de los filtros de estado */
@@ -427,5 +526,203 @@ th {
     left: 0;
     right: 0;
     width: 100%;
+  }
+  
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchTypeSelect,
+  .searchInput {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .searchButton,
+  .clearSearchButton {
+    width: 100%;
+  }
+}
+
+/* Estilos para el filtro de fecha */
+.dateFilterContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.dateInput {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 25px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  background-color: white;
+}
+
+.dateInput:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+
+.dateInput::placeholder {
+  color: #666;
+  font-size: 14px;
+}
+
+.clearDateButton {
+  padding: 10px 12px;
+  background-color: #dc3546;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+  min-width: 40px;
+}
+
+.clearDateButton:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 8px rgba(220, 53, 70, 0.3);
+  transform: translateY(-1px);
+}
+
+.clearDateButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 53, 70, 0.3);
+}
+
+.datePickerWrapper {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  margin-top: 5px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+}
+
+/* Responsive para el filtro de fecha */
+@media (max-width: 768px) {
+  .dateFilterContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .dateInput {
+    width: 100%;
+    min-width: unset;
+  }
+  
+  .clearDateButton {
+    width: 100%;
+  }
+  
+  .datePickerWrapper {
+    position: relative;
+    margin-top: 10px;
+  }
+}
+
+/* Estilos para los filtros de estado de pago */
+.statusFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.statusButton {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  background-color: #e0e0e0;
+  border: 2px solid #d0d0d0;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.statusButton:hover:not(:disabled) {
+  background-color: #d0d0d0;
+  border-color: #b0b0b0;
+  transform: translateY(-1px);
+}
+
+.statusButton:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  border-color: #d0d0d0;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.statusButton:disabled:hover {
+  transform: none;
+  background-color: #e0e0e0;
+  border-color: #d0d0d0;
+}
+
+.statusButton.active {
+  background-color: #2c4c6d;
+  color: white;
+  border-color: #2c4c6d;
+  font-weight: 600;
+}
+
+.statusButton.active:hover {
+  background-color: #1e3447;
+  border-color: #1e3447;
+}
+
+.clearStatusButton {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background-color: #dc3546;
+  border: 2px solid #dc3546;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.clearStatusButton:hover {
+  background-color: #c82333;
+  border-color: #c82333;
+  box-shadow: 0 4px 8px rgba(220, 53, 70, 0.3);
+  transform: translateY(-1px);
+}
+
+.clearStatusButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(220, 53, 70, 0.3);
+}
+
+/* Responsive para los filtros de estado */
+@media (max-width: 768px) {
+  .statusFilters {
+    justify-content: center;
+  }
+  
+  .statusButton,
+  .clearStatusButton {
+    flex: 1;
+    min-width: 120px;
   }
 }

@@ -566,11 +566,44 @@ const Estadisticas = () => {
     window.location.href = "https://www.gehsuites.com/es";
   };
 
-  //#region Reservas obtenidas
-  const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(nombreAgencia);
-    const reservasObtenidas = reservasNano.get();
-    setReservas(reservasObtenidas);
+  //#region Reservas obtenidas (todas las reservas usando all=true)
+  const ObtenerReservas = async (token, rolUsuario) => {
+    try {
+      const baseUrl = import.meta.env.PUBLIC_API_URL;
+
+      // Construir la URL según el rol del usuario
+      const buildUrlBase = () => {
+        if (rolUsuario?.includes("super-admin")) {
+          return `${baseUrl}/agencias/v1/reservas?all=true`;
+        }
+        if (rolUsuario?.includes("admin")) {
+          return `${baseUrl}/agencias/v1/reservas/reservas-by-agencia?all=true`;
+        }
+        return `${baseUrl}/agencias/v1/reservas/reservas-by-user?all=true`;
+      };
+
+      const url = buildUrlBase();
+      const response = await fetchWithToken(url);
+
+      if (!response.ok) {
+        throw new Error("Error al obtener todas las reservas para estadísticas");
+      }
+
+      const data = await response.json();
+      
+      // Extraer las reservas de la respuesta (puede venir en data.data o directamente como array)
+      const todasLasReservas = data?.data ?? data?.reservas ?? (Array.isArray(data) ? data : []);
+
+      // Actualizar el store de nanostores con todas las reservas
+      reservasNano.set(Array.isArray(todasLasReservas) ? todasLasReservas : []);
+      
+      // También actualizar el estado local por si acaso
+      setReservas(Array.isArray(todasLasReservas) ? todasLasReservas : []);
+    } catch (error) {
+      console.error("Error obteniendo todas las reservas para estadísticas:", error);
+      reservasNano.set([]);
+      setReservas([]);
+    }
   };
 
   const handleClick = () => {
