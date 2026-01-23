@@ -3,7 +3,7 @@ import styles from "./styles/tabla.module.css";
 import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente, buscarReservaPorHotel, buscarReservaPorAgencia, buscarReservaPorFecha } from "../../stores/disponibilidad";
+import { getReservas, reservasNano, buscarReservaPorCodigo, buscarReservaPorHuesped, buscarReservaPorAgente, buscarReservaPorHotel, buscarReservaPorAgencia, buscarReservaPorFecha, buscarReservaPorEstado } from "../../stores/disponibilidad";
 import { format } from "@formkit/tempo";
 
 const Tabla = () => {
@@ -32,6 +32,7 @@ const Tabla = () => {
   const [selectedDate, setSelectedDate] = useState(null); // Fecha seleccionada para filtro
   const [showDatePicker, setShowDatePicker] = useState(false); // Mostrar/ocultar calendario
   const datePickerRef = useRef(null); // Referencia para el calendario
+  const [selectedStatus, setSelectedStatus] = useState(null); // Estado de pago seleccionado
 
   useEffect(() => {
     const datosUsuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -72,6 +73,10 @@ const Tabla = () => {
 
     setIsLoading(true);
     try {
+      // Limpiar otros filtros cuando se hace una búsqueda de texto
+      setSelectedDate(null);
+      setSelectedStatus(null);
+      
       // Limpiar caché cuando se hace una nueva búsqueda
       setSearchCache(new Map());
       setCurrentSearchTerm(termino.trim());
@@ -162,8 +167,8 @@ const Tabla = () => {
 
     // Si no hay término de búsqueda, no hacer nada
     if (!searchTerm.trim()) {
-      // Si se limpia el campo y había una búsqueda activa (pero NO por fecha), recargar todas las reservas
-      if (hasActiveSearch && userRole && currentSearchType !== "fecha") {
+      // Si se limpia el campo y había una búsqueda activa (pero NO por fecha o estado), recargar todas las reservas
+      if (hasActiveSearch && userRole && currentSearchType !== "fecha" && currentSearchType !== "estado") {
         setHasActiveSearch(false);
         setCurrentSearchTerm("");
         setCurrentSearchType("");
@@ -341,6 +346,38 @@ const Tabla = () => {
       return;
     }
 
+    // Si es búsqueda por estado, usar selectedStatus
+    if (currentSearchType === "estado" && selectedStatus !== null) {
+      // Verificar si la página ya está en caché
+      if (searchCache.has(pageNumber)) {
+        const cachedReservas = searchCache.get(pageNumber);
+        setFilteredReservas(cachedReservas);
+        setCurrentPage(pageNumber);
+        return;
+      }
+      
+      setIsLoading(true);
+      try {
+        const result = await buscarReservaPorEstado(selectedStatus, pageNumber);
+        const reservasArray = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : []);
+        
+        const newCache = new Map(searchCache);
+        newCache.set(pageNumber, reservasArray);
+        setSearchCache(newCache);
+        
+        setFilteredReservas(reservasArray);
+        if (result.meta) {
+          setPaginationMeta(result.meta);
+        }
+        setCurrentPage(pageNumber);
+      } catch (error) {
+        console.error("Error al cargar página:", error);
+      } finally {
+        setIsLoading(false);
+      }
+      return;
+    }
+
     if (!currentSearchTerm || !currentSearchType) return;
     
     // Verificar si la página ya está en caché
@@ -365,6 +402,8 @@ const Tabla = () => {
         result = await buscarReservaPorHotel(currentSearchTerm, pageNumber);
       } else if (currentSearchType === "agencia") {
         result = await buscarReservaPorAgencia(currentSearchTerm, pageNumber);
+      } else if (currentSearchType === "estado" && selectedStatus !== null) {
+        result = await buscarReservaPorEstado(selectedStatus, pageNumber);
       } else {
         setIsLoading(false);
         return;
@@ -396,6 +435,7 @@ const Tabla = () => {
     setSearchCache(new Map());
     setHasActiveSearch(false);
     setSelectedDate(null);
+    setSelectedStatus(null);
     if (userRole) {
       setCurrentPage(1);
       ObtenerReservas(userRole, 1);
@@ -407,9 +447,10 @@ const Tabla = () => {
     setSelectedDate(date);
     setShowDatePicker(false);
     
-    // Limpiar búsquedas anteriores
+    // Limpiar otros filtros
     setSearchTerm("");
     setCurrentSearchTerm("");
+    setSelectedStatus(null);
     
     // Ejecutar búsqueda inmediatamente al seleccionar fecha
     setIsLoading(true);
@@ -489,6 +530,94 @@ const Tabla = () => {
     setCurrentSearchTerm("");
     setCurrentSearchType("");
     setSearchCache(new Map());
+    setSelectedStatus(null);
+    if (userRole) {
+      setCurrentPage(1);
+      ObtenerReservas(userRole, 1);
+    }
+  };
+
+  // Manejar selección de estado de pago
+  const handleStatusSelect = async (status) => {
+    // Si se selecciona el mismo estado, limpiar el filtro
+    if (selectedStatus === status) {
+      handleStatusClear();
+      return;
+    }
+
+    setSelectedStatus(status);
+    
+    // Limpiar otros filtros
+    setSearchTerm("");
+    setCurrentSearchTerm("");
+    setSelectedDate(null);
+    
+    // Ejecutar búsqueda inmediatamente al seleccionar estado
+    setIsLoading(true);
+    try {
+      setSearchCache(new Map());
+      setCurrentSearchType("estado");
+      setCurrentPage(1);
+      setHasActiveSearch(true);
+
+      const result = await buscarReservaPorEstado(status, 1);
+      
+      let reservasArray = [];
+      if (Array.isArray(result.data)) {
+        reservasArray = result.data.filter(dato => dato && dato.reservation && dato.reservation.checkin && dato.reservation.checkout);
+      } else if (result.data && result.data.reservation && result.data.reservation.checkin && result.data.reservation.checkout) {
+        reservasArray = [result.data];
+      }
+      
+      const newCache = new Map();
+      newCache.set(1, reservasArray);
+      setSearchCache(newCache);
+      
+      setReservas(reservasArray);
+      setFilteredReservas(reservasArray);
+      
+      if (result.meta) {
+        const totalFromServer = result.meta.total || 0;
+        const pageSizeFromServer = result.meta.pageSize || 15;
+        setPaginationMeta({
+          ...result.meta,
+          total: totalFromServer,
+          totalPages: Math.max(1, Math.ceil(totalFromServer / pageSizeFromServer))
+        });
+      } else {
+        setPaginationMeta({
+          total: reservasArray.length,
+          page: 1,
+          pageSize: 15,
+          totalPages: Math.max(1, Math.ceil(reservasArray.length / 15))
+        });
+      }
+      setCurrentPage(1);
+    } catch (error) {
+      console.error("Error en la búsqueda por estado:", error);
+      setReservas([]);
+      setFilteredReservas([]);
+      setHasActiveSearch(false);
+      setPaginationMeta({
+        total: 0,
+        page: 1,
+        pageSize: 15,
+        totalPages: 1
+      });
+      setCurrentPage(1);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Limpiar filtro de estado
+  const handleStatusClear = () => {
+    setSelectedStatus(null);
+    setHasActiveSearch(false);
+    setCurrentSearchTerm("");
+    setCurrentSearchType("");
+    setSearchCache(new Map());
+    setSelectedDate(null);
     if (userRole) {
       setCurrentPage(1);
       ObtenerReservas(userRole, 1);
@@ -498,6 +627,16 @@ const Tabla = () => {
   const isUsingFilters = !!(
     searchTerm
   );
+  
+  // Detectar qué filtro está activo para deshabilitar los otros
+  const hasActiveTextSearch = hasActiveSearch && currentSearchType && currentSearchType !== "fecha" && currentSearchType !== "estado" && currentSearchTerm;
+  const hasActiveDateFilter = hasActiveSearch && currentSearchType === "fecha" && selectedDate;
+  const hasActiveStatusFilter = hasActiveSearch && currentSearchType === "estado" && selectedStatus !== null;
+  
+  // Determinar qué filtros deben estar deshabilitados
+  const isTextSearchDisabled = hasActiveDateFilter || hasActiveStatusFilter;
+  const isDateFilterDisabled = hasActiveTextSearch || hasActiveStatusFilter;
+  const isStatusFilterDisabled = hasActiveTextSearch || hasActiveDateFilter;
   
   // Determinar si debemos usar paginación del cliente
   // NOTA: Con lazy loading, las búsquedas usan paginación del servidor, no del cliente
@@ -595,7 +734,7 @@ const Tabla = () => {
     if (!userRole) return;
     
     // Si hay búsqueda activa, usar lazy loading (cargar página del servidor)
-    if (hasActiveSearch && (currentSearchTerm || currentSearchType === "fecha")) {
+    if (hasActiveSearch && (currentSearchTerm || currentSearchType === "fecha" || currentSearchType === "estado")) {
       if (pageNumber < 1 || pageNumber > effectiveTotalPages) return;
       cargarPaginaBusqueda(pageNumber);
       return;
@@ -652,6 +791,7 @@ const Tabla = () => {
           value={searchType}
           onChange={handleSearchTypeChange}
           className={styles.searchTypeSelect}
+          disabled={isTextSearchDisabled}
         >
           <option value="codigo">Código de reserva</option>
           <option value="huesped">Nombre de huésped</option>
@@ -679,12 +819,13 @@ const Tabla = () => {
 
           onChange={handleSearchInputChange}
           className={styles.searchInput}
+          disabled={isTextSearchDisabled}
         />
 
         <button
           type="submit"
           className={styles.searchButton}
-          disabled={isLoading}
+          disabled={isLoading || isTextSearchDisabled}
         >
           {isLoading ? "Buscando..." : "Buscar"}
         </button>
@@ -709,8 +850,10 @@ const Tabla = () => {
           value={selectedDate ? format(selectedDate, "DD/MM/YYYY", "es") : ""}
           placeholder="Filtrar por fecha desde..."
             readOnly
-          onClick={() => setShowDatePicker(!showDatePicker)}
+          onClick={() => !isDateFilterDisabled && setShowDatePicker(!showDatePicker)}
           className={styles.dateInput}
+          disabled={isDateFilterDisabled}
+          style={{ cursor: isDateFilterDisabled ? 'not-allowed' : 'pointer', opacity: isDateFilterDisabled ? 0.6 : 1 }}
           />
         {selectedDate && (
           <button
@@ -722,7 +865,7 @@ const Tabla = () => {
             ✕
           </button>
         )}
-        {showDatePicker && (
+        {showDatePicker && !isDateFilterDisabled && (
           <div className={styles.datePickerWrapper}>
             <Calendar
               date={selectedDate || new Date()}
@@ -732,6 +875,68 @@ const Tabla = () => {
           </div>
         )}
       </div>
+      </div>
+
+      {/* Filtros por estado de pago */}
+      <div className={styles.statusFilters}>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("0")}
+          className={`${styles.statusButton} ${selectedStatus === "0" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Pago Pendiente
+        </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("1")}
+          className={`${styles.statusButton} ${selectedStatus === "1" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Pago en proceso
+        </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("2")}
+          className={`${styles.statusButton} ${selectedStatus === "2" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Pago rechazado
+        </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("3")}
+          className={`${styles.statusButton} ${selectedStatus === "3" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Pago completado
+        </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("4")}
+          className={`${styles.statusButton} ${selectedStatus === "4" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Reserva cancelada
+        </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("5")}
+          className={`${styles.statusButton} ${selectedStatus === "5" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Pago segundo abono
+        </button>
+        {selectedStatus !== null && (
+          <button
+            type="button"
+            onClick={handleStatusClear}
+            className={styles.clearStatusButton}
+            title="Limpiar filtro de estado"
+          >
+            ✕ Limpiar
+          </button>
+        )}
       </div>
 
       <table>

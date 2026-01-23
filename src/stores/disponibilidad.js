@@ -422,3 +422,11 @@ export const buscarReservaPorFecha = async (fechaDesde, page = 1) => {
   
   return result;
 };
+
+// Función para buscar reservas por estado de pago - Lazy loading
+export const buscarReservaPorEstado = async (status, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+  const urlBase = `${URL}/agencias/v1/reservas/buscar/estado?status=${encodeURIComponent(status)}`;
+  
+  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+};
