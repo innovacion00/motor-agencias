@@ -880,7 +880,6 @@ const Tabla = () => {
             <Calendar
               date={selectedDate || new Date()}
               onChange={handleDateSelect}
-              minDate={new Date()}
             />
           </div>
         )}
