@@ -1,4 +1,6 @@
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
+import { refreshToken } from '../stores/authtoken';
 
 /**
  * Realiza la consulta de disponibilidad de vuelos
@@ -78,95 +80,49 @@ export const searchFlights = async () => {
       return date.toISOString().split('T')[0];
     };
 
-    // Crear el array de viajeros
-    const travelers = [];
-    for (let i = 1; i <= cantAdultos; i++) {
-      travelers.push({
-        id: i.toString(),
-        travelerType: "ADULT"
-      });
-    }
-
-    // Agregar niños si existen en localStorage
-    if (cantNinos > 0) {
-      const startIdForChildren = travelers.length + 1;
-      for (let j = 0; j < cantNinos; j++) {
-        travelers.push({
-          id: (startIdForChildren + j).toString(),
-          travelerType: "CHILD"
-        });
-      }
-    }
-
-    // Body de la consulta (Con validacion)
-    const requestBodyvalid ={
-      currencyCode: selectedCurrency === "USD" ? "USD" : "COP",
-      originDestinations: [
-        {
-          id:"1",
-          originLocationCode: datosDelVuelo.originIata,
-          destinationLocationCode:datosDelVuelo.destinationIata,
-          departureDate: formatDate(datosDelVuelo.dateRange.startDate)
-        },
-        {
-          id:"2",
-          originLocationCode: datosDelVuelo.destinationIata,
-          destinationLocationCode:datosDelVuelo.originIata,
-          departureDate:formatDate(datosDelVuelo.dateRange.endDate)
-        }
-      ],
-      travelers: travelers,
-      sources:["GDS"],
-      searchCriteria:{
-        maxFlightOffers:60,
-        flightFilters:{
-          maxNumberOfConnections:2
-        }
-        }
-      };
-
-    // Body de la consulta (Sin validacion)
+    // Nuevo body según el formato requerido
     const requestBody = {
-      currencyCode: selectedCurrency === "USD" ? "USD" : "COP",
-      originDestinations: [
-        {
-          id: "1",
-          originLocationCode:datosDelVuelo.originIata,
-          destinationLocationCode: datosDelVuelo.destinationIata,
-          departureDateTimeRange: {
-            date: formatDate(datosDelVuelo.dateRange.startDate)
-          }
-        },
-        {
-          id: "2",
-          originLocationCode: datosDelVuelo.originIata,
-          destinationLocationCode: datosDelVuelo.destinationIata,
-          departureDateTimeRange: {
-            date: formatDate(datosDelVuelo.dateRange.endDate)
-          }
-        }
-      ],
-      travelers: travelers,
-      sources: ["GDS"],
-      searchCriteria: {
-        maxFlightOffers: 60,
-        flightFilters: {
-          maxNumberOfConnections: 2
-        }
-      }
+      origin: datosDelVuelo.originIata,
+      destination: datosDelVuelo.destinationIata,
+      departureDate: formatDate(datosDelVuelo.dateRange.startDate),
+      returnDate: formatDate(datosDelVuelo.dateRange.endDate),
+      adults: cantAdultos,
+      canarian_resident: false,
+      balear_resident: false,
+      ceuta_melilla_resident: false,
+      search_mode: "SEARCH_BEST_DEAL",
+      currency: selectedCurrency === "USD" ? "USD" : "COP"
     };
 
     console.log('Consultando vuelos con:', requestBody);
 
     // Realizar la consulta usando variable de entorno como base URL
     const baseUrl = import.meta.env.PUBLIC_API_URL;
-    const response = await fetch(`${baseUrl}/agencias/v1/vuelos/disponibilidad`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBodyvalid)
-    });
+    
+    // Función para realizar la petición con token
+    const fetchWithToken = async (token) => {
+      return await fetch(`${baseUrl}/agencias/v1/vuelos/maarlab/disponibilidad`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+    };
+
+    let token = Cookies.get('accessToken');
+    let response = await fetchWithToken(token);
+
+    // Si el token expiró, intentar refrescarlo
+    if (response.status === 401) {
+      const newToken = await refreshToken();
+      if (newToken) {
+        response = await fetchWithToken(newToken);
+      } else {
+        throw new Error('No se pudo autenticar. Por favor, inicia sesión nuevamente.');
+      }
+    }
 
     if (!response.ok) {
       throw new Error(`Error en la consulta: ${response.status} ${response.statusText}`);

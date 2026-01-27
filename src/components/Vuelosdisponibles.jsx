@@ -61,7 +61,16 @@ const VuelosDisponibles = () => {
 
   // Función para formatear fecha completa
   const formatDate = (dateTimeString) => {
-    const date = new Date(dateTimeString);
+    // Manejar tanto formato ISO como formato "YYYY-MM-DD HH:mm:ss"
+    let date;
+    if (typeof dateTimeString === 'string' && dateTimeString.includes(' ')) {
+      // Formato "YYYY-MM-DD HH:mm:ss"
+      const [datePart] = dateTimeString.split(' ');
+      date = new Date(datePart + 'T00:00:00');
+    } else {
+      date = new Date(dateTimeString);
+    }
+    
     const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
     const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
     
@@ -99,7 +108,11 @@ const VuelosDisponibles = () => {
       'UA': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/UA.png?crop=false&width=108&height=92&fallback=default1.png&_v=5549857010860b629834720579d831e5',
       'B6':'https://s202.q4cdn.com/521076508/files/doc_downloads/logos/JetBlue-Logo_Blue.png',
       'NH':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVvcvOq8qQLYp_o4IDIPXVVdHkLpgZLha6Fg&s',
-      'EK':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png'
+      'EK':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png',
+      'IB':'https://www.latamairlines.com/content/dam/latamxp/sites/alianzas/aerolineas-images_0011_iberia-Airlines.png',
+      'UX':'https://logodownload.org/wp-content/uploads/2019/10/air-europa-logo-0.png',
+      'JA':'https://dgital.com/images/blogs/2020-11-22_js-behind-the-scene/main.png',
+      'VB':'https://upload.wikimedia.org/wikipedia/commons/b/bf/Nuevo_vivaaerobus_logotipo_original.jpg',
       // Agregar más aerolíneas aquí en el futuro
       // 'XX': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/XX.png?crop=false&width=108&height=92&fallback=default1.png&_v=...',
     };
@@ -127,7 +140,178 @@ const VuelosDisponibles = () => {
         const datosDelVuelo = JSON.parse(localStorage.getItem('datosDelVuelo'));
         const datosReserva = JSON.parse(localStorage.getItem('datosreserva'));
         
-        if (dataVuelo && dataVuelo.data && dataVuelo.data.length > 0) {
+        // Verificar si la respuesta tiene la nueva estructura
+        const hasNewStructure = dataVuelo && (dataVuelo.recommendedFlights || dataVuelo.flights);
+        
+        // Guardar datos de reserva del hotel en estado para usos futuros (opcional)
+        const hotelReservation = (datosReserva && datosReserva.length > 0) ? datosReserva[0] : null;
+        if (hotelReservation) {
+          setHotelReservationData(hotelReservation);
+        }
+
+        // Obtener información del hotel
+        const hotelInfo = hotelReservation ? {
+          name: hotelNames[hotelReservation.hotelidAutocore] || `Hotel ID: ${hotelReservation.hotelidAutocore}`,
+          dates: `${hotelReservation.checkin} -> ${hotelReservation.checkout}`,
+          room: {
+            type: hotelReservation.NombreH,
+            meal: hotelReservation.plandealimentacion,
+            dates: `${hotelReservation.checkin} - ${hotelReservation.checkout}`,
+            nights: `${hotelReservation.nights} noches, ${hotelReservation.huespedes} huéspedes`,
+            pets: typeof hotelReservation.mascotas === 'number' ? hotelReservation.mascotas : parseInt(hotelReservation.mascotas || 0, 10),
+            transferIncluded: !!hotelReservation.incluirTraslado,
+            transferText: hotelReservation.incluirTraslado
+              ? (hotelReservation.tipoTraslado === 'aeropuerto_hotel'
+                  ? 'Aeropuerto al hotel'
+                  : hotelReservation.tipoTraslado === 'hotel_aeropuerto'
+                    ? 'Hotel al aeropuerto'
+                    : hotelReservation.tipoTraslado === 'ambos'
+                      ? 'Aeropuerto al hotel y Hotel al aeropuerto'
+                      : 'Incluido')
+              : 'No incluido'
+          },
+          price: formatPrice(hotelReservation.precio),
+          includesTaxes: true
+        } : {
+          name: "Hotel Seleccionado",
+          dates: datosDelVuelo?.dateRange ? 
+            `${formatDate(datosDelVuelo.dateRange.startDate)} -> ${formatDate(datosDelVuelo.dateRange.endDate)}` : 
+            "Fechas no disponibles",
+          room: {
+            type: "Habitación seleccionada",
+            meal: "Plan seleccionado",
+            payment: "Pago: Inmediato",
+            dates: datosDelVuelo?.dateRange ? 
+              `${formatDate(datosDelVuelo.dateRange.startDate)} - ${formatDate(datosDelVuelo.dateRange.endDate)}` : 
+              "Fechas no disponibles",
+            nights: datosDelVuelo?.dateRange ? 
+              `${Math.ceil((new Date(datosDelVuelo.dateRange.endDate) - new Date(datosDelVuelo.dateRange.startDate)) / (1000 * 60 * 60 * 24))} noches` : 
+              "Noches no disponibles",
+            pets: 0,
+            transferIncluded: false,
+            transferText: 'No incluido'
+          },
+          price: "$0",
+          includesTaxes: true
+        };
+
+        if (hasNewStructure) {
+          // Combinar recommendedFlights y flights
+          const allFlights = [
+            ...(dataVuelo.recommendedFlights || []),
+            ...(dataVuelo.flights || [])
+          ];
+          
+          if (allFlights.length > 0) {
+            // Guardar las ofertas originales para futuras referencias
+            setOriginalFlightOffers(allFlights);
+
+            // Procesar las ofertas de vuelo con la nueva estructura
+            const processedFlights = allFlights.map((offer, index) => {
+              const outbound = offer.outbound;
+              const returnFlight = offer.inbound; // Nota: en la nueva estructura es "inbound" no "return"
+              
+              // Seleccionar precio en divisa acorde a la búsqueda
+              const selectedCurrency = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+              const totalPrice = parseFloat(offer.totalPrice || 0);
+              const passengers = offer.pricePerPassenger?.length || dataVuelo.Passengers?.NumberOfAdults || 1;
+              const pricePerPerson = totalPrice / passengers;
+
+               // Función para procesar segmentos con la nueva estructura
+               const processSegments = (flightData) => {
+                 const segments = flightData.segments || [];
+                 
+                 // Procesar cada segmento para incluir el nombre de la aerolínea
+                 const processedSegments = segments.map(seg => ({
+                   ...seg,
+                   airlineName: seg.airlineName || seg.airlineCode,
+                   carrierCode: seg.airlineCode
+                 }));
+                 
+                 if (segments.length === 1) {
+                   // Vuelo directo
+                   const segment = segments[0];
+                   return {
+                     date: formatDate(`${segment.departureDate} ${segment.departureTime}`),
+                     airline: segment.airlineName || segment.airlineCode,
+                     logo: getAirlineLogo(segment.airlineCode),
+                     origin: segment.departureCode,
+                     originCity: segment.departureCityName || segment.departureCode,
+                     destination: segment.arrivalCode,
+                     destinationCity: segment.arrivalCityName || segment.arrivalCode,
+                     departure: segment.departureTime,
+                     arrival: segment.arrivalTime,
+                     duration: formatDuration(segment.duration),
+                     type: flightData.connections === 0 ? "Directo" : `${flightData.connections} escala${flightData.connections > 1 ? 's' : ''}`,
+                     baggage: {
+                       carryOn: offer.cabin_luggage_include || false,
+                       checked: offer.luggage_include || false,
+                       underseat: offer.underseat_luggage_include || false
+                     },
+                     segments: processedSegments,
+                     carrierCode: segment.airlineCode,
+                     airlineName: segment.airlineName || segment.airlineCode,
+                     numberOfStops: flightData.connections || 0
+                   };
+                 } else {
+                   // Vuelo con escalas
+                   const firstSegment = segments[0];
+                   const lastSegment = segments[segments.length - 1];
+                   
+                   return {
+                     date: formatDate(`${firstSegment.departureDate} ${firstSegment.departureTime}`),
+                     airline: firstSegment.airlineName || firstSegment.airlineCode,
+                     logo: getAirlineLogo(firstSegment.airlineCode),
+                     origin: firstSegment.departureCode,
+                     originCity: firstSegment.departureCityName || firstSegment.departureCode,
+                     destination: lastSegment.arrivalCode,
+                     destinationCity: lastSegment.arrivalCityName || lastSegment.arrivalCode,
+                     departure: firstSegment.departureTime,
+                     arrival: lastSegment.arrivalTime,
+                     duration: formatDuration(flightData.duration),
+                     type: `${flightData.connections} escala${flightData.connections > 1 ? 's' : ''}`,
+                     baggage: {
+                       carryOn: offer.cabin_luggage_include || false,
+                       checked: offer.luggage_include || false,
+                       underseat: offer.underseat_luggage_include || false
+                     },
+                     segments: processedSegments,
+                     carrierCode: firstSegment.airlineCode,
+                     airlineName: firstSegment.airlineName || firstSegment.airlineCode,
+                     numberOfStops: flightData.connections || 0
+                   };
+                 }
+               };
+
+              return {
+                id: index + 1,
+                flightId: offer.flightId,
+                outbound: processSegments(outbound),
+                return: processSegments(returnFlight),
+                pricing: {
+                  perPerson: formatPrice(pricePerPerson),
+                  total: formatPrice(totalPrice),
+                  passengers: passengers,
+                  includesTaxes: true,
+                  currency: offer.CurrencyCode || selectedCurrency
+                },
+                bestDeal: offer.bestDeal || false
+              };
+            });
+
+            setFlightData({
+              hotel: hotelInfo,
+              flights: processedFlights
+            });
+          } else {
+            // Si no hay vuelos en la nueva estructura
+            setFlightData({
+              hotel: hotelInfo,
+              flights: []
+            });
+          }
+        } else if (dataVuelo && dataVuelo.data && dataVuelo.data.length > 0) {
+          // Mantener compatibilidad con estructura antigua si existe
           const flightOffers = dataVuelo.data;
           const dictionariesData = dataVuelo.dictionaries;
           
@@ -135,61 +319,8 @@ const VuelosDisponibles = () => {
           setDictionaries(dictionariesData);
           // Mantener una copia de las ofertas originales para futuras referencias
           setOriginalFlightOffers(flightOffers);
-          
-          // Guardar datos de reserva del hotel en estado para usos futuros (opcional)
-          const hotelReservation = (datosReserva && datosReserva.length > 0) ? datosReserva[0] : null;
-          if (hotelReservation) {
-            setHotelReservationData(hotelReservation);
-          }
 
-          // Obtener información del hotel desde los datos recien leídos (evita depender del estado asíncrono)
-          const hotelInfo = hotelReservation ? {
-            name: hotelNames[hotelReservation.hotelidAutocore] || `Hotel ID: ${hotelReservation.hotelidAutocore}`,
-            dates: `${hotelReservation.checkin} -> ${hotelReservation.checkout}`,
-            room: {
-              type: hotelReservation.NombreH,
-              meal: hotelReservation.plandealimentacion,
-            // payment: "Pago: Inmediato",
-              dates: `${hotelReservation.checkin} - ${hotelReservation.checkout}`,
-              nights: `${hotelReservation.nights} noches, ${hotelReservation.huespedes} huéspedes`,
-              pets: typeof hotelReservation.mascotas === 'number' ? hotelReservation.mascotas : parseInt(hotelReservation.mascotas || 0, 10),
-              transferIncluded: !!hotelReservation.incluirTraslado,
-              transferText: hotelReservation.incluirTraslado
-                ? (hotelReservation.tipoTraslado === 'aeropuerto_hotel'
-                    ? 'Aeropuerto al hotel'
-                    : hotelReservation.tipoTraslado === 'hotel_aeropuerto'
-                      ? 'Hotel al aeropuerto'
-                      : hotelReservation.tipoTraslado === 'ambos'
-                        ? 'Aeropuerto al hotel y Hotel al aeropuerto'
-                        : 'Incluido')
-                : 'No incluido'
-            },
-            price: formatPrice(hotelReservation.precio),
-            includesTaxes: true
-          } : {
-            name: "Hotel Seleccionado",
-            dates: datosDelVuelo?.dateRange ? 
-              `${formatDate(datosDelVuelo.dateRange.startDate)} -> ${formatDate(datosDelVuelo.dateRange.endDate)}` : 
-              "Fechas no disponibles",
-            room: {
-              type: "Habitación seleccionada",
-              meal: "Plan seleccionado",
-              payment: "Pago: Inmediato",
-              dates: datosDelVuelo?.dateRange ? 
-                `${formatDate(datosDelVuelo.dateRange.startDate)} - ${formatDate(datosDelVuelo.dateRange.endDate)}` : 
-                "Fechas no disponibles",
-              nights: datosDelVuelo?.dateRange ? 
-                `${Math.ceil((new Date(datosDelVuelo.dateRange.endDate) - new Date(datosDelVuelo.dateRange.startDate)) / (1000 * 60 * 60 * 24))} noches` : 
-                "Noches no disponibles",
-              pets: 0,
-              transferIncluded: false,
-              transferText: 'No incluido'
-            },
-            price: "$0",
-            includesTaxes: true
-          };
-
-          // Procesar las ofertas de vuelo
+          // Procesar las ofertas de vuelo (estructura antigua)
           const processedFlights = flightOffers.map((offer, index) => {
             const itineraries = offer.itineraries;
             const outbound = itineraries[0];
@@ -201,64 +332,79 @@ const VuelosDisponibles = () => {
             const passengers = offer.travelerPricings.length;
             const pricePerPerson = totalPrice / passengers;
 
-            // Función para procesar múltiples segmentos (escalas)
-            const processSegments = (segments) => {
-              if (segments.length === 1) {
-                // Vuelo directo
-                const segment = segments[0];
-                return {
-                  date: formatDate(segment.departure.at),
-                  airline: getAirlineName(segment.carrierCode, dictionariesData),
-                  logo: getAirlineLogo(segment.carrierCode),
-                  origin: segment.departure.iataCode,
-                  originCity: getCityName(segment.departure.iataCode, dictionariesData),
-                  destination: segment.arrival.iataCode,
-                  destinationCity: getCityName(segment.arrival.iataCode, dictionariesData),
-                  departure: formatDateTime(segment.departure.at),
-                  arrival: formatDateTime(segment.arrival.at),
-                  duration: formatDuration(segment.duration),
-                  type: segment.numberOfStops === 0 ? "Directo" : `${segment.numberOfStops} escala${segment.numberOfStops > 1 ? 's' : ''}`,
-                  baggage: {
-                    carryOn: true,
-                    checked: true
-                  },
-                  segments: [segment] // Para vuelos directos, solo un segmento
-                };
-              } else {
-                // Vuelo con escalas - procesar todos los segmentos
-                const firstSegment = segments[0];
-                const lastSegment = segments[segments.length - 1];
-                const totalDuration = segments.reduce((total, seg) => {
-                  const duration = seg.duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
-                  const hours = duration[1] ? parseInt(duration[1]) : 0;
-                  const minutes = duration[2] ? parseInt(duration[2]) : 0;
-                  return total + (hours * 60 + minutes);
-                }, 0);
-                
-                const totalHours = Math.floor(totalDuration / 60);
-                const totalMinutes = totalDuration % 60;
-                const formattedDuration = totalHours > 0 ? `${totalHours}h ${totalMinutes}m` : `${totalMinutes}m`;
+             // Función para procesar múltiples segmentos (escalas)
+             const processSegments = (segments) => {
+               // Procesar cada segmento para incluir el nombre de la aerolínea
+               const processedSegments = segments.map(seg => ({
+                 ...seg,
+                 airlineName: getAirlineName(seg.carrierCode, dictionariesData) || seg.carrierCode,
+                 carrierCode: seg.carrierCode
+               }));
+               
+               if (segments.length === 1) {
+                 // Vuelo directo
+                 const segment = segments[0];
+                 const airlineName = getAirlineName(segment.carrierCode, dictionariesData) || segment.carrierCode;
+                 return {
+                   date: formatDate(segment.departure.at),
+                   airline: airlineName,
+                   logo: getAirlineLogo(segment.carrierCode),
+                   origin: segment.departure.iataCode,
+                   originCity: getCityName(segment.departure.iataCode, dictionariesData),
+                   destination: segment.arrival.iataCode,
+                   destinationCity: getCityName(segment.arrival.iataCode, dictionariesData),
+                   departure: formatDateTime(segment.departure.at),
+                   arrival: formatDateTime(segment.arrival.at),
+                   duration: formatDuration(segment.duration),
+                   type: segment.numberOfStops === 0 ? "Directo" : `${segment.numberOfStops} escala${segment.numberOfStops > 1 ? 's' : ''}`,
+                   baggage: {
+                     carryOn: true,
+                     checked: true
+                   },
+                   segments: processedSegments,
+                   carrierCode: segment.carrierCode,
+                   airlineName: airlineName,
+                   numberOfStops: segment.numberOfStops || 0
+                 };
+               } else {
+                 // Vuelo con escalas - procesar todos los segmentos
+                 const firstSegment = segments[0];
+                 const lastSegment = segments[segments.length - 1];
+                 const airlineName = getAirlineName(firstSegment.carrierCode, dictionariesData) || firstSegment.carrierCode;
+                 const totalDuration = segments.reduce((total, seg) => {
+                   const duration = seg.duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+                   const hours = duration[1] ? parseInt(duration[1]) : 0;
+                   const minutes = duration[2] ? parseInt(duration[2]) : 0;
+                   return total + (hours * 60 + minutes);
+                 }, 0);
+                 
+                 const totalHours = Math.floor(totalDuration / 60);
+                 const totalMinutes = totalDuration % 60;
+                 const formattedDuration = totalHours > 0 ? `${totalHours}h ${totalMinutes}m` : `${totalMinutes}m`;
 
-                return {
-                  date: formatDate(firstSegment.departure.at),
-                  airline: getAirlineName(firstSegment.carrierCode, dictionariesData),
-                  logo: getAirlineLogo(firstSegment.carrierCode),
-                  origin: firstSegment.departure.iataCode,
-                  originCity: getCityName(firstSegment.departure.iataCode, dictionariesData),
-                  destination: lastSegment.arrival.iataCode,
-                  destinationCity: getCityName(lastSegment.arrival.iataCode, dictionariesData),
-                  departure: formatDateTime(firstSegment.departure.at),
-                  arrival: formatDateTime(lastSegment.arrival.at),
-                  duration: formattedDuration,
-                  type: `${segments.length - 1} escala${segments.length - 1 > 1 ? 's' : ''}`,
-                  baggage: {
-                    carryOn: true,
-                    checked: true
-                  },
-                  segments: segments // Todos los segmentos para mostrar escalas
-                };
-              }
-            };
+                 return {
+                   date: formatDate(firstSegment.departure.at),
+                   airline: airlineName,
+                   logo: getAirlineLogo(firstSegment.carrierCode),
+                   origin: firstSegment.departure.iataCode,
+                   originCity: getCityName(firstSegment.departure.iataCode, dictionariesData),
+                   destination: lastSegment.arrival.iataCode,
+                   destinationCity: getCityName(lastSegment.arrival.iataCode, dictionariesData),
+                   departure: formatDateTime(firstSegment.departure.at),
+                   arrival: formatDateTime(lastSegment.arrival.at),
+                   duration: formattedDuration,
+                   type: `${segments.length - 1} escala${segments.length - 1 > 1 ? 's' : ''}`,
+                   baggage: {
+                     carryOn: true,
+                     checked: true
+                   },
+                   segments: processedSegments,
+                   carrierCode: firstSegment.carrierCode,
+                   airlineName: airlineName,
+                   numberOfStops: segments.length - 1
+                 };
+               }
+             };
 
             return {
               id: index + 1,
@@ -280,7 +426,7 @@ const VuelosDisponibles = () => {
         } else {
           // Si no hay datos, usar datos de ejemplo
           setFlightData({
-            hotel: {
+            hotel: hotelInfo || {
               name: "Hotel Avexi Suites",
               dates: "6 sep -> 10 sep (3 noches)",
               room: {
@@ -364,31 +510,35 @@ const VuelosDisponibles = () => {
     );
   }
 
-  // Si no hay dictionaries disponibles, mostrar loading
-  if (!dictionaries) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-          <h2>Cargando información de vuelos...</h2>
-        </div>
-      </div>
-    );
-  }
+  // Si no hay dictionaries disponibles (solo para estructura antigua), no bloquear
+  // La nueva estructura no requiere dictionaries
 
-  // Construir listado de aerolíneas presentes y filtrar por aerolínea seleccionada
-  const carriersInResultsSet = new Set();
-  flightData.flights.forEach((f) => {
-    f.outbound.segments.forEach((s) => carriersInResultsSet.add(s.carrierCode));
-    f.return.segments.forEach((s) => carriersInResultsSet.add(s.carrierCode));
-  });
-  const carriersInResults = Array.from(carriersInResultsSet);
+   // Construir listado de aerolíneas presentes y filtrar por aerolínea seleccionada
+   const carriersMap = new Map(); // Map para guardar código -> nombre
+   flightData.flights.forEach((f) => {
+     f.outbound.segments.forEach((s) => {
+       const carrierCode = s.carrierCode || s.airlineCode;
+       const airlineName = s.airlineName || getAirlineName(carrierCode, dictionaries) || carrierCode;
+       if (carrierCode) {
+         carriersMap.set(carrierCode, airlineName);
+       }
+     });
+     f.return.segments.forEach((s) => {
+       const carrierCode = s.carrierCode || s.airlineCode;
+       const airlineName = s.airlineName || getAirlineName(carrierCode, dictionaries) || carrierCode;
+       if (carrierCode) {
+         carriersMap.set(carrierCode, airlineName);
+       }
+     });
+   });
+   const carriersInResults = Array.from(carriersMap.keys());
 
-  const filteredFlights = selectedCarrier
-    ? flightData.flights.filter((f) =>
-        f.outbound.segments.some((s) => s.carrierCode === selectedCarrier) ||
-        f.return.segments.some((s) => s.carrierCode === selectedCarrier)
-      )
-    : flightData.flights;
+   const filteredFlights = selectedCarrier
+     ? flightData.flights.filter((f) =>
+         f.outbound.segments.some((s) => (s.carrierCode || s.airlineCode) === selectedCarrier) ||
+         f.return.segments.some((s) => (s.carrierCode || s.airlineCode) === selectedCarrier)
+       )
+     : flightData.flights;
 
   // Paginación sobre la lista filtrada
   const totalFlights = filteredFlights.length;
@@ -443,12 +593,15 @@ const VuelosDisponibles = () => {
               value={selectedCarrier}
               onChange={(e) => setSelectedCarrier(e.target.value)}
             >
-              <option value="">Todas</option>
-              {carriersInResults.map((code) => (
-                <option key={code} value={code}>
-                  {getAirlineName(code, dictionaries)}
-                </option>
-              ))}
+               <option value="">Todas</option>
+               {carriersInResults.map((code) => {
+                 const airlineName = carriersMap.get(code) || getAirlineName(code, dictionaries) || code;
+                 return (
+                   <option key={code} value={code}>
+                     {airlineName}
+                   </option>
+                 );
+               })}
             </select>
           </div>
           <br />
@@ -461,52 +614,66 @@ const VuelosDisponibles = () => {
                   <span className={styles.segmentDate}>{flight.outbound.date}</span>
                 </div>
                 
-                {/* Mostrar todos los segmentos de ida */}
-                {flight.outbound.segments.map((segment, segmentIndex) => (
-                  <div key={segmentIndex} className={styles.flightDetails}>
-                    <div className={styles.airlineInfo}>
-                      <img src={getAirlineLogo(segment.carrierCode)} alt={getAirlineName(segment.carrierCode, dictionaries)} className={styles.airlineLogo} />
-                      <span className={styles.airlineName}>{getAirlineName(segment.carrierCode, dictionaries)}</span>
-                    </div>
-                    <div className={styles.routeInfo}>
-                      <div className={styles.origin}>
-                        <span className={styles.cityCode}>{segment.departure.iataCode}</span>
-                        <span className={styles.cityName}>{getCityName(segment.departure.iataCode, dictionaries)}</span>
-                      </div>
-                      <div className={styles.flightTime}>
-                        <span className={styles.departureTime}>{formatDateTime(segment.departure.at)}</span>
-                        <span className={styles.flightType}>
-                          {segment.numberOfStops === 0 ? "Directo" : `${segment.numberOfStops} escala${segment.numberOfStops > 1 ? 's' : ''}`}
-                        </span>
-                        <span className={styles.arrivalTime}>{formatDateTime(segment.arrival.at)}</span>
-                      </div>
-                      <div className={styles.destination}>
-                        <span className={styles.cityCode}>{segment.arrival.iataCode}</span>
-                        <span className={styles.cityName}>{getCityName(segment.arrival.iataCode, dictionaries)}</span>
-                      </div>
-                    </div>
-                    <div className={styles.flightDuration}>
-                      <span>{formatDuration(segment.duration)}</span>
-                    </div>
-                    <div className={styles.baggageInfo}>
-                      <i className="fas fa-suitcase-rolling"></i>
-                      <i className="fas fa-suitcase"></i>
-                      <i className="fas fa-info-circle"></i>
-                    </div>
-                    
-                    {/* Mostrar información de escala si no es el último segmento */}
-                    {segmentIndex < flight.outbound.segments.length - 1 && (
-                      <div className={styles.connectionInfo}>
-                        <div className={styles.connectionLine}></div>
-                        <div className={styles.connectionText}>
-                          <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
-                          <span>Escala en {getCityName(segment.arrival.iataCode, dictionaries)} ({segment.arrival.iataCode})</span>
+                 {/* Mostrar todos los segmentos de ida */}
+                 {flight.outbound.segments.map((segment, segmentIndex) => {
+                   // Manejar tanto la estructura nueva como la antigua
+                   const isNewStructure = segment.departureCode !== undefined;
+                   const carrierCode = segment.carrierCode || segment.airlineCode;
+                   // Priorizar airlineName del segmento, luego usar getAirlineName si no existe
+                   const airlineName = segment.airlineName || getAirlineName(carrierCode, dictionaries) || carrierCode;
+                   const originCode = isNewStructure ? segment.departureCode : segment.departure?.iataCode;
+                   const destinationCode = isNewStructure ? segment.arrivalCode : segment.arrival?.iataCode;
+                   const departureTime = isNewStructure ? segment.departureTime : formatDateTime(segment.departure?.at);
+                   const arrivalTime = isNewStructure ? segment.arrivalTime : formatDateTime(segment.arrival?.at);
+                   const duration = isNewStructure ? segment.duration : segment.duration;
+                   const numberOfStops = segment.numberOfStops || flight.outbound.numberOfStops || 0;
+                   
+                   return (
+                     <div key={segmentIndex} className={styles.flightDetails}>
+                       <div className={styles.airlineInfo}>
+                         <img src={getAirlineLogo(carrierCode)} alt={airlineName} className={styles.airlineLogo} />
+                         <span className={styles.airlineName}>{airlineName}</span>
+                       </div>
+                      <div className={styles.routeInfo}>
+                        <div className={styles.origin}>
+                          <span className={styles.cityCode}>{originCode}</span>
+                          <span className={styles.cityName}>{getCityName(originCode, dictionaries)}</span>
                         </div>
-                        <div className={styles.connectionLine}></div>
+                        <div className={styles.flightTime}>
+                          <span className={styles.departureTime}>{departureTime}</span>
+                          <span className={styles.flightType}>
+                            {numberOfStops === 0 ? "Directo" : `${numberOfStops} escala${numberOfStops > 1 ? 's' : ''}`}
+                          </span>
+                          <span className={styles.arrivalTime}>{arrivalTime}</span>
+                        </div>
+                        <div className={styles.destination}>
+                          <span className={styles.cityCode}>{destinationCode}</span>
+                          <span className={styles.cityName}>{getCityName(destinationCode, dictionaries)}</span>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                ))}
+                      <div className={styles.flightDuration}>
+                        <span>{formatDuration(duration)}</span>
+                      </div>
+                      <div className={styles.baggageInfo}>
+                        <i className="fas fa-suitcase-rolling"></i>
+                        <i className="fas fa-suitcase"></i>
+                        <i className="fas fa-info-circle"></i>
+                      </div>
+                      
+                      {/* Mostrar información de escala si no es el último segmento */}
+                      {segmentIndex < flight.outbound.segments.length - 1 && (
+                        <div className={styles.connectionInfo}>
+                          <div className={styles.connectionLine}></div>
+                          <div className={styles.connectionText}>
+                            <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
+                            <span>Escala en {getCityName(destinationCode, dictionaries)} ({destinationCode})</span>
+                          </div>
+                          <div className={styles.connectionLine}></div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
                 
                 {/* Información resumida del vuelo completo de ida */}
                 <div className={styles.flightSummary}>
@@ -531,52 +698,66 @@ const VuelosDisponibles = () => {
                   <span className={styles.segmentDate}>{flight.return.date}</span>
                 </div>
                 
-                {/* Mostrar todos los segmentos de regreso */}
-                {flight.return.segments.map((segment, segmentIndex) => (
-                  <div key={segmentIndex} className={styles.flightDetails}>
-                    <div className={styles.airlineInfo}>
-                      <img src={getAirlineLogo(segment.carrierCode)} alt={getAirlineName(segment.carrierCode, dictionaries)} className={styles.airlineLogo} />
-                      <span className={styles.airlineName}>{getAirlineName(segment.carrierCode, dictionaries)}</span>
-                    </div>
-                    <div className={styles.routeInfo}>
-                      <div className={styles.origin}>
-                        <span className={styles.cityCode}>{segment.departure.iataCode}</span>
-                        <span className={styles.cityName}>{getCityName(segment.departure.iataCode, dictionaries)}</span>
-                      </div>
-                      <div className={styles.flightTime}>
-                        <span className={styles.departureTime}>{formatDateTime(segment.departure.at)}</span>
-                        <span className={styles.flightType}>
-                          {segment.numberOfStops === 0 ? "Directo" : `${segment.numberOfStops} escala${segment.numberOfStops > 1 ? 's' : ''}`}
-                        </span>
-                        <span className={styles.arrivalTime}>{formatDateTime(segment.arrival.at)}</span>
-                      </div>
-                      <div className={styles.destination}>
-                        <span className={styles.cityCode}>{segment.arrival.iataCode}</span>
-                        <span className={styles.cityName}>{getCityName(segment.arrival.iataCode, dictionaries)}</span>
-                      </div>
-                    </div>
-                    <div className={styles.flightDuration}>
-                      <span>{formatDuration(segment.duration)}</span>
-                    </div>
-                    <div className={styles.baggageInfo}>
-                      <i className="fas fa-suitcase-rolling"></i>
-                      <i className="fas fa-suitcase"></i>
-                      <i className="fas fa-info-circle"></i>
-                    </div>
-                    
-                    {/* Mostrar información de escala si no es el último segmento */}
-                    {segmentIndex < flight.return.segments.length - 1 && (
-                      <div className={styles.connectionInfo}>
-                        <div className={styles.connectionLine}></div>
-                        <div className={styles.connectionText}>
-                        <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
-                          <span>Escala en {getCityName(segment.arrival.iataCode, dictionaries)} ({segment.arrival.iataCode})</span>
+                 {/* Mostrar todos los segmentos de regreso */}
+                 {flight.return.segments.map((segment, segmentIndex) => {
+                   // Manejar tanto la estructura nueva como la antigua
+                   const isNewStructure = segment.departureCode !== undefined;
+                   const carrierCode = segment.carrierCode || segment.airlineCode;
+                   // Priorizar airlineName del segmento, luego usar getAirlineName si no existe
+                   const airlineName = segment.airlineName || getAirlineName(carrierCode, dictionaries) || carrierCode;
+                   const originCode = isNewStructure ? segment.departureCode : segment.departure?.iataCode;
+                   const destinationCode = isNewStructure ? segment.arrivalCode : segment.arrival?.iataCode;
+                   const departureTime = isNewStructure ? segment.departureTime : formatDateTime(segment.departure?.at);
+                   const arrivalTime = isNewStructure ? segment.arrivalTime : formatDateTime(segment.arrival?.at);
+                   const duration = isNewStructure ? segment.duration : segment.duration;
+                   const numberOfStops = segment.numberOfStops || flight.return.numberOfStops || 0;
+                   
+                   return (
+                     <div key={segmentIndex} className={styles.flightDetails}>
+                       <div className={styles.airlineInfo}>
+                         <img src={getAirlineLogo(carrierCode)} alt={airlineName} className={styles.airlineLogo} />
+                         <span className={styles.airlineName}>{airlineName}</span>
+                       </div>
+                      <div className={styles.routeInfo}>
+                        <div className={styles.origin}>
+                          <span className={styles.cityCode}>{originCode}</span>
+                          <span className={styles.cityName}>{getCityName(originCode, dictionaries)}</span>
                         </div>
-                        <div className={styles.connectionLine}></div>
+                        <div className={styles.flightTime}>
+                          <span className={styles.departureTime}>{departureTime}</span>
+                          <span className={styles.flightType}>
+                            {numberOfStops === 0 ? "Directo" : `${numberOfStops} escala${numberOfStops > 1 ? 's' : ''}`}
+                          </span>
+                          <span className={styles.arrivalTime}>{arrivalTime}</span>
+                        </div>
+                        <div className={styles.destination}>
+                          <span className={styles.cityCode}>{destinationCode}</span>
+                          <span className={styles.cityName}>{getCityName(destinationCode, dictionaries)}</span>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                ))}
+                      <div className={styles.flightDuration}>
+                        <span>{formatDuration(duration)}</span>
+                      </div>
+                      <div className={styles.baggageInfo}>
+                        <i className="fas fa-suitcase-rolling"></i>
+                        <i className="fas fa-suitcase"></i>
+                        <i className="fas fa-info-circle"></i>
+                      </div>
+                      
+                      {/* Mostrar información de escala si no es el último segmento */}
+                      {segmentIndex < flight.return.segments.length - 1 && (
+                        <div className={styles.connectionInfo}>
+                          <div className={styles.connectionLine}></div>
+                          <div className={styles.connectionText}>
+                          <img src="https://space-img.sfo3.digitaloceanspaces.com/Logos/Avion.png" alt="Avión" />
+                            <span>Escala en {getCityName(destinationCode, dictionaries)} ({destinationCode})</span>
+                          </div>
+                          <div className={styles.connectionLine}></div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
                 
                 {/* Información resumida del vuelo completo de regreso */}
                 <div className={styles.flightSummary}>
