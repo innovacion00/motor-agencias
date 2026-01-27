@@ -998,20 +998,22 @@ export const CotizacionCreada = ({ id }) => {
                         <div style={{ display: 'grid', gap: '10px' }}>
                             <button
                                 onClick={handleAceptar}
+                                disabled={decision !== null}
                                 style={{
                                     fontWeight: '500',
-                                    backgroundColor: '#059669',
+                                    backgroundColor: decision !== null ? '#9ca3af' : '#059669',
                                     color: 'white',
                                     padding: '12px 16px',
                                     border: 'none',
                                     borderRadius: '5px',
-                                    cursor: 'pointer',
+                                    cursor: decision !== null ? 'not-allowed' : 'pointer',
                                     fontSize: '14px',
                                     width: '100%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '8px'
+                                    gap: '8px',
+                                    opacity: decision !== null ? 0.6 : 1
                                 }}
                             >
                                 <CheckCircle size={18} />
@@ -1019,20 +1021,22 @@ export const CotizacionCreada = ({ id }) => {
                             </button>
                             <button
                                 onClick={handleRechazar}
+                                disabled={decision !== null}
                                 style={{
                                     fontWeight: '500',
-                                    backgroundColor: 'white',
-                                    color: '#ef4444',
+                                    backgroundColor: decision !== null ? '#f3f4f6' : 'white',
+                                    color: decision !== null ? '#9ca3af' : '#ef4444',
                                     padding: '12px 16px',
-                                    border: '1px solid #ef4444',
+                                    border: `1px solid ${decision !== null ? '#9ca3af' : '#ef4444'}`,
                                     borderRadius: '5px',
-                                    cursor: 'pointer',
+                                    cursor: decision !== null ? 'not-allowed' : 'pointer',
                                     fontSize: '14px',
                                     width: '100%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '8px'
+                                    gap: '8px',
+                                    opacity: decision !== null ? 0.6 : 1
                                 }}
                             >
                                 <XCircle size={18} />
