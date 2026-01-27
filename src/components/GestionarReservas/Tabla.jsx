@@ -289,7 +289,17 @@ const Tabla = () => {
   };
 
   const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value);
+    let value = event.target.value;
+    
+    // Si es búsqueda por código de reserva, convertir a mayúsculas y limitar a 10 caracteres
+    if (searchType === "codigo") {
+      value = value.toUpperCase();
+      if (value.length > 10) {
+        value = value.substring(0, 10);
+      }
+    }
+    
+    setSearchTerm(value);
   };
 
   const handleSearchSubmit = async (event) => {
@@ -801,7 +811,6 @@ const Tabla = () => {
         </select>
         <input
           type="text"
-
           placeholder={
             searchType === "codigo"
               ? "Ingrese el código de reserva..."
@@ -816,10 +825,11 @@ const Tabla = () => {
               : "Ingrese el término de búsqueda..."
           }
           value={searchTerm}
-
           onChange={handleSearchInputChange}
           className={styles.searchInput}
           disabled={isTextSearchDisabled}
+          maxLength={searchType === "codigo" ? 10 : undefined}
+          style={searchType === "codigo" ? { textTransform: "uppercase" } : {}}
         />
 
         <button
