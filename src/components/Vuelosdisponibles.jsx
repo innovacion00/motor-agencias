@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import styles from "../../public/styles/VuelosDisponibles.module.css";
 import DropdownSearch from "./DropdownSearch";
 import IATA_CITY_NAMES from "../utils/iataCityNames";
+import Modal from "react-modal";
+import Cookies from 'js-cookie';
+import { refreshToken } from '../stores/authtoken';
 
 
 const VuelosDisponibles = () => {
@@ -14,6 +17,15 @@ const VuelosDisponibles = () => {
   const ITEMS_PER_PAGE = 6;
   const [selectedCarrier, setSelectedCarrier] = useState("");
   const [hotelReservationData, setHotelReservationData] = useState(null);
+  const [isBaggageModalOpen, setIsBaggageModalOpen] = useState(false);
+  const [selectedFlightForBaggage, setSelectedFlightForBaggage] = useState(null);
+  const [selectedFare, setSelectedFare] = useState(null);
+  const [selectedBaggageByPassenger, setSelectedBaggageByPassenger] = useState({}); // { passengerId: baggageId }
+  const [showBaggageSelection, setShowBaggageSelection] = useState(false);
+  const [loadingBaggageData, setLoadingBaggageData] = useState(false);
+  const [loadingExtras, setLoadingExtras] = useState(false);
+  const [baggageOptions, setBaggageOptions] = useState([]);
+  const [packageData, setPackageData] = useState(null);
   
   // Mapeo de IDs de hotel a nombres
   const hotelNames = {
@@ -487,6 +499,13 @@ const VuelosDisponibles = () => {
     setCurrentPage(1);
   }, [selectedCarrier]);
 
+  // Configurar el elemento raíz del modal para react-modal
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      Modal.setAppElement(document.body);
+    }
+  }, []);
+
   // Mostrar loading mientras se cargan los datos
   if (loading) {
     return (
@@ -576,6 +595,549 @@ const VuelosDisponibles = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+
+  const handleOpenBaggageModal = (flight) => {
+    setSelectedFlightForBaggage(flight);
+    setIsBaggageModalOpen(true);
+    // Establecer tarifa básica como seleccionada por defecto
+    setSelectedFare('basica');
+  };
+
+  // Función para hacer la petición al endpoint de paquete
+  const fetchBaggageData = async () => {
+    if (!selectedFlightData) {
+      console.error('No hay vuelo seleccionado');
+      return;
+    }
+
+    setLoadingBaggageData(true);
+    try {
+      const baseUrl = import.meta.env.PUBLIC_API_URL;
+      
+      // Obtener el flightId del vuelo seleccionado
+      const flightId = selectedFlightData.flightId || '';
+      
+      // Body de la primera petición
+      const requestBody = {
+        flightId: flightId,
+        currency: "USD",
+        language: "ES"
+      };
+      
+      // Función para realizar la petición con token
+      const fetchWithToken = async (url, options, token) => {
+        return await fetch(url, {
+          ...options,
+          headers: {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      };
+
+      let token = Cookies.get('accessToken');
+      
+      // Primera petición: obtener el packageId
+      const packageUrl = `${baseUrl}/agencias/v1/vuelos/maarlab/paquete?info=all`;
+      let response = await fetchWithToken(packageUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      }, token);
+
+      // Si el token expiró, intentar refrescarlo
+      if (response.status === 401) {
+        const newToken = await refreshToken();
+        if (newToken) {
+          token = newToken;
+          response = await fetchWithToken(packageUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+          }, token);
+        } else {
+          throw new Error('No se pudo autenticar. Por favor, inicia sesión nuevamente.');
+        }
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error en la respuesta del paquete:', errorText);
+        throw new Error(`Error en la consulta del paquete: ${response.status} ${response.statusText}`);
+      }
+
+      const packageResponse = await response.json();
+      console.log('Datos del paquete recibidos:', packageResponse);
+      
+      // Guardar los datos del paquete
+      setPackageData(packageResponse);
+      
+      // Obtener el packageId
+      const packageId = packageResponse.packageId;
+      
+      if (!packageId) {
+        throw new Error('No se recibió el packageId en la respuesta');
+      }
+
+      // Segunda petición: obtener las opciones de equipaje
+      const baggageUrl = `${baseUrl}/agencias/v1/vuelos/maarlab/equipaje?packageId=${packageId}`;
+      let baggageResponse = await fetchWithToken(baggageUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }, token);
+
+      // Si el token expiró en la segunda petición, intentar refrescarlo
+      if (baggageResponse.status === 401) {
+        const newToken = await refreshToken();
+        if (newToken) {
+          token = newToken;
+          baggageResponse = await fetchWithToken(baggageUrl, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }, token);
+        } else {
+          throw new Error('No se pudo autenticar. Por favor, inicia sesión nuevamente.');
+        }
+      }
+
+      if (!baggageResponse.ok) {
+        const errorText = await baggageResponse.text();
+        console.error('Error en la respuesta del equipaje:', errorText);
+        throw new Error(`Error en la consulta del equipaje: ${baggageResponse.status} ${baggageResponse.statusText}`);
+      }
+
+      const baggageData = await baggageResponse.json();
+      console.log('Opciones de equipaje recibidas:', baggageData);
+      
+      // Guardar las opciones de equipaje
+      setBaggageOptions(baggageData);
+      
+      // Ocultar el componente y mostrar el modal
+      setShowBaggageSelection(true);
+      setSelectedFlightForBaggage(selectedFlightData);
+      setIsBaggageModalOpen(true);
+      setSelectedFare(null); // Resetear la selección de tarifa
+      setSelectedBaggageByPassenger({}); // Resetear selecciones por pasajero
+      
+      return { packageData: packageResponse, baggageOptions: baggageData };
+    } catch (error) {
+      console.error('Error al obtener datos de equipaje:', error);
+      alert(`Error al obtener datos de equipaje: ${error.message}`);
+      return null;
+    } finally {
+      setLoadingBaggageData(false);
+    }
+  };
+
+  const handleContinue = async () => {
+    if (!selectedFlight) {
+      return;
+    }
+    await fetchBaggageData();
+  };
+
+  const handleCloseBaggageModal = () => {
+    setIsBaggageModalOpen(false);
+    setSelectedFlightForBaggage(null);
+    setSelectedFare(null);
+    setSelectedBaggageByPassenger({});
+    setShowBaggageSelection(false); // Volver a mostrar el componente principal
+  };
+
+  const handleSelectFare = (baggageId, passengerId) => {
+    if (baggageId === 'none') {
+      // Si selecciona "sin equipaje", remover la selección de ese pasajero
+      setSelectedBaggageByPassenger(prev => {
+        const updated = { ...prev };
+        delete updated[passengerId];
+        return updated;
+      });
+      console.log(`Equipaje seleccionado: Sin equipaje adicional - Pasajero ${parseInt(passengerId) + 1} (ID: ${passengerId})`);
+    } else {
+      // Buscar la información del equipaje seleccionado
+      const baggageOption = baggageOptions.find(b => b.id === baggageId);
+      const baggageName = baggageOption ? baggageOption.baggageName : 'Equipaje desconocido';
+      
+      // Seleccionar equipaje para el pasajero específico
+      setSelectedBaggageByPassenger(prev => ({
+        ...prev,
+        [passengerId]: baggageId
+      }));
+      
+      console.log(`Equipaje seleccionado: ${baggageName} - Pasajero ${parseInt(passengerId) + 1} (ID: ${passengerId})`);
+    }
+  };
+
+  // Función para hacer la petición al endpoint de extras
+  const fetchExtras = async (extrasArray) => {
+    if (!packageData || !packageData.packageId) {
+      throw new Error('No se encontró el packageId');
+    }
+
+    setLoadingExtras(true);
+    try {
+      const baseUrl = import.meta.env.PUBLIC_API_URL;
+      const url = `${baseUrl}/agencias/v1/vuelos/maarlab/extras`;
+      
+      // Body de la petición
+      const requestBody = {
+        packageId: packageData.packageId,
+        extras: extrasArray
+      };
+      
+      // Función para realizar la petición con token
+      const fetchWithToken = async (token) => {
+        return await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(requestBody)
+        });
+      };
+
+      let token = Cookies.get('accessToken');
+      let response = await fetchWithToken(token);
+
+      // Si el token expiró, intentar refrescarlo
+      if (response.status === 401) {
+        const newToken = await refreshToken();
+        if (newToken) {
+          token = newToken;
+          response = await fetchWithToken(token);
+        } else {
+          throw new Error('No se pudo autenticar. Por favor, inicia sesión nuevamente.');
+        }
+      }
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error en la respuesta de extras:', errorText);
+        throw new Error(`Error en la consulta de extras: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('Extras agregados exitosamente:', data);
+      
+      // Guardar la respuesta en localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('dataVueloEquipaje', JSON.stringify(data));
+        console.log('Datos de equipaje guardados en localStorage:', data);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error al agregar extras:', error);
+      throw error;
+    } finally {
+      setLoadingExtras(false);
+    }
+  };
+
+  const handleConfirmBaggage = async () => {
+    try {
+      // Filtrar solo los equipajes seleccionados (excluyendo "none" o valores vacíos)
+      const selectedExtras = Object.entries(selectedBaggageByPassenger)
+        .filter(([passengerId, baggageId]) => baggageId && baggageId !== 'none')
+        .map(([passengerId, baggageId]) => {
+          // Buscar la opción de equipaje para obtener el passengerId correcto
+          const baggageOption = baggageOptions.find(b => b.id === baggageId);
+          return {
+            extraId: baggageId,
+            typeExtraId: "1",
+            passengerId: baggageOption ? String(baggageOption.passengerId) : String(passengerId)
+          };
+        });
+
+      // Si hay equipajes adicionales seleccionados, hacer la petición
+      if (selectedExtras.length > 0) {
+        console.log('Equipajes seleccionados:', selectedExtras);
+        const extrasResponse = await fetchExtras(selectedExtras);
+        // La respuesta ya se guarda en localStorage dentro de fetchExtras
+      } else {
+        console.log('No se seleccionaron equipajes adicionales, procediendo sin petición');
+        // Si no hay equipajes seleccionados, limpiar el localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('dataVueloEquipaje');
+          console.log('dataVueloEquipaje eliminado del localStorage (sin equipajes adicionales)');
+        }
+      }
+
+      // Cerrar el modal y redirigir a la página de reservas
+      handleCloseBaggageModal();
+      
+      // Redirigir a la página de reservas
+      if (typeof window !== 'undefined') {
+        window.location.href = '/reservas';
+      }
+    } catch (error) {
+      console.error('Error al confirmar equipaje:', error);
+      alert(`Error al procesar el equipaje: ${error.message}`);
+    }
+  };
+
+  // Obtener el precio de una opción de equipaje
+  const getBaggagePrice = (baggageId) => {
+    const baggage = baggageOptions.find(b => b.id === baggageId);
+    return baggage ? parseFloat(baggage.pricingDetail) : 0;
+  };
+
+  // Formatear precio de equipaje
+  const formatBaggagePrice = (baggageId) => {
+    const price = getBaggagePrice(baggageId);
+    if (price === 0) return '+$0';
+    return `+${formatPrice(price)}`;
+  };
+
+  // Calcular el total con el precio adicional del equipaje
+  const calculateTotalWithFare = () => {
+    if (!selectedFlightForBaggage || !packageData) {
+      return '0';
+    }
+    
+    // Obtener el precio base del paquete
+    const basePrice = parseFloat(packageData.totalPrice || packageData.flightBookPrice || 0);
+    
+    // Sumar los precios de todos los equipajes seleccionados por pasajero
+    let totalBaggagePrice = 0;
+    Object.values(selectedBaggageByPassenger).forEach(baggageId => {
+      if (baggageId && baggageId !== 'none') {
+        totalBaggagePrice += getBaggagePrice(baggageId);
+      }
+    });
+    
+    const total = basePrice + totalBaggagePrice;
+    return formatPrice(total);
+  };
+
+  // Organizar opciones de equipaje por passengerId
+  const organizeBaggageByPassenger = () => {
+    if (!baggageOptions || baggageOptions.length === 0) return {};
+    
+    const organized = {};
+    baggageOptions.forEach(option => {
+      const passengerId = option.passengerId;
+      if (!organized[passengerId]) {
+        organized[passengerId] = [];
+      }
+      organized[passengerId].push(option);
+    });
+    
+    return organized;
+  };
+
+  // Obtener la lista única de passengerIds
+  const getPassengerIds = () => {
+    if (!baggageOptions || baggageOptions.length === 0) return [];
+    const ids = [...new Set(baggageOptions.map(opt => opt.passengerId))];
+    return ids.sort((a, b) => a - b);
+  };
+
+  // Si se debe mostrar la selección de equipaje, ocultar el componente principal
+  if (showBaggageSelection) {
+    return (
+      <>
+        {/* Modal de Agregar Equipaje */}
+        <Modal
+          isOpen={isBaggageModalOpen}
+          onRequestClose={handleCloseBaggageModal}
+          className={styles.modalContent}
+          overlayClassName={styles.modalOverlay}
+          contentLabel="Agregar equipaje"
+        >
+          {selectedFlightForBaggage && (
+            <>
+              <div className={styles.modalHeader}>
+                <h2 className={styles.modalTitle}>Agregar equipaje</h2>
+                <button className={styles.closeButton} onClick={handleCloseBaggageModal}>
+                  ×
+                </button>
+              </div>
+
+              <div className={styles.modalBody}>
+                {/* Información del vuelo */}
+                <div className={styles.flightInfoSection}>
+                  <div className={styles.flightInfoHeader}>
+                    <img 
+                      src={selectedFlightForBaggage.outbound.logo} 
+                      alt={selectedFlightForBaggage.outbound.airline}
+                    />
+                    <div className={styles.flightInfoTitle}>Tu vuelo</div>
+                  </div>
+
+                  {/* Vuelo de ida */}
+                  <div className={styles.flightRoute}>
+                    <span className={styles.flightRouteLabel}>Ida:</span>
+                    <div className={styles.flightRouteDetails}>
+                      <span className={styles.flightRouteCode}>
+                        {selectedFlightForBaggage.outbound.origin} - {selectedFlightForBaggage.outbound.destination}
+                      </span>
+                      <span className={styles.flightRouteDate}>
+                        {selectedFlightForBaggage.outbound.date}
+                      </span>
+                      <span className={styles.flightRouteTime}>
+                        {selectedFlightForBaggage.outbound.departure} {selectedFlightForBaggage.outbound.type}
+                      </span>
+                    </div>
+                    <div className={styles.baggageIconsContainer}>
+                      <i className={`fas fa-backpack ${styles.baggageIcon}`}></i>
+                      <i className={`fas fa-suitcase-rolling ${styles.baggageIcon}`}></i>
+                      <i className={`fas fa-suitcase ${styles.baggageIcon}`}></i>
+                    </div>
+                  </div>
+
+                  {/* Vuelo de vuelta */}
+                  <div className={styles.flightRoute}>
+                    <span className={styles.flightRouteLabel}>Vuelta:</span>
+                    <div className={styles.flightRouteDetails}>
+                      <span className={styles.flightRouteCode}>
+                        {selectedFlightForBaggage.return.origin} - {selectedFlightForBaggage.return.destination}
+                      </span>
+                      <span className={styles.flightRouteDate}>
+                        {selectedFlightForBaggage.return.date}
+                      </span>
+                      <span className={styles.flightRouteTime}>
+                        {selectedFlightForBaggage.return.departure} {selectedFlightForBaggage.return.type}
+                      </span>
+                    </div>
+                    <div className={styles.baggageIconsContainer}>
+                      <i className={`fas fa-backpack ${styles.baggageIcon}`}></i>
+                      <i className={`fas fa-suitcase-rolling ${styles.baggageIcon}`}></i>
+                      <i className={`fas fa-suitcase ${styles.baggageIcon}`}></i>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Selección de equipaje */}
+                <h3 className={styles.fareSelectionTitle}>Selecciona tu equipaje</h3>
+                {loadingBaggageData ? (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <p>Cargando opciones de equipaje...</p>
+                  </div>
+                ) : baggageOptions && baggageOptions.length > 0 ? (
+                  getPassengerIds().map(passengerId => {
+                    const passengerOptions = organizeBaggageByPassenger()[passengerId] || [];
+                    const passengerType = passengerOptions[0]?.type_passenger || 'adult';
+                    const selectedBaggageId = selectedBaggageByPassenger[passengerId];
+                    
+                    return (
+                      <div key={passengerId} style={{ marginBottom: '30px' }}>
+                        <h4 style={{ 
+                          fontSize: '16px', 
+                          fontWeight: 600, 
+                          color: '#1C3D5A', 
+                          marginBottom: '15px',
+                          paddingBottom: '8px',
+                          borderBottom: '1px solid #e0e0e0'
+                        }}>
+                          Pasajero {parseInt(passengerId) + 1} ({passengerType})
+                        </h4>
+                        <div className={styles.fareOptions}>
+                          {/* Opción sin equipaje adicional */}
+                          <div 
+                            className={`${styles.fareCard} ${selectedBaggageId === 'none' || !selectedBaggageId ? styles.selected : ''}`}
+                            onClick={() => handleSelectFare('none', passengerId)}
+                          >
+                            <div className={styles.fareName}>Sin equipaje adicional</div>
+                            <div className={styles.farePrice}>+$0</div>
+                            <div className={styles.farePriceLabel}>Equipaje incluido en la tarifa</div>
+                            <div className={styles.fareBaggageIcons}>
+                              <i className={`fas fa-backpack ${styles.fareBaggageIcon} ${styles.active}`}></i>
+                            </div>
+                            <button 
+                              className={`${styles.fareSelectButton} ${selectedBaggageId === 'none' || !selectedBaggageId ? styles.selected : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSelectFare('none', passengerId);
+                              }}
+                            >
+                              {selectedBaggageId === 'none' || !selectedBaggageId ? 'Seleccionado' : 'Seleccionar'}
+                            </button>
+                          </div>
+
+                          {/* Opciones de equipaje para este pasajero */}
+                          {passengerOptions.map((option, index) => (
+                            <div 
+                              key={option.id || index}
+                              className={`${styles.fareCard} ${selectedBaggageId === option.id ? styles.selected : ''}`}
+                              onClick={() => handleSelectFare(option.id, passengerId)}
+                            >
+                              <div className={styles.fareName}>{option.baggageName}</div>
+                              <div className={styles.farePrice}>+{formatPrice(parseFloat(option.pricingDetail))}</div>
+                              <div className={styles.farePriceLabel}>
+                                {option.bagsAllowed} maleta{option.bagsAllowed > 1 ? 's' : ''} • {option.weightPerBag} kg c/u
+                              </div>
+                              <div className={styles.fareBaggageIcons}>
+                                {Array.from({ length: option.bagsAllowed }).map((_, i) => (
+                                  <i key={i} className={`fas fa-suitcase ${styles.fareBaggageIcon} ${styles.active}`}></i>
+                                ))}
+                              </div>
+                              <button 
+                                className={`${styles.fareSelectButton} ${selectedBaggageId === option.id ? styles.selected : ''}`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleSelectFare(option.id, passengerId);
+                                }}
+                              >
+                                {selectedBaggageId === option.id ? 'Seleccionado' : 'Seleccionar'}
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <p>No hay opciones de equipaje disponibles</p>
+                  </div>
+                )}
+
+                {/* Información sobre dimensiones */}
+                <div className={styles.infoSection}>
+                  <div className={styles.infoText}>
+                    Los beneficios y penalidades de la tarifa aplican a los cargos de la aerolínea, y no incluyen los cargos por servicio.
+                  </div>
+                  <div className={styles.infoText}>
+                    <strong>Dimensiones Permitidas:</strong> Un morral o una cartera: 45 x 35 x 20 cm. Un equipaje de mano: 55 x 35 x 25 cm. y peso máximo 10 kg. Equipaje en Bodega: 158cm. lineales y peso máximo 23 kg. Las medidas y peso del equipaje incluido pueden variar, consulta en el sitio de la aerolínea.
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer del modal */}
+              <div className={styles.modalFooter}>
+                <div className={styles.footerTotal}>
+                  <div className={styles.footerTotalLabel}>
+                    Total {packageData?.flight?.pricePerPassenger?.length || selectedFlightForBaggage?.pricing?.passengers || 0} personas: {calculateTotalWithFare()} {packageData?.currency || currencySuffix}
+                  </div>
+                  <div className={styles.footerTaxesInfo}>
+                    <i className="fas fa-info-circle"></i>
+                    <span>Incluye impuestos</span>
+                  </div>
+                </div>
+                <button 
+                  className={styles.footerNextButton}
+                  onClick={handleConfirmBaggage}
+                  disabled={loadingBaggageData || loadingExtras}
+                >
+                  {loadingExtras ? 'Procesando...' : loadingBaggageData ? 'Cargando...' : 'Siguiente >'}
+                </button>
+              </div>
+            </>
+          )}
+        </Modal>
+      </>
+    );
+  }
 
   return (
     <>
@@ -775,15 +1337,6 @@ const VuelosDisponibles = () => {
                 </div>
               </div>
 
-              {/* Opción de equipaje */}
-              <div className={styles.baggageUpgrade}>
-                <div className={styles.baggageUpgradeContent}>
-                  <i className="fas fa-suitcase"></i>
-                  <span>Lleva más equipaje con una mejor categoría</span>
-                  <button className={styles.addBaggageBtn}>+ Agregar equipaje</button>
-                </div>
-              </div>
-
               {/* Precios */}
               <div className={styles.pricing}>
                 <div className={styles.pricePerPerson}>
@@ -949,9 +1502,13 @@ const VuelosDisponibles = () => {
   
           {/* Botón de acción */}
           {selectedFlight ? (
-            <a href="/reservas" rel="noopener noreferrer">
-              <button className={styles.actionButton}>Continuar</button>
-            </a>
+            <button 
+              className={styles.actionButton}
+              onClick={handleContinue}
+              disabled={loadingBaggageData}
+            >
+              {loadingBaggageData ? 'Cargando...' : 'Continuar'}
+            </button>
           ) : (
             <button 
               className={styles.actionButton} 

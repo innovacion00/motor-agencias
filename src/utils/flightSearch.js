@@ -91,7 +91,8 @@ export const searchFlights = async () => {
       balear_resident: false,
       ceuta_melilla_resident: false,
       search_mode: "SEARCH_BEST_DEAL",
-      currency: selectedCurrency === "USD" ? "USD" : "COP"
+      currency:"USD"
+      // currency: selectedCurrency === "USD" ? "USD" : "COP"
     };
 
     console.log('Consultando vuelos con:', requestBody);

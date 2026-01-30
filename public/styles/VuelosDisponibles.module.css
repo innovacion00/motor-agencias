@@ -762,3 +762,330 @@
     gap: 15px;
   }
 }
+
+/* Estilos del Modal de Equipaje */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modalContent {
+  background-color: #e8f5e9;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 0;
+  outline: none;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1C3D5A;
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #666;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.closeButton:hover {
+  background-color: #f0f0f0;
+}
+
+.modalBody {
+  padding: 24px;
+  background-color: white;
+}
+
+.flightInfoSection {
+  margin-bottom: 24px;
+}
+
+.flightInfoHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.flightInfoHeader img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.flightInfoTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1C3D5A;
+}
+
+.flightRoute {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.flightRouteLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1C3D5A;
+  min-width: 80px;
+}
+
+.flightRouteDetails {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.flightRouteCode {
+  font-weight: 600;
+  color: #1C3D5A;
+}
+
+.flightRouteDate {
+  color: #666;
+  font-size: 14px;
+}
+
+.flightRouteTime {
+  color: #2cac3d;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.baggageIconsContainer {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+  align-items: center;
+}
+
+.baggageIcon {
+  font-size: 20px;
+  color: #999;
+}
+
+.baggageIcon.active {
+  color: #1C3D5A;
+}
+
+.fareSelectionTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1C3D5A;
+  margin: 24px 0 16px 0;
+}
+
+.fareOptions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fareCard {
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fareCard:hover {
+  border-color: #1C3D5A;
+}
+
+.fareCard.selected {
+  border-color: #1C3D5A;
+  background-color: #f8f9fa;
+}
+
+.fareName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1C3D5A;
+}
+
+.farePrice {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1C3D5A;
+}
+
+.farePriceLabel {
+  font-size: 12px;
+  color: #666;
+}
+
+.fareBaggageIcons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.fareBaggageIcon {
+  font-size: 24px;
+  color: #999;
+}
+
+.fareBaggageIcon.active {
+  color: #1C3D5A;
+}
+
+.fareSelectButton {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #1C3D5A;
+  background-color: white;
+  color: #1C3D5A;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: auto;
+}
+
+.fareSelectButton:hover {
+  background-color: #1C3D5A;
+  color: white;
+}
+
+.fareSelectButton.selected {
+  background-color: #1C3D5A;
+  color: white;
+}
+
+.infoSection {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.infoText {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.infoText:last-child {
+  margin-bottom: 0;
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background-color: white;
+  border-top: 1px solid #e0e0e0;
+  border-radius: 0 0 12px 12px;
+}
+
+.footerTotal {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.footerTotalLabel {
+  font-size: 14px;
+  color: #666;
+}
+
+.footerTotalAmount {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1C3D5A;
+}
+
+.footerTaxesInfo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.footerTaxesInfo i {
+  color: #1C3D5A;
+  font-size: 14px;
+}
+
+.footerNextButton {
+  background-color: #1C3D5A;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.footerNextButton:hover {
+  background-color: #1c3d5ac0;
+}
+
+@media (max-width: 768px) {
+  .fareOptions {
+    grid-template-columns: 1fr;
+  }
+  
+  .modalFooter {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .footerNextButton {
+    width: 100%;
+  }
+}
