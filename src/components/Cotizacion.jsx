@@ -463,7 +463,7 @@ export default function ReservaHotelComponent() {
     const mascotas = datosReserva[0]?.mascotas || 0;
     const logoAgenciaUrl = logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg";
     const nombreAgencia = agencia?.agencia?.fullName || "Agencia de Viajes";
-    const telefonoAgencia = "+57 333 602 50 21";
+    const telefonoAgencia = logoAgencia?.telefono || "+57 333 602 50 21";
     const emailCliente = formData.email;
     const telefonoCliente = formData.celular;
 
