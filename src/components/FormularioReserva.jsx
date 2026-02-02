@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import intlTelInput from 'intl-tel-input';
 import 'intl-tel-input/build/css/intlTelInput.css';
 import DropdownSearch from "./DropdownSearch";
@@ -64,6 +64,8 @@ const FormularioReserva = () => {
   // Modo vuelo+hotel (formularios dinámicos por pasajero)
   const [vuelosActivados, setVuelosActivados] = useState(false);
   const [numPasajeros, setNumPasajeros] = useState(1);
+  const [flightData, setFlightData] = useState(null);
+  const [baggageData, setBaggageData] = useState(null);
   const createEmptyPassenger = () => ({
     tipoDocumento: "",
     numeroDocumento: "",
@@ -164,6 +166,22 @@ const FormularioReserva = () => {
       const calculado = (Number(adultos || 0) + Number(ninos || 0) || 1);
       setNumPasajeros(calculado);
       setVuelosActivados(false);
+    }
+
+    // Cargar datos del vuelo seleccionado (sin procesar aún)
+    try {
+      const datosReservaVuelos = JSON.parse(localStorage.getItem('datosReservaVuelos'));
+      const dataVueloEquipaje = JSON.parse(localStorage.getItem('dataVueloEquipaje'));
+      
+      if (datosReservaVuelos) {
+        setFlightData(datosReservaVuelos);
+      }
+      
+      if (dataVueloEquipaje) {
+        setBaggageData(dataVueloEquipaje);
+      }
+    } catch (e) {
+      console.error('Error al cargar datos del vuelo:', e);
     }
   }, []);
 
@@ -720,6 +738,156 @@ const FormularioReserva = () => {
     }).format(value);
   };
 
+  // Función para obtener el logo de la aerolínea
+  const getAirlineLogo = (carrierCode) => {
+    const airlineLogos = {
+      'AV': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/AV.png?crop=false&width=108&height=92&fallback=default2.png&_v=9da891fb64018166c1a5228d9c46e5ef',
+      'LA': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/LA.png?crop=false&width=108&height=92&fallback=default1.png&_v=e2abb15ddcd9bf090836299b76d255e0',
+      'CM': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/CM.png?crop=false&width=108&height=92&fallback=default1.png&_v=a61544cffd06cf2178b9a97659b98650',
+      'UA': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/UA.png?crop=false&width=108&height=92&fallback=default1.png&_v=5549857010860b629834720579d831e5',
+      'B6':'https://s202.q4cdn.com/521076508/files/doc_downloads/logos/JetBlue-Logo_Blue.png',
+      'NH':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVvcvOq8qQLYp_o4IDIPXVVdHkLpgZLha6Fg&s',
+      'EK':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png',
+      'IB':'https://www.latamairlines.com/content/dam/latamxp/sites/alianzas/aerolineas-images_0011_iberia-Airlines.png',
+      'UX':'https://logodownload.org/wp-content/uploads/2019/10/air-europa-logo-0.png',
+      'JA':'https://dgital.com/images/blogs/2020-11-22_js-behind-the-scene/main.png',
+      'VB':'https://upload.wikimedia.org/wikipedia/commons/b/bf/Nuevo_vivaaerobus_logotipo_original.jpg',
+    };
+    
+    return airlineLogos[carrierCode] || `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${carrierCode}`;
+  };
+
+  // Función para formatear duración ISO 8601 a formato legible
+  const formatDuration = (isoDuration) => {
+    if (!isoDuration) return "0h 0m";
+    const match = isoDuration.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+    if (!match) return "0h 0m";
+    
+    const hours = match[1] ? parseInt(match[1]) : 0;
+    const minutes = match[2] ? parseInt(match[2]) : 0;
+    
+    if (hours > 0 && minutes > 0) {
+      return `${hours}h ${minutes}m`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else {
+      return `${minutes}m`;
+    }
+  };
+
+  // Función para formatear fecha
+  const formatFlightDate = (dateString) => {
+    if (!dateString) return "";
+    try {
+      // Manejar formato YYYY-MM-DD
+      const date = new Date(dateString + 'T00:00:00');
+      const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+      
+      const dayName = dayNames[date.getDay()];
+      const day = date.getDate();
+      const month = monthNames[date.getMonth()];
+      const year = date.getFullYear();
+      
+      return `${dayName} ${day} ${month} ${year}`;
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // Procesar datos del vuelo desde datosReservaVuelos o dataVueloEquipaje
+  const processedFlightData = useMemo(() => {
+    // Primero intentar con dataVueloEquipaje si existe
+    if (baggageData && baggageData.flight) {
+      const flightFromEquipaje = baggageData.flight;
+      return {
+        flightId: flightFromEquipaje.flightId,
+        outbound: {
+          origin: flightFromEquipaje.outbound?.origin,
+          originCity: flightFromEquipaje.outbound?.segments?.[0]?.departureCityName || flightFromEquipaje.outbound?.origin,
+          destination: flightFromEquipaje.outbound?.destination,
+          destinationCity: flightFromEquipaje.outbound?.segments?.[flightFromEquipaje.outbound?.segments?.length - 1]?.arrivalCityName || flightFromEquipaje.outbound?.destination,
+          departure: flightFromEquipaje.outbound?.departureTime,
+          arrival: flightFromEquipaje.outbound?.arrivalTime,
+          date: formatFlightDate(flightFromEquipaje.outbound?.departureDate),
+          duration: formatDuration(flightFromEquipaje.outbound?.duration),
+          type: flightFromEquipaje.outbound?.connections === 0 ? "Directo" : `${flightFromEquipaje.outbound?.connections} escala${flightFromEquipaje.outbound?.connections > 1 ? 's' : ''}`,
+          airline: flightFromEquipaje.outbound?.segments?.[0]?.airlineName || flightFromEquipaje.outbound?.segments?.[0]?.airlineCode,
+          logo: getAirlineLogo(flightFromEquipaje.outbound?.segments?.[0]?.airlineCode),
+        },
+        return: {
+          origin: flightFromEquipaje.inbound?.origin,
+          originCity: flightFromEquipaje.inbound?.segments?.[0]?.departureCityName || flightFromEquipaje.inbound?.origin,
+          destination: flightFromEquipaje.inbound?.destination,
+          destinationCity: flightFromEquipaje.inbound?.segments?.[flightFromEquipaje.inbound?.segments?.length - 1]?.arrivalCityName || flightFromEquipaje.inbound?.destination,
+          departure: flightFromEquipaje.inbound?.departureTime,
+          arrival: flightFromEquipaje.inbound?.arrivalTime,
+          date: formatFlightDate(flightFromEquipaje.inbound?.departureDate),
+          duration: formatDuration(flightFromEquipaje.inbound?.duration),
+          type: flightFromEquipaje.inbound?.connections === 0 ? "Directo" : `${flightFromEquipaje.inbound?.connections} escala${flightFromEquipaje.inbound?.connections > 1 ? 's' : ''}`,
+          airline: flightFromEquipaje.inbound?.segments?.[0]?.airlineName || flightFromEquipaje.inbound?.segments?.[0]?.airlineCode,
+          logo: getAirlineLogo(flightFromEquipaje.inbound?.segments?.[0]?.airlineCode),
+        },
+        pricing: {
+          total: baggageData.totalPrice || baggageData.flightBookPrice,
+          perPerson: flightFromEquipaje.pricePerPassenger?.[0]?.total || (parseFloat(baggageData.totalPrice || 0) / (flightFromEquipaje.pricePerPassenger?.length || 1)),
+          passengers: flightFromEquipaje.pricePerPassenger?.length || 1,
+          currency: baggageData.currency || "USD",
+          includesTaxes: true
+        }
+      };
+    }
+    
+    // Si no hay dataVueloEquipaje, procesar datosReservaVuelos
+    if (flightData && flightData.outbound) {
+      const processFlightSegment = (segment) => {
+        if (!segment) return null;
+        
+        // Obtener información de los segmentos si existen
+        const segments = segment.segments || [];
+        const firstSegment = segments[0];
+        const lastSegment = segments[segments.length - 1] || firstSegment;
+        
+        return {
+          origin: segment.origin,
+          originCity: firstSegment?.departureCityName || segment.origin,
+          destination: segment.destination,
+          destinationCity: lastSegment?.arrivalCityName || segment.destination,
+          departure: segment.departureTime,
+          arrival: segment.arrivalTime,
+          date: formatFlightDate(segment.departureDate),
+          duration: formatDuration(segment.duration),
+          type: segment.connections === 0 ? "Directo" : `${segment.connections} escala${segment.connections > 1 ? 's' : ''}`,
+          airline: firstSegment?.airlineName || firstSegment?.airlineCode || "Aerolínea",
+          logo: getAirlineLogo(firstSegment?.airlineCode),
+          connections: segment.connections || 0
+        };
+      };
+      
+      return {
+        flightId: flightData.flightId,
+        outbound: processFlightSegment(flightData.outbound),
+        return: processFlightSegment(flightData.inbound),
+        pricing: {
+          total: flightData.totalPrice || flightData.TotalPriceWithoutLuggage,
+          totalWithoutLuggage: flightData.TotalPriceWithoutLuggage,
+          perPerson: flightData.pricePerPassenger?.[0]?.total || (parseFloat(flightData.totalPrice || 0) / (flightData.pricePerPassenger?.length || 1)),
+          pricePerPassenger: flightData.pricePerPassenger,
+          passengers: flightData.pricePerPassenger?.length || 1,
+          currency: flightData.CurrencyCode || "USD",
+          includesTaxes: true
+        },
+        baggage: {
+          cabin: flightData.cabin_luggage_include || false,
+          checked: flightData.luggage_include || false,
+          underseat: flightData.underseat_luggage_include || false
+        }
+      };
+    }
+    
+    return null;
+  }, [flightData, baggageData]);
+
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
     Swal.fire({
@@ -885,6 +1053,246 @@ const FormularioReserva = () => {
             )}
           </div>
         ))}
+
+        {/* Sección de Datos del Vuelo */}
+        {processedFlightData && (
+          <div
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              padding: "15px",
+              marginBottom: "20px",
+            }}
+          >
+            <h3 style={{ marginTop: 0, marginBottom: "20px", color: "#2c3e50" }}>
+              Datos del vuelo
+            </h3>
+
+            {/* Vuelo de ida */}
+            {processedFlightData.outbound && (
+              <div style={{ marginBottom: "20px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
+                <h4 style={{ marginTop: 0, marginBottom: "15px", color: "#1C3D5A" }}>
+                  Vuelo de ida
+                </h4>
+                <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "10px" }}>
+                  {processedFlightData.outbound.logo && (
+                    <img
+                      src={processedFlightData.outbound.logo}
+                      alt={processedFlightData.outbound.airline}
+                      style={{ width: "50px", height: "50px", objectFit: "contain" }}
+                    />
+                  )}
+                  <div>
+                    <p style={{ margin: 0, fontWeight: "600", color: "#1C3D5A" }}>
+                      {processedFlightData.outbound.airline || processedFlightData.outbound.airlineName || "Aerolínea"}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+                      {processedFlightData.outbound.date}
+                    </p>
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "20px", marginTop: "15px" }}>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: "600", fontSize: "18px", color: "#1C3D5A" }}>
+                      {processedFlightData.outbound.origin}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                      {processedFlightData.outbound.originCity || processedFlightData.outbound.origin}
+                    </p>
+                  </div>
+                  <div style={{ flex: 1, textAlign: "center" }}>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#2cac3d", fontWeight: "500" }}>
+                      {processedFlightData.outbound.type || "Directo"}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                      {processedFlightData.outbound.duration || "Duración no disponible"}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: "600", fontSize: "18px", color: "#1C3D5A" }}>
+                      {processedFlightData.outbound.destination}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                      {processedFlightData.outbound.destinationCity || processedFlightData.outbound.destination}
+                    </p>
+                  </div>
+                </div>
+                <div style={{ marginTop: "10px", display: "flex", gap: "10px", alignItems: "center" }}>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+                    <strong>Salida:</strong> {processedFlightData.outbound.departure}
+                  </p>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+                    <strong>Llegada:</strong> {processedFlightData.outbound.arrival}
+                  </p>
+                </div>
+                {/* Información de equipaje incluido */}
+                {processedFlightData.baggage && (
+                  <div style={{ marginTop: "15px", padding: "10px", backgroundColor: "#fff", borderRadius: "5px" }}>
+                    <p style={{ margin: 0, marginBottom: "8px", fontWeight: "600", color: "#1C3D5A" }}>
+                      Equipaje incluido:
+                    </p>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                      {processedFlightData.baggage.underseat && (
+                        <span style={{ fontSize: "12px", color: "#28a745", fontWeight: "500" }}>✓ Equipaje de mano</span>
+                      )}
+                      {processedFlightData.baggage.cabin && (
+                        <span style={{ fontSize: "12px", color: "#28a745", fontWeight: "500" }}>✓ Equipaje de cabina</span>
+                      )}
+                      {processedFlightData.baggage.checked && (
+                        <span style={{ fontSize: "12px", color: "#28a745", fontWeight: "500" }}>✓ Equipaje facturado</span>
+                      )}
+                      {!processedFlightData.baggage.underseat && !processedFlightData.baggage.cabin && !processedFlightData.baggage.checked && (
+                        <span style={{ fontSize: "12px", color: "#666" }}>Sin equipaje incluido</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Información de equipaje adicional */}
+                {baggageData?.luggage && baggageData.luggage.length > 0 && (
+                  <div style={{ marginTop: "15px", padding: "10px", backgroundColor: "#fff3cd", borderRadius: "5px", border: "1px solid #ffc107" }}>
+                    <p style={{ margin: 0, marginBottom: "8px", fontWeight: "600", color: "#1C3D5A" }}>
+                      Equipaje adicional:
+                    </p>
+                    {baggageData.luggage.map((luggage, idx) => (
+                      <p key={idx} style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}>
+                        Pasajero {parseInt(luggage.passengerId) + 1}: {luggage.baggageName} - {luggage.pricingDetail} {baggageData.currency || "USD"}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Vuelo de regreso */}
+            {processedFlightData.return && (
+              <div style={{ marginBottom: "20px", padding: "15px", backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
+                <h4 style={{ marginTop: 0, marginBottom: "15px", color: "#1C3D5A" }}>
+                  Vuelo de regreso
+                </h4>
+                <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "10px" }}>
+                  {processedFlightData.return.logo && (
+                    <img
+                      src={processedFlightData.return.logo}
+                      alt={processedFlightData.return.airline}
+                      style={{ width: "50px", height: "50px", objectFit: "contain" }}
+                    />
+                  )}
+                  <div>
+                    <p style={{ margin: 0, fontWeight: "600", color: "#1C3D5A" }}>
+                      {processedFlightData.return.airline || processedFlightData.return.airlineName || "Aerolínea"}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+                      {processedFlightData.return.date}
+                    </p>
+                  </div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "20px", marginTop: "15px" }}>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: "600", fontSize: "18px", color: "#1C3D5A" }}>
+                      {processedFlightData.return.origin}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                      {processedFlightData.return.originCity || processedFlightData.return.origin}
+                    </p>
+                  </div>
+                  <div style={{ flex: 1, textAlign: "center" }}>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#2cac3d", fontWeight: "500" }}>
+                      {processedFlightData.return.type || "Directo"}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                      {processedFlightData.return.duration || "Duración no disponible"}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: "600", fontSize: "18px", color: "#1C3D5A" }}>
+                      {processedFlightData.return.destination}
+                    </p>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#666" }}>
+                      {processedFlightData.return.destinationCity || processedFlightData.return.destination}
+                    </p>
+                  </div>
+                </div>
+                <div style={{ marginTop: "10px", display: "flex", gap: "10px", alignItems: "center" }}>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+                    <strong>Salida:</strong> {processedFlightData.return.departure}
+                  </p>
+                  <p style={{ margin: 0, fontSize: "14px", color: "#666" }}>
+                    <strong>Llegada:</strong> {processedFlightData.return.arrival}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Precio del vuelo */}
+            {processedFlightData.pricing && (
+              <div style={{ marginTop: "15px", padding: "15px", backgroundColor: "#fff", borderRadius: "5px", border: "1px solid #e0e0e0" }}>
+                <p style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "#1C3D5A" }}>
+                  Precio del vuelo
+                </p>
+                {processedFlightData.pricing.pricePerPassenger && Array.isArray(processedFlightData.pricing.pricePerPassenger) && (
+                  <div style={{ marginTop: "10px" }}>
+                    {processedFlightData.pricing.pricePerPassenger.map((passenger, idx) => (
+                      <p key={idx} style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}>
+                        Pasajero {parseInt(passenger.passenger_id) + 1} ({passenger.passenger_type}): {passenger.currency === "USD" 
+                          ? `$${parseFloat(passenger.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                          : formatCurrency(parseFloat(passenger.total))
+                        } {passenger.currency || processedFlightData.pricing.currency}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                {processedFlightData.pricing.perPerson && !processedFlightData.pricing.pricePerPassenger && (
+                  <p style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}>
+                    Por persona: {typeof processedFlightData.pricing.perPerson === 'string' ? processedFlightData.pricing.perPerson : formatCurrency(processedFlightData.pricing.perPerson)} {processedFlightData.pricing.currency || divisaSelec || "COP"}
+                  </p>
+                )}
+                {processedFlightData.pricing.totalWithoutLuggage && processedFlightData.pricing.total && parseFloat(processedFlightData.pricing.total) > parseFloat(processedFlightData.pricing.totalWithoutLuggage) && (
+                  <p style={{ margin: "5px 0", fontSize: "12px", color: "#666" }}>
+                    Precio sin equipaje: {processedFlightData.pricing.currency === "USD" 
+                      ? `$${parseFloat(processedFlightData.pricing.totalWithoutLuggage).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : formatCurrency(parseFloat(processedFlightData.pricing.totalWithoutLuggage))
+                    } {processedFlightData.pricing.currency}
+                  </p>
+                )}
+                <p style={{ margin: "5px 0", fontSize: "16px", fontWeight: "600", color: "#2c3e50" }}>
+                  Total {processedFlightData.pricing.passengers || 1} persona(s): {processedFlightData.pricing.currency === "USD" 
+                    ? `$${parseFloat(processedFlightData.pricing.total || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                    : typeof processedFlightData.pricing.total === 'string' ? processedFlightData.pricing.total : formatCurrency(parseFloat(processedFlightData.pricing.total || 0))
+                  } {processedFlightData.pricing.currency || divisaSelec || "COP"}
+                </p>
+                {processedFlightData.pricing.includesTaxes && (
+                  <p style={{ margin: "5px 0", fontSize: "12px", color: "#28a745" }}>
+                    Incluye impuestos
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Precio total con equipaje si existe */}
+            {baggageData && (
+              <div style={{ marginTop: "15px", padding: "15px", backgroundColor: "#e8f5e9", borderRadius: "5px", border: "1px solid #c8e6c9" }}>
+                <p style={{ margin: 0, fontSize: "16px", fontWeight: "600", color: "#1C3D5A" }}>
+                  Precio total con equipaje
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "18px", fontWeight: "700", color: "#2c3e50" }}>
+                  {baggageData.currency === "USD" 
+                    ? `$${parseFloat(baggageData.totalPrice || baggageData.flightBookPrice || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                    : formatCurrency(parseFloat(baggageData.totalPrice || baggageData.flightBookPrice || 0))
+                  } {baggageData.currency || divisaSelec || "USD"}
+                </p>
+                {baggageData.flightBookPrice && baggageData.totalPrice && parseFloat(baggageData.totalPrice) > parseFloat(baggageData.flightBookPrice) && (
+                  <p style={{ margin: "5px 0", fontSize: "12px", color: "#666" }}>
+                    Precio base: {baggageData.currency === "USD" 
+                      ? `$${parseFloat(baggageData.flightBookPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : formatCurrency(parseFloat(baggageData.flightBookPrice))
+                    } {baggageData.currency || "USD"}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <div
           style={{
