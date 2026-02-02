@@ -160,8 +160,9 @@ body {
 .cards {
   display: flex;
   flex-direction: column;
-  width: 100%;
-
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: calc(100% - 320px);
 }
 
 /* Detalles y tipos de habitaciones*/
@@ -169,6 +170,9 @@ body {
 .room_section {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  position: relative;
 }
 
 .room_card {
@@ -180,7 +184,10 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  flex: 3;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .room_card img {
@@ -279,9 +286,15 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 250px;
-  margin-left: 20px;
+  width: 300px;
   flex-shrink: 0;
+  flex-grow: 0;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+  box-sizing: border-box;
 }
 
 .reservation h3 {
@@ -389,13 +402,19 @@ body {
 .reservation {
 border: 1px solid #ddd; /* Borde gris claro */
 border-radius: 20px; /* Bordes redondeados */
-padding-bottom: 500px;
 padding: 30px; /* Espaciado interno */
 background-color: #fff; /* Fondo blanco */
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sutil sombra */
 color: #333; /* Color del texto */
 width: 300px; /* Ancho del contenedor */
-margin: 0 auto; /* Centrar */
+flex-shrink: 0;
+flex-grow: 0;
+max-height: 85vh;
+overflow-y: auto;
+position: sticky;
+top: 20px;
+align-self: flex-start;
+box-sizing: border-box;
 }
 
 /* Título */

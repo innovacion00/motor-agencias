@@ -609,6 +609,7 @@ export const Cid = ({ id }) => {
     //Hotel avexi/azuan/Marina
     "Habitacion Doble Standard",
     "Habitacion Cuadruple Standard",
+    ,
     //Hotel Bocagrande
     "Doble ",
     "Triple ",
