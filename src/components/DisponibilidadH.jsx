@@ -660,7 +660,7 @@ export const Cid = ({ id }) => {
   // Función para obtener el límite de habitaciones según el tipo
   const obtenerLimiteHabitaciones = (roomName, count) => {
     if (habitacionesConLimiteEspecial.includes(roomName)) {
-      return count + 3;
+      return count ;
     }
     return count;
   };
