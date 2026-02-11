@@ -39,17 +39,17 @@ const nombreHotelId = (hotelId) => {
 const direccionHotelId = (hotelId) => {
   const direccionMap = {
     // Hoteles Cartagena
-    1: "Bocagrande Cra 3 N° 8-156, Cartagena de Indias, Bolívar", // Hotel Azuan
+    1: "Cra. 3 #8-156, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Azuan
     4: "Cra. 1 #47-10, Marbella, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Aixo
-    5: "Cartagena de indias, Barrio Marbella carrera 2 número 47- 10", // Hotel Abi
-    6: "Bocagrande Cra 3 N° 4-86, Cartagena de Indias, Bolívar", // Hotel Avexi
-    7: "Bocagrande Avenida San Martin Cra 2 N 7-159, Cartagena de Indias, Bolívar", // Hotel Bocagrande
-    9: "Bocagrande Cra 3 N° 4 -32, Cartagena de Indias, Bolívar", // Hotel Marina
+    5: "Cra. 1 #42-70, Barrio El Cabrero, Cartagena de Indias, Provincia de Cartagena, Bolívar ", // Hotel Abi
+    6: "Cra. 3 #No 4 -86, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Avexi
+    7: "Cra. 2 #7-159, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Bocagrande
+    9: "Cra. 3 #4 - 32, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Marina
     56: "Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar", // Hotel Boquilla
     // Hoteles Santa Marta
     8: "Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena", // Hotel Rodadero
     2: "Calle 11 # 2 - 29 Centro Histórico, Santa Marta, Magdalena", // Hotel 1525
-    48: "Carrera 3 No. 10 - 40, El Rodadero, 470001 Santa Marta", // Hotel Axis
+    48: "Cra. 3 #10-14, El Rodadero, Gaira, Santa Marta, Magdalena", // Hotel Axis
     44: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena", // Hotel Sansiraka
     123: "CRA 4 N° 23F05 Gaira, 470002", // Playa Salguero Hotel
     // Hoteles Bogotá
