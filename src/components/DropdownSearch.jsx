@@ -201,27 +201,18 @@ const DropdownSearch = () => {
       const objetohotel = {
         checkin: dateRange.startDate.toISOString().split("T")[0],
         nights,
-       city: destination.toUpperCase(),
+        city: destination.toUpperCase(),
         layout,
       };
 
-      // DEBUG TEMPORAL: log cuando se presiona "Consultar" y antes de llamar al endpoint
-      console.log("[DEBUG disponibilidad] Botón Consultar presionado", {
-        endpoint: `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/disponibilidad`,
-        payload: objetohotel,
-      });
-
       await getdisponibility(objetohotel);
 
-      // DEBUG TEMPORAL: desactivar redirección automática después de consultar
-      // Cuando termines de depurar, volver a habilitar este bloque
-      // const destinations = {
-      //   CARTAGENA: "/busquedacartagena",
-      //   BOGOTA: "/busquedabogota",
-      //   SANTA_MARTA: "/busquedasantamarta",
-      // };
-      // window.location.href = destinations[destination];
-      console.log("[DEBUG disponibilidad] Navegación desactivada temporalmente después de consultar");
+      const destinations = {
+        CARTAGENA: "/busquedacartagena",
+        BOGOTA: "/busquedabogota",
+        SANTA_MARTA: "/busquedasantamarta",
+      };
+      window.location.href = destinations[destination];
     } catch (error) {
       // La alerta ya fue mostrada por getdisponibility; solo evitamos navegar
     } finally {
