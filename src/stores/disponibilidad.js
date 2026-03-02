@@ -26,6 +26,18 @@ export const getdisponibility = async (objetohotel) => {
 
   const fetchDisponibilidad = async (accessToken) => {
     const url = `${URL}/agencias/v1/reservas/disponibilidad`;
+    // DEBUG TEMPORAL: log de la consulta a disponibilidad (body exacto que se envía)
+    try {
+      const parsedBody = JSON.parse(objetoprueba);
+      const prettyBody = JSON.stringify(parsedBody, null, 2);
+      console.log("[DEBUG disponibilidad] Endpoint:", url);
+      console.log("[DEBUG disponibilidad] Body (JSON.stringify):\n", prettyBody);
+    } catch {
+      console.log(
+        "[DEBUG disponibilidad] Body (string enviado a disponibilidad):",
+        objetoprueba
+      );
+    }
     const response = await fetch(url, {
       method: "POST",
       headers: {
