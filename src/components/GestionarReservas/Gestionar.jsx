@@ -51,6 +51,7 @@ const Gestionar = ({ reservas }) => {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -442,6 +443,19 @@ const Gestionar = ({ reservas }) => {
   //#region Cancelar reservas
   const cancelarReserva = async (reservaId) => {
     try {
+      setIsCancelling(true);
+
+      Swal.fire({
+        title: "Cancelando reserva...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       const response = await fetchWithToken(
         `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
         {
@@ -484,6 +498,8 @@ const Gestionar = ({ reservas }) => {
         "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
         "error"
       );
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -1480,11 +1496,14 @@ const Gestionar = ({ reservas }) => {
 
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
-                disabled={isCancellationDisabled()}
-                className={`${styles.cancelarButton} ${isCancellationDisabled() ? styles.disabledButtonc : ""
-                  }`}
+                disabled={isCancellationDisabled() || isCancelling}
+                className={`${styles.cancelarButton} ${
+                  isCancellationDisabled() || isCancelling
+                    ? styles.disabledButtonc
+                    : ""
+                }`}
               >
-                Cancelar reserva
+                {isCancelling ? "Cancelando..." : "Cancelar reserva"}
               </button>
               {/* <button
                 onClick={imprimirVoucher}
