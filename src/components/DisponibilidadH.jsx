@@ -542,8 +542,8 @@ const plan_alimentacion = {
 const hotelesExentosIVA = new Set([56, 123]);
 
 // Add these constants near the top with other price constants
-const MASCOTA_PRECIO_COP = 50000;
-const MASCOTA_PRECIO_USD = 10;
+const MASCOTA_PRECIO_COP = 75000;
+const MASCOTA_PRECIO_USD = 15;
 
 // UseState
 
@@ -1177,7 +1177,7 @@ export const Cid = ({ id }) => {
                           display: 'block',
                           marginTop: '5px'
                         }}>
-                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                          Nota: Para llegadas entra 10:00pm y 6:00am no es posible realizar el traslado.
                         </span>
                       </label>
                     </div>
@@ -1205,7 +1205,7 @@ export const Cid = ({ id }) => {
                           display: 'block',
                           marginTop: '5px'
                         }}>
-                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                          Nota: Para llegadas entra 10:00pm y 6:00am no es posible realizar el traslado.
                         </span>
                       </label>
                     </div>
@@ -1233,7 +1233,7 @@ export const Cid = ({ id }) => {
                           display: 'block',
                           marginTop: '5px'
                         }}>
-                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                         Nota: Para llegadas entra 10:00pm y 6:00am no es posible realizar el traslado.
                         </span>
                       </label>
                     </div>
