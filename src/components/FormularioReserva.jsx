@@ -594,13 +594,6 @@ const FormularioReserva = () => {
                 : `${formatCurrency(data.precio)} COP`}
             </p>
 
-            {parseInt(habitaciones, 10) >= 10 && (
-              <p style={{ fontWeight: "bold", color: "#2c3e50", fontSize: "18px" }}>
-                *<strong>Nota: </strong>El beneficio de tourconductor aplica cuando el número de
-                habitaciones es igual o mayor a 15.*
-              </p>
-            )}
-
             <br />
 
             {mostrarCheckboxes && (
@@ -650,7 +643,28 @@ const FormularioReserva = () => {
             )}
           </div>
         ))}
-
+{parseInt(habitaciones, 10) >= 9 && (
+          <div
+            style={{
+              border: "1px solid #26547B",
+              background: "#F5FAFF",
+              padding: "10px 12px",
+              borderRadius: "8px",
+              marginTop: "10px",
+              marginBottom: "20px",
+            }}
+          >
+            <p style={{ margin: 0, color: "#26547B", fontWeight: 700 }}>
+              Nota
+            </p>
+            <p style={{ margin: "6px 0 0 0", color: "#2c3e50" }}>
+              El beneficio de tourconductor aplica cuando el número de
+              habitaciones es igual o mayor a 15. De 15 a 19 habitaciones se
+              otorga 1 habitación gratuita y de 20 en adelante 2 habitaciones
+              gratuitas.
+            </p>
+          </div>
+        )}
         <div
           style={{
             border: "1px solid #ddd",
