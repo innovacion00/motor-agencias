@@ -594,6 +594,13 @@ const FormularioReserva = () => {
                 : `${formatCurrency(data.precio)} COP`}
             </p>
 
+            {parseInt(habitaciones, 10) >= 10 && (
+              <p style={{ fontWeight: "bold", color: "#2c3e50", fontSize: "18px" }}>
+                *<strong>Nota: </strong>El beneficio de tourconductor aplica cuando el número de
+                habitaciones es igual o mayor a 15.*
+              </p>
+            )}
+
             <br />
 
             {mostrarCheckboxes && (

@@ -1580,9 +1580,16 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
-                  {dato.exentoIVA && (
-                    <h5>Este hotel está exento del cobro de IVA.</h5>
+                  {ninos + adultos > 16 && (
+                    <h5>
+                      El beneficio de tourconductor aplica cuando el número de
+                      habitaciones es igual o mayor a 15.
+                    </h5>
                   )}
+                  {dato.exentoIVA && (
+                    <h5>Este hotel está exento del cobros de IVA.</h5>
+                  )}
+
                   {tipoTraslado && (
                     <h5>
                       Traslado seleccionado: {" "}
