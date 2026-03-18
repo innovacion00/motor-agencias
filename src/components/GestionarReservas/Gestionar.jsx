@@ -52,6 +52,18 @@ const Gestionar = ({ reservas }) => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isChangingStatus, setIsChangingStatus] = useState(false);
+  const [nuevoEstado, setNuevoEstado] = useState(reservas?.status?.toString() ?? "0");
+
+  // Estados de reserva mapeados (igual que en Tabla.jsx y Movimientos.jsx)
+  const ESTADOS_RESERVA = {
+    "0": "Pendiente de pago",
+    "1": "En proceso",
+    "2": "Pago rechazado",
+    "3": "Pago aprobado",
+    "4": "Cancelado",
+    "5": "Abonado primera mitad",
+  };
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -67,6 +79,10 @@ const Gestionar = ({ reservas }) => {
       });
     }
   }, [reservas]);
+
+  useEffect(() => {
+    setNuevoEstado(reservas?.status?.toString() ?? "0");
+  }, [reservas?.status]);
 
   const handleTitularChange = (e) => {
     const { name, value } = e.target;
@@ -439,6 +455,57 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
+
+  //#region Cambiar estado de reserva (llamado al seleccionar en el dropdown)
+  const handleCambiarEstado = async (statusSeleccionado) => {
+    if (statusSeleccionado === (reservas?.status?.toString() ?? "0")) return;
+
+    try {
+      setIsChangingStatus(true);
+      Swal.fire({
+        title: "Cambiando estado...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => Swal.showLoading(),
+      });
+
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/status/${reservas._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ status: parseInt(statusSeleccionado, 10) }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al actualizar el estado");
+      }
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Estado de la reserva actualizado correctamente",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+        confirmButtonColor: "#26547B",
+      }).then(() => window.location.reload());
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+      setNuevoEstado(reservas?.status?.toString() ?? "0"); // Revertir al valor anterior
+      Swal.fire({
+        title: "Error",
+        text: error.message || "No se pudo cambiar el estado. Intente nuevamente.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    } finally {
+      setIsChangingStatus(false);
+    }
+  };
+  //#endregion
   
   //#region Cancelar reservas
   const cancelarReserva = async (reservaId) => {
@@ -1492,6 +1559,28 @@ const Gestionar = ({ reservas }) => {
           <div className={styles.gestionarReserv}>
             <p>Gestionar reserva</p>
             <div className={styles.acciones}>
+              {/* Cambiar estado de la reserva - visible solo para super-admin */}
+              {datosDelUsuario?.role?.includes("super-admin") && (
+                <div className={styles.cambiarEstadoWrapper}>
+                  <select
+                    value={nuevoEstado}
+                    onChange={(e) => {
+                      const valor = e.target.value;
+                      if (valor === (reservas?.status?.toString() ?? "0")) return;
+                      setNuevoEstado(valor);
+                      handleCambiarEstado(valor);
+                    }}
+                    disabled={isChangingStatus}
+                    className={styles.estadoSelect}
+                  >
+                    {Object.entries(ESTADOS_RESERVA).map(([valor, etiqueta]) => (
+                      <option key={valor} value={valor}>
+                        {etiqueta}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               {/* <a>Modificar reserva</a> */}
 
               <button

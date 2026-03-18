@@ -327,6 +327,27 @@ h3{
     padding-bottom: 15px;
 }
 
+.cambiarEstadoWrapper {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.estadoSelect {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 0.95rem;
+    min-width: 200px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.estadoSelect:disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+}
+
 .acciones button{
     display: flex;
     align-items: center;
