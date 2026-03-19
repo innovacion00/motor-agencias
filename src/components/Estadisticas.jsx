@@ -16,9 +16,18 @@ import { useHover } from "@uidotdev/usehooks";
 import Swal from "sweetalert2";
 
 const Estadisticas = () => {
-  const [reservasPorHotel, setReservasPorHotel] = useState();
+  // Paleta unificada para gráficas
+  const chartPalette = [
+    "#e1c16f",
+    "#625631",
+    "#ebdba8",
+    "#eee2bb",
+    "#a69058",
+    "#ccb577",
+  ];
+  const [reservasPorHotel, setReservasPorHotel] = useState([]);
   const [reservasPorMes, setReservasPorMes] = useState([]);
-  const [reservasPorCiudad, setReservasPorCiudad] = useState();
+  const [reservasPorCiudad, setReservasPorCiudad] = useState([]);
   const [reservasCanceladas, setReservasCanceladas] = useState();
   const [userData, setUserData] = useState(null);
   const [reservas, setReservas] = useState([]);
@@ -50,6 +59,17 @@ const Estadisticas = () => {
   const [reservasUltimos30Dias, setReservasUltimos30Dias] = useState([]); // Nuevo estado para reservas de últimos 30 días
   const [reservasAprobadas, setReservasAprobadas] = useState([]);
   const [reservasCanceladasPorAgencia, setReservasCanceladasPorAgencia] = useState([]);
+
+  // Filtro global de reservas para TODO el tablero (Enero–Marzo)
+  // CHECKPOINT: para volver a "todas las reservas", reemplaza el return por `return reservas;`
+  const filtrarReservasEneMar = (reservas) => {
+    // return reservas; // CHECKPOINT (revertir)
+    return (Array.isArray(reservas) ? reservas : []).filter((r) => {
+      const fecha = new Date(r?.createdAt);
+      const mes = fecha.getMonth(); // 0=Ene, 1=Feb, 2=Mar
+      return mes >= 0 && mes <= 2;
+    });
+  };
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -62,7 +82,7 @@ const Estadisticas = () => {
 
   //#region reservas por mes
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
@@ -115,7 +135,7 @@ const Estadisticas = () => {
 
   //#region reservas por hotel
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       // Lista de hoteles en orden
@@ -155,7 +175,7 @@ const Estadisticas = () => {
   // #region Reservas por ciudad
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       // Mapeo para normalizar los nombres de las ciudades
@@ -239,14 +259,17 @@ const Estadisticas = () => {
           throw new Error("Error al obtener agencias");
         }
 
-        const data = await response.json();
-        setAgenciasRegistradas(data.length);
+        const json = await response.json();
+        const agencias = Array.isArray(json?.data) ? json.data : [];
+        const totalAgencias =
+          typeof json?.meta?.total === "number" ? json.meta.total : agencias.length;
+        setAgenciasRegistradas(totalAgencias);
 
         // Calcular agencias nuevas en las últimas 24h
         const ahora = new Date();
         const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000);
 
-        const agenciasRecientes = data.filter((agencia) => {
+        const agenciasRecientes = agencias.filter((agencia) => {
           const fechaCreacion = new Date(agencia.createdAt);
           return fechaCreacion >= hace24Horas;
         });
@@ -261,7 +284,7 @@ const Estadisticas = () => {
   }, []);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const estadosLabel = {
@@ -285,7 +308,7 @@ const Estadisticas = () => {
         ([estado, cantidad]) => ({
           x: estadosLabel[estado],
           y: cantidad,
-          label: `${estadosLabel[estado]}: ${cantidad}`,
+          label: `${cantidad}`,
         })
       );
 
@@ -293,7 +316,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
@@ -309,7 +332,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
@@ -324,7 +347,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const totalHuespedes = reservasObtenidas.reduce((acc, reserva) => {
@@ -340,7 +363,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const reservasCompletadas = reservasObtenidas.filter(
@@ -355,7 +378,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const totalNoches = reservasObtenidas.reduce((acc, reserva) => {
@@ -367,7 +390,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const totalDias = reservasObtenidas.reduce((acc, reserva) => {
@@ -385,7 +408,7 @@ const Estadisticas = () => {
   }, [reservasNano.get()]);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
     console.log("Reservas obtenidas:", reservasObtenidas); // Debug
 
     if (reservasObtenidas && reservasObtenidas.length > 0) {
@@ -416,7 +439,7 @@ const Estadisticas = () => {
   }, [reservasNano.get()]);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
     console.log("Reservas obtenidas:", reservasObtenidas);
 
     if (reservasObtenidas?.length > 0) {
@@ -446,7 +469,7 @@ const Estadisticas = () => {
 
   // Nuevo useEffect para procesar reservas de los últimos 30 días
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas?.length > 0) {
       const ahora = new Date();
@@ -479,7 +502,7 @@ const Estadisticas = () => {
   }, [reservasNano.get()]);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas?.length > 0) {
       // Filtrar solo las reservas con status 3 (aprobadas)
@@ -509,7 +532,7 @@ const Estadisticas = () => {
 
   // Nuevo useEffect para procesar reservas canceladas por agencia
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas?.length > 0) {
       // Filtrar solo las reservas canceladas (status 4)
@@ -783,6 +806,13 @@ const Estadisticas = () => {
       });
     }
   };
+// -----------------------------------------------------------------------------------------------------------------------
+  // Reservas por mes (Enero–Marzo)
+  // CHECKPOINT: para volver a mostrar todos los meses, usa la línea de abajo y comenta el filtro.
+  // const reservasPorMesFiltradas = reservasPorMes;
+  const reservasPorMesFiltradas = (reservasPorMes || []).filter((d) =>
+    ["Ene", "Feb", "Mar"].includes(d.mes)
+  );
 
   return (
     <div className="stats-container">
@@ -883,7 +913,7 @@ const Estadisticas = () => {
             padding={{ left: 80, right: 20, top: 20, bottom: 50 }}
           >
             <VictoryAxis
-              tickFormat={reservasPorMes?.map((d) => d.mes)}
+              tickFormat={reservasPorMesFiltradas.map((d) => d.mes)}
               style={{
                 tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
               }}
@@ -896,10 +926,10 @@ const Estadisticas = () => {
               }}
             />
             <VictoryBar
-              data={reservasPorMes}
+              data={reservasPorMesFiltradas}
               x="mes"
               y="reservas"
-              style={{ data: { fill: "#4CAF50" } }}
+              style={{ data: { fill: chartPalette[0] } }}
               labels={({ datum }) => `${datum.reservas}`}
             />
           </VictoryChart>
@@ -930,7 +960,7 @@ const Estadisticas = () => {
               data={reservasPorHotel}
               x="hotel"
               y="reservas"
-              style={{ data: { fill: "#FF5733" } }}
+              style={{ data: { fill: chartPalette[2] } }}
               labels={({ datum }) => `${datum.reservas}`}
             />
           </VictoryChart>
@@ -941,7 +971,7 @@ const Estadisticas = () => {
           <h2 style={{ textAlign: "center" }}>Número de reservas por Ciudad</h2>
           <VictoryPie
             data={reservasPorCiudad}
-            colorScale={["#85c1e9", "#a2d9ce", "#d7bde2"]}
+            colorScale={chartPalette}
             labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
             style={{
               labels: {
@@ -951,39 +981,51 @@ const Estadisticas = () => {
                 fontFamily: "Roboto",
               },
             }}
+            padAngle={2}
             innerRadius={80}
             labelRadius={80}
           />
         </div>
 
-        {/*#region  Gráfica de Estados de Pago */}
+        {/* Gráfica de Estados de Pago (con leyenda al lado) */}
         <div className="chart-wrapper">
           <h2 style={{ textAlign: "center" }}>
             Estados de pago en tiempo real
           </h2>
-          <VictoryPie
-            data={estadosPago}
-            colorScale={[
-              "#f39c12",
-              "#36a3c4",
-              "#e0577a",
-              "#3a963f",
-              "#bd1f1f",
-              "#b58a2d",
-            ]}
-            style={{
-              labels: {
-                fontWeight: "bolder",
-                fontSize: 9,
-                fill: "#232222",
-                fontFamily: "Roboto",
-              },
-            }}
-            labelRadius={({ innerRadius }) => innerRadius + 70}
-            innerRadius={50}
-            padAngle={2}
-            animate={{ duration: 1000 }}
-          />
+
+          <div className="payment-status-row">
+            <div className="payment-status-chart">
+              <VictoryPie
+                data={estadosPago}
+                colorScale={chartPalette}                
+                width={520}
+                height={360}
+                radius={145}
+                innerRadius={70}
+                padAngle={2}
+                labels={() => ""}
+                style={{
+                  data: { stroke: "#ffffff", strokeWidth: 2 },
+                }}
+                animate={{ duration: 1000 }}
+              />
+            </div>
+
+            <div className="payment-status-legend">
+              {(estadosPago || []).map((item, idx) => (
+                <div className="legend-item" key={`${item.x}-${idx}`}>
+                  <span
+                    className="legend-swatch"
+                    style={{
+                      backgroundColor: chartPalette[idx % chartPalette.length],
+                    }}
+                  />
+                  <span className="legend-label">{item.x}</span>
+                  <span className="legend-value">{item.y}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 

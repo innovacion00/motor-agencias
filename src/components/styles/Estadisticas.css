@@ -1,5 +1,5 @@
 .stats-container {
-  max-width: 1400px;
+  max-width: auto;
   margin: 0 auto;
   padding: 20px;
   background-color: #f8f9fa;
@@ -67,8 +67,67 @@
   gap: 20px;
   padding: 20px;
   margin: 0 auto;
-  max-width: 1400px;
+  max-width: 1600px;
 }
+
+/* Contenedor de gráficas a ancho completo (fuera del grid de 2 columnas) */
+.stats-content-single {
+  padding: 0 20px 20px;
+  margin: 0 auto;
+  max-width: 1600px;
+  max-height: 1700px;
+}
+
+.payment-status-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.payment-status-chart {
+  display: flex;
+  justify-content: center;
+}
+
+.payment-status-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  justify-self: stretch;
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.legend-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.legend-value {
+  font-weight: 700;
+  color: #625631;
+}
+
+/* La leyenda ya va debajo; no requiere breakpoint específico */
 
 .chart-wrapper {
   width: 100%;
