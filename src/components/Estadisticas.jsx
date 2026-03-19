@@ -814,6 +814,18 @@ const Estadisticas = () => {
     ["Ene", "Feb", "Mar"].includes(d.mes)
   );
 
+  // Número de reservas realizadas (desde enero hasta la actualidad)
+  // CHECKPOINT: para volver a contar todas, descomenta la línea de abajo y comenta el filtro.
+  // const reservasRealizadasCount = reservas?.length ?? 0;
+  const reservasRealizadasCount = (reservas || []).filter((r) => {
+    const fecha = new Date(r?.createdAt);
+    const ahora = new Date();
+    return (
+      fecha.getFullYear() === ahora.getFullYear() &&
+      fecha.getMonth() <= ahora.getMonth()
+    );
+  }).length;
+
   return (
     <div className="stats-container">
       <div className="stats-header">
@@ -843,7 +855,7 @@ const Estadisticas = () => {
         <div className="stats-indicator">
           <h2>Numero de reservas realizadas</h2>
           <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
-            {reservas.length}
+            {reservasRealizadasCount}
           </p>
         </div>
         <div className="stats-indicator">
@@ -996,7 +1008,7 @@ const Estadisticas = () => {
           <div className="payment-status-row">
             <div className="payment-status-chart">
               <VictoryPie
-                data={estadosPago}
+                // data={estadosPago}
                 colorScale={chartPalette}                
                 width={520}
                 height={360}
