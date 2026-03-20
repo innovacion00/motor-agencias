@@ -60,6 +60,8 @@ const Estadisticas = () => {
   const [reservasAprobadas, setReservasAprobadas] = useState([]);
   const [reservasCanceladasPorAgencia, setReservasCanceladasPorAgencia] = useState([]);
 
+  const [isChartsLoading, setIsChartsLoading] = useState(true);
+
   // Filtro global de reservas para TODO el tablero (Enero–Marzo)
   // CHECKPOINT: para volver a "todas las reservas", reemplaza el return por `return reservas;`
   const filtrarReservasEneMar = (reservas) => {
@@ -150,7 +152,6 @@ const Estadisticas = () => {
         "Hotel Sansiraka",
         "Hotel Abi",
         "Hotel Marina",
-        "Hotel 1525",
         "Hotel Windsor",
         "Hotel Madisson",
       ];
@@ -592,6 +593,7 @@ const Estadisticas = () => {
   //#region Reservas obtenidas (todas las reservas usando all=true)
   const ObtenerReservas = async (token, rolUsuario) => {
     try {
+      setIsChartsLoading(true);
       const baseUrl = import.meta.env.PUBLIC_API_URL;
 
       // Construir la URL según el rol del usuario
@@ -626,6 +628,8 @@ const Estadisticas = () => {
       console.error("Error obteniendo todas las reservas para estadísticas:", error);
       reservasNano.set([]);
       setReservas([]);
+    } finally {
+      setIsChartsLoading(false);
     }
   };
 
@@ -814,6 +818,19 @@ const Estadisticas = () => {
     ["Ene", "Feb", "Mar"].includes(d.mes)
   );
 
+  // Paleta específica para estados de pago (independiente de la paleta general)
+  const paymentStatusColorMap = {
+    "Pago rechazado": "#F56C51",
+    "Pago aprobado": "#62A672",
+    "Cancelado": "#9e9e9e",
+    "Pagado primera mitad": "#6C9BF5",
+    "Pendiente de pago": "#FFE77D",
+    "En proceso": "#8d6e63",
+  };
+
+  const getPaymentStatusColor = (status) =>
+    paymentStatusColorMap[status] || "#bdbdbd";
+
   // Número de reservas realizadas (desde enero hasta la actualidad)
   // CHECKPOINT: para volver a contar todas, descomenta la línea de abajo y comenta el filtro.
   // const reservasRealizadasCount = reservas?.length ?? 0;
@@ -825,6 +842,13 @@ const Estadisticas = () => {
       fecha.getMonth() <= ahora.getMonth()
     );
   }).length;
+
+  const SkeletonRow = ({ height = 280 }) => (
+    <div className="stats-chart-skeleton">
+      <div className="stats-chart-skeleton-line" />
+      <div className="stats-chart-skeleton-rect" style={{ height }} />
+    </div>
+  );
 
   return (
     <div className="stats-container">
@@ -854,59 +878,59 @@ const Estadisticas = () => {
       <div className="indicators-grid">
         <div className="stats-indicator">
           <h2>Numero de reservas realizadas</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {reservasRealizadasCount}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Agencias Registradas</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {agenciasRegistradas}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Reservas Canceladas en las Últimas 24h</h2>
-          <p style={{ color: "#4CAF50" }}>{reservasCanceladas}</p>
+          <p style={{ color: "#AD884E" }}>{reservasCanceladas}</p>
         </div>
         <div className="stats-indicator">
           <h2>Agencias Nuevas (Últimas 24h)</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {agenciasNuevas}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Reservas garantizadas en las Últimas 24h</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2ECC71" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {reservasCompletadas24h}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Reservas Realizadas (Últimas 24h)</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#3498DB" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {reservasUltimas24h}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Promedio de Huéspedes por Reserva</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#9B59B6" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {promedioHuespedes}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Tasa de reservas garantizadas </h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E67E22" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {tasaConversion}%
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Travel Window</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#16A085" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {promedioEstadia} noches
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Booking Window</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2980B9" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {formatBookingWindow(bookingWindow)}
           </p>
         </div>
@@ -917,86 +941,110 @@ const Estadisticas = () => {
         <div className="chart-wrapper">
           {/* -------------------- Gráfico de reservas por mes ------------------------ */}
           <h2 style={{ textAlign: "center" }}>Reservas por Mes</h2>
-          <VictoryChart
-            theme={VictoryTheme.material}
-            domainPadding={20}
-            width={480} // Reducido de 400
-            height={300} // Reducido de 300
-            padding={{ left: 80, right: 20, top: 20, bottom: 50 }}
-          >
-            <VictoryAxis
-              tickFormat={reservasPorMesFiltradas.map((d) => d.mes)}
-              style={{
-                tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
-              }}
-            />
-            <VictoryAxis
-              dependentAxis
-              tickFormat={(x) => `${x} reservas`}
-              style={{
-                tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
-              }}
-            />
-            <VictoryBar
-              data={reservasPorMesFiltradas}
-              x="mes"
-              y="reservas"
-              style={{ data: { fill: chartPalette[0] } }}
-              labels={({ datum }) => `${datum.reservas}`}
-            />
-          </VictoryChart>
+          {isChartsLoading ? (
+            <SkeletonRow height={280} />
+          ) : (
+            <VictoryChart
+              theme={VictoryTheme.material}
+              domainPadding={20}
+              width={480} // Reducido de 400
+              height={300} // Reducido de 300
+              padding={{ left: 80, right: 20, top: 20, bottom: 50 }}
+            >
+              <VictoryAxis
+                tickFormat={reservasPorMesFiltradas.map((d) => d.mes)}
+                style={{
+                  tickLabels: {
+                    fontSize: 11,
+                    padding: 5,
+                    fontFamily: "Roboto",
+                  },
+                }}
+              />
+              <VictoryAxis
+                dependentAxis
+                tickFormat={(x) => `${x} reservas`}
+                style={{
+                  tickLabels: {
+                    fontSize: 11,
+                    padding: 5,
+                    fontFamily: "Roboto",
+                  },
+                }}
+              />
+              <VictoryBar
+                data={reservasPorMesFiltradas}
+                x="mes"
+                y="reservas"
+                style={{ data: { fill: chartPalette[0] } }}
+                labels={({ datum }) => `${datum.reservas}`}
+              />
+            </VictoryChart>
+          )}
         </div>
 
         {/* ------------------- Gráfica de Reservas por Hotel ----------------------*/}
         <div className="chart-wrapper">
           <h2 style={{ textAlign: "center" }}>Reservas por hotel</h2>
-          <VictoryChart
-            theme={VictoryTheme.material}
-            domainPadding={20}
-            width={600}
-            height={400}
-            padding={{ left: 100, right: 30, top: 20, bottom: 100 }}
-          >
-            <VictoryAxis
-              tickFormat={reservasPorHotel?.map((d) => d.hotel)}
-              style={{
-                tickLabels: { angle: -45, fontSize: 12, textAnchor: "end" },
-              }}
-            />
-            <VictoryAxis
-              dependentAxis
-              tickFormat={(x) => `${x} reservas`}
-              style={{ tickLabels: { fontSize: 12 } }}
-            />
-            <VictoryBar
-              data={reservasPorHotel}
-              x="hotel"
-              y="reservas"
-              style={{ data: { fill: chartPalette[2] } }}
-              labels={({ datum }) => `${datum.reservas}`}
-            />
-          </VictoryChart>
+          {isChartsLoading ? (
+            <SkeletonRow height={340} />
+          ) : (
+            <VictoryChart
+              theme={VictoryTheme.material}
+              domainPadding={20}
+              width={600}
+              height={400}
+              padding={{ left: 100, right: 30, top: 20, bottom: 100 }}
+            >
+              <VictoryAxis
+                tickFormat={reservasPorHotel?.map((d) => d.hotel)}
+                style={{
+                  tickLabels: {
+                    angle: -45,
+                    fontSize: 12,
+                    textAnchor: "end",
+                  },
+                }}
+              />
+              <VictoryAxis
+                dependentAxis
+                tickFormat={(x) => `${x} reservas`}
+                style={{ tickLabels: { fontSize: 12 } }}
+              />
+              <VictoryBar
+                data={reservasPorHotel}
+                x="hotel"
+                y="reservas"
+                style={{ data: { fill: chartPalette[2] } }}
+                labels={({ datum }) => `${datum.reservas}`}
+              />
+            </VictoryChart>
+          )}
         </div>
 
         {/* Gráfica de Reservas por Ciudad */}
         <div className="chart-wrapper">
           <h2 style={{ textAlign: "center" }}>Número de reservas por Ciudad</h2>
-          <VictoryPie
-            data={reservasPorCiudad}
-            colorScale={chartPalette}
-            labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
-            style={{
-              labels: {
-                fontSize: 10,
-                fontWeight: "bold",
-                fill: "#333",
-                fontFamily: "Roboto",
-              },
-            }}
-            padAngle={2}
-            innerRadius={80}
-            labelRadius={80}
-          />
+          {isChartsLoading ? (
+            <SkeletonRow height={320} />
+          ) : (
+            <VictoryPie
+              data={reservasPorCiudad}
+              colorScale={chartPalette}
+              labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
+              style={{
+                labels: {
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  fill: "#333",
+                  fontFamily: "Roboto",
+                },
+              }}
+              padAngle={2}
+              innerRadius={80}
+              labelRadius={80}
+            />
+          )}
         </div>
 
         {/* Gráfica de Estados de Pago (con leyenda al lado) */}
@@ -1004,40 +1052,46 @@ const Estadisticas = () => {
           <h2 style={{ textAlign: "center" }}>
             Estados de pago en tiempo real
           </h2>
+          {isChartsLoading ? (
+            <SkeletonRow height={380} />
+          ) : (
+            <div className="payment-status-row">
+              <div className="payment-status-chart">
+                <VictoryPie
+                  data={estadosPago}
+                  width={520}
+                  height={360}
+                  radius={145}
+                  innerRadius={70}
+                  padAngle={2}
+                  labels={() => ""}
+                  style={{
+                    data: {
+                      fill: ({ datum }) => getPaymentStatusColor(datum.x),
+                      stroke: "#ffffff",
+                      strokeWidth: 2,
+                    },
+                  }}
+                  animate={{ duration: 1000 }}
+                />
+              </div>
 
-          <div className="payment-status-row">
-            <div className="payment-status-chart">
-              <VictoryPie
-                // data={estadosPago}
-                colorScale={chartPalette}                
-                width={520}
-                height={360}
-                radius={145}
-                innerRadius={70}
-                padAngle={2}
-                labels={() => ""}
-                style={{
-                  data: { stroke: "#ffffff", strokeWidth: 2 },
-                }}
-                animate={{ duration: 1000 }}
-              />
+              <div className="payment-status-legend">
+                {(estadosPago || []).map((item, idx) => (
+                  <div className="legend-item" key={`${item.x}-${idx}`}>
+                    <span
+                      className="legend-swatch"
+                      style={{
+                        backgroundColor: getPaymentStatusColor(item.x),
+                      }}
+                    />
+                    <span className="legend-label">{item.x}</span>
+                    <span className="legend-value">{item.y}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            <div className="payment-status-legend">
-              {(estadosPago || []).map((item, idx) => (
-                <div className="legend-item" key={`${item.x}-${idx}`}>
-                  <span
-                    className="legend-swatch"
-                    style={{
-                      backgroundColor: chartPalette[idx % chartPalette.length],
-                    }}
-                  />
-                  <span className="legend-label">{item.x}</span>
-                  <span className="legend-value">{item.y}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 

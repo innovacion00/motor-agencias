@@ -164,7 +164,7 @@
 
 .stats-indicator h2 {
   color: #34495e;
-  font-size: 15px;
+  font-size: 20px;
   margin-bottom: 10px;
   font-family: "Roboto", sans-serif;
 }
@@ -174,6 +174,11 @@
   font-weight: bold;
   margin: 0;
   font-family: "Roboto", sans-serif;
+  border: 1px solid #AD884E;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: inline-block;
+  background-color: #fffaf0;
 }
 
 .indicators-grid {
@@ -237,7 +242,7 @@
 }
 
 .agencies-table th {
-  background: #26547B;
+  background: #AD884E;
   color: white;
   padding: 8px;
   text-align: left;
@@ -277,7 +282,7 @@
 .table-title {
   text-align: center;
   margin-bottom: 15px;
-  font-size: 16px;
+  font-size: 23px;
 }
 
 .agencies-table table {
@@ -290,6 +295,11 @@
   padding: 8px;
   text-align: left;
   border: 1px solid #ddd;
+  font-size: 17px; /* +4px mínimo frente al tamaño anterior (13px) */
+}
+
+.agencies-table table {
+  font-size: 18px; /* Base general de tabla */
 }
 
 @media (max-width: 768px) {
@@ -322,5 +332,41 @@
 @media (max-width: 1200px) {
   .stats-content {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Skeleton para gráficas */
+.stats-chart-skeleton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.stats-chart-skeleton-line {
+  height: 14px;
+  width: 55%;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  animation: skeletonPulse 1.5s infinite;
+}
+
+.stats-chart-skeleton-rect {
+  width: 100%;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  animation: skeletonPulse 1.5s infinite;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 1;
   }
 }
