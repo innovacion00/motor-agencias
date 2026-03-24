@@ -715,12 +715,12 @@ const DropdownSearch = () => {
       </button>
       
       {/* Botón de búsqueda con IA */}
-      <button
+      {/* <button
         onClick={handleSearchWithIA}
         className={styles.searchButton}
       >
         Consultar con IA
-      </button>
+      </button> */}
       {/* Modal de carga */}
       <Modal
         isOpen={isLoading}
