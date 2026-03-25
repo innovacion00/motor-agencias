@@ -1560,7 +1560,7 @@ const Gestionar = ({ reservas }) => {
             <p>Gestionar reserva</p>
             <div className={styles.acciones}>
               {/* Cambiar estado de la reserva - visible para super-admin o correos autorizados */}
-              {(datosDelUsuario?.role?.includes("super-admin") ||
+              {(datosDelUsuario?.role?.includes("super-admin") &&
                 ["carlosdceballos30@gmail.com", "innovacion@gehsuites.com, malejadigital97@gmail.com"].includes(
                   datosDelUsuario?.email?.toLowerCase?.() ?? ""
                 )) && (
