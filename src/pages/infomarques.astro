@@ -1,0 +1,1026 @@
+---
+import { fetchWithAuth } from "../utils/fetchWithAuth";
+
+async function fetchProtectedData() {
+  const data = await fetchWithAuth("URL_PROTEGIDA");
+  console.log(data);
+}
+import BaseLayout from "../layouts/BaseLayout.astro";
+import DropdownSearch from "../components/DropdownSearch";
+import CarrouselA from "../components/Carrouseles/Carrouselmarques";
+import RouteProtection from "../components/RouteProtection.astro";
+---
+
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+  <RouteProtection />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <html lang="es">
+    <body>
+      <div class="search-form-wrapper">
+        <DropdownSearch client:visible />
+      </div>
+
+      <div class="container">
+        <!-- Menú de botones General y Habitaciones -->
+        <div class="nav-tabs">
+          <button id="generalBtn" class="active">General</button>
+          <button id="roomsBtn">Habitaciones</button>
+        </div>
+
+        <!-- Sección General -->
+
+        <div id="generalSection" class="section active">
+          <div class="gallery">
+            <CarrouselA client:load />
+            <!-- <img alt="Hotel lobby with reception desk and seating area" class="main-image" height="400"
+            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1" width="800" />
+          <div class="side-images">
+            <img alt="Hotel dining area with tables and chairs" height="150"
+              src="https://www.gehsuites.com/multimedia/galerias/galeriaazuan6270.jpg" width="250" />
+            <img alt="Close-up of a breakfast dish with eggs and toast" height="150"
+              src="https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg" width="250" />
+          </div> -->
+          </div>
+          <br />
+          <h2 style={{ fontSize: "18px" }}>Hotel boutique El Marqués ⭐⭐⭐⭐</h2>
+          <br />
+          <p>
+            Hotel boutique El Marqués by GEH Suites es un hotel boutique ubicado en el Centro Histórico de Cartagena, dentro de la emblemática Ciudad Amurallada. 
+            Ocupa una casa colonial del siglo XVII restaurada, que conserva su arquitectura original y la combina con comodidades modernas y atención personalizada.
+            Gracias a su excelente ubicación, los huéspedes pueden visitar caminando los principales atractivos turísticos como Plaza Santo Domingo, Plaza de Bolívar,
+            <br /><br />
+            Museo de la Inquisición, Plaza San Pedro Claver, así como iglesias, museos, boutiques y una amplia oferta de restaurantes de gastronomía local, nacional e internacional.
+            Es una opción ideal para parejas, familias y viajeros que desean alojarse en el corazón del Centro Histórico y vivir una experiencia auténtica en Cartagena.
+          </p>
+          <br />
+          <hr />
+          <div class="services">
+            <h3>Servicios destacados</h3>
+            <div class="service-list">
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
+                    alt="check icon"
+                  />
+                  Desayuno americano (incluido)
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
+                    alt="check icon"
+                  />
+                  Acceso a piscina (incluido)
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
+                    alt="check icon"
+                  />
+                  Aire acondicionado
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png"
+                    alt="check icon"
+                  />
+                  Pet friendly(maximo 8kg. 1 por habitacion)
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="servicess">
+            <br />
+            <hr />
+            <br />
+            <h3>Servicios generales</h3>
+            <div class="service-list">
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+                  Lavanderia/Tintoreria
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+
+                  Recepción 24 horas
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+
+                  Wifi gratuito
+                </span>
+              </div>
+
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+
+                  Servicio diario de limpieza
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+                  Wifi en todas las areas del hotel
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+                  Duchas con agua caliente
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+                  Ubicación en el Centro Histórico
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+
+                  Aire acondicionado
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+
+                  Servicio de guarda equipaje
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+
+                  Restaurante
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- Botones en la parte inferior -->
+          <div class="info-box">
+            <div class="contact-info">
+              <i class="fas fa-phone-alt"> </i>
+              +57 333 602 50 21
+              <i class="fas fa-map-marker-alt" style="margin-left: 20px;"> </i>
+              Calle Nuestra Señora del Carmen #33- 41, Cartagena de Indias, Bolívar
+              <a
+                href="https://www.google.com/maps/place/El+Marqu%C3%A9s+Hotel+Boutique/@10.4234306,-75.5520041,20.54z/data=!4m9!3m8!1s0x8ef625b9c0555555:0xb580041a0f727000!5m2!4m1!1i2!8m2!3d10.4235819!4d-75.5522379!16s%2Fg%2F1tfzsznw?entry=ttu&g_ep=EgoyMDI2MDMxMC4wIKXMDSoASAFQAw%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver mapa</a
+              >
+            </div>
+            <!-- <div class="buttons">
+    <button>
+      Ver habitaciones
+    </button>
+  </div> -->
+          </div>
+        </div>
+
+        <br />
+        <!-- Sección Habitaciones -->
+
+        <div id="roomsSection" class="section">
+          <!-- Habitación Doble deluxe -->
+
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe.jpg"
+                    alt="Habitación Deluxe estandar"
+                    class="room-main-image"
+                  />
+                </div>
+                <div class="room-small-images-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe2.jpg"
+                    alt="habitacion_deluxe 2"
+                    class="room-small-image"
+                  />
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe3.jpg"
+                    alt="habitacion_deluxe3"
+                    class="room-small-image"
+                  />
+                </div>
+              </div>
+              <div class="room-details">
+                <h3>Habitacion Deluxe</h3>
+                <p>Habitación acogedora con cama doble, ideal para parejas.</p>
+                <br />
+                <hr />
+                <br />
+                <div class="room-icons">
+                  <span>🛏 1 cama doble</span>
+                  <span>📶 Wifi gratuito</span>
+                  <span>❄️ Aire acondicionado</span>
+                </div>
+                <br />
+                <hr />
+                <br />
+                <div class="room-services">
+                  <h4>Instalaciones</h4>
+                  <ul>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Aire acondicionado
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Caja de seguridad
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Baño con ducha
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Toallas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Artículos de aseo
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Pantuflas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Wifi gratuito
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> TV Satelital
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="availability-button">Ver disponibilidad</button> -->
+              </div>
+            </div>
+            <!-- Habitación Junior -->
+          </div>
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior.jpg"
+                    alt="Habitación Junior"
+                    class="room-main-image"
+                  />
+                </div>
+                <div class="room-small-images-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior2.jpg"
+                    alt="Cuadruple Imagen pequeña 1 "
+                    class="room-small-image"
+                  />
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior3.jpg"
+                    alt="Cuadruple Imagen pequeña 2"
+                    class="room-small-image"
+                  />
+                </div>
+              </div>
+              <div class="room-details">
+                <h3>Junior Suite</h3>
+                <p>
+                  Amplia suite con cama king size, ideal para una estancia
+                  en pareja.
+                </p>
+                <br />
+                <hr />
+                <br />
+                <div class="room-icons">
+                  <span>🛏 1x Cama king size</span>
+                  <span>📶 Wifi gratuito</span>
+                  <span>❄️ Aire acondicionado</span>
+                </div>
+                <br />
+                <hr />
+                <br />
+                <div class="room-services">
+                  <h4>Instalaciones</h4>
+                  <ul>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Aire acondicionado
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Caja de seguridad
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Baño con ducha
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Toallas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Artículos de aseo
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Pantuflas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Wifi gratuito
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> TV Satelital
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="availability-button">Ver disponibilidad</button> -->
+              </div>
+            </div>
+          </div>
+        <!-- Junior suite twin -->
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin1.jpg"
+                    alt="Habitación Deluxe estandar"
+                    class="room-main-image"
+                  />
+                </div>
+                <div class="room-small-images-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin2.jpg"
+                    alt="habitacion_deluxe 2"
+                    class="room-small-image"
+                  />
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin3.jpg"
+                    alt="habitacion_deluxe3"
+                    class="room-small-image"
+                  />
+                </div>
+              </div>
+              <div class="room-details">
+                <h3>Junior suite twin</h3>
+                <p>Habitación acogedora con 2 cama doble.Perfecto tres huespedes</p>
+                <br />
+                <hr />
+                <br />
+                <div class="room-icons">
+                  <span>🛏 2 camas dobles king size</span>
+                  <span>📶 Wifi gratuito</span>
+                  <span>❄️ Aire acondicionado</span>
+                </div>
+                <br />
+                <hr />
+                <br />
+                <div class="room-services">
+                  <h4>Instalaciones</h4>
+                  <ul>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Aire acondicionado
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Caja de seguridad
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Baño con ducha
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Toallas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Artículos de aseo
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Pantuflas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Wifi gratuito
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> TV Satelital
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="availability-button">Ver disponibilidad</button> -->
+              </div>
+            </div>
+            <!-- Habitación Suite -->
+          </div>
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite.jpg"
+                    alt="Habitación suite"
+                    class="room-main-image"
+                  />
+                </div>
+                <div class="room-small-images-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite2.jpg"
+                    alt="habitacion suite 2"
+                    class="room-small-image"
+                  />
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite3.jpg"
+                    alt="habitacion suite 3"
+                    class="room-small-image"
+                  />
+                </div>
+              </div>
+              <div class="room-details">
+                <h3>Suite</h3>
+                <p>Habitación acogedora con cama doble, Excelente opcion para una instancia mas grande y comoda.</p>
+                <br />
+                <hr />
+                <br />
+                <div class="room-icons">
+                  <span>🛏 1 cama king size</span>
+                  <span>📶 Wifi gratuito</span>
+                  <span>❄️ Aire acondicionado</span>
+                </div>
+                <br />
+                <hr />
+                <br />
+                <div class="room-services">
+                  <h4>Instalaciones</h4>
+                  <ul>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Aire acondicionado
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Caja de seguridad
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Baño con ducha
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Toallas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Artículos de aseo
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Pantuflas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Wifi gratuito
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> TV Satelital
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="availability-button">Ver disponibilidad</button> -->
+              </div>
+            </div>
+          </div>
+          <!-- Añadir otra hab -->
+        </div>
+      </div>
+
+      <script>
+        // Seleccionamos los botones y las secciones
+        const generalBtn = document.getElementById("generalBtn");
+        const roomsBtn = document.getElementById("roomsBtn");
+        const generalSection = document.getElementById("generalSection");
+        const roomsSection = document.getElementById("roomsSection");
+
+        // Funciones para mostrar/ocultar secciones
+        generalBtn.addEventListener("click", () => {
+          generalSection.classList.add("active");
+          roomsSection.classList.remove("active");
+          generalBtn.classList.add("active");
+          roomsBtn.classList.remove("active");
+        });
+
+        roomsBtn.addEventListener("click", () => {
+          roomsSection.classList.add("active");
+          generalSection.classList.remove("active");
+          roomsBtn.classList.add("active");
+          generalBtn.classList.remove("active");
+        });
+      </script>
+    </body>
+
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #fff;
+        color: #1c3d5a;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 65%;
+        margin: 0 auto;
+        padding: 20px 0;
+      }
+
+      .tabs {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+      }
+
+      /* Menú de navegación */
+      .nav-tabs {
+        display: flex;
+
+        margin-bottom: 20px;
+      }
+
+      .nav-tabs button {
+        padding: 10px 20px;
+        margin-right: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #1c3d5a;
+        border-bottom: 2px solid transparent;
+        transition: border-bottom 0.1s ease;
+      }
+
+      .nav-tabs button.active {
+        border-bottom: 4px solid #8b4513;
+        font-weight: bold;
+      }
+
+      .nav-tabs button:hover {
+        border-bottom: 2px solid #8b4513;
+      }
+
+      /* Secciones ocultables */
+      .section {
+        display: none;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      .gallery {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .main-image {
+        width: 60%;
+        height: auto;
+        padding-bottom: 20px;
+      }
+
+      .side-images {
+        width: 38%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .side-images img {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+        border-radius: 5px;
+      }
+
+      .description {
+        margin-top: 20px;
+      }
+
+      .description h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .description p {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .services {
+        margin-top: 20px;
+      }
+
+      .services h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+      }
+
+      .services .service-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .services .service-item {
+        width: 25%;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .services .service-item i {
+        margin-right: 10px;
+      }
+      .services .service-item img {
+        margin-right: 10px;
+        height: 25px;
+        width: 25px;
+      }
+
+      .footer {
+        margin-top: 20px;
+        padding: 20px 0;
+        border-top: 1px solid #444;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .footer .contact-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .footer .contact-info i {
+        margin-right: 10px;
+      }
+
+      .footer .buttons {
+        display: flex;
+      }
+
+      .footer .buttons button {
+        background-color: #fff;
+        color: #1c3d5a;
+        padding: 10px 20px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .info-box {
+        background-color: #f0f0f0;
+        padding: 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-radius: 5px;
+      }
+
+      .info-box .contact-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .info-box .contact-info i {
+        margin-right: 10px;
+      }
+
+      .info-box .contact-info a {
+        color: #1c3d5a;
+        text-decoration: none;
+        margin-left: 10px;
+      }
+
+      .info-box .buttons {
+        display: flex;
+      }
+
+      .info-box .buttons button {
+        background-color: #1c3d5a;
+        color: #fff;
+        padding: 10px 20px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .highlighted-services,
+      .general-services {
+        margin-bottom: 20px;
+      }
+
+      .highlighted-services img {
+        width: 50px;
+        margin-right: 10px;
+      }
+
+      .highlighted-services {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+
+      .general-services ul {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .general-services ul li {
+        width: 45%;
+        margin-bottom: 10px;
+      }
+
+      /* Botones en la parte inferior */
+      .bottom-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+      }
+
+      .bottom-buttons button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .bottom-buttons button:hover {
+        background-color: #0056b3;
+      }
+
+      .bottom-buttons a {
+        text-decoration: none;
+        color: white;
+      }
+
+      .search-form-wrapper {
+        background-color: #1c3d5a;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .dropdownSearchContainer {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background-color: #f29c38;
+        /* Cambia el color del fondo */
+        border-radius: 8px;
+      }
+
+      hr {
+        height: auto;
+        width: 100%;
+        opacity: 0.5;
+      }
+
+      .room h3 {
+        padding: 20px;
+      }
+
+      .room p {
+        padding-left: 20px;
+        padding-bottom: 8px;
+        padding-top: 8px;
+      }
+
+      .room {
+        margin-bottom: 30px;
+        border: 1px solid #eaeaea;
+        border-radius: 10px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        background-color: #f5f5f5;
+      }
+
+      .room-header {
+        display: flex;
+      }
+
+      .room-gallery {
+        width: 60%;
+      }
+
+      .room-main-image-container {
+        margin-bottom: 10px;
+        padding-right: 20px;
+        display: flex;
+      }
+
+      .room-main-image {
+        width: 100%;
+        border-radius: 1px;
+      }
+
+      .room-small-images-container {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 20px;
+      }
+
+      .room-small-image {
+        width: 49%;
+        border-radius: 1px;
+      }
+
+      .room-details {
+        width: 55%;
+      }
+
+      .room-icons {
+        padding-left: 20px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .room-icons span {
+        display: flex;
+        align-items: center;
+      }
+
+      .room h4 {
+        padding-left: 20px;
+      }
+
+      .room-services ul {
+        list-style-type: none;
+        padding-left: 20px;
+        padding-top: 13px;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .room-services ul li {
+        padding-left: 20px;
+        padding-top: 20px;
+        width: 45%;
+        margin-bottom: 5px;
+      }
+
+      .availability-button {
+        margin-top: 10px;
+        padding: 20px 20px;
+        background-color: #033f97;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </html></BaseLayout
+>
