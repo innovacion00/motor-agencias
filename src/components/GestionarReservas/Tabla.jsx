@@ -1113,6 +1113,27 @@ const Tabla = () => {
                     >
                       Consultar y gestionar
                     </a>
+                  {dato?.vuelo &&
+                    ((Array.isArray(dato.vuelo) && dato.vuelo.length > 0) ||
+                      (typeof dato.vuelo === "object" &&
+                        !Array.isArray(dato.vuelo) &&
+                        Object.keys(dato.vuelo).length > 0)) && (
+                          <span
+                          title="Esta reserva tiene vuelos"
+                      aria-label="Reserva con vuelos"
+                      style={{ marginRight: "5px", display: "inline-flex", alignItems: "center",  }}
+                    >
+                      <img
+                        src="https://images.icon-icons.com/2070/PNG/512/airplane_icon_126136.png"
+                        alt="Reserva con vuelos"
+                        style={{
+                          width: "25px",
+                          height: "25px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </span>
+                  )}
                   </td>
                 </tr>
               ))}

@@ -123,8 +123,9 @@ const VuelosDisponibles = () => {
       'EK':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png',
       'IB':'https://www.latamairlines.com/content/dam/latamxp/sites/alianzas/aerolineas-images_0011_iberia-Airlines.png',
       'UX':'https://logodownload.org/wp-content/uploads/2019/10/air-europa-logo-0.png',
-      'JA':'https://dgital.com/images/blogs/2020-11-22_js-behind-the-scene/main.png',
+      'JA':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyzD0GhR6Cb4t8ChiJwTz6QdgKQAHtsAhKjA&s',
       'VB':'https://upload.wikimedia.org/wikipedia/commons/b/bf/Nuevo_vivaaerobus_logotipo_original.jpg',
+      'P5':"https://imgproxy.domestika.org/unsafe/s:1200:1200/dpr:1/rs:fill/ex:true/el:true/plain/src://project-covers/000/508/871/508871-original.png?1558801782",
       // Agregar más aerolíneas aquí en el futuro
       // 'XX': 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/XX.png?crop=false&width=108&height=92&fallback=default1.png&_v=...',
     };
@@ -681,6 +682,11 @@ const VuelosDisponibles = () => {
       
       if (!packageId) {
         throw new Error('No se recibió el packageId en la respuesta');
+      }
+      // Persistir packageId para usarlo al finalizar la reserva (hotel + vuelo)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('flightPackageId', packageId);
+        localStorage.setItem('flightPackageData', JSON.stringify(packageResponse));
       }
 
       // Segunda petición: obtener las opciones de equipaje

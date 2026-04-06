@@ -337,6 +337,100 @@ const FormularioReserva = () => {
     return response;
   };
 
+  const mapDocumentTypeForFlight = (tipoDocumento) => {
+    if (tipoDocumento === "pasaporte") return "PASSPORT";
+    return "IDENTITY_CARD";
+  };
+
+  const formatPhoneWithCountrySpace = (rawPhone = "") => {
+    const value = String(rawPhone || "").trim();
+    if (!value.startsWith("+")) return value;
+
+    const normalized = value.replace(/\s+/g, " ");
+    const withSpaceMatch = normalized.match(/^(\+\d{1,4})\s+(.+)$/);
+    if (withSpaceMatch) {
+      const code = withSpaceMatch[1];
+      const number = withSpaceMatch[2].replace(/\s+/g, "");
+      return `${code} ${number}`;
+    }
+
+    const digits = normalized.replace(/\D/g, "");
+    if (!digits) return value;
+
+    // Inferir longitud del código país usando teléfono local de 10 dígitos (caso principal del negocio).
+    const inferredCodeLen = digits.length - 10;
+    const countryCodeLen =
+      inferredCodeLen >= 1 && inferredCodeLen <= 3 ? inferredCodeLen : 2;
+
+    const countryCode = digits.slice(0, countryCodeLen);
+    const number = digits.slice(countryCodeLen);
+    return number ? `+${countryCode} ${number}` : `+${countryCode}`;
+  };
+
+  const buildFlightPassengersPayload = (passengers = []) => {
+    return passengers.map((passenger, index) => ({
+      passengerId: String(index),
+      type_passenger: "adult",
+      title: "Mr",
+      name: passenger.nombreCompleto || "",
+      surname: passenger.apellidos || "",
+      email: passenger.email || "",
+      contact_number: formatPhoneWithCountrySpace(passenger.celular || ""),
+      date_of_birth: passenger.fechaNacimiento || "",
+      document_type: mapDocumentTypeForFlight(passenger.tipoDocumento),
+      document_number: passenger.numeroDocumento || "",
+      document_issuance: "CO",
+      document_issuance_date: "2020-01-15",
+      document_expiration: "2026-12-28",
+      document_residence: "ARONA",
+      country_id: "CO",
+      address: "Calle Noname 7",
+      province: "BOLIVAR",
+      city: "CARTAGENA",
+      postalcode: "130002",
+      residence_type: "DNI",
+      residence: "ARONA",
+      frequent_flyer_number: "43234512",
+      frequent_flyer_type: "IBERIA",
+    }));
+  };
+
+  const createFlightReservation = async ({ reservaChatbotId, passengers }) => {
+    const packageIdFromStorage = localStorage.getItem("flightPackageId");
+    const packageDataFromStorage = JSON.parse(localStorage.getItem("flightPackageData") || "null");
+    const packageId = packageIdFromStorage || packageDataFromStorage?.packageId || "";
+
+    if (!packageId) {
+      throw new Error("No se encontró el packageId para finalizar la reserva de vuelos.");
+    }
+
+    const flightPayload = {
+      reservaChatbotId,
+      packageId,
+      hotel_id: "",
+      partner_id: "20317285-8045-4336-92f4-efdd24aab67f",
+      passengers: buildFlightPassengersPayload(passengers),
+      payment: {
+        payment_type: "FLIGHT_ONLY",
+      },
+    };
+
+    const flightUrl = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/vuelos/maarlab/reservar?info=all`;
+    const flightResponse = await fetchWithToken(flightUrl, {
+      method: "POST",
+      body: JSON.stringify(flightPayload),
+    });
+
+    if (!flightResponse.ok) {
+      const errorText = await flightResponse.text();
+      throw new Error(
+        `No se pudo crear la reserva de vuelos: ${flightResponse.status} ${flightResponse.statusText}${errorText ? ` - ${errorText}` : ""}`
+      );
+    }
+
+    return await flightResponse.json();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
@@ -573,6 +667,19 @@ const FormularioReserva = () => {
         return;
       }
     }
+
+    const packageIdFromStorage = localStorage.getItem("flightPackageId");
+    const packageDataFromStorage = JSON.parse(localStorage.getItem("flightPackageData") || "null");
+    const packageId = packageIdFromStorage || packageDataFromStorage?.packageId || "";
+    if (!packageId) {
+      Swal.fire({
+        icon: "error",
+        title: "Falta información del vuelo",
+        text: "No se encontró el packageId. Regresa a vuelos, selecciona y continúa de nuevo.",
+      });
+      return;
+    }
+
     // Guardar lista de pasajeros para uso posterior
     try {
       localStorage.setItem("pasajerosVuelo", JSON.stringify(formDataList));
@@ -693,11 +800,22 @@ const FormularioReserva = () => {
           body: informacionD,
         });
         if (response.ok) {
-          await response.json();
+          const data = await response.json();
+          const reservaChatbotId = data?.reservaChatbotId;
+
+          if (!reservaChatbotId) {
+            throw new Error("La reserva de hotel no retornó reservaChatbotId.");
+          }
+
+          await createFlightReservation({
+            reservaChatbotId,
+            passengers: formDataList,
+          });
+
           Swal.fire({
             icon: "success",
             title: "Reserva realizada",
-            text: "Se ha confirmado su reserva con éxito.",
+            text: "Se ha confirmado su reserva de hotel y vuelos con éxito.",
           });
           setTimeout(() => {
             window.location.href = "/misreservas";
