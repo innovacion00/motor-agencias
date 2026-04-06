@@ -868,7 +868,7 @@ const FormularioReserva = () => {
       'EK':'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png',
       'IB':'https://www.latamairlines.com/content/dam/latamxp/sites/alianzas/aerolineas-images_0011_iberia-Airlines.png',
       'UX':'https://logodownload.org/wp-content/uploads/2019/10/air-europa-logo-0.png',
-      'JA':'https://dgital.com/images/blogs/2020-11-22_js-behind-the-scene/main.png',
+      'JA':'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyzD0GhR6Cb4t8ChiJwTz6QdgKQAHtsAhKjA&s',
       'VB':'https://upload.wikimedia.org/wikipedia/commons/b/bf/Nuevo_vivaaerobus_logotipo_original.jpg',
     };
     
