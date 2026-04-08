@@ -63,6 +63,7 @@ const Gestionar = ({ reservas }) => {
     "3": "Pago aprobado",
     "4": "Cancelado",
     "5": "Abonado primera mitad",
+    "6": "Reserva abonada",
   };
 
   useEffect(() => {
@@ -861,6 +862,10 @@ const Gestionar = ({ reservas }) => {
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
           Abonado primera mitad
         </p>
+      ) : reservas?.status == 6 ? (
+        <p className={`${styles.estadoPago} ${styles.aboned}`}>
+          Reserva abonada
+        </p>
       ) : reservas?.status == 1 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago total en proceso
@@ -1470,6 +1475,13 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
+              ) : reservas?.status == "6" ? (
+                <div className={styles.totalPago}>
+                  <p>Total + impuestos</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.total)}
+                  </p>
+                </div>
               ) : reservas?.status == "1" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
@@ -1487,11 +1499,13 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
+                  reservas?.status == "6" ||
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
-                    reservas?.status == "4"
+                    reservas?.status == "4" ||
+                    reservas?.status == "6"
                     ? styles.disabledButtonp
                     : ""
                   }`}
@@ -1506,6 +1520,7 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
                   reservas?.status == "5" ||
+                  reservas?.status == "6" ||
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
@@ -1513,6 +1528,7 @@ const Gestionar = ({ reservas }) => {
                     reservas?.status == "3" ||
                     reservas?.status == "4" ||
                     reservas?.status == "5" ||
+                    reservas?.status == "6" ||
                     reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
@@ -1526,12 +1542,14 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
+                  reservas?.status == "6" ||
                   
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
                     reservas?.status == "4" 
+                    || reservas?.status == "6"
                     
                     ? styles.disabledButtonp
                     : ""

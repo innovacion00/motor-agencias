@@ -936,6 +936,14 @@ const Tabla = () => {
         >
           Pago segundo abono
         </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("6")}
+          className={`${styles.statusButton} ${selectedStatus === "6" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Reserva abonada
+        </button>
         {selectedStatus !== null && (
           <button
             type="button"
@@ -1022,6 +1030,8 @@ const Tabla = () => {
                       format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                     ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                       format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                    ) : dato.status == "6" ? (
+                      format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                     ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                       format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                     ) : (
@@ -1046,6 +1056,8 @@ const Tabla = () => {
                         `${formatCurrency(dato.totalMitad)} USD`
                       ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "6" ? (
+                        `${formatCurrency(dato.total)} USD`
                       ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} USD`
                       ) : (
@@ -1069,6 +1081,8 @@ const Tabla = () => {
                         `${formatCurrency(dato.totalMitad)} COP`
                       ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "6" ? (
+                        `${formatCurrency(dato.total)} COP`
                       ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} COP`
                       ) : (
@@ -1106,6 +1120,10 @@ const Tabla = () => {
                     ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                       <span className={`${styles.status} ${styles.abonado}`}>
                         Abonado primera mitad
+                      </span>
+                    ) : dato.status == "6" ? (
+                      <span className={`${styles.status} ${styles.aboned}`}>
+                        Reserva abonada
                       </span>
                     ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                       <span className={`${styles.status} ${styles.proces}`}>
