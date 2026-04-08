@@ -883,6 +883,31 @@ export const Cid = ({ id }) => {
   };
   console.log(mostrarTraslados);
 
+  const obtenerBedsPorTipoHabitacion = (roomName = "") => {
+    const nombre = roomName.toLowerCase();
+
+    if (nombre.includes("sextuple") || nombre.includes("séxtuple")) return 6;
+    if (nombre.includes("quintuple") || nombre.includes("quíntuple")) return 5;
+    if (
+      nombre.includes("cuadruple") ||
+      nombre.includes("cuádruple") ||
+      nombre.includes("cuadrúple")
+    )
+      return 4;
+    if (nombre.includes("triple")) return 3;
+    if (
+      nombre.includes("doble") ||
+      nombre.includes("double") ||
+      nombre.includes("twin") ||
+      nombre.includes("junior") ||
+      nombre.includes("matrimonial")
+    ) {
+      return 2;
+    }
+    // Valor por defecto para no bloquear el flujo si el tipo no coincide.
+    return 2;
+  };
+
   // Cálculo de camas totales seleccionadas vs número de adultos
   const totalBedsSeleccionadas = datohabitacion.reduce(
     (acumulado, habitacion) => acumulado + (Number(habitacion.beds) || 0),
@@ -1356,7 +1381,8 @@ export const Cid = ({ id }) => {
                       Para pagos antes del check-in
                     </p>
                     <p>
-                      <i className="fas fa-bed"></i> {dato.beds} personas
+                      <i className="fas fa-bed"></i>{" "}
+                      {obtenerBedsPorTipoHabitacion(dato.roomName)} personas
                     </p>
                     <p className="price"></p>
                     <p className="price">
@@ -1478,7 +1504,7 @@ export const Cid = ({ id }) => {
                                     : "amountBeforeTax"
                                 ] || "Sin precio disponible",
                                 NombreH: dato.roomName,
-                                beds: dato.beds,
+                                beds: obtenerBedsPorTipoHabitacion(dato.roomName),
                                 hotelid: habitaciones?.hotel?.roomcloud_id,
                                 ciudad: habitaciones?.hotel?.city,
                                 hotelidAutocore: habitaciones?.hotel?.id,
