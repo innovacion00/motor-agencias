@@ -894,6 +894,7 @@ export const Cid = ({ id }) => {
       nombre.includes("cuadrúple")
     )
       return 4;
+    if (nombre.includes("familiar")) return 3;
     if (nombre.includes("triple")) return 3;
     if (
       nombre.includes("doble") ||
