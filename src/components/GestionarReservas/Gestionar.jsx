@@ -1177,134 +1177,6 @@ const Gestionar = ({ reservas }) => {
                 Tienes plazo de hacer el segundo pago hasta el {reservas?.fechaLimitePago2}
               </p>
 
-              {puedeGestionarFechasPago && (
-                <div style={{ marginTop: "12px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "12px",
-                    flexWrap: "wrap",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <div ref={fechaLimitePagoRef} style={{ position: "relative" }}>
-                    <p style={{ margin: 0, fontWeight: 600, color: "#1C3D5A" }}>
-                      Fecha límite pago 1
-                    </p>
-                    <input
-                      type="text"
-                      value={
-                        fechaLimitePago
-                          ? fechaLimitePago.toISOString().split("T")[0]
-                          : ""
-                      }
-                      onFocus={() => setShowFechaLimitePagoPicker(true)}
-                      readOnly
-                      style={{
-                        marginTop: "6px",
-                        padding: "8px 10px",
-                        borderRadius: "8px",
-                        border: "1px solid #ccc",
-                        width: "220px",
-                      }}
-                    />
-                    {showFechaLimitePagoPicker && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          zIndex: 10,
-                          marginTop: "8px",
-                        }}
-                      >
-                        <Calendar
-                          date={fechaLimitePago || new Date()}
-                          onChange={(date) => setFechaLimitePago(date)}
-                        />
-                        <button
-                          onClick={() => setShowFechaLimitePagoPicker(false)}
-                          style={{
-                            width: "100%",
-                            padding: "8px",
-                            backgroundColor: "#26547B",
-                            color: "white",
-                            border: "none",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Confirmar
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <div ref={fechaLimitePago2Ref} style={{ position: "relative" }}>
-                    <p style={{ margin: 0, fontWeight: 600, color: "#1C3D5A" }}>
-                      Fecha límite pago 2
-                    </p>
-                    <input
-                      type="text"
-                      value={
-                        fechaLimitePago2
-                          ? fechaLimitePago2.toISOString().split("T")[0]
-                          : ""
-                      }
-                      onFocus={() => setShowFechaLimitePago2Picker(true)}
-                      readOnly
-                      style={{
-                        marginTop: "6px",
-                        padding: "8px 10px",
-                        borderRadius: "8px",
-                        border: "1px solid #ccc",
-                        width: "220px",
-                      }}
-                    />
-                    {showFechaLimitePago2Picker && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          zIndex: 10,
-                          marginTop: "8px",
-                        }}
-                      >
-                        <Calendar
-                          date={fechaLimitePago2 || new Date()}
-                          onChange={(date) => setFechaLimitePago2(date)}
-                        />
-                        <button
-                          onClick={() => setShowFechaLimitePago2Picker(false)}
-                          style={{
-                            width: "100%",
-                            padding: "8px",
-                            backgroundColor: "#26547B",
-                            color: "white",
-                            border: "none",
-                            cursor: "pointer",
-                          }}
-                        >
-                          Confirmar
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <button
-                  onClick={guardarFechasLimitePago}
-                  disabled={isSavingFechasPago}
-                  style={{
-                    marginTop: "12px",
-                    padding: "10px 14px",
-                    backgroundColor: isSavingFechasPago ? "#d3d3d3" : "#26547B",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: isSavingFechasPago ? "not-allowed" : "pointer",
-                  }}
-                >
-                  {isSavingFechasPago ? "Guardando..." : "Guardar fechas de pago"}
-                </button>
-              </div>
-              )}
               </div>
               
               <p className={styles.total}>
@@ -1883,6 +1755,74 @@ const Gestionar = ({ reservas }) => {
               </button> */}
             </div>
           </div>
+          {puedeGestionarFechasPago && (
+            <div className={styles.gestionarReserv}>
+              <p>Modificar fechas de pago</p>
+              <div className={styles.acciones}>
+                <div className={styles.fechasPagoContainer}>
+                  <div ref={fechaLimitePagoRef} style={{ position: "relative" }}>
+                    <p className={styles.fechaPagoLabel}>Fecha límite pago 1</p>
+                    <input
+                      type="text"
+                      value={
+                        fechaLimitePago
+                          ? fechaLimitePago.toISOString().split("T")[0]
+                          : ""
+                      }
+                      onFocus={() => setShowFechaLimitePagoPicker(true)}
+                      readOnly
+                      className={styles.fechaPagoInput}
+                    />
+                    {showFechaLimitePagoPicker && (
+                      <div className={styles.calendarioWrapper}>
+                        <Calendar
+                          date={fechaLimitePago || new Date()}
+                          onChange={(date) => {
+                            setFechaLimitePago(date);
+                            setShowFechaLimitePagoPicker(false);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div ref={fechaLimitePago2Ref} style={{ position: "relative" }}>
+                    <p className={styles.fechaPagoLabel}>Fecha límite pago 2</p>
+                    <input
+                      type="text"
+                      value={
+                        fechaLimitePago2
+                          ? fechaLimitePago2.toISOString().split("T")[0]
+                          : ""
+                      }
+                      onFocus={() => setShowFechaLimitePago2Picker(true)}
+                      readOnly
+                      className={styles.fechaPagoInput}
+                    />
+                    {showFechaLimitePago2Picker && (
+                      <div className={styles.calendarioWrapper}>
+                        <Calendar
+                          date={fechaLimitePago2 || new Date()}
+                          onChange={(date) => {
+                            setFechaLimitePago2(date);
+                            setShowFechaLimitePago2Picker(false);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={guardarFechasLimitePago}
+                  disabled={isSavingFechasPago}
+                  className={styles.guardarFechasPagoButton}
+                >
+                  {isSavingFechasPago ? "Actualizando..." : "Actualizar fechas de pago"}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
