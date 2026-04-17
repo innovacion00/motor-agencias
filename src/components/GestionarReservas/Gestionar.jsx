@@ -1379,6 +1379,12 @@ const Gestionar = ({ reservas }) => {
                 autenticado en una notaría.
               </p>
               <br />
+              <p style={{fontWeight:"bold", color:"red"}}>
+              *Si en la plataforma Booking Connect únicamente se visualiza un pago 
+              correspondiente al 50% de la reserva el dia antes del check-in, 
+              nos veremos en la obligación de solicitar directamente al cliente el pago del monto restante en recepción.
+              </p>
+              <br />
               <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
               <p style={{fontFamily:"Roboto"}}>
                 <br />
