@@ -522,6 +522,21 @@ const getHotelName = (hotel) => {
   return hotel?.name || "Hotel no encontrado";
 };
 
+const hotelNombreStoragePorId = {
+  1: "azuan",
+  3: "madisson",
+  4: "aixo",
+  5: "abi",
+  6: "avexi",
+  8: "rodadero",
+  9: "marina",
+  10: "windsor",
+  44: "sansiraka",
+  48: "axis",
+  56: "boquilla",
+  123: "salguero",
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
@@ -717,6 +732,15 @@ export const Cid = ({ id }) => {
   //Enviar datos de reserva
   const enviardatos = () => {
     localStorage.setItem("datosreserva", JSON.stringify(datohabitacion));
+    const hotelActual = habitaciones?.hotel || {};
+    const hotelId = Number(hotelActual.id ?? id);
+    const hotelSeleccionado = {
+      id: hotelId,
+      nombre: hotelNombreStoragePorId[hotelId] || getHotelName(hotelActual),
+      ciudad: hotelActual.city ?? selectedCity ?? "",
+      imagen: hotelActual.image ?? hotel?.image ?? "",
+    };
+    localStorage.setItem("hotelSeleccionado", JSON.stringify(hotelSeleccionado));
   };
 
   //Use effect selectedCity

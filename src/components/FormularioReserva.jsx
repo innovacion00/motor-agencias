@@ -10,6 +10,10 @@ import { useStore } from "@nanostores/react";
 import ToursCs from "./ToursCs";
 import { refreshToken } from "../stores/authtoken";
 import Cookies from "js-cookie";
+import {
+  getBookingConnectCategoriesForHotel,
+  getBookingConnectRatePlansForHotel,
+} from "../constants/bookingConnectRatePlans";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -227,6 +231,57 @@ const FormularioReserva = () => {
     });
   };
 
+  const normalizeMealPlan = (mealPlan) => {
+    const normalized = String(mealPlan || "").toLowerCase();
+    if (normalized.includes("media")) return "PAM";
+    if (normalized.includes("pension completa")) return "PA";
+    return "";
+  };
+
+  const getRatePlanMapName = (agencyCategory, mealPlan) => {
+    const isNeto = Number(agencyCategory) === 0;
+    const base = isNeto ? "Booking Connect Neto" : "Booking Connect Mayorista";
+    const mealSuffix = normalizeMealPlan(mealPlan);
+    return mealSuffix ? `${base} ${mealSuffix}` : base;
+  };
+
+  const mapDocumTypeId = (documentType) => {
+    const map = {
+      cedulaC: 1,
+      pasaporte: 3,
+      cedulaE: 5,
+      otro: 31,
+    };
+    return map[documentType] || 31;
+  };
+
+  const buildDayPrice = (startDate, endDate, basePrice) => {
+    const prices = [];
+    const current = new Date(startDate);
+    const end = new Date(endDate);
+    const safePrice = Number(basePrice) || 0;
+
+    while (current < end) {
+      prices.push({
+        fecha: current.toISOString().slice(0, 10),
+        precioBase: safePrice,
+      });
+      current.setDate(current.getDate() + 1);
+    }
+    return prices;
+  };
+
+  const resolveCategoryId = (hotelAutocoreId, roomName, roomId) => {
+    const categories = getBookingConnectCategoriesForHotel(Number(hotelAutocoreId)) || [];
+    const byName = categories.find((item) =>
+      String(item.mapName || "").toLowerCase() === String(roomName || "").toLowerCase()
+    );
+    if (byName?.mapCode) return Number(byName.mapCode);
+    const numericRoomId = Number(roomId);
+    if (!Number.isNaN(numericRoomId) && numericRoomId > 0) return numericRoomId;
+    return 1;
+  };
+
   const fetchWithToken = async (url, options = {}) => {
     let token = Cookies.get('accessToken');
     let response = await fetch(url, {
@@ -283,143 +338,171 @@ const FormularioReserva = () => {
           })
         );
       };
-      const informacionD = JSON.stringify({
-        total: Math.round(totalRetenciones),
-        mascotasNumber: reserva[0]?.mascotas || null, // Changed from mascotas to mascotasNumber
-        adicionAlmuerzo: almuerzo,
-        adicionCena: cena,
+      const hotelSeleccionado = JSON.parse(localStorage.getItem("hotelSeleccionado") || "{}");
+      const hotelSlug = hotelSeleccionado?.nombre;
+      const hotelId = Number(reserva[0]?.hotelidAutocore);
+      const hotelRatePlans = getBookingConnectRatePlansForHotel(hotelId) || [];
+      const expectedRatePlanName = getRatePlanMapName(
+        agencia?.agencia?.category,
+        reserva[0]?.plandealimentacion
+      );
+      const mappedRatePlan = hotelRatePlans.find(
+        (item) =>
+          String(item.mapName || "").toLowerCase() === expectedRatePlanName.toLowerCase()
+      );
+      const ratePlan = mappedRatePlan ? String(mappedRatePlan.mapCode) : "";
+
+      const [name = "", ...otherNames] = String(formData.nombreCompleto || "").trim().split(" ");
+      const [firstLastName = "", secondLastName = ""] = String(formData.apellidos || "")
+        .trim()
+        .split(" ");
+
+      const rooms = reserva.map((dato, index) => {
+        const roomConfig = fechasreserva?.layout?.[index] || {};
+        const roomAdults = Number(roomConfig.adults || 0);
+        const roomChilds = Array.isArray(roomConfig.children_ages)
+          ? roomConfig.children_ages.length
+          : 0;
+        const categoriaId = resolveCategoryId(
+          hotelId,
+          dato?.NombreH,
+          dato?.roomId
+        );
+        return {
+          categoriaId,
+          paxAdultos: roomAdults,
+          paxChilds: roomChilds,
+          dayPrice: buildDayPrice(checkin, checkout, dato?.precioBase),
+          guest: [
+            {
+              documId: String(formData.numeroDocumento || ""),
+              documTypeId: mapDocumTypeId(formData.tipoDocumento),
+              name,
+              firstLastName,
+              secondLastName,
+              birthDay: `${formData.fechaNacimiento}T00:00:00`,
+              nacionalityId: esExtranjero ? 0 : 47,
+              generId: 1,
+              address: "",
+              city: reserva[0]?.ciudad || "",
+              phone: String(formData.celular || ""),
+              countryId: esExtranjero ? 0 : 47,
+              email: formData.email,
+              isOwner: true,
+              image1: null,
+              image2: null,
+            },
+          ],
+        };
+      });
+
+      const acuerdos = DatosRetenciones == null
+        ? `Creada por la agencia: ${agencia.agencia.fullName
+        }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+        } ${formData.apellidos}. ${valorextranjero == "es extranjero"
+          ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+          : ""
+        } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
+        } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
+          ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+          : ""
+        }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+          ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
+          : ""
+        }${reserva[0].mascotas && reserva[0].mascotas > 0
+          ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
+          : ""
+        }  `
+        : `Creada por la agencia: ${agencia.agencia.fullName
+        }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+        } ${formData.apellidos
+        }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
+          ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+          : ""
+        } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
+        } ${almuerzo
+          ? "La agencia marco la casilla de solicitar almuerzo."
+          : ""
+        }${facturaE
+          ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+          : ""
+        }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+          ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
+          : ""
+        }${reserva[0].mascotas && reserva[0].mascotas > 0
+          ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
+          : ""
+        }`;
+
+      const mytoolPayload = {
+        hotelId,
+        checkIn: checkin,
+        checkOut: checkout,
+        usuario: "Agente",
+        maquinaId: 1,
+        bookData: {
+          solicitante: {
+            titular: `${formData.nombreCompleto} ${formData.apellidos}`.trim(),
+            telefono: String(formData.celular || ""),
+            email: formData.email,
+          },
+          canalVentaId: 101,
+          ratePlan,
+          paisCode: "CO",
+          monedaCode: divisaSelec || "COP",
+          comision: 0,
+          siAgregaImpto: !esExtranjero,
+          acuerdos,
+          motivoId: 2,
+          subSegmentoId: 4,
+          segmentoId: 1,
+          agenciaId:0,
+          agenteId:0,
+        },
+        rooms,
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
-          tipoDocumento: formData.tipoDocumento,
+          tipoDocumento:
+            formData.tipoDocumento === "cedulaC"
+              ? "Cédula de ciudadanía"
+              : formData.tipoDocumento === "cedulaE"
+                ? "Cédula de extranjería"
+                : formData.tipoDocumento === "pasaporte"
+                  ? "Pasaporte"
+                  : "Otro",
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
+        total: Math.round(totalRetenciones),
+      };
 
-        infoTransporte:
-          reserva[0].incluirTraslado === true
-            ? {
-              numeroVuelo: formData.numeroVuelo,
-              ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
-                reserva[0].tipoTraslado === "ambos") && {
-                numeroVueloSalida: formData.numeroVueloSalida,
-              }),
-              firstContactNumber: formData.telefonotraslado,
-              aerolinea: formData.aereolinea,
-              tipoRecogida: tipodetraslado,
-              cantidadPersonas: totalHuespedes,
-            }
-            : null,
-        infoToures:
-          reserva[0].tourSeleccionado?.length > 0
-            ? {
-              nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
-              firstContactNumber: formData.celular,
-              secondContacNumber:
-                formData.telefonotraslado || formData.celular
-            }
-            : null,
-        ...filtrarRetenciones({
-          reteFuente: {
-            resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
-          },
-          reteIca: {
-            resultado: Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0,
-          },
-          reteIva: {
-            resultado: Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
-          },
-        }),
-        planAlimentario: reserva[0].plandealimentacion, //TIPO DE PLAN DE ALIMENTACION
-        exentoIva: esExtranjero, // HUESPED EXTRANJERO O COLOMBIANO
-        reservaInfo: {
-          agency: {
-            is_agency: true,
-            agency_type: agencia.agencia.category, //TOKEN
-            external_ref_id: "666222",
-          },
-          reservation: {
-            adults: adults, //N°ADULTOS
-            checkin: checkin, //FECHA DE CHECKIN
-            checkout: checkout, // FECHA DE CHEKOUT
-            children: ninos, // N°NIÑOS
-            children_ages: childrenAgesString, // STRING DE EDADES NIÑOS
-            city: reserva[0].ciudad, // CIUDAD SELECCIONADA
-            country: "COL", //PAIS
-            currency: divisaSelec || "COP", //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
-            email: formData.email, //FORMDATA INPUT EMAIL
-            firstName: formData.nombreCompleto, // FORMDATA INPUT NOMBRECOMPLETO
-            lastName: formData.apellidos, //FORMDATA INPUT APELLIDOS
-            nights: noches, //N° DE NOCHES
-            notes:
-              DatosRetenciones == null
-                ? `Creada por la agencia: ${agencia.agencia.fullName
-                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
-                } ${formData.apellidos}. ${valorextranjero == "es extranjero"
-                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                  : ""
-                } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
-                } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
-                  ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                  : ""
-                }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
-                  ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
-                  : ""
-                }${reserva[0].mascotas && reserva[0].mascotas > 0
-                  ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
-                  : ""
-                }  `
-                : `Creada por la agencia: ${agencia.agencia.fullName
-                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
-                } ${formData.apellidos
-                }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
-                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                  : ""
-                } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
-                } ${almuerzo
-                  ? "La agencia marco la casilla de solicitar almuerzo."
-                  : ""
-                }${facturaE
-                  ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                  : ""
-                }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
-                  ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
-                  : ""
-                }${reserva[0].mascotas && reserva[0].mascotas > 0
-                  ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
-                  : ""
-                }`,
-            rooms: habitaciones, // TIPO DE HABITACIONES
-            roomsData: reserva.map((dato, index) => {
-              const roomConfig = fechasreserva.layout[index] || {}; // ASEGÚRATE DE OBTENER EL LAYOUT CORRESPONDIENTE A LA HABITACIÓN.
-              return {
-                nombreHabitacion: dato.NombreH, //NOMBRE DE LA HABITACION
-                adults: JSON.stringify(roomConfig.adults || 0), // ADULTOS ESPECÍFICOS POR HABITACIÓN.
-                children_ages: roomConfig.children_ages?.join(",") || "", //EDADES DE LOS NIÑOS POR HABITACION [ARRAY]
-                children: roomConfig.children_ages // NIÑOS ESPECIFICOS POR HABITACION [ARRAY]
-                  ? JSON.stringify(roomConfig.children_ages.length)
-                  : "",
-                checkin: checkin, //TIPO CHECKIN
-                checkout: checkout, //TIPO CHECKOUT
-                currency: currentCurrency, //TIPO DE MONEDA ACTUALMENTE (USD//COP)
-                id: dato.roomId, //  ROOMID DE LA HABITACION
-                quantity: "1", // QUANTITY ??
-                rateId: dato.rateId, //RATEID = HABITACION DEPENDIENDO DEL TIPO DE ALIMENTACION
-                unitaryPrice: dato.precio, //PRECIO POR HABITACION
-              };
-            }),
-            telephone: `${formData.celular}`, //NUMERO DE CELULAR
-          },
-        },
-      }); //JSON.STRINGIFY
+      const missingFields = [];
+      if (!hotelSlug) missingFields.push("hotelSlug (hotelSeleccionado.nombre)");
+      if (!hotelId) missingFields.push("hotelId");
+      if (!mytoolPayload.checkIn || !mytoolPayload.checkOut) missingFields.push("checkIn/checkOut");
+      if (!ratePlan) missingFields.push("ratePlan (mapeo bookingConnectRatePlans)");
+      if (!rooms.length) missingFields.push("rooms");
+      if (rooms.some((room) => !room.categoriaId)) missingFields.push("categoriaId");
+
+      if (missingFields.length > 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Faltan datos para crear la reserva",
+          text: `No se puede enviar la reserva. Campos faltantes: ${missingFields.join(", ")}`,
+        });
+        setbotondesactivado(false);
+        return;
+      }
+
+      const informacionD = JSON.stringify(mytoolPayload);
 
       try {
         // error409
         setbotondesactivado(true);
-        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
+        const hotelSeleccionado = JSON.parse(localStorage.getItem("hotelSeleccionado") || "{}");
+        const hotelSlug = encodeURIComponent(hotelSeleccionado?.nombre || "");
+        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/${hotelSlug}`;
 
         const response = await fetchWithToken(url, {
           method: "POST",
