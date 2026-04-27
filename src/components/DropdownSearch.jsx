@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import styles from "../../public/styles/DropdownSearch.module.css";
 import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
+import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
 
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -43,6 +44,13 @@ const DropdownSearch = () => {
     MIN_ROOMS: 1,
     MAX_ROOMS: 9,
   });
+
+  const normalizeText = (text = "") =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
 
   //  // Función para generar fechas bloqueadas desde el 26 de diciembre de 2025 hasta el 12 de enero de 2026
   //  const generateBlockedDates = () => {
@@ -132,27 +140,15 @@ const DropdownSearch = () => {
 
     setIsSearchingOrigin(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/vuelos/ciudades/buscar?keyword=${encodeURIComponent(keyword)}&countryCode=`
-      );
+      const query = normalizeText(keyword);
+      const suggestions = IATA_SEARCH_MAP.filter((city) => {
+        const cityName = normalizeText(city.name);
+        const cityIata = normalizeText(city.iataCode);
+        return cityName.includes(query) || cityIata.includes(query);
+      }).slice(0, 20);
 
-      if (response.ok) {
-        const data = await response.json();
-        const suggestions = data.data
-          .filter(city => city.iataCode) // Solo ciudades que tengan iataCode
-          .map(city => ({
-            name: city.name,
-            iataCode: city.iataCode,
-            countryCode: city.address?.countryCode || 'CO',
-            type: city.type,
-            subType: city.subType
-          }));
-        setOriginSuggestions(suggestions);
-        setShowOriginSuggestions(suggestions.length > 0);
-      } else {
-        setOriginSuggestions([]);
-        setShowOriginSuggestions(false);
-      }
+      setOriginSuggestions(suggestions);
+      setShowOriginSuggestions(suggestions.length > 0);
     } catch (error) {
       console.error("Error buscando ciudades:", error);
       setOriginSuggestions([]);
@@ -325,11 +321,11 @@ const DropdownSearch = () => {
       return;
     }
 
-    if (includesFlight && !origin) {
+    if (includesFlight && !selectedOriginIata) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Por favor ingresa la ciudad de origen del vuelo",
+        text: "Por favor selecciona una ciudad de origen valida para el vuelo",
       });
       return;
     }
