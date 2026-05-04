@@ -46,7 +46,7 @@ const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
   44: 8, // Sansiraka
   48: 8, // Axis
   56: 8, // El Marques
-  123: 8, // Playa Salguero
+  123: 8, // Playa 
 });
 
 const BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL = Object.freeze({
