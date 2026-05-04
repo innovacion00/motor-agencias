@@ -10,6 +10,10 @@ import { useStore } from "@nanostores/react";
 import ToursCs from "./ToursCs";
 import { refreshToken } from "../stores/authtoken";
 import Cookies from "js-cookie";
+import {
+  getBookingConnectCategoriesForHotel,
+  getBookingConnectRatePlansForHotel,
+} from "../constants/bookingConnectRatePlans";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -29,6 +33,90 @@ const plan_alimentacion = {
 };
 
 const HOTELES_EXENTOS_IVA = new Set([56, 123]);
+
+const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
+  1: 7, // Azuan
+  3: 7, // Madisson
+  4: 2, // Aixo
+  5: 8, // Abi
+  6: 8, // Avexi
+  8: 8, // Rodadero
+  9: 8, // Marina
+  10: 7, // Windsor
+  44: 8, // Sansiraka
+  48: 8, // Axis
+  56: 8, // El Marques
+  123: 8, // Playa Salguero
+});
+
+const BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL = Object.freeze({
+  4: Object.freeze([
+    { roomId: 83422, mapName: "DBSuperior" },
+    { roomId: 83420, mapName: "DBEstandart" },
+    { roomId: 83421, mapName: "FMEstandart" },
+    { roomId: 83419, mapName: "FMSuperior" },
+  ]),
+  9: Object.freeze([
+    { roomId: 83527, mapName: "St.Triple" },
+    { roomId: 83528, mapName: "St. Doble" },
+    { roomId: 83527, mapName: "St. Cuadruple" },
+  ]),
+  6: Object.freeze([
+    { roomId: 83532, mapName: "St. Doble" },
+    { roomId: 83529, mapName: "St. Cuadruple" },
+    { roomId: 83529, mapName: "St. Doble2" },
+  ]),
+  1: Object.freeze([
+    { roomId: 83533, mapName: "FAMILIAR " },
+    { roomId: 83534, mapName: "MATRIMONIAL" },
+  ]),
+  5: Object.freeze([
+    { roomId: 125839, mapName: "Familiar 5pax" },
+    { roomId: 125838, mapName: "Cuadruple" },
+    { roomId: 125837, mapName: "Triple" },
+    { roomId: 125836, mapName: "Doble Estandar" },
+  ]),
+  48: Object.freeze([
+    { roomId: 145577, mapName: "Quintuple" },
+    { roomId: 145576, mapName: "Cuadruple" },
+    { roomId: 145573, mapName: "Triple" },
+    { roomId: 145571, mapName: "Doble" },
+  ]),
+  44: Object.freeze([
+    { roomId: 104184, mapName: "Quintuple" },
+    { roomId: 104183, mapName: "Cuadruple" },
+    { roomId: 104182, mapName: "Triple" },
+    { roomId: 104181, mapName: "Junior Suite" },
+    { roomId: 104179, mapName: "Doble" },
+    { roomId: 104979, mapName: "Twin" },
+  ]),
+  8: Object.freeze([
+    { roomId: 121966, mapName: "Doble" },
+    { roomId: 125832, mapName: "Triple" },
+    { roomId: 125833, mapName: "Cuadruple" },
+  ]),
+  123: Object.freeze([
+    { roomId: 164099, mapName: "Doble" },
+    { roomId: 164101, mapName: "Cuadruple" },
+    { roomId: 164100, mapName: "Triple" },
+  ]),
+  3: Object.freeze([
+    { roomId: 109452, mapName: "ESTANDAR" },
+    { roomId: 109509, mapName: "FAMILIAR" },
+    { roomId: 109508, mapName: "EJECUTIVA TWIN" },
+    { roomId: 109507, mapName: "SUITE BUSINESS" },
+    { roomId: 109505, mapName: "SUPERIOR CON TERRAZA" },
+    { roomId: 116068, mapName: "FAMILIAR3PAX" },
+  ]),
+  10: Object.freeze([
+    { roomId: 129037, mapName: "SUITE MATRIMONIAL" },
+    { roomId: 129036, mapName: "JUNIOR SUITE TWIN" },
+    { roomId: 129035, mapName: "JUNIOR SUITE DOBLE" },
+    { roomId: 129034, mapName: "TRIPLE ESTANDAR" },
+    { roomId: 129033, mapName: "DOBLE ESTANDAR TWIN" },
+    { roomId: 128299, mapName: "DOBLE SUPERIOR" },
+  ]),
+});
 
 //#region UseState
 const FormularioReserva = () => {
@@ -227,6 +315,73 @@ const FormularioReserva = () => {
     });
   };
 
+  const normalizeMealPlan = (mealPlan) => {
+    const normalized = String(mealPlan || "").toLowerCase();
+    if (normalized.includes("media")) return "PAM";
+    if (normalized.includes("pension completa")) return "PA";
+    return "";
+  };
+
+  const getRatePlanMapName = (agencyCategory, mealPlan) => {
+    const isNeto = Number(agencyCategory) === 0;
+    const base = isNeto ? "Booking Connect Neto" : "Booking Connect Mayorista";
+    const mealSuffix = normalizeMealPlan(mealPlan);
+    return mealSuffix ? `${base} ${mealSuffix}` : base;
+  };
+
+  const mapDocumTypeId = (documentType) => {
+    const map = {
+      cedulaC: 1,
+      pasaporte: 3,
+      cedulaE: 5,
+      otro: 31,
+    };
+    return map[documentType] || 31;
+  };
+
+  const buildDayPrice = (startDate, endDate, basePrice) => {
+    const prices = [];
+    const current = new Date(startDate);
+    const end = new Date(endDate);
+    const safePrice = Number(basePrice) || 0;
+
+    while (current < end) {
+      prices.push({
+        fecha: current.toISOString().slice(0, 10),
+        precioBase: safePrice,
+      });
+      current.setDate(current.getDate() + 1);
+    }
+    return prices;
+  };
+
+  const normalizeCategoryName = (value) =>
+    String(value || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+  const resolveCategoryId = (hotelAutocoreId, roomName, roomId) => {
+    const numericHotelId = Number(hotelAutocoreId);
+    const numericRoomId = Number(roomId);
+    const categories = getBookingConnectCategoriesForHotel(numericHotelId) || [];
+    const roomMappings = BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL[numericHotelId] || [];
+
+    const mappedByRoomId = roomMappings.filter((item) => Number(item.roomId) === numericRoomId);
+    const targetMapName =
+      mappedByRoomId.find(
+        (item) => normalizeCategoryName(item.mapName) === normalizeCategoryName(roomName)
+      )?.mapName ||
+      mappedByRoomId[0]?.mapName ||
+      roomName;
+
+    const byMappedName = categories.find(
+      (item) => normalizeCategoryName(item.mapName) === normalizeCategoryName(targetMapName)
+    );
+
+    if (byMappedName?.mapCode) return Number(byMappedName.mapCode);
+    return 1;
+  };
+
   const fetchWithToken = async (url, options = {}) => {
     let token = Cookies.get('accessToken');
     let response = await fetch(url, {
@@ -283,25 +438,161 @@ const FormularioReserva = () => {
           })
         );
       };
-      const informacionD = JSON.stringify({
-        total: Math.round(totalRetenciones),
-        mascotasNumber: reserva[0]?.mascotas || null, // Changed from mascotas to mascotasNumber
-        adicionAlmuerzo: almuerzo,
-        adicionCena: cena,
+      const hotelSeleccionado = JSON.parse(localStorage.getItem("hotelSeleccionado") || "{}");
+      const hotelSlug = hotelSeleccionado?.nombre;
+      const hotelId = Number(reserva[0]?.hotelidAutocore);
+      const hotelRatePlans = getBookingConnectRatePlansForHotel(hotelId) || [];
+      const expectedRatePlanName = getRatePlanMapName(
+        agencia?.agencia?.category,
+        reserva[0]?.plandealimentacion
+      );
+      const mappedRatePlan = hotelRatePlans.find(
+        (item) =>
+          String(item.mapName || "").toLowerCase() === expectedRatePlanName.toLowerCase()
+      );
+      const ratePlan = mappedRatePlan ? String(mappedRatePlan.mapCode) : "";
+      const motivoId = BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL[hotelId] ?? 8;
+
+      const [name = "", ...otherNames] = String(formData.nombreCompleto || "").trim().split(" ");
+      const [firstLastName = "", secondLastName = ""] = String(formData.apellidos || "")
+        .trim()
+        .split(" ");
+
+      const rooms = reserva.map((dato, index) => {
+        const roomConfig = fechasreserva?.layout?.[index] || {};
+        const roomAdults = Number(roomConfig.adults || dato?.huespedes || 0);
+        const roomChilds = Array.isArray(roomConfig.children_ages)
+          ? roomConfig.children_ages.length
+          : 0;
+        const categoriaId = resolveCategoryId(
+          hotelId,
+          dato?.NombreH,
+          dato?.roomId
+        );
+        return {
+          categoriaId,
+          nombreHabitacion: String(dato?.NombreH || ""),
+          room_id: String(dato?.roomId || ""),
+          paxAdultos: roomAdults,
+          paxChilds: roomChilds,
+          dayPrice: buildDayPrice(checkin, checkout, dato?.precioBase),
+          guest: [],
+        };
+      });
+      const acomodaciones = reserva
+        .map((dato) => String(dato?.NombreH || "").trim())
+        .filter(Boolean)
+        .join(", ");
+
+      const acuerdos = DatosRetenciones == null
+        ? `Creada por la agencia: ${agencia.agencia.fullName
+        }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+        } ${formData.apellidos}. Acomodación: ${acomodaciones}. ${valorextranjero == "es extranjero"
+          ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+          : ""
+        } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
+        } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
+          ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+          : ""
+        }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+          ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
+          : ""
+        }${reserva[0].mascotas && reserva[0].mascotas > 0
+          ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
+          : ""
+        } El total de la reserva es: ${Math.round(totalRetenciones)} `
+        : `Creada por la agencia: ${agencia.agencia.fullName
+        }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
+        } ${formData.apellidos
+        }. Acomodación: ${acomodaciones
+        }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
+          ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
+          : ""
+        } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
+        } ${almuerzo
+          ? "La agencia marco la casilla de solicitar almuerzo."
+          : ""
+        }${facturaE
+          ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
+          : ""
+        }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+          ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
+          : ""
+        }${reserva[0].mascotas && reserva[0].mascotas > 0
+          ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
+          : ""
+        } El total de la reserva es: ${Math.round(totalRetenciones)}`;
+
+      const retencionesPayload = filtrarRetenciones({
+        reteFuente: {
+          resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
+          porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
+        },
+        reteIca: {
+          resultado: Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
+          porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0,
+        },
+        reteIva: {
+          resultado: Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
+          porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
+        },
+      });
+
+      const mytoolPayload = {
+        hotelId,
+        checkIn: checkin,
+        checkOut: checkout,
+        usuario: "Agente",
+        maquinaId: 1,
+        bookData: {
+          solicitante: {
+            titular: `${formData.nombreCompleto} ${formData.apellidos}`.trim(),
+            telefono: String(formData.celular || ""),
+            email: formData.email,
+          },
+          canalVentaId: 101,
+          ratePlan,
+          paisCode: "CO",
+          monedaCode: divisaSelec || "COP",
+          comision: 0,
+          siAgregaImpto: !esExtranjero,
+          acuerdos,
+          motivoId,
+          subSegmentoId: 4,
+          segmentoId: 1,
+          agenciaId:0,
+          agenteId:0,
+        },
+        rooms,
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
-          tipoDocumento: formData.tipoDocumento,
+          tipoDocumento:
+            formData.tipoDocumento === "cedulaC"
+              ? "Cédula de ciudadanía"
+              : formData.tipoDocumento === "cedulaE"
+                ? "Cédula de extranjería"
+                : formData.tipoDocumento === "pasaporte"
+                  ? "Pasaporte"
+                  : "Otro",
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
-
+        total: Math.round(totalRetenciones),
+        notes: acuerdos,
+        planAlimentario: String(reserva[0]?.plandealimentacion || ""),
+        adicionCena: Boolean(cena),
+        adicionAlmuerzo: Boolean(almuerzo),
+        mascotasNumber: Number(reserva[0]?.mascotas || 0),
+        origenIata: String(reserva[0]?.origenIata || "BOG"),
+        ...retencionesPayload,
+         exentoIva: Boolean(esExtranjero || hotelExentoIVA || reserva[0]?.exentoIVA),
         infoTransporte:
-          reserva[0].incluirTraslado === true
+          reserva[0]?.incluirTraslado === true
             ? {
               numeroVuelo: formData.numeroVuelo,
-              ...((reserva[0].tipoTraslado === "hotel_aeropuerto" ||
-                reserva[0].tipoTraslado === "ambos") && {
+              ...((reserva[0]?.tipoTraslado === "hotel_aeropuerto" ||
+                reserva[0]?.tipoTraslado === "ambos") && {
                 numeroVueloSalida: formData.numeroVueloSalida,
               }),
               firstContactNumber: formData.telefonotraslado,
@@ -311,115 +602,42 @@ const FormularioReserva = () => {
             }
             : null,
         infoToures:
-          reserva[0].tourSeleccionado?.length > 0
+          reserva[0]?.tourSeleccionado?.length > 0
             ? {
               nombres: reserva[0].tourSeleccionado.map((tour) => tour.title),
               firstContactNumber: formData.celular,
-              secondContacNumber:
-                formData.telefonotraslado || formData.celular
+              secondContacNumber: formData.telefonotraslado || formData.celular,
             }
             : null,
-        ...filtrarRetenciones({
-          reteFuente: {
-            resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
-          },
-          reteIca: {
-            resultado: Math.round(DatosRetenciones?.calculo_rtf_ica) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIca) || 0,
-          },
-          reteIva: {
-            resultado: Math.round(DatosRetenciones?.calculo_rtf_iva) || 0,
-            porcentaje: Number(RetencionesPorcentaje?.reteIva) || 0,
-          },
-        }),
-        planAlimentario: reserva[0].plandealimentacion, //TIPO DE PLAN DE ALIMENTACION
-        exentoIva: esExtranjero, // HUESPED EXTRANJERO O COLOMBIANO
-        reservaInfo: {
-          agency: {
-            is_agency: true,
-            agency_type: agencia.agencia.category, //TOKEN
-            external_ref_id: "666222",
-          },
-          reservation: {
-            adults: adults, //N°ADULTOS
-            checkin: checkin, //FECHA DE CHECKIN
-            checkout: checkout, // FECHA DE CHEKOUT
-            children: ninos, // N°NIÑOS
-            children_ages: childrenAgesString, // STRING DE EDADES NIÑOS
-            city: reserva[0].ciudad, // CIUDAD SELECCIONADA
-            country: "COL", //PAIS
-            currency: divisaSelec || "COP", //TIPO DE MONEDA A ENVIAR (ACTUALMENTE USD//COP)
-            email: formData.email, //FORMDATA INPUT EMAIL
-            firstName: formData.nombreCompleto, // FORMDATA INPUT NOMBRECOMPLETO
-            lastName: formData.apellidos, //FORMDATA INPUT APELLIDOS
-            nights: noches, //N° DE NOCHES
-            notes:
-              DatosRetenciones == null
-                ? `Creada por la agencia: ${agencia.agencia.fullName
-                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
-                } ${formData.apellidos}. ${valorextranjero == "es extranjero"
-                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                  : ""
-                } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
-                } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
-                  ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                  : ""
-                }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
-                  ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
-                  : ""
-                }${reserva[0].mascotas && reserva[0].mascotas > 0
-                  ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
-                  : ""
-                }  `
-                : `Creada por la agencia: ${agencia.agencia.fullName
-                }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
-                } ${formData.apellidos
-                }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
-                  ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
-                  : ""
-                } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
-                } ${almuerzo
-                  ? "La agencia marco la casilla de solicitar almuerzo."
-                  : ""
-                }${facturaE
-                  ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-                  : ""
-                }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
-                  ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
-                  : ""
-                }${reserva[0].mascotas && reserva[0].mascotas > 0
-                  ? ` Se han enviado ${reserva[0].mascotas} mascota(s).`
-                  : ""
-                }`,
-            rooms: habitaciones, // TIPO DE HABITACIONES
-            roomsData: reserva.map((dato, index) => {
-              const roomConfig = fechasreserva.layout[index] || {}; // ASEGÚRATE DE OBTENER EL LAYOUT CORRESPONDIENTE A LA HABITACIÓN.
-              return {
-                nombreHabitacion: dato.NombreH, //NOMBRE DE LA HABITACION
-                adults: JSON.stringify(roomConfig.adults || 0), // ADULTOS ESPECÍFICOS POR HABITACIÓN.
-                children_ages: roomConfig.children_ages?.join(",") || "", //EDADES DE LOS NIÑOS POR HABITACION [ARRAY]
-                children: roomConfig.children_ages // NIÑOS ESPECIFICOS POR HABITACION [ARRAY]
-                  ? JSON.stringify(roomConfig.children_ages.length)
-                  : "",
-                checkin: checkin, //TIPO CHECKIN
-                checkout: checkout, //TIPO CHECKOUT
-                currency: currentCurrency, //TIPO DE MONEDA ACTUALMENTE (USD//COP)
-                id: dato.roomId, //  ROOMID DE LA HABITACION
-                quantity: "1", // QUANTITY ??
-                rateId: dato.rateId, //RATEID = HABITACION DEPENDIENDO DEL TIPO DE ALIMENTACION
-                unitaryPrice: dato.precio, //PRECIO POR HABITACION
-              };
-            }),
-            telephone: `${formData.celular}`, //NUMERO DE CELULAR
-          },
-        },
-      }); //JSON.STRINGIFY
+        asistentes: [],
+      };
 
-      try {
+      const missingFields = [];
+      if (!hotelSlug) missingFields.push("hotelSlug (hotelSeleccionado.nombre)");
+      if (!hotelId) missingFields.push("hotelId");
+      if (!mytoolPayload.checkIn || !mytoolPayload.checkOut) missingFields.push("checkIn/checkOut");
+      if (!ratePlan) missingFields.push("ratePlan (mapeo bookingConnectRatePlans)");
+      if (!rooms.length) missingFields.push("rooms");
+      if (rooms.some((room) => !room.categoriaId)) missingFields.push("categoriaId");
+
+      if (missingFields.length > 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Faltan datos para crear la reserva",
+          text: `No se puede enviar la reserva. Campos faltantes: ${missingFields.join(", ")}`,
+        });
+        setbotondesactivado(false);
+        return;
+      }
+
+      const informacionD = JSON.stringify(mytoolPayload);
+
+      try {7
         // error409
         setbotondesactivado(true);
-        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
+        const hotelSeleccionado = JSON.parse(localStorage.getItem("hotelSeleccionado") || "{}");
+        const hotelSlug = encodeURIComponent(hotelSeleccionado?.nombre || "");
+        const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/${hotelSlug}`;
 
         const response = await fetchWithToken(url, {
           method: "POST",

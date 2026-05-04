@@ -223,7 +223,7 @@ const Gestionar = ({ reservas }) => {
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
 
-    if (reservas?.mascotas) {
+    if (Number(reservas?.mascotasNumber || 0) > 0) {
       setMostrarMascotas(true);
     } else {
       setMostrarMascotas(false);
@@ -652,11 +652,14 @@ const Gestionar = ({ reservas }) => {
       });
 
       const response = await fetchWithToken(
-        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/cancelar`,
         {
-          method: "DELETE",
+          method: "POST",
           body: JSON.stringify({
-            reservaId: reservaId,
+            localizador: reservas?.reservaChatbotId,
+            canalVentaId: 101,
+            usuarioCancela:"Lucia",
+            maquinaId: 1,
           }),
         }
       );
@@ -1032,7 +1035,7 @@ const Gestionar = ({ reservas }) => {
                 src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_telefono.png"
                 alt="logo_telefono"
               />{" "}
-              <span>+57 3336025021</span>
+              <span>+57 3336025669</span>
             </p>
 
             <div className={styles.infoFechas}>
@@ -1073,8 +1076,8 @@ const Gestionar = ({ reservas }) => {
                   <div className={styles.contenHabi}>
                     <div className={styles.imgHabi}>
                       <img
-                        src={habitaciones[dato.id]?.url}
-                        alt='habita'
+                        src={habitaciones[dato.room_id]?.url}
+                        alt='img-habitacion'
                       />
                     </div>
                     <div className={styles.infoHabitaciones}>

@@ -228,6 +228,7 @@ const Tabla = () => {
     try {
 
       const { data, meta } = await getReservas(role, page, itemsPerPage);
+      console.log("getReservas -> meta:", meta);
       const reservasObtenidas = data ?? reservasNano.get();
       
       setReservas(reservasObtenidas);
@@ -264,6 +265,10 @@ const Tabla = () => {
 
       }, 0)
     : 0;
+  
+  const totalAmountToDisplay = Number(
+    paginationMeta?.sumaTotalesNoCanceladas ?? totalAmount
+  );
 
   const formatCurrency = (value) => {
     if (!value || isNaN(value)) return "$$$";
@@ -1156,7 +1161,7 @@ const Tabla = () => {
                   Total:
                 </td>
                 <td style={{ fontWeight: "bold" }}>
-                  {formatCurrency(totalAmount)}
+                  {formatCurrency(totalAmountToDisplay)}
                 </td>
                 <td colSpan="2"></td>
               </tr>

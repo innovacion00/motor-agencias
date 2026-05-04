@@ -744,7 +744,7 @@ export const CotizacionPublica = ({ id }) => {
                 <div style={{ backgroundColor: '#886b43', color: '#fff', padding: '20px', borderRadius: '5px', marginTop: '30px', textAlign: 'center' }}>
                     <h2 style={{ color: '#fff', borderBottom: '2px solid #fff', margin: 0, paddingBottom: '10px' }}>¿Preguntas?</h2>
                     <p><strong>Contáctanos</strong></p>
-                    <p>Whatsapp y Llamadas: <a href="tel:+573336025021" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>+57 333 602 50 21</a></p>
+                    <p>Whatsapp y Llamadas: <a href="tel:+573336025669" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>+57 333 602 56 69</a></p>
                     <br />
                     
                     <p>Desarrollado por <a href="https://www.gehsuites.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>GEH Suites</a></p>
