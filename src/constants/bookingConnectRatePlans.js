@@ -5,6 +5,11 @@
 
 /** @type {Readonly<Record<number, ReadonlyArray<BookingConnectRatePlan>>>} */
 export const BOOKING_CONNECT_RATE_PLANS_BY_HOTEL_AUTOCORE_ID = Object.freeze({
+  //Hotel Marina
+  9: Object.freeze([
+    {id: 5, tipo: "RatePlan", mapCode: 99092, mapName: "Booking Connect Mayorista"},
+  { id: 5, tipo: "RatePlan", mapCode: 99093, mapName: "Booking Connect Neto"},
+  ]),
   // Hotel Azuan
   1: Object.freeze([
     { id: 5, tipo: "RatePlan", mapCode: 99100, mapName: "Booking Connect Mayorista" },
@@ -96,6 +101,12 @@ export const BOOKING_CONNECT_CATEGORIES_BY_HOTEL_AUTOCORE_ID = Object.freeze({
     { id: 3, tipo: "Categorias", mapCode: 5, mapName: "SUITE BUSINESS" },
     { id: 3, tipo: "Categorias", mapCode: 3, mapName: "SUPERIOR CON TERRAZA" },
   ]),
+  // Hotel Azuan
+  1: Object.freeze([
+    { id: 3, tipo: "Categorias", mapCode: 1, mapName: "FAMILIAR "},
+    { id: 3, tipo: "Categorias", mapCode: 2, mapName: "MATRIMONIAL" },
+    
+  ]),
   // Hotel Aixo
   4: Object.freeze([
     { id: 3, tipo: "Categorias", mapCode: 2, mapName: "DBEstandart" },
@@ -114,12 +125,19 @@ export const BOOKING_CONNECT_CATEGORIES_BY_HOTEL_AUTOCORE_ID = Object.freeze({
   6: Object.freeze([
     { id: 3, tipo: "Categorias", mapCode: 1, mapName: "St. Cuadruple" },
     { id: 3, tipo: "Categorias", mapCode: 2, mapName: "St. Doble" },
+    { id: 3, tipo: "Categorias", mapCode: 3, mapName: "St. Doble2" },
   ]),
   // Hotel Rodadero
   8: Object.freeze([
     { id: 3, tipo: "Categorias", mapCode: 3, mapName: "Cuadruple" },
     { id: 3, tipo: "Categorias", mapCode: 1, mapName: "Doble" },
     { id: 3, tipo: "Categorias", mapCode: 2, mapName: "Triple" },
+  ]),
+  // Hotel Marina
+  9: Object.freeze([
+    { id: 3, tipo: "Categorias", mapCode: 1, mapName: "St. Cuadruple" },
+    { id: 3, tipo: "Categorias", mapCode: 2, mapName: "St. Doble" },
+    { id: 3, tipo: "Categorias", mapCode: 3, mapName: "St.Triple" },
   ]),
   // Hotel Windsor
   10: Object.freeze([
@@ -141,11 +159,11 @@ export const BOOKING_CONNECT_CATEGORIES_BY_HOTEL_AUTOCORE_ID = Object.freeze({
   ]),
   // Hotel Axis
   48: Object.freeze([
-    { id: 3, tipo: "Categorias", mapCode: 3, mapName: "Delux" },
-    { id: 3, tipo: "Categorias", mapCode: 7, mapName: "Familiar" },
-    { id: 3, tipo: "Categorias", mapCode: 2, mapName: "Jr Suite" },
-    { id: 3, tipo: "Categorias", mapCode: 1, mapName: "Jr Twin" },
-    { id: 3, tipo: "Categorias", mapCode: 5, mapName: "Suite" },
+    { id: 3, tipo: "Categorias", mapCode: 4, mapName: "Cuadruple" },
+    { id: 3, tipo: "Categorias", mapCode: 1, mapName: "Doble" },
+    { id: 3, tipo: "Categorias", mapCode: 2, mapName: "Doble Twin" },
+    { id: 3, tipo: "Categorias", mapCode: 5, mapName: "Quintuple" },
+    { id: 3, tipo: "Categorias", mapCode: 3, mapName: "Triple" },
   ]),
   // Playa Salguero Hotel
   123: Object.freeze([

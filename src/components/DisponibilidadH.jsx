@@ -534,7 +534,7 @@ const hotelNombreStoragePorId = {
   44: "sansiraka",
   48: "axis",
   56: "boquilla",
-  123: "salguero",
+  123: "playasalguero",
 };
 
 const plan_alimentacion = {
@@ -558,7 +558,7 @@ const hotelesExentosIVA = new Set([56, 123]);
 
 // Add these constants near the top with other price constants
 const MASCOTA_PRECIO_COP = 75000;
-const MASCOTA_PRECIO_USD = 15;
+const MASCOTA_PRECIO_USD = 21;
 
 // UseState
 
