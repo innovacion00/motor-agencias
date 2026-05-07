@@ -27,7 +27,9 @@ import RouteProtection from "../components/RouteProtection.astro";
 
     <body>
       <br />
-      <SwiperSlider client:load />
+      <div class="swiper-slider-wrapper">
+        <SwiperSlider client:load />
+      </div>
 
       <div class="search-form-wrapper">
         <DropdownSearch client:load />
@@ -1091,7 +1093,13 @@ import RouteProtection from "../components/RouteProtection.astro";
       <!-- Script para manejar la visibilidad de las secciones -->
       <script>
         document.addEventListener("DOMContentLoaded", () => {
-          const buttons = document.querySelectorAll(".nav button");
+          const tabsNav = document.querySelector(".container .nav");
+          const buttons = tabsNav
+            ? tabsNav.querySelectorAll("button")
+            : [];
+
+          if (!buttons.length) return;
+
           const hideAllSections = () => {
             const sections = document.querySelectorAll(".content");
 
@@ -1141,6 +1149,11 @@ import RouteProtection from "../components/RouteProtection.astro";
         background-color: #fff;
         margin: 0 auto;
         padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .swiper-slider-wrapper {
+        width: 100%;
       }
 
       .header {
@@ -1208,10 +1221,10 @@ import RouteProtection from "../components/RouteProtection.astro";
         text-align: center;
         background-color: #f5d7b4;
         padding: 10px;
-        margin: 0 435px 20px;
+        margin: 0 auto 20px;
         border-radius: 4px;
-        width: 29%;
-        height: 80;
+        width: fit-content;
+        max-width: min(90%, 420px);
       }
 
       .content p {
@@ -1312,7 +1325,8 @@ import RouteProtection from "../components/RouteProtection.astro";
         border-radius: 4px;
         transition: background-color 0.3s;
         border-color: #1c3d5a;
-        width: 280px;
+        width: 100%;
+        max-width: 280px;
       }
 
       .hotel .info .button button:hover {
@@ -1331,8 +1345,20 @@ import RouteProtection from "../components/RouteProtection.astro";
       }
 
       @media (max-width: 768px) {
+        .container {
+          padding: 14px;
+        }
+
         .content h2 {
-          margin: 0 20px 20px;
+          margin: 0 auto 16px;
+          width: calc(100% - 32px);
+          max-width: 360px;
+        }
+
+        .content p {
+          margin: 0 0 16px;
+          padding: 14px;
+          font-size: 15px;
         }
 
         .hotel {
@@ -1347,6 +1373,8 @@ import RouteProtection from "../components/RouteProtection.astro";
         .nav button {
           width: 100%;
           max-width: 300px;
+          margin-right: 0;
+          padding: 10px 14px;
         }
       }
 
@@ -1358,6 +1386,8 @@ import RouteProtection from "../components/RouteProtection.astro";
         justify-content: center;
         align-items: center;
         gap: 15px;
+        box-sizing: border-box;
+        width: 100%;
       }
 
       .search-form-container {
@@ -1400,6 +1430,66 @@ import RouteProtection from "../components/RouteProtection.astro";
         width: 26px;
         height: 26px;
         margin-right: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .search-form-wrapper {
+          padding: 14px;
+          border-radius: 0;
+          gap: 10px;
+        }
+      }
+
+      @media (max-width: 943px) {
+        .swiper-slider-wrapper {
+          display: none;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 10px;
+        }
+
+        .header {
+          padding: 12px 0;
+        }
+
+        .header h1 {
+          font-size: 20px;
+        }
+
+        .content.active {
+          padding-top: 20px;
+          padding-bottom: 20px;
+        }
+
+        .content h2 {
+          width: 100%;
+          max-width: 100%;
+          margin: 0 0 12px;
+          font-size: 18px;
+        }
+
+        .hotel .hotel-header {
+          gap: 8px;
+        }
+
+        .hotel .hotel-logo {
+          margin-right: 8px;
+        }
+
+        .hotel .info h3 {
+          font-size: 16px;
+        }
+
+        .hotel .info .button button {
+          max-width: 100%;
+        }
+
+        .search-form-wrapper {
+          padding: 10px;
+        }
       }
     </style>
   </BaseLayout>

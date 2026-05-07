@@ -716,6 +716,7 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
         max-width: 65%;
         margin: 0 auto;
         padding: 20px 0;
+        box-sizing: border-box;
       }
 
       .tabs {
@@ -727,7 +728,7 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
       /* Menú de navegación */
       .nav-tabs {
         display: flex;
-
+        flex-wrap: wrap;
         margin-bottom: 20px;
       }
 
@@ -812,7 +813,8 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
       .services .service-list {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: flex-start;
+        gap: 10px 0;
       }
 
       .services .service-item {
@@ -870,12 +872,15 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 10px;
         border-radius: 5px;
       }
 
       .info-box .contact-info {
         display: flex;
         align-items: center;
+        flex-wrap: wrap;
+        row-gap: 8px;
       }
 
       .info-box .contact-info i {
@@ -965,6 +970,8 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
         justify-content: center;
         align-items: center;
         gap: 15px;
+        box-sizing: border-box;
+        width: 100%;
       }
 
       .dropdownSearchContainer {
@@ -1000,6 +1007,7 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
         display: flex;
         justify-content: space-between;
         background-color: #f5f5f5;
+        box-sizing: border-box;
       }
 
       .room-header {
@@ -1076,6 +1084,132 @@ import CarrouselA from "../components/Carrouseles/CarrouselAixo";
         border: none;
         border-radius: 5px;
         cursor: pointer;
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          max-width: 90%;
+          padding: 16px 0;
+        }
+
+        .services .service-item {
+          width: 33.33%;
+        }
+
+        .room-header {
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .room-gallery,
+        .room-details {
+          width: 100%;
+        }
+
+        .room-main-image-container,
+        .room-small-images-container {
+          padding-right: 0;
+        }
+
+        .room-icons {
+          flex-wrap: wrap;
+          gap: 8px 16px;
+          justify-content: flex-start;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          max-width: 100%;
+          padding: 14px;
+        }
+
+        .search-form-wrapper {
+          padding: 14px;
+          border-radius: 0;
+        }
+
+        .nav-tabs {
+          gap: 8px;
+        }
+
+        .nav-tabs button {
+          width: calc(50% - 4px);
+          margin-right: 0;
+          text-align: center;
+          padding: 10px 12px;
+        }
+
+        .services .service-item {
+          width: 50%;
+        }
+
+        .services .service-item span {
+          display: flex;
+          align-items: center;
+          line-height: 1.35;
+        }
+
+        .info-box {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 14px;
+        }
+
+        .info-box .contact-info {
+          display: block;
+          line-height: 1.5;
+        }
+
+        .room {
+          padding: 14px;
+        }
+
+        .room h3,
+        .room p,
+        .room h4,
+        .room-icons,
+        .room-services ul {
+          padding-left: 0;
+        }
+
+        .room-services ul li {
+          width: 100%;
+          padding-left: 0;
+          padding-top: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 10px;
+        }
+
+        .nav-tabs button {
+          width: 100%;
+        }
+
+        .services .service-item {
+          width: 100%;
+        }
+
+        .services h3,
+        .servicess h3 {
+          font-size: 18px;
+        }
+
+        .room-small-images-container {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .room-small-image {
+          width: 100%;
+        }
+
+        .room-icons {
+          font-size: 14px;
+        }
       }
     </style>
   </html></BaseLayout
