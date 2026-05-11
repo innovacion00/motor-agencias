@@ -484,10 +484,35 @@ const FormularioReserva = () => {
         .filter(Boolean)
         .join(", ");
 
+      const nochesNum = Number(reserva[0]?.nights) || 0;
+      const divisorNoches = nochesNum > 0 ? nochesNum : 1;
+      const textoPreciosPorDia = reserva
+        .map((dato) => {
+          const nombreH = String(dato?.NombreH || "").trim() || "Habitación";
+          let numerador = Number(dato?.precio);
+          if (!Number.isFinite(numerador) || numerador <= 0) {
+            numerador = Number(dato?.precioBase);
+          }
+          if (!Number.isFinite(numerador) || numerador <= 0) return null;
+          const precioDia = numerador / divisorNoches;
+          if (!Number.isFinite(precioDia) || precioDia < 0) return null;
+          const monto =
+            divisaSelec === "USD"
+              ? `${precioDia} USD`
+              : `${formatCurrency(Math.round(precioDia))} COP`;
+          return `${nombreH}: ${monto}`;
+        })
+        .filter(Boolean)
+        .join(", ");
+      const sufijoPrecioPorDia =
+        textoPreciosPorDia.length > 0
+          ? ` Precio por día: ${textoPreciosPorDia}.`
+          : "";
+
       const acuerdos = DatosRetenciones == null
         ? `Creada por la agencia: ${agencia.agencia.fullName
         }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
-        } ${formData.apellidos}. Acomodación: ${acomodaciones}. ${valorextranjero == "es extranjero"
+        } ${formData.apellidos}. Acomodación: ${acomodaciones}.${sufijoPrecioPorDia} ${valorextranjero == "es extranjero"
           ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
           : ""
         } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
@@ -505,7 +530,7 @@ const FormularioReserva = () => {
         }. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto
         } ${formData.apellidos
         }. Acomodación: ${acomodaciones
-        }, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
+        }${sufijoPrecioPorDia}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero"
           ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
           : ""
         } Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""
@@ -632,7 +657,7 @@ const FormularioReserva = () => {
 
       const informacionD = JSON.stringify(mytoolPayload);
 
-      try {7
+      try {
         // error409
         setbotondesactivado(true);
         const hotelSeleccionado = JSON.parse(localStorage.getItem("hotelSeleccionado") || "{}");
