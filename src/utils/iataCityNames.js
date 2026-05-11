@@ -14,6 +14,7 @@ const IATA_CITY_NAMES = {
   ADZ: "San Andrés",
   CUC: "Cúcuta",
   BGA: "Bucaramanga",
+  EOH: "Medellín",
 
   // Hubs frecuentes en la región
   PTY: "Ciudad de Panamá",

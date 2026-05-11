@@ -4,6 +4,7 @@ export const IATA_SEARCH_MAP = [
   { iataCode: "CTG", name: "Cartagena de Indias", countryCode: "CO" },
   { iataCode: "SMR", name: "Santa Marta", countryCode: "CO" },
   { iataCode: "MDE", name: "Medellín", countryCode: "CO" },
+  { iataCode: "EOH", name: "Medellín", countryCode: "CO" },
   { iataCode: "CLO", name: "Cali", countryCode: "CO" },
   { iataCode: "BAQ", name: "Barranquilla", countryCode: "CO" },
   { iataCode: "BGA", name: "Bucaramanga", countryCode: "CO" },
@@ -34,5 +35,6 @@ export const IATA_SEARCH_MAP = [
   { iataCode: "MAD", name: "Madrid", countryCode: "ES" },
   { iataCode: "CDG", name: "París", countryCode: "FR" },
   { iataCode: "GRU", name: "São Paulo", countryCode: "BR" },
+  
 ];
 

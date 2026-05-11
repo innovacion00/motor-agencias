@@ -130,7 +130,8 @@
   import Swal from "sweetalert2";
   import Cookies from 'js-cookie';
   // const url = 'https://gehsuitesapps.com';
-  const url = import.meta.env.PUBLIC_API_URL;
+  const rawApiUrl = import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000";
+  const url = rawApiUrl.trim().replace(/\/+$/, "");
   function validateForm() {
     const email = (document.getElementById("email") as HTMLInputElement).value.trim();
     const password = (document.getElementById("password") as HTMLInputElement).value.trim();
