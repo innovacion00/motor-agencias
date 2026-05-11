@@ -18,6 +18,9 @@ import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
 
+/** Mismo criterio que en FormularioReserva (Hotel Axis Inn / Autocore). */
+const AXIS_HOTEL_AUTOCORE_ID = 48;
+
 //UseState
 const Gestionar = ({ reservas }) => {
   // console.log(reservas); // Datos de la reserva
@@ -651,18 +654,36 @@ const Gestionar = ({ reservas }) => {
         },
       });
 
-      const response = await fetchWithToken(
-        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/cancelar`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            localizador: reservas?.reservaChatbotId,
-            canalVentaId: 101,
-            usuarioCancela:"Lucia",
-            maquinaId: 1,
-          }),
-        }
+      const hotelAutocoreId = Number(
+        reservas?.hotelidAutocore ?? reservas?.hotelId ?? 0
       );
+      const hotelNombre = String(reservas?.hotel || "").toLowerCase();
+      const isAxisHotel =
+        hotelAutocoreId === AXIS_HOTEL_AUTOCORE_ID ||
+        hotelNombre.includes("axis");
+
+      const response = isAxisHotel
+        ? await fetchWithToken(
+            `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
+            {
+              method: "DELETE",
+              body: JSON.stringify({
+                reservaId: reservaId,
+              }),
+            }
+          )
+        : await fetchWithToken(
+            `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/cancelar`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                localizador: reservas?.reservaChatbotId,
+                canalVentaId: 101,
+                usuarioCancela: "Lucia",
+                maquinaId: 1,
+              }),
+            }
+          );
 
       //#region Validar respuesta api
       if (!response.ok) {
