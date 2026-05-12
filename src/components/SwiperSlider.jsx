@@ -11,6 +11,7 @@ import 'swiper/css/pagination';
 const SwiperSlider = () => {
   return (
     <Swiper
+      className="swiper-home-hero"
       modules={[Navigation, Pagination, Autoplay, EffectFade]} // Habilitar módulos
       spaceBetween={30}
       slidesPerView= {1}

@@ -5,6 +5,7 @@ import "../../public/styles/Header.css"; // Importa el archivo CSS
 
 const Header = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userData, setUserData] = useState()
   const [profileImage, setprofileImage] = useState(userData?.imageUrl || "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono%20avatar.png")
   
@@ -100,6 +101,9 @@ const Header = () => {
       if (!event.target.closest(".profile-menu")) {
         setDropdownVisible(false);
       }
+      if (!event.target.closest(".mobile-nav-wrapper")) {
+        setMobileMenuOpen(false);
+      }
     };
     
     window.addEventListener("click", handleClickOutside);
@@ -119,12 +123,36 @@ const Header = () => {
         </a>
       </div>
       <nav className="nav">
-      
-        <a href="/" className="reservations-link">Inicio</a>
-        <a href="/misreservas" className="reservations-link">Gestionar reservas</a>
-        <a href="/cotizaciones" className="reservations-link">Cotizaciones</a>
-        <a href="/tablerousuario" className="reservations-link">Mi perfil</a>
-        <a href="/eventos" className="reservations-link">Eventos</a>
+        <div className="desktop-links">
+          <a href="/" className="reservations-link">Inicio</a>
+          <a href="/misreservas" className="reservations-link">Gestionar reservas</a>
+          <a href="/cotizaciones" className="reservations-link">Cotizaciones</a>
+          <a href="/tablerousuario" className="reservations-link">Mi perfil</a>
+          <a href="/eventos" className="reservations-link">Eventos</a>
+        </div>
+
+        <div className="mobile-nav-wrapper">
+          <button
+            className="hamburger-button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Abrir menu"
+            aria-expanded={mobileMenuOpen}
+            type="button"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          {mobileMenuOpen && (
+            <div className="mobile-menu">
+              <a href="/" className="reservations-link">Inicio</a>
+              <a href="/misreservas" className="reservations-link">Gestionar reservas</a>
+              <a href="/cotizaciones" className="reservations-link">Cotizaciones</a>
+              <a href="/tablerousuario" className="reservations-link">Mi perfil</a>
+              <a href="/eventos" className="reservations-link">Eventos</a>
+            </div>
+          )}
+        </div>
         
         <div className="icons">
           <div className="profile-menu">
