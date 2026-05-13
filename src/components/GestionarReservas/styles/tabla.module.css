@@ -1,11 +1,29 @@
 .container {
-  width: 90%;
+  width: 100%;
+  max-width: 1400px;
   margin: 20px auto;
+  padding: 0 12px;
+  box-sizing: border-box;
 }
 
-h1 {
-  font-size: 30PX;
+.pageTitle {
+  font-size: clamp(1.25rem, 4vw, 1.875rem);
   color: #2c4c6d;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Tabla ancha: scroll horizontal en pantallas pequeñas sin perder columnas */
+.tableScroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 16px 0;
+  border-radius: 5px;
+}
+
+.tableScroll table {
+  min-width: 1020px;
 }
 
 .filters {
@@ -224,12 +242,14 @@ th {
 
 .containerfilters {
   width: 100%;
-  max-width: 800px;
+  max-width: 100%;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 20px;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 .searchTypeSelect {
   min-width: 180px;
@@ -728,5 +748,46 @@ th {
   .clearStatusButton {
     flex: 1;
     min-width: 120px;
+  }
+}
+
+/* Fila búsqueda + fecha en columna; tabla y paginación en pantallas estrechas */
+@media (max-width: 900px) {
+  .containerfilters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .dateFilterContainer {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .pagination {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .pageItem,
+  .pageNav {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .tableScroll table th,
+  .tableScroll table td {
+    padding: 10px 5px;
+    font-size: 11px;
+  }
+
+  .tableScroll table th {
+    font-size: 10px;
   }
 }

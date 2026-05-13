@@ -796,7 +796,7 @@ const Tabla = () => {
           }
         `}
       </style>
-      <h1>Consultar mis reservas</h1>
+      <h1 className={styles.pageTitle}>Consultar mis reservas</h1>
       <br />
       <div className={styles.containerfilters}>
 
@@ -961,6 +961,7 @@ const Tabla = () => {
         )}
       </div>
 
+      <div className={styles.tableScroll}>
       <table>
         <thead>
           <tr>
@@ -1169,6 +1170,7 @@ const Tabla = () => {
           )}
         </tbody>
       </table>
+      </div>
 
       {/* Mostrar paginación solo cuando no está cargando */}
       {!isLoading && (
