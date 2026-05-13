@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import './FormularioRetenciones.css'
 
 const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDatos }) => {
     const [isChecked, setIsChecked] = useState(false);
@@ -285,7 +286,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                             </form>
                         </div>
                         <div className='container_valor_retenciones'>
-
+                            <div className="retenciones-table-scroll">
                             <table>
                                 <thead>
                                     <tr>
@@ -313,6 +314,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
                 )
