@@ -1097,7 +1097,7 @@ const Gestionar = ({ reservas }) => {
                   <div className={styles.contenHabi}>
                     <div className={styles.imgHabi}>
                       <img
-                        src={habitaciones[dato.room_id]?.url}
+                        src={habitaciones[dato.room_id]?.url || habitaciones[dato.id]?.url}
                         alt='img-habitacion'
                       />
                     </div>
@@ -1446,6 +1446,7 @@ const Gestionar = ({ reservas }) => {
           </div>
           <div className={styles.Retenciones}>
             <p>Información sobre las retenciones en caso de que aplique</p>
+            <div className={styles.tableScrollWrapper}>
             <table>
               <thead>
                 <tr>
@@ -1474,6 +1475,7 @@ const Gestionar = ({ reservas }) => {
                 </tr>
               </tbody>
             </table>
+            </div>
 
             {/* <TablaDesglose precio={reservas?.total}/> */}
             <br />

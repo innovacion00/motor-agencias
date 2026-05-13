@@ -405,6 +405,22 @@ hr {
   margin: 15px 0;
 }
 
+/* Divisor entre reservas: ancho completo del bloque (mismo criterio que .reservationLayout hr) */
+.pending-payments-card .dashboard-reserva-hr {
+  display: block;
+  position: relative;
+  left: auto;
+  right: auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 10px 0;
+  border: 0;
+  border-top: 1px solid #2e7d32;
+  height: 0;
+  background-color: transparent;
+}
+
 /* Reusable buttons */
 .btn {
   display: inline-flex;
@@ -449,4 +465,130 @@ hr {
   opacity: 0.6;
   cursor: not-allowed;
   pointer-events: none;
+}
+
+/* --- User dashboard responsive --- */
+@media (max-width: 992px) {
+  .header {
+    padding: 10px clamp(12px, 4vw, 24px);
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .container,
+  .formUser {
+    padding: 12px;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .nav-tabs {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px;
+  }
+
+  .nav-tabs a {
+    padding: 8px 12px;
+    font-size: 14px;
+    flex: 1 1 auto;
+    text-align: center;
+    min-width: min(100%, 140px);
+    box-sizing: border-box;
+  }
+
+  .nav-tabs button {
+    margin-left: 0;
+    flex: 1 1 100%;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .content {
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .card {
+    flex: 1 1 100%;
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .profile-card img {
+    width: min(180px, 42vw);
+    height: min(180px, 42vw);
+    max-width: 100%;
+    object-fit: cover;
+  }
+
+  .profile-image {
+    width: min(180px, 42vw);
+    height: min(180px, 42vw);
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .wallet-card .balance {
+    font-size: clamp(1.25rem, 6vw, 32px);
+    word-break: break-word;
+  }
+
+  .recharge-input {
+    max-width: 100%;
+  }
+
+  .config-cards {
+    flex-direction: column;
+  }
+
+  .estadopago {
+    margin: 12px 0;
+  }
+
+  .nombrehotel,
+  .fechalimit {
+    margin-bottom: 12px;
+    word-break: break-word;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-tabs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nav-tabs a {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .profile-card > .btn.btn-primary {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-top: 8px;
+  }
+
+  .wallet-card > button {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .userdashboard-modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .userdashboard-modal-footer .btn {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
 }
