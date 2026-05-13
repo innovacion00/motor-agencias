@@ -1602,19 +1602,27 @@ export const Cid = ({ id }) => {
               ));
             })()}
           </div>
-          <div className={styles.reservation}>
-            <h3>Reserva</h3>
-            <hr />
-            <br />
-            <h3>{getHotelName(habitaciones?.hotel)}</h3>
-            <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
-            <p>
-              {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
-            </p>
-            <h4> ({rangosfechas.nights} noches )</h4>
-            <br />
-            <hr />
+          <div
+            className={`${styles.reservation} ${styles.reservationLayout}`}
+          >
+            <div className={styles.reservationHeader}>
+              <h3>Reserva</h3>
+              <hr />
+              <br />
+              <h3>{getHotelName(habitaciones?.hotel)}</h3>
+              <p>
+                {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
+              </p>
+              <h4> ({rangosfechas.nights} noches )</h4>
+              <br />
+              <hr />
+            </div>
 
+            <div className={styles.reservationCount}>
+              <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
+            </div>
+
+            <div className={styles.reservationSelectedList}>
             {datohabitacion.map((dato, index) => (
               <div key={index} style={{ position: "relative" }}>
                 {" "}
@@ -1702,7 +1710,9 @@ export const Cid = ({ id }) => {
                 </ul>
               </div>
             ))}
+            </div>
 
+            <div className={styles.reservationFooter}>
             <a href="/reservas">
               <button
                 onClick={enviardatos}
@@ -1745,10 +1755,11 @@ export const Cid = ({ id }) => {
                 Generar cotización
               </button>
             </a>
-          <Tooltip 
-            id="tooltip-generar-cotizacion"
-            className="custom-tooltip"
-          />
+            <Tooltip
+              id="tooltip-generar-cotizacion"
+              className="custom-tooltip"
+            />
+            </div>
           </div>
         </div>
       </div>

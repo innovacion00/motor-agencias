@@ -325,9 +325,13 @@ body {
   background-color: #F29C38;
   padding: 20px;
   border-radius: 8px;
-  display: flexbox justify-content center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 15px;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .search_form_container {
@@ -825,9 +829,13 @@ font-size: 14px;
 background-color: #F29C38;
 padding: 20px;
 border-radius: 8px;
-display: flexbox justify-content center;
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
 align-items: center;
 gap: 15px;
+box-sizing: border-box;
+width: 100%;
 }
 
 .search_form_container {
@@ -1135,4 +1143,245 @@ margin-right: 10px;
 .btn_underline_anim:focus-visible {
   outline: 2px dashed #26547B;
   outline-offset: 4px;
+}
+
+/* --- Responsive (reglas al final para prevalecer sobre duplicados del archivo) --- */
+
+@media (max-width: 1024px) {
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px 14px;
+    box-sizing: border-box;
+  }
+
+  .cards {
+    max-width: 100%;
+    min-width: 0;
+    order: 1;
+  }
+
+  .room_section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .reservation {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    position: relative;
+    top: auto;
+    max-height: none;
+    align-self: stretch;
+    order: 2;
+  }
+}
+
+@media (max-width: 900px) {
+  .hotel_title {
+    font-size: 26px;
+    line-height: 1.25;
+  }
+
+  .hotel_info {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .hotel_info img {
+    width: 100%;
+    max-width: none;
+    height: auto;
+    max-height: 260px;
+    margin-right: 0;
+    margin-bottom: 16px;
+    object-fit: cover;
+  }
+
+  .hotel_details {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .hotel_details .description {
+    margin-right: 0;
+    min-width: 0;
+  }
+
+  .hotel_details .more_info {
+    text-align: left;
+    width: 100%;
+  }
+
+  .hotel_details .more_info button {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .search_criteria {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+    padding: 16px;
+  }
+
+  .search_criteria div {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 120px;
+  }
+
+  .room_card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .room_card img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: cover;
+  }
+
+  .room_details {
+    margin-left: 0;
+    margin-top: 12px;
+    min-width: 0;
+  }
+
+  .room_details button {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .icons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    align-items: center;
+  }
+
+  .icons img {
+    width: 22px;
+    height: 22px;
+    margin-right: 0;
+    object-fit: contain;
+  }
+
+  .tour_item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .touresSection {
+    padding: 12px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .tour_item label {
+    margin-right: 0;
+  }
+
+  .btn_underline_anim {
+    align-self: flex-start;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .planes h3 {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px 10px;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .hotel_title {
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+
+  .available_rooms {
+    font-size: 20px;
+  }
+
+  .search_form_wrapper {
+    padding: 14px 10px;
+    border-radius: 0;
+    gap: 10px;
+  }
+
+  .search_criteria div {
+    flex: 1 1 100%;
+  }
+
+  .search_criteria div strong {
+    font-size: 16px;
+  }
+
+  .reservation {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .reservation hr {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+  }
+
+  .reservation button,
+  .reservation a button {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .icons img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .radioLabel {
+    gap: 8px;
+  }
+}
+
+/* Panel Reserva: columna; orden natural = cabecera → contador → lista → botones */
+.reservationLayout {
+  display: flex;
+  flex-direction: column;
+}
+
+.reservationHeader,
+.reservationCount,
+.reservationSelectedList,
+.reservationFooter {
+  min-width: 0;
+}
+
+.reservationCount h3 {
+  margin: 0 0 12px;
+}
+
+.reservationFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
 }

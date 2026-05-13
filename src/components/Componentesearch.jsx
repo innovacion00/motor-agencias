@@ -309,11 +309,11 @@ const BusquedaCartagena = () => {
         </div>
 
         <div className={styles.title}>Resultados {Ciudad}</div>
-        <div className={styles.filter}>
+        {/* <div className={styles.filter}>
           <select>
             <option>Menor precio</option>
           </select>
-        </div>
+        </div> */}
 
         {/* Mostrar los hoteles disponibles */}
         {hotelesDisponibles.length > 0 ? (

@@ -38,6 +38,7 @@ body {
     margin-bottom: 20px;
     font-weight: 700;
     line-height: 1.25;
+    padding-bottom: 20px;
 }
 
 .filter {
@@ -108,7 +109,7 @@ body {
     margin: 10px 0;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px 10px;
+    gap: 4px 8px;
     align-items: center;
 }
 
@@ -267,12 +268,16 @@ button:active{
     margin-top: 10px;
 }
 
-.icons img,
-.icon_image {
-    width: 26px;
-    height: 26px;
+.hotel_info .icons img,
+.hotel_info .icon_image {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+    object-fit: contain;
     margin-right: 0;
     flex-shrink: 0;
+    vertical-align: middle;
 }
 
 .hotel_info > a {
@@ -368,6 +373,14 @@ button:active{
 
     .hotel_info .specs {
         font-size: 14px;
+    }
+
+    .hotel_info .icons img,
+    .hotel_info .icon_image {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
     }
 
     .hotel_info > a button {
