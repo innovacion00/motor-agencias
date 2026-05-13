@@ -1379,6 +1379,36 @@ margin-right: 10px;
   margin: 0 0 12px;
 }
 
+.reservationHeader {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Sobreescribe .reservation hr (250px + absolute): líneas a ancho del bloque */
+.reservationLayout .reservationHeader hr {
+  position: relative;
+  left: auto;
+  right: auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0.75rem 0;
+  border: 0;
+  border-top: 1px solid #ccc;
+  height: 0;
+}
+
+.reservationLayout .reservationSelectedList hr {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0.75rem 0;
+  border: 0;
+  border-top: 1px solid #ddd;
+  height: 0;
+}
+
 .reservationFooter {
   display: flex;
   flex-direction: column;
