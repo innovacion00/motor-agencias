@@ -878,20 +878,11 @@ const FormularioReserva = () => {
 
   return (
     <>
-      <div
-        style={{
-          backgroundColor: "#F29C38",
-          padding: "20px",
-          borderRadius: "8px",
-          display: "flexbox justify-content center",
-          alignItems: "center",
-          gap: "15px",
-        }}
-      >
+      <div className="search_form_wrapper">
         <DropdownSearch client:load />
       </div>
 
-      <div style={{ fontFamily: "Roboto, sans-serif", padding: "20px" }}>
+      <div className="formulario-reserva-root">
         <h2>¡Falta poco! Termina de completar la información</h2>
         <div
           style={{
@@ -916,6 +907,7 @@ const FormularioReserva = () => {
         {reserva?.map((data) => (
           <div
             key={data.roomId || index}
+            className="formulario-reserva-room-card"
             style={{
               border: "1px solid #ddd",
               borderRadius: "5px",
@@ -925,6 +917,8 @@ const FormularioReserva = () => {
           >
             <img
               src={data.imgH}
+              alt=""
+              className="formulario-reserva-room-img"
               style={{
                 width: "200px",
               }}
@@ -981,13 +975,7 @@ const FormularioReserva = () => {
             <br />
 
             {mostrarCheckboxes && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
-                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
-                }}
-              >
+              <div className="formulario-reserva-check-row">
                 <strong>¿Desea adicionar almuerzo?</strong>
                 <input
                   type="checkbox"
@@ -1050,6 +1038,7 @@ const FormularioReserva = () => {
           </div>
         )}
         <div
+          className="formulario-reserva-total-box"
           style={{
             border: "1px solid #ddd",
             borderRadius: "5px",
@@ -1118,13 +1107,7 @@ const FormularioReserva = () => {
 
             <div>
               {/*-------------- INPUT CHECKBOX HUESPED -------------- */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center", // Alinea verticalmente el checkbox con el texto
-                  justifyContent: "flex-start", // Alinea el contenido a la izquierda
-                }}
-              >
+              <div className="formulario-reserva-check-row">
                 <label htmlFor="esExtranjero" style={{ marginLeft: "10px" }}>
                   ¿El huésped es extranjero? marque la casilla para indicar si
                 </label>
@@ -1431,14 +1414,7 @@ const FormularioReserva = () => {
               ""
             )}
 
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center", // Alinea verticalmente el checkbox con el texto
-                justifyContent: "flex-start", // Alinea el contenido a la izquierda
-              }}
-            >
-              {/*-------------- INPUT LABEL Y CHECKBOX FACTURA ELECTRONICA -------------- */}
+            <div className="formulario-reserva-check-row">
               <label
                 htmlFor="facturaelectronica"
                 style={{ marginLeft: "10px" }}
