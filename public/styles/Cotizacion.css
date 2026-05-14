@@ -10,6 +10,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+  min-width: 0;
 }
 
 @media (min-width: 1024px) {
@@ -22,6 +23,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-width: 0;
 }
 
 .header {
@@ -36,8 +38,46 @@
   gap: 12px;
 }
 
+.logos-header {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.logos-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-cargar-logo {
+  padding: 8px 16px;
+  background-color: #26547B;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.btn-cargar-logo:hover {
+  background-color: #1e4666;
+}
+
 .logo {
-  height: 40px;
+  display: block;
+  height: auto;
+}
+
+.logo.logo-cotizacion-agencia {
+  width: clamp(110px, 36vw, 200px);
+  max-height: 160px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
 .card {
@@ -82,6 +122,12 @@
   gap: 16px;
 }
 
+@media (max-width: 560px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .info-item {
   display: flex;
   flex-direction: column;
@@ -109,8 +155,15 @@
 
 .contact-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Bloque anidado (teléfono bajo dirección) en una fila completa */
+.card > .contact-item .contact-item {
+  flex: 1 1 100%;
+  margin-top: 4px;
 }
 
 .icon {
@@ -120,7 +173,7 @@
 
 .dates-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
   font-size: 14px;
@@ -133,10 +186,14 @@
 
 .table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  max-width: 100%;
 }
 
 .table {
   width: 100%;
+  min-width: 520px;
   border-collapse: collapse;
 }
 
@@ -221,6 +278,10 @@
 
 .accordion-title {
   font-weight: 600;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+  padding-right: 8px;
 }
 
 .icon-chevron {
@@ -286,9 +347,18 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 24px;
-  height: max-content;
+  position: static;
+  top: auto;
+  height: auto;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    position: sticky;
+    top: 24px;
+    height: max-content;
+  }
 }
 
 .sidebar-card {
@@ -387,6 +457,70 @@
 
 /* Responsive para móviles */
 @media (max-width: 768px) {
+  .container {
+    padding: 12px 14px;
+    box-sizing: border-box;
+  }
+
+  .layout {
+    gap: 16px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .title {
+    font-size: clamp(1.125rem, 4.5vw, 1.5rem);
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    word-break: break-word;
+  }
+
+  .logos-actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .btn-cargar-logo {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .container_principal {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .container_retenciones {
+    width: 100%;
+  }
+
+  .container_valor_retenciones {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .th,
+  .td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+
+  .td-total-amount {
+    font-size: 16px;
+  }
+
+  .container_valor_retenciones th,
+  .container_valor_retenciones td {
+    padding: 8px 6px;
+    font-size: 0.85rem;
+  }
+
   .hotel-images-container {
     flex-direction: column;
     height: auto;
@@ -403,6 +537,32 @@
   
   .secondary-image {
     height: 100%;
+  }
+
+  .custom-tooltip {
+    max-width: min(350px, 92vw) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .price-row {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .price-value {
+    margin-left: auto;
+    text-align: right;
+    word-break: break-word;
+  }
+
+  .accordion-button {
+    padding: 12px;
+  }
+
+  .textarea {
+    min-height: 140px;
+    padding: 12px;
   }
 }
 
@@ -423,6 +583,9 @@
 /* Estilos para retenciones */
 .contenRetenciones {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
 }
 
 .container_retenciones {
@@ -430,17 +593,24 @@
   border-radius: 4px;
   padding: 1rem;
   width: 50%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-bottom: 1rem;
 }
 
 .container_principal {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
   min-height: 300px;
 }
 
 .container_valor_retenciones {
   display: flex;
+  flex: 1 1 280px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .container_valor_retenciones p {
@@ -509,7 +679,8 @@ input[type=number] {
 /* Estilos de tabla para retenciones */
 .formulario_retenciones ~ .container_valor_retenciones table,
 .container_valor_retenciones table {
-  width: 60%;
+  width: 100%;
+  max-width: 100%;
   border-collapse: collapse;
   margin: 20px 0;
   background: #ffffff;

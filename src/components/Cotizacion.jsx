@@ -1165,15 +1165,10 @@ export default function ReservaHotelComponent() {
 
           {/* Formulario de Información del Huésped */}
           <div className="card">
-            <div className="logos" style={{ display: "flex", alignItems: "center", gap: "15px", justifyContent: "flex-start" }}>
+            <div className="logos logos-header">
               <img src={logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
-                alt="Logo Agencia" className="logo" style={{ width: "200px", height: "200px" }} />
-              
-              
-              
-              
-              
-              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
+                alt="Logo Agencia" className="logo logo-cotizacion-agencia" />
+              <div className="logos-actions">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -1187,19 +1182,10 @@ export default function ReservaHotelComponent() {
                   data-tooltip-id="tooltip-logo-agencia"
                   data-tooltip-content="Carga el logotipo de tu agencia que se mostrará en la cotización enviada al cliente"
                   data-tooltip-place="left"
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor: "#26547B",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "14px"
-                  }}
+                  className="btn-cargar-logo"
                 >
                   Cargar logotipo de la agencia
                 </button>
-                
               </div>
             </div>
             <div className="badge-container">
