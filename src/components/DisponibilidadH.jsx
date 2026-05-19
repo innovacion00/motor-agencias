@@ -1804,7 +1804,9 @@ export const Cid = ({ id }) => {
             ))}
             </div>
 
+            <div className={styles.reservationFooter}>
             <button
+              type="button"
               onClick={handleReservarClick}
               disabled={!puedeReservar || isSearchingFlights}
               data-tooltip-id="tooltip-generar-cotizacion"
@@ -1836,18 +1838,6 @@ export const Cid = ({ id }) => {
                 if (!(!puedeReservar || isSearchingFlights)) {
                   e.target.style.backgroundColor = "#0056b3";
                   e.target.style.transform = "scale(1.1)";
-            <div className={styles.reservationFooter}>
-            <a href="/reservas">
-              <button
-                onClick={enviardatos}
-                disabled={!puedeReservar}
-                data-tooltip-id="tooltip-generar-cotizacion"
-                data-tooltip-content={
-                  !puedeReservar
-                    ? datohabitacion.length === 0
-                      ? "Selecciona las habitaciones que deseas reservar"
-                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
-                    : "Crear una reserva personalizada para el cliente."
                 }
               }}
               onMouseLeave={(e) => {

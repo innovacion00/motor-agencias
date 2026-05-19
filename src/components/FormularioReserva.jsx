@@ -37,7 +37,7 @@ const plan_alimentacion = {
 const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 
 /** Reservas vía endpoint legacy `/reservas/reservar` (no mytool). */
-const AXIS_HOTEL_AUTOCORE_ID = 48;
+const LEGACY_RESERVA_HOTEL_AUTOCORE_IDS = new Set([48, 56]); // Axis, Boquilla
 
 const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
   1: 7, // Azuan
@@ -399,6 +399,8 @@ const FormularioReserva = () => {
       };
       return next;
     });
+  };
+
   const normalizeMealPlan = (mealPlan) => {
     const normalized = String(mealPlan || "").toLowerCase();
     if (normalized.includes("media")) return "PAM";
@@ -617,13 +619,13 @@ const FormularioReserva = () => {
         );
       };
       const hotelIdAutocore = Number(reserva[0]?.hotelidAutocore);
-      const isAxisReservation = hotelIdAutocore === AXIS_HOTEL_AUTOCORE_ID;
+      const isLegacyReservation = LEGACY_RESERVA_HOTEL_AUTOCORE_IDS.has(hotelIdAutocore);
 
       let informacionD;
       let url;
 
-      if (isAxisReservation) {
-        const retencionesAxis = filtrarRetenciones({
+      if (isLegacyReservation) {
+        const retencionesLegacy = filtrarRetenciones({
           reteFuente: {
             resultado: Math.round(DatosRetenciones?.calculo_rtf_fte) || 0,
             porcentaje: Number(RetencionesPorcentaje?.reteFuente) || 0,
@@ -645,7 +647,7 @@ const FormularioReserva = () => {
         const notesConRetenciones =
           `Creada por la agencia: ${agencia?.agencia?.fullName ?? ""}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero" ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado: ${r0?.tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}${facturaE ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}${r0?.tourSeleccionado && r0.tourSeleccionado.length > 0 ? ` Tours seleccionados: ${r0.tourSeleccionado.map((tour) => tour.title).join(", ")}.` : ""}${r0?.mascotas && r0.mascotas > 0 ? ` Se han enviado ${r0.mascotas} mascota(s).` : ""}`;
 
-        const axisLegacyPayload = {
+        const legacyPayload = {
           total: Math.round(totalRetenciones),
           mascotasNumber: reserva[0]?.mascotas || null,
           adicionAlmuerzo: almuerzo,
@@ -680,7 +682,7 @@ const FormularioReserva = () => {
                     formData.telefonotraslado || formData.celular,
                 }
               : null,
-          ...retencionesAxis,
+          ...retencionesLegacy,
           planAlimentario: reserva[0]?.plandealimentacion,
           exentoIva: esExtranjero,
           reservaInfo: {
@@ -730,23 +732,23 @@ const FormularioReserva = () => {
           },
         };
 
-        const axisMissing = [];
+        const legacyMissing = [];
         if (reserva[0]?.hotelid == null || reserva[0]?.hotelid === "")
-          axisMissing.push("hotelid (roomcloud)");
-        if (!checkin || !checkout) axisMissing.push("checkin/checkout");
-        if (!agencia?.agencia) axisMissing.push("agencia");
+          legacyMissing.push("hotelid (roomcloud)");
+        if (!checkin || !checkout) legacyMissing.push("checkin/checkout");
+        if (!agencia?.agencia) legacyMissing.push("agencia");
 
-        if (axisMissing.length > 0) {
+        if (legacyMissing.length > 0) {
           Swal.fire({
             icon: "error",
             title: "Faltan datos para crear la reserva",
-            text: `No se puede enviar la reserva. Campos faltantes: ${axisMissing.join(", ")}`,
+            text: `No se puede enviar la reserva. Campos faltantes: ${legacyMissing.join(", ")}`,
           });
           setbotondesactivado(false);
           return;
         }
 
-        informacionD = JSON.stringify(axisLegacyPayload);
+        informacionD = JSON.stringify(legacyPayload);
         url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
       } else {
       const hotelSeleccionado = JSON.parse(localStorage.getItem("hotelSeleccionado") || "{}");

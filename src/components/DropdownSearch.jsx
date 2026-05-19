@@ -6,6 +6,7 @@ import Modal from "react-modal";
 import styles from "../../public/styles/DropdownSearch.module.css";
 import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
+import { currency } from "../stores/divisas";
 import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
 
 const DropdownSearch = () => {
@@ -232,6 +233,13 @@ const DropdownSearch = () => {
     }
   };
 
+  const setSelectedCurrency = (code) => {
+    try {
+      localStorage.setItem("selectedCurrency", code);
+      currency.set(code);
+    } catch (e) {}
+  };
+
   const handleGroupReservation = () => {
     setRooms(
       Array.from({ length: 10 }, () => ({
@@ -244,6 +252,7 @@ const DropdownSearch = () => {
     setbotonactivado("group");
     setIncludesFlight(false);
     setOrigin("");
+    setSelectedCurrency("COP");
     // Guardar tipo de búsqueda en localStorage: 2 = Reserva para grupos
     try {
       localStorage.setItem("tipoBusqueda", "2");
@@ -269,6 +278,7 @@ const DropdownSearch = () => {
     setbotonactivado("single");
     setIncludesFlight(false);
     setOrigin("");
+    setSelectedCurrency("COP");
     // Guardar tipo de búsqueda en localStorage: 1 = Única fecha
     try {
       localStorage.setItem("tipoBusqueda", "1");
@@ -293,6 +303,7 @@ const DropdownSearch = () => {
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("flight");
     setIncludesFlight(true);
+    setSelectedCurrency("USD");
     // Guardar tipo de búsqueda en localStorage: 3 = Vuelo + hotel
     try {
       localStorage.setItem("tipoBusqueda", "3");
