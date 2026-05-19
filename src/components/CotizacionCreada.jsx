@@ -185,6 +185,26 @@ const generarDescripcionPension = (planAlimentacion) => {
     }
 };
 
+const textoTrasladoDesdeInfoTransporte = (info) => {
+    if (!info) return null;
+    if (info.tipo) {
+        if (info.tipo === 'aeropuerto_hotel') return 'Aeropuerto al hotel';
+        if (info.tipo === 'hotel_aeropuerto') return 'Hotel al aeropuerto';
+        if (info.tipo === 'ambos') return 'Aeropuerto al hotel | Hotel al aeropuerto';
+        return String(info.tipo);
+    }
+    const tr = info.tipoRecogida;
+    if (tr === 0) return 'Aeropuerto al hotel';
+    if (tr === 1) return 'Hotel al aeropuerto';
+    if (tr === 2) return 'Aeropuerto al hotel | Hotel al aeropuerto';
+    return 'Incluido';
+};
+
+const nombresToursValidos = (infoToures) => {
+    if (!infoToures?.nombres || !Array.isArray(infoToures.nombres)) return [];
+    return infoToures.nombres.map((n) => String(n || '').trim()).filter(Boolean);
+};
+
 export const CotizacionCreada = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
@@ -496,6 +516,8 @@ export const CotizacionCreada = ({ id }) => {
     // Calcular markup si existe
     const markupAmount = cotizacion.markup ? cotizacion.markup - total : 0;
     const markupPorcentaje = total > 0 ? Math.round((markupAmount / total) * 100) : 0;
+    const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
+    const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
 
     // Función para descargar PDF
     const handleDownloadPDF = async () => {
@@ -735,6 +757,14 @@ export const CotizacionCreada = ({ id }) => {
                                     <p className="label">Habitaciones</p>
                                     <p className="value">{roomsData.length}</p>
                                 </div>
+                                <div className="date-item">
+                                    <p className="label">Traslados</p>
+                                    <p className="value">{textoTrasladoResumen || 'No incluidos'}</p>
+                                </div>
+                                <div className="date-item">
+                                    <p className="label">Tours</p>
+                                    <p className="value">{toursNombresResumen.length > 0 ? toursNombresResumen.join(', ') : 'No incluidos'}</p>
+                                </div>
                             </div>
 
                             {/* Tabla de Habitaciones */}
@@ -820,19 +850,17 @@ export const CotizacionCreada = ({ id }) => {
                                                 {cotizacion?.infoTransporte ? (
                                                     <div>
                                                         <p><strong>Traslado incluido:</strong> Sí</p>
-                                                        {cotizacion.infoTransporte.tipo && (
-                                                            <p><strong>Tipo de traslado:</strong> {cotizacion.infoTransporte.tipo}</p>
-                                                        )}
+                                                        <p><strong>Tipo de traslado:</strong> {textoTrasladoResumen}</p>
                                                     </div>
                                                 ) : (
                                                     <p><strong>Traslado incluido:</strong> No</p>
                                                 )}
 
-                                                {cotizacion?.infoToures && Array.isArray(cotizacion.infoToures.nombres) && cotizacion.infoToures.nombres.length > 0 ? (
+                                                {toursNombresResumen.length > 0 ? (
                                                     <div>
                                                         <p><strong>Tours incluidos:</strong></p>
                                                         <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
-                                                            {cotizacion.infoToures.nombres.map((nombreTour, index) => (
+                                                            {toursNombresResumen.map((nombreTour, index) => (
                                                                 <li key={index}>{nombreTour || `Tour ${index + 1}`}</li>
                                                             ))}
                                                         </ul>

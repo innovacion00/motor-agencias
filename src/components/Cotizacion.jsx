@@ -62,6 +62,26 @@ const direccionHotelId = (hotelId) => {
 
 const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 
+const etiquetaTrasladoDesdeTipo = (tipo) => {
+  if (tipo === "aeropuerto_hotel") return "Aeropuerto al hotel";
+  if (tipo === "hotel_aeropuerto") return "Hotel al aeropuerto";
+  if (tipo === "ambos") return "Aeropuerto al hotel | Hotel al aeropuerto";
+  return tipo ? String(tipo) : "";
+};
+
+const textoTrasladoDesdeInfoTransporte = (info) => {
+  if (!info) return null;
+  if (info.tipo) {
+    const porTipo = etiquetaTrasladoDesdeTipo(info.tipo);
+    return porTipo || "Incluido";
+  }
+  const tr = info.tipoRecogida;
+  if (tr === 0) return "Aeropuerto al hotel";
+  if (tr === 1) return "Hotel al aeropuerto";
+  if (tr === 2) return "Aeropuerto al hotel | Hotel al aeropuerto";
+  return "Incluido";
+};
+
 // Función para obtener las imágenes del hotel basado en el ID
 const getHotelImagesById = (hotelId) => {
   const hotelImagesMap = {
@@ -491,6 +511,25 @@ export default function ReservaHotelComponent() {
     const telefonoAgencia = logoAgencia?.telefono || "+57 333 602 50 21";
     const emailCliente = formData.email;
     const telefonoCliente = formData.celular;
+    const r0 = datosReserva[0] || {};
+    const trasladoIncluido =
+      r0.incluirTraslado === true && r0.tipoTraslado != null;
+    const textoTrasladoPdf = trasladoIncluido
+      ? etiquetaTrasladoDesdeTipo(r0.tipoTraslado) || "Traslado incluido"
+      : null;
+    const toursPdf = Array.isArray(r0.tourSeleccionado)
+      ? r0.tourSeleccionado
+          .map(
+            (tour) =>
+              (tour && (tour.title || tour.nombre || tour.titulo || "")) || ""
+          )
+          .map((s) => String(s).trim())
+          .filter(Boolean)
+      : [];
+    const toursPdfHtml =
+      toursPdf.length > 0
+        ? toursPdf.map((n) => `<li><strong>Tour:</strong> ${n}</li>`).join("")
+        : "";
 
         return `<!DOCTYPE html>
   <html lang="es">
@@ -841,6 +880,14 @@ export default function ReservaHotelComponent() {
                   <span>${mascotas} permitida(s)</span>
               </div>
               ` : ''}
+              <div class="detail-item">
+                  <label>Traslados</label>
+                  <span>${textoTrasladoPdf || "No incluidos"}</span>
+              </div>
+              <div class="detail-item">
+                  <label>Tours</label>
+                  <span>${toursPdf.length > 0 ? toursPdf.join(", ") : "No incluidos"}</span>
+              </div>
           </div>
       </div>
 
@@ -873,6 +920,12 @@ export default function ReservaHotelComponent() {
               <li>Cajillas de seguridad.</li>
               <li>Baño privado con ducha y amenities.</li>
               <li>Servicio de guarda equipaje sin costo adicional.</li>
+              ${
+                textoTrasladoPdf
+                  ? `<li><strong>Traslado aeropuerto:</strong> ${textoTrasladoPdf}.</li>`
+                  : ""
+              }
+              ${toursPdfHtml}
           </ul>
       </div>
 
@@ -1005,6 +1058,7 @@ export default function ReservaHotelComponent() {
       const infoTransporte =
         primerDatoReserva.incluirTraslado === true && tipodetraslado !== null
           ? {
+              tipo: primerDatoReserva.tipoTraslado,
               // En cotización no pedimos aún número de vuelo ni aerolínea,
               // pero el backend exige strings con longitud mínima; usamos "ND"
               numeroVuelo: "ND",
@@ -1547,7 +1601,7 @@ export default function ReservaHotelComponent() {
                           <div>
                             <p><strong>Traslado incluido:</strong> Sí</p>
                             {datosReserva[0]?.tipoTraslado && (
-                              <p><strong>Tipo de traslado:</strong> {datosReserva[0].tipoTraslado}</p>
+                              <p><strong>Tipo de traslado:</strong> {etiquetaTrasladoDesdeTipo(datosReserva[0].tipoTraslado)}</p>
                             )}
                           </div>
                         ) : (
@@ -1559,7 +1613,7 @@ export default function ReservaHotelComponent() {
                             <p><strong>Tours incluidos:</strong></p>
                             <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
                               {datosReserva[0].tourSeleccionado.map((tour, index) => (
-                                <li key={index}>{tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
+                                <li key={index}>{tour.title || tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
                               ))}
                             </ul>
                           </div>

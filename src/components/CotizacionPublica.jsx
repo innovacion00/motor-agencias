@@ -181,6 +181,26 @@ const generarDescripcionPension = (planAlimentacion) => {
     }
 };
 
+const textoTrasladoDesdeInfoTransporte = (info) => {
+    if (!info) return null;
+    if (info.tipo) {
+        if (info.tipo === 'aeropuerto_hotel') return 'Aeropuerto al hotel';
+        if (info.tipo === 'hotel_aeropuerto') return 'Hotel al aeropuerto';
+        if (info.tipo === 'ambos') return 'Aeropuerto al hotel | Hotel al aeropuerto';
+        return String(info.tipo);
+    }
+    const tr = info.tipoRecogida;
+    if (tr === 0) return 'Aeropuerto al hotel';
+    if (tr === 1) return 'Hotel al aeropuerto';
+    if (tr === 2) return 'Aeropuerto al hotel | Hotel al aeropuerto';
+    return 'Incluido';
+};
+
+const nombresToursValidos = (infoToures) => {
+    if (!infoToures?.nombres || !Array.isArray(infoToures.nombres)) return [];
+    return infoToures.nombres.map((n) => String(n || '').trim()).filter(Boolean);
+};
+
 export const CotizacionPublica = ({ id }) => {
     const [showReservaIncluye, setShowReservaIncluye] = useState(false);
     const [showPoliticas, setShowPoliticas] = useState(false);
@@ -412,6 +432,8 @@ export const CotizacionPublica = ({ id }) => {
     const total = subtotal + iva;
     const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : total;
     const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
+    const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
+    const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
 
     return (
         <div className="container" ref={containerRef}>
@@ -499,22 +521,15 @@ export const CotizacionPublica = ({ id }) => {
                         <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
                             <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Traslados</div>
                             <div style={{ color: '#333', marginTop: '5px' }}>
-                                {cotizacion?.infoTransporte
-                                    ? (
-                                        cotizacion.infoTransporte.tipo === 'aeropuerto_hotel' ? 'Aeropuerto al hotel' :
-                                        cotizacion.infoTransporte.tipo === 'hotel_aeropuerto' ? 'Hotel al aeropuerto' :
-                                        cotizacion.infoTransporte.tipo === 'ambos' ? 'Aeropuerto al hotel | Hotel al aeropuerto' :
-                                        'Incluido'
-                                      )
-                                    : 'No incluidos'}
+                                {textoTrasladoResumen || 'No incluidos'}
                             </div>
                         </div>
                         {/* Tours */}
                         <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
                             <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Tours</div>
                             <div style={{ color: '#333', marginTop: '5px' }}>
-                                {cotizacion?.infoToures && Array.isArray(cotizacion.infoToures.nombres) && cotizacion.infoToures.nombres.length > 0
-                                    ? cotizacion.infoToures.nombres.map((nombreTour, index) => (
+                                {toursNombresResumen.length > 0
+                                    ? toursNombresResumen.map((nombreTour, index) => (
                                         <span key={index}>
                                             {index > 0 && ', '}
                                             {nombreTour || `Tour ${index + 1}`}
@@ -557,6 +572,12 @@ export const CotizacionPublica = ({ id }) => {
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Estancia de {reservaInfo.nights || '1'} noche(s) del {reservaInfo.checkin || '—'} al {reservaInfo.checkout || '—'}</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Habitaciones confortables, dotadas con cajillas de seguridad, Tv moderno, duchas con agua caliente, wifi en todas las áreas del hotel.</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>{roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Plan de alimentación no especificado'} incluido</li>
+                        {textoTrasladoResumen && (
+                            <li style={{ margin: '8px 0', lineHeight: '1.8' }}><strong>Traslado:</strong> {textoTrasladoResumen}</li>
+                        )}
+                        {toursNombresResumen.length > 0 && (
+                            <li style={{ margin: '8px 0', lineHeight: '1.8' }}><strong>Tours:</strong> {toursNombresResumen.join(', ')}</li>
+                        )}
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Check-in 3:00 pm y check-out 12:00 pm</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de guarda equipaje sin costo adicional</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Baño privado con ducha o bañera</li>
