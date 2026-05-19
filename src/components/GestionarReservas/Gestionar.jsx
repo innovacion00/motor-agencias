@@ -112,9 +112,6 @@ function getAirlineLogo(carrierCode) {
     `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${encodeURIComponent(code || "?")}`
   );
 }
-/** Mismo criterio que en FormularioReserva (Axis, Boquilla / Autocore). */
-const LEGACY_RESERVA_HOTEL_AUTOCORE_IDS = new Set([48, 56]);
-
 //UseState
 const Gestionar = ({ reservas }) => {
   // console.log(reservas); // Datos de la reserva
@@ -749,41 +746,66 @@ const Gestionar = ({ reservas }) => {
         },
       });
 
-      const hotelAutocoreId = Number(
-        reservas?.hotelidAutocore ?? reservas?.hotelId ?? 0
-      );
-      const hotelNombre = String(reservas?.hotel || "").toLowerCase();
-      const isLegacyHotel =
-        LEGACY_RESERVA_HOTEL_AUTOCORE_IDS.has(hotelAutocoreId) ||
-        hotelNombre.includes("axis") ||
-        hotelNombre.includes("boquilla");
+      const apiUrl = import.meta.env.PUBLIC_API_URL;
+      const mytoolUrl = `${apiUrl}/agencias/v1/reservas/mytool/cancelar`;
+      const legacyUrl = `${apiUrl}/agencias/v1/reservas/cancelar-reserva`;
 
-      const response = isLegacyHotel
-        ? await fetchWithToken(
-            `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
-            {
-              method: "DELETE",
-              body: JSON.stringify({
-                reservaId: reservaId,
-              }),
-            }
-          )
-        : await fetchWithToken(
-            `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/cancelar`,
-            {
-              method: "POST",
-              body: JSON.stringify({
-                localizador: reservas?.reservaChatbotId,
-                canalVentaId: 101,
-                usuarioCancela: "Lucia",
-                maquinaId: 1,
-              }),
-            }
-          );
+      const cancelarConMytool = () =>
+        fetchWithToken(mytoolUrl, {
+          method: "POST",
+          body: JSON.stringify({
+            localizador: reservas?.reservaChatbotId,
+            canalVentaId: 101,
+            usuarioCancela: "Lucia",
+            maquinaId: 1,
+          }),
+        });
+
+      const cancelarConLegacy = () =>
+        fetchWithToken(legacyUrl, {
+          method: "DELETE",
+          body: JSON.stringify({
+            reservaId: reservaId,
+          }),
+        });
+
+      let response;
+      let cancelacionVia = "mytool";
+
+      try {
+        response = await cancelarConMytool();
+      } catch (mytoolError) {
+        console.warn(
+          "Fallo la petición mytool/cancelar, se intentará cancelar-reserva:",
+          mytoolError
+        );
+        cancelacionVia = "legacy";
+        response = await cancelarConLegacy();
+      }
+
+      if (!response.ok && cancelacionVia === "mytool") {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = await response.text();
+        }
+        console.warn(
+          "mytool/cancelar no exitoso, se intentará cancelar-reserva:",
+          errorData
+        );
+        cancelacionVia = "legacy";
+        response = await cancelarConLegacy();
+      }
 
       //#region Validar respuesta api
       if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = await response.text();
+        }
         console.error("Error al cancelar la reserva:", errorData);
         Swal.fire(
           "Error",

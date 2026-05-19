@@ -14,7 +14,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-
+  box-sizing: border-box;
 }
 
 /* Contenedor principal */
@@ -26,6 +26,8 @@
   font-family: 'Roboto', sans-serif;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Aplicar Roboto a todos los elementos */
@@ -726,40 +728,340 @@
 @media (max-width: 1200px) {
   .container {
     flex-direction: column;
+    max-width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
   }
-  
+
   .sidebar {
     width: 100%;
     position: static;
     height: auto;
+    margin-left: 0;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    order: 2;
   }
-  
+
   .mainContent {
     max-width: none;
+    width: 100%;
+    order: 1;
   }
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .mainContent {
+    padding: 12px 0;
+  }
+
+  .flightsSection,
+  .flightOption {
+    padding: 14px;
+  }
+
   .flightDetails {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: stretch;
+    gap: 12px;
   }
-  
+
+  .airlineInfo {
+    min-width: 0;
+    width: 100%;
+  }
+
   .routeInfo {
     width: 100%;
+    flex-wrap: wrap;
     justify-content: space-between;
-  }
-  
-  .pricing {
-    flex-direction: column;
     gap: 10px;
+  }
+
+  .origin,
+  .destination {
+    min-width: 0;
+    flex: 1 1 70px;
+  }
+
+  .flightTime {
+    flex: 1 1 100%;
+    order: 3;
+  }
+
+  .flightDuration,
+  .baggageInfo {
+    width: 100%;
+    justify-content: center;
     text-align: center;
   }
-  
+
+  .baggageInfo {
+    display: flex;
+    justify-content: center;
+  }
+
+  .pricing {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    align-items: stretch;
+  }
+
+  .pricePerPerson,
+  .totalPrice {
+    width: 100%;
+  }
+
   .navigation {
     flex-direction: column;
     gap: 15px;
+    align-items: stretch;
+  }
+
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .pagination label {
+    font-size: 14px;
+  }
+
+  .pagination select,
+  .pageBtn {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .selectBtn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .connectionInfo {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .connectionLine {
+    width: 100%;
+    margin: 0;
+  }
+
+  .connectionText {
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+
+  .connectionText span {
+    word-break: break-word;
+  }
+
+  .flightSummary {
+    padding: 12px;
+  }
+
+  .summaryInfo {
+    gap: 6px;
+  }
+
+  .summaryRoute {
+    font-size: 13px;
+    word-break: break-word;
+  }
+
+  .hotelHeader,
+  .flightHeader {
+    flex-wrap: wrap;
+  }
+
+  .hotelName,
+  .flightRoute {
+    font-size: 15px;
+    word-break: break-word;
+  }
+
+  .totalAmount {
+    font-size: 20px;
+  }
+
+  .modalOverlay {
+    padding: 12px;
+    align-items: flex-end;
+  }
+
+  .modalContent {
+    max-height: 92vh;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .modalBody {
+    padding: 16px;
+  }
+
+  .modalHeader {
+    padding: 16px;
+  }
+
+  .modalTitle {
+    font-size: 18px;
+  }
+
+  .modalBody .flightRoute {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .modalBody .flightRouteLabel {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .modalBody .flightRouteDetails {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .modalBody .baggageIconsContainer {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 4px;
+  }
+
+  .fareOptions {
+    grid-template-columns: 1fr;
+  }
+
+  .modalFooter {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .footerNextButton {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .fareSelectionTitle {
+    font-size: 16px;
+    margin: 16px 0 12px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 8px;
+  }
+
+  .flightsSection,
+  .flightOption {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
+
+  .segmentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .cityCode {
+    font-size: 14px;
+  }
+
+  .departureTime,
+  .arrivalTime {
+    font-size: 14px;
+  }
+
+  .modalOverlay {
+    padding: 0;
+  }
+
+  .modalContent {
+    max-height: 95vh;
+    border-radius: 12px 12px 0 0;
+    margin: 0;
+  }
+
+  .modalBody {
+    padding: 12px;
+  }
+
+  .modalHeader {
+    padding: 12px 14px;
+  }
+
+  .modalTitle {
+    font-size: 16px;
+    padding-right: 8px;
+  }
+
+  .flightInfoHeader img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modalBody .flightRouteCode,
+  .modalBody .flightRouteDate,
+  .modalBody .flightRouteTime {
+    font-size: 12px;
+  }
+
+  .fareCard {
+    padding: 12px;
+  }
+
+  .fareName {
+    font-size: 14px;
+  }
+
+  .farePrice {
+    font-size: 16px;
+  }
+
+  .infoSection {
+    padding: 12px;
+  }
+
+  .infoText {
+    font-size: 11px;
+  }
+
+  .footerTotalAmount {
+    font-size: 18px;
+  }
+
+  .exitBtn {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .noFlights {
+    padding: 24px 12px;
+  }
+
+  .noFlights h2 {
+    font-size: 18px;
+  }
+
+  .noFlights p {
+    font-size: 14px;
   }
 }
 
@@ -1072,20 +1374,4 @@
 
 .footerNextButton:hover {
   background-color: #1c3d5ac0;
-}
-
-@media (max-width: 768px) {
-  .fareOptions {
-    grid-template-columns: 1fr;
-  }
-  
-  .modalFooter {
-    flex-direction: column;
-    gap: 16px;
-    align-items: stretch;
-  }
-  
-  .footerNextButton {
-    width: 100%;
-  }
 }
