@@ -42,6 +42,7 @@ const BusquedaCartagena = () => {
     41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
     56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
     123:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg", //Salguero
+    124:""
   };
 
   //Objeto con los arreglos de los iconos
@@ -344,16 +345,16 @@ const BusquedaCartagena = () => {
       )}
 <br />
         <div className={styles.title}>Resultados {Ciudad}</div>
-        <div className={styles.filter}>
+        {/* <div className={styles.filter}>
           <select>
             <option>Menor precio</option>
           </select>
-        </div>
+        </div> */}
 
         {/* Mostrar los hoteles disponibles */}
         {hotelesDisponibles.length > 0 ? (
           hotelesDisponibles
-            .filter(hotel => hotel.hotel.id !== 2 && hotel.hotel.id !== 41) // Filter out hotels with IDs 2 and 45
+            .filter(hotel => hotel.hotel.id !== 2 && hotel.hotel.id !== 41 && hotel.hotel.id !== 7) // Filter out hotels with IDs 2, 45 and 77
             .map((tipo) => (
             <div className={styles.hotel} key={tipo.hotel.id}>
               {hasAxisDecemberDiscount(tipo.hotel.id, nochesyedades1?.dateRange) && (

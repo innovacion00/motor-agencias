@@ -3,9 +3,13 @@
 /* Estilo general del contenedor */
 .dropdownSearchContainer {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 1rem;
     border-radius: 8px;
+    width: 100%;
+    max-width: 1200px;
 
   }
 
@@ -72,6 +76,8 @@
   
   .datePicker {
     position: relative;
+    width: 100%;
+    max-width: 300px;
   }
   
   
@@ -79,7 +85,7 @@
     position:absolute;
     top: 100%;
     left: 0;
-    z-index: 1000px;
+    z-index: 1000;
     background-color: white;
     box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
     border-radius: 8px;
@@ -140,21 +146,20 @@
    .dropdown {
     position: relative;
     display: inline-block;
-    width: 300px; /* Ajusta el ancho del dropdown */
-    padding-top: 15px;
-    padding-bottom: 15px;
+    width: 100%;
+    max-width: 300px; /* Ajusta el ancho del dropdown */
   }
   
   .dropdown select {
-    width: 98%;
-    padding: 10px;
+    width: 100%;
+    padding: 0.55rem 1.4rem 0.55rem 0.8rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #6C757D;
     position: relative;
     background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%236C757D" d="M2 0L0 2h4z"/></svg>');
@@ -508,7 +513,9 @@ input:checked + .slider::before {
   padding: 8px 12px;
   border-radius: 5px;
   font-size: 14px;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: min(90vw, 420px);
+  text-align: center;
   z-index: 10;
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -584,3 +591,93 @@ input:checked + .slider::before {
  position: relative;
 }
 
+@media (max-width: 768px) {
+  .dropdownSearchContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .dateButtons {
+    flex-wrap: wrap;
+    justify-content: stretch;
+    gap: 0.5rem;
+  }
+
+  .dateButtons button {
+    flex: 1 1 180px;
+    width: 100%;
+  }
+
+  .dropdown,
+  .datePicker {
+    width: 100%;
+    max-width: none;
+  }
+
+  .dropdown select,
+  .datePicker input,
+  .dropdownToggle,
+  .searchButton {
+    width: 100%;
+    max-width: none;
+  }
+
+  .dropdown select {
+    font-size: 0.9rem;
+    padding: 0.5rem 1.25rem 0.5rem 0.7rem;
+  }
+
+  .dropdownPeople {
+    width: 100%;
+    position: relative;
+  }
+
+  .dropdownMenu {
+    width: 100%;
+    max-width: none;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+  }
+
+  .dateRangePicker {
+    width: min(92vw, 360px);
+    max-width: 92vw;
+    left: 50%;
+    transform: translateX(-50%);
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .dropdown select {
+    font-size: 0.85rem;
+    padding: 0.45rem 1.1rem 0.45rem 0.65rem;
+  }
+
+  .dateButtons button {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .dateRangePicker {
+    width: 94vw;
+    max-width: 94vw;
+    padding: 8px;
+  }
+
+  .dropdownMenu {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .searchButton {
+    padding: 10px 14px;
+  }
+}

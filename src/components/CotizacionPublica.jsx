@@ -30,6 +30,31 @@ const nombreHotelId = (hotelId) => {
     return hotelMap[hotelId] || "Hotel no encontrado";
 };
 
+// Función para obtener la dirección del hotel basado en el ID
+const direccionHotelId = (hotelId) => {
+    const direccionMap = {
+        // Hoteles Cartagena
+        1: "Bocagrande Cra 3 N° 8-156, Cartagena de Indias, Bolívar", // Hotel Azuan
+        4: "Cra. 1 #47-10, Marbella, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Aixo
+        5: "Cartagena de indias, Barrio Marbella carrera 2 número 47- 10", // Hotel Abi
+        6: "Bocagrande Cra 3 N° 4-86, Cartagena de Indias, Bolívar", // Hotel Avexi
+        7: "Bocagrande Avenida San Martin Cra 2 N 7-159, Cartagena de Indias, Bolívar", // Hotel Bocagrande
+        9: "Bocagrande Cra 3 N° 4 -32, Cartagena de Indias, Bolívar", // Hotel Marina
+        56: "Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar", // Hotel Boquilla
+        // Hoteles Santa Marta
+        8: "Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena", // Hotel Rodadero
+        2: "Calle 11 # 2 - 29 Centro Histórico, Santa Marta, Magdalena", // Hotel 1525
+        48: "Carrera 3 No. 10 - 40, El Rodadero, 470001 Santa Marta", // Hotel Axis
+        44: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena", // Hotel Sansiraka
+        123: "CRA 4 N° 23F05 Gaira, 470002", // Playa Salguero Hotel
+        // Hoteles Bogotá
+        10: "Chapinero, Calle 95 #9-97, Bogotá, Colombia", // Hotel Windsor
+        3: "Cra 18 #93 - 97, Barrio el Chico, Bogotá, Colombia", // Hotel Madisson
+    };
+
+    return direccionMap[hotelId] || "Dirección no disponible";
+};
+
 // Función para obtener las imágenes del hotel basado en el ID
 const getHotelImagesById = (hotelId) => {
     const hotelImagesMap = {
@@ -154,6 +179,26 @@ const generarDescripcionPension = (planAlimentacion) => {
         // Por defecto, solo desayuno
         return "Incluye desayuno y servicios básicos";
     }
+};
+
+const textoTrasladoDesdeInfoTransporte = (info) => {
+    if (!info) return null;
+    if (info.tipo) {
+        if (info.tipo === 'aeropuerto_hotel') return 'Aeropuerto al hotel';
+        if (info.tipo === 'hotel_aeropuerto') return 'Hotel al aeropuerto';
+        if (info.tipo === 'ambos') return 'Aeropuerto al hotel | Hotel al aeropuerto';
+        return String(info.tipo);
+    }
+    const tr = info.tipoRecogida;
+    if (tr === 0) return 'Aeropuerto al hotel';
+    if (tr === 1) return 'Hotel al aeropuerto';
+    if (tr === 2) return 'Aeropuerto al hotel | Hotel al aeropuerto';
+    return 'Incluido';
+};
+
+const nombresToursValidos = (infoToures) => {
+    if (!infoToures?.nombres || !Array.isArray(infoToures.nombres)) return [];
+    return infoToures.nombres.map((n) => String(n || '').trim()).filter(Boolean);
 };
 
 export const CotizacionPublica = ({ id }) => {
@@ -387,6 +432,8 @@ export const CotizacionPublica = ({ id }) => {
     const total = subtotal + iva;
     const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : total;
     const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
+    const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
+    const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
 
     return (
         <div className="container" ref={containerRef}>
@@ -474,22 +521,15 @@ export const CotizacionPublica = ({ id }) => {
                         <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
                             <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Traslados</div>
                             <div style={{ color: '#333', marginTop: '5px' }}>
-                                {cotizacion?.infoTransporte
-                                    ? (
-                                        cotizacion.infoTransporte.tipo === 'aeropuerto_hotel' ? 'Aeropuerto al hotel' :
-                                        cotizacion.infoTransporte.tipo === 'hotel_aeropuerto' ? 'Hotel al aeropuerto' :
-                                        cotizacion.infoTransporte.tipo === 'ambos' ? 'Aeropuerto al hotel | Hotel al aeropuerto' :
-                                        'Incluido'
-                                      )
-                                    : 'No incluidos'}
+                                {textoTrasladoResumen || 'No incluidos'}
                             </div>
                         </div>
                         {/* Tours */}
                         <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
                             <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Tours</div>
                             <div style={{ color: '#333', marginTop: '5px' }}>
-                                {cotizacion?.infoToures && Array.isArray(cotizacion.infoToures.nombres) && cotizacion.infoToures.nombres.length > 0
-                                    ? cotizacion.infoToures.nombres.map((nombreTour, index) => (
+                                {toursNombresResumen.length > 0
+                                    ? toursNombresResumen.map((nombreTour, index) => (
                                         <span key={index}>
                                             {index > 0 && ', '}
                                             {nombreTour || `Tour ${index + 1}`}
@@ -532,6 +572,12 @@ export const CotizacionPublica = ({ id }) => {
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Estancia de {reservaInfo.nights || '1'} noche(s) del {reservaInfo.checkin || '—'} al {reservaInfo.checkout || '—'}</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Habitaciones confortables, dotadas con cajillas de seguridad, Tv moderno, duchas con agua caliente, wifi en todas las áreas del hotel.</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>{roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Plan de alimentación no especificado'} incluido</li>
+                        {textoTrasladoResumen && (
+                            <li style={{ margin: '8px 0', lineHeight: '1.8' }}><strong>Traslado:</strong> {textoTrasladoResumen}</li>
+                        )}
+                        {toursNombresResumen.length > 0 && (
+                            <li style={{ margin: '8px 0', lineHeight: '1.8' }}><strong>Tours:</strong> {toursNombresResumen.join(', ')}</li>
+                        )}
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Check-in 3:00 pm y check-out 12:00 pm</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de guarda equipaje sin costo adicional</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Baño privado con ducha o bañera</li>
@@ -719,7 +765,7 @@ export const CotizacionPublica = ({ id }) => {
                 <div style={{ backgroundColor: '#886b43', color: '#fff', padding: '20px', borderRadius: '5px', marginTop: '30px', textAlign: 'center' }}>
                     <h2 style={{ color: '#fff', borderBottom: '2px solid #fff', margin: 0, paddingBottom: '10px' }}>¿Preguntas?</h2>
                     <p><strong>Contáctanos</strong></p>
-                    <p>Whatsapp y Llamadas: <a href="tel:+573336025021" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>+57 333 602 50 21</a></p>
+                    <p>Whatsapp y Llamadas: <a href="tel:+573336025669" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>+57 333 602 56 69</a></p>
                     <br />
                     
                     <p>Desarrollado por <a href="https://www.gehsuites.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>GEH Suites</a></p>

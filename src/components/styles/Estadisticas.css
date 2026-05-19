@@ -1,5 +1,5 @@
 .stats-container {
-  max-width: 1400px;
+  max-width: auto;
   margin: 0 auto;
   padding: 20px;
   background-color: #f8f9fa;
@@ -67,8 +67,67 @@
   gap: 20px;
   padding: 20px;
   margin: 0 auto;
-  max-width: 1400px;
+  max-width: 1600px;
 }
+
+/* Contenedor de gráficas a ancho completo (fuera del grid de 2 columnas) */
+.stats-content-single {
+  padding: 0 20px 20px;
+  margin: 0 auto;
+  max-width: 1600px;
+  max-height: 1700px;
+}
+
+.payment-status-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.payment-status-chart {
+  display: flex;
+  justify-content: center;
+}
+
+.payment-status-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  justify-self: stretch;
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.legend-label {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.legend-value {
+  font-weight: 700;
+  color: #625631;
+}
+
+/* La leyenda ya va debajo; no requiere breakpoint específico */
 
 .chart-wrapper {
   width: 100%;
@@ -105,7 +164,7 @@
 
 .stats-indicator h2 {
   color: #34495e;
-  font-size: 15px;
+  font-size: 20px;
   margin-bottom: 10px;
   font-family: "Roboto", sans-serif;
 }
@@ -115,6 +174,11 @@
   font-weight: bold;
   margin: 0;
   font-family: "Roboto", sans-serif;
+  border: 1px solid #AD884E;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: inline-block;
+  background-color: #fffaf0;
 }
 
 .indicators-grid {
@@ -178,7 +242,7 @@
 }
 
 .agencies-table th {
-  background: #26547B;
+  background: #AD884E;
   color: white;
   padding: 8px;
   text-align: left;
@@ -218,7 +282,7 @@
 .table-title {
   text-align: center;
   margin-bottom: 15px;
-  font-size: 16px;
+  font-size: 23px;
 }
 
 .agencies-table table {
@@ -231,6 +295,11 @@
   padding: 8px;
   text-align: left;
   border: 1px solid #ddd;
+  font-size: 17px; /* +4px mínimo frente al tamaño anterior (13px) */
+}
+
+.agencies-table table {
+  font-size: 18px; /* Base general de tabla */
 }
 
 @media (max-width: 768px) {
@@ -263,5 +332,41 @@
 @media (max-width: 1200px) {
   .stats-content {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Skeleton para gráficas */
+.stats-chart-skeleton {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.stats-chart-skeleton-line {
+  height: 14px;
+  width: 55%;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+  animation: skeletonPulse 1.5s infinite;
+}
+
+.stats-chart-skeleton-rect {
+  width: 100%;
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  animation: skeletonPulse 1.5s infinite;
+}
+
+@keyframes skeletonPulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 1;
   }
 }

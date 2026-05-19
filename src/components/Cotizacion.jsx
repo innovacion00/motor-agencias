@@ -35,7 +35,52 @@ const nombreHotelId = (hotelId) => {
   return hotelMap[hotelId] || "Hotel no encontrado";
 };
 
+// Función para obtener la dirección del hotel basado en el ID
+const direccionHotelId = (hotelId) => {
+  const direccionMap = {
+    // Hoteles Cartagena
+    1: "Cra. 3 #8-156, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Azuan
+    4: "Cra. 1 #47-10, Marbella, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Aixo
+    5: "Cra. 1 #42-70, Barrio El Cabrero, Cartagena de Indias, Provincia de Cartagena, Bolívar ", // Hotel Abi
+    6: "Cra. 3 #No 4 -86, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Avexi
+    7: "Cra. 2 #7-159, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Bocagrande
+    9: "Cra. 3 #4 - 32, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Marina
+    56: "Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar", // Hotel Boquilla
+    // Hoteles Santa Marta
+    8: "Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena", // Hotel Rodadero
+    2: "Calle 11 # 2 - 29 Centro Histórico, Santa Marta, Magdalena", // Hotel 1525
+    48: "Cra. 3 #10-14, El Rodadero, Gaira, Santa Marta, Magdalena", // Hotel Axis
+    44: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena", // Hotel Sansiraka
+    123: "CRA 4 N° 23F05 Gaira, 470002", // Playa Salguero Hotel
+    // Hoteles Bogotá
+    10: "Chapinero, Calle 95 #9-97, Bogotá, Colombia", // Hotel Windsor
+    3: "Cra 18 #93 - 97, Barrio el Chico, Bogotá, Colombia", // Hotel Madisson
+  };
+
+  return direccionMap[hotelId] || "Dirección no disponible";
+};
+
 const HOTELES_EXENTOS_IVA = new Set([56, 123]);
+
+const etiquetaTrasladoDesdeTipo = (tipo) => {
+  if (tipo === "aeropuerto_hotel") return "Aeropuerto al hotel";
+  if (tipo === "hotel_aeropuerto") return "Hotel al aeropuerto";
+  if (tipo === "ambos") return "Aeropuerto al hotel | Hotel al aeropuerto";
+  return tipo ? String(tipo) : "";
+};
+
+const textoTrasladoDesdeInfoTransporte = (info) => {
+  if (!info) return null;
+  if (info.tipo) {
+    const porTipo = etiquetaTrasladoDesdeTipo(info.tipo);
+    return porTipo || "Incluido";
+  }
+  const tr = info.tipoRecogida;
+  if (tr === 0) return "Aeropuerto al hotel";
+  if (tr === 1) return "Hotel al aeropuerto";
+  if (tr === 2) return "Aeropuerto al hotel | Hotel al aeropuerto";
+  return "Incluido";
+};
 
 // Función para obtener las imágenes del hotel basado en el ID
 const getHotelImagesById = (hotelId) => {
@@ -463,9 +508,28 @@ export default function ReservaHotelComponent() {
     const mascotas = datosReserva[0]?.mascotas || 0;
     const logoAgenciaUrl = logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg";
     const nombreAgencia = agencia?.agencia?.fullName || "Agencia de Viajes";
-    const telefonoAgencia = "+57 333 602 50 21";
+    const telefonoAgencia = logoAgencia?.telefono || "+57 333 602 50 21";
     const emailCliente = formData.email;
     const telefonoCliente = formData.celular;
+    const r0 = datosReserva[0] || {};
+    const trasladoIncluido =
+      r0.incluirTraslado === true && r0.tipoTraslado != null;
+    const textoTrasladoPdf = trasladoIncluido
+      ? etiquetaTrasladoDesdeTipo(r0.tipoTraslado) || "Traslado incluido"
+      : null;
+    const toursPdf = Array.isArray(r0.tourSeleccionado)
+      ? r0.tourSeleccionado
+          .map(
+            (tour) =>
+              (tour && (tour.title || tour.nombre || tour.titulo || "")) || ""
+          )
+          .map((s) => String(s).trim())
+          .filter(Boolean)
+      : [];
+    const toursPdfHtml =
+      toursPdf.length > 0
+        ? toursPdf.map((n) => `<li><strong>Tour:</strong> ${n}</li>`).join("")
+        : "";
 
         return `<!DOCTYPE html>
   <html lang="es">
@@ -816,6 +880,14 @@ export default function ReservaHotelComponent() {
                   <span>${mascotas} permitida(s)</span>
               </div>
               ` : ''}
+              <div class="detail-item">
+                  <label>Traslados</label>
+                  <span>${textoTrasladoPdf || "No incluidos"}</span>
+              </div>
+              <div class="detail-item">
+                  <label>Tours</label>
+                  <span>${toursPdf.length > 0 ? toursPdf.join(", ") : "No incluidos"}</span>
+              </div>
           </div>
       </div>
 
@@ -848,6 +920,12 @@ export default function ReservaHotelComponent() {
               <li>Cajillas de seguridad.</li>
               <li>Baño privado con ducha y amenities.</li>
               <li>Servicio de guarda equipaje sin costo adicional.</li>
+              ${
+                textoTrasladoPdf
+                  ? `<li><strong>Traslado aeropuerto:</strong> ${textoTrasladoPdf}.</li>`
+                  : ""
+              }
+              ${toursPdfHtml}
           </ul>
       </div>
 
@@ -980,6 +1058,7 @@ export default function ReservaHotelComponent() {
       const infoTransporte =
         primerDatoReserva.incluirTraslado === true && tipodetraslado !== null
           ? {
+              tipo: primerDatoReserva.tipoTraslado,
               // En cotización no pedimos aún número de vuelo ni aerolínea,
               // pero el backend exige strings con longitud mínima; usamos "ND"
               numeroVuelo: "ND",
@@ -1140,15 +1219,10 @@ export default function ReservaHotelComponent() {
 
           {/* Formulario de Información del Huésped */}
           <div className="card">
-            <div className="logos" style={{ display: "flex", alignItems: "center", gap: "15px", justifyContent: "flex-start" }}>
+            <div className="logos logos-header">
               <img src={logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg"}
-                alt="Logo Agencia" className="logo" style={{ width: "200px", height: "200px" }} />
-              
-              
-              
-              
-              
-              <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
+                alt="Logo Agencia" className="logo logo-cotizacion-agencia" />
+              <div className="logos-actions">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -1162,19 +1236,10 @@ export default function ReservaHotelComponent() {
                   data-tooltip-id="tooltip-logo-agencia"
                   data-tooltip-content="Carga el logotipo de tu agencia que se mostrará en la cotización enviada al cliente"
                   data-tooltip-place="left"
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor: "#26547B",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "14px"
-                  }}
+                  className="btn-cargar-logo"
                 >
                   Cargar logotipo de la agencia
                 </button>
-                
               </div>
             </div>
             <div className="badge-container">
@@ -1390,7 +1455,7 @@ export default function ReservaHotelComponent() {
               <h3 className="subtitle">{nombreHotelId(datosReserva[0].hotelidAutocore)}</h3>
               <div className="contact-item">
                 <MapPin className="icon" />
-                <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
+                <span>{direccionHotelId(datosReserva[0].hotelidAutocore)}</span>
                 <div className="contact-item">
                   <Phone className="icon" />
                   <span>+57 333 602 50 21</span>
@@ -1536,7 +1601,7 @@ export default function ReservaHotelComponent() {
                           <div>
                             <p><strong>Traslado incluido:</strong> Sí</p>
                             {datosReserva[0]?.tipoTraslado && (
-                              <p><strong>Tipo de traslado:</strong> {datosReserva[0].tipoTraslado}</p>
+                              <p><strong>Tipo de traslado:</strong> {etiquetaTrasladoDesdeTipo(datosReserva[0].tipoTraslado)}</p>
                             )}
                           </div>
                         ) : (
@@ -1548,7 +1613,7 @@ export default function ReservaHotelComponent() {
                             <p><strong>Tours incluidos:</strong></p>
                             <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
                               {datosReserva[0].tourSeleccionado.map((tour, index) => (
-                                <li key={index}>{tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
+                                <li key={index}>{tour.title || tour.nombre || tour.titulo || `Tour ${index + 1}`}</li>
                               ))}
                             </ul>
                           </div>

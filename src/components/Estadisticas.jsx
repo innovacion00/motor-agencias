@@ -16,9 +16,18 @@ import { useHover } from "@uidotdev/usehooks";
 import Swal from "sweetalert2";
 
 const Estadisticas = () => {
-  const [reservasPorHotel, setReservasPorHotel] = useState();
+  // Paleta unificada para gráficas
+  const chartPalette = [
+    "#e1c16f",
+    "#625631",
+    "#ebdba8",
+    "#eee2bb",
+    "#a69058",
+    "#ccb577",
+  ];
+  const [reservasPorHotel, setReservasPorHotel] = useState([]);
   const [reservasPorMes, setReservasPorMes] = useState([]);
-  const [reservasPorCiudad, setReservasPorCiudad] = useState();
+  const [reservasPorCiudad, setReservasPorCiudad] = useState([]);
   const [reservasCanceladas, setReservasCanceladas] = useState();
   const [userData, setUserData] = useState(null);
   const [reservas, setReservas] = useState([]);
@@ -50,6 +59,19 @@ const Estadisticas = () => {
   const [reservasUltimos30Dias, setReservasUltimos30Dias] = useState([]); // Nuevo estado para reservas de últimos 30 días
   const [reservasAprobadas, setReservasAprobadas] = useState([]);
   const [reservasCanceladasPorAgencia, setReservasCanceladasPorAgencia] = useState([]);
+
+  const [isChartsLoading, setIsChartsLoading] = useState(true);
+
+  // Filtro global de reservas para TODO el tablero (Enero–Marzo)
+  // CHECKPOINT: para volver a "todas las reservas", reemplaza el return por `return reservas;`
+  const filtrarReservasEneMar = (reservas) => {
+    // return reservas; // CHECKPOINT (revertir)
+    return (Array.isArray(reservas) ? reservas : []).filter((r) => {
+      const fecha = new Date(r?.createdAt);
+      const mes = fecha.getMonth(); // 0=Ene, 1=Feb, 2=Mar
+      return mes >= 0 && mes <= 2;
+    });
+  };
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -62,7 +84,7 @@ const Estadisticas = () => {
 
   //#region reservas por mes
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
@@ -115,7 +137,7 @@ const Estadisticas = () => {
 
   //#region reservas por hotel
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       // Lista de hoteles en orden
@@ -130,7 +152,6 @@ const Estadisticas = () => {
         "Hotel Sansiraka",
         "Hotel Abi",
         "Hotel Marina",
-        "Hotel 1525",
         "Hotel Windsor",
         "Hotel Madisson",
       ];
@@ -155,7 +176,7 @@ const Estadisticas = () => {
   // #region Reservas por ciudad
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       // Mapeo para normalizar los nombres de las ciudades
@@ -239,14 +260,17 @@ const Estadisticas = () => {
           throw new Error("Error al obtener agencias");
         }
 
-        const data = await response.json();
-        setAgenciasRegistradas(data.length);
+        const json = await response.json();
+        const agencias = Array.isArray(json?.data) ? json.data : [];
+        const totalAgencias =
+          typeof json?.meta?.total === "number" ? json.meta.total : agencias.length;
+        setAgenciasRegistradas(totalAgencias);
 
         // Calcular agencias nuevas en las últimas 24h
         const ahora = new Date();
         const hace24Horas = new Date(ahora.getTime() - 24 * 60 * 60 * 1000);
 
-        const agenciasRecientes = data.filter((agencia) => {
+        const agenciasRecientes = agencias.filter((agencia) => {
           const fechaCreacion = new Date(agencia.createdAt);
           return fechaCreacion >= hace24Horas;
         });
@@ -261,7 +285,7 @@ const Estadisticas = () => {
   }, []);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const estadosLabel = {
@@ -285,7 +309,7 @@ const Estadisticas = () => {
         ([estado, cantidad]) => ({
           x: estadosLabel[estado],
           y: cantidad,
-          label: `${estadosLabel[estado]}: ${cantidad}`,
+          label: `${cantidad}`,
         })
       );
 
@@ -293,7 +317,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
@@ -309,7 +333,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const ahora = new Date();
@@ -324,7 +348,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const totalHuespedes = reservasObtenidas.reduce((acc, reserva) => {
@@ -340,7 +364,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const reservasCompletadas = reservasObtenidas.filter(
@@ -355,7 +379,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const totalNoches = reservasObtenidas.reduce((acc, reserva) => {
@@ -367,7 +391,7 @@ const Estadisticas = () => {
     }
   }, [reservasNano.get()]);
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas.length > 0) {
       const totalDias = reservasObtenidas.reduce((acc, reserva) => {
@@ -385,7 +409,7 @@ const Estadisticas = () => {
   }, [reservasNano.get()]);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
     console.log("Reservas obtenidas:", reservasObtenidas); // Debug
 
     if (reservasObtenidas && reservasObtenidas.length > 0) {
@@ -416,7 +440,7 @@ const Estadisticas = () => {
   }, [reservasNano.get()]);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
     console.log("Reservas obtenidas:", reservasObtenidas);
 
     if (reservasObtenidas?.length > 0) {
@@ -446,7 +470,7 @@ const Estadisticas = () => {
 
   // Nuevo useEffect para procesar reservas de los últimos 30 días
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas?.length > 0) {
       const ahora = new Date();
@@ -479,7 +503,7 @@ const Estadisticas = () => {
   }, [reservasNano.get()]);
 
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas?.length > 0) {
       // Filtrar solo las reservas con status 3 (aprobadas)
@@ -509,7 +533,7 @@ const Estadisticas = () => {
 
   // Nuevo useEffect para procesar reservas canceladas por agencia
   useEffect(() => {
-    const reservasObtenidas = reservasNano.get();
+    const reservasObtenidas = filtrarReservasEneMar(reservasNano.get());
 
     if (reservasObtenidas?.length > 0) {
       // Filtrar solo las reservas canceladas (status 4)
@@ -569,6 +593,7 @@ const Estadisticas = () => {
   //#region Reservas obtenidas (todas las reservas usando all=true)
   const ObtenerReservas = async (token, rolUsuario) => {
     try {
+      setIsChartsLoading(true);
       const baseUrl = import.meta.env.PUBLIC_API_URL;
 
       // Construir la URL según el rol del usuario
@@ -603,6 +628,8 @@ const Estadisticas = () => {
       console.error("Error obteniendo todas las reservas para estadísticas:", error);
       reservasNano.set([]);
       setReservas([]);
+    } finally {
+      setIsChartsLoading(false);
     }
   };
 
@@ -783,6 +810,45 @@ const Estadisticas = () => {
       });
     }
   };
+// -----------------------------------------------------------------------------------------------------------------------
+  // Reservas por mes (Enero–Marzo)
+  // CHECKPOINT: para volver a mostrar todos los meses, usa la línea de abajo y comenta el filtro.
+  // const reservasPorMesFiltradas = reservasPorMes;
+  const reservasPorMesFiltradas = (reservasPorMes || []).filter((d) =>
+    ["Ene", "Feb", "Mar"].includes(d.mes)
+  );
+
+  // Paleta específica para estados de pago (independiente de la paleta general)
+  const paymentStatusColorMap = {
+    "Pago rechazado": "#F56C51",
+    "Pago aprobado": "#62A672",
+    "Cancelado": "#9e9e9e",
+    "Pagado primera mitad": "#6C9BF5",
+    "Pendiente de pago": "#FFE77D",
+    "En proceso": "#8d6e63",
+  };
+
+  const getPaymentStatusColor = (status) =>
+    paymentStatusColorMap[status] || "#bdbdbd";
+
+  // Número de reservas realizadas (desde enero hasta la actualidad)
+  // CHECKPOINT: para volver a contar todas, descomenta la línea de abajo y comenta el filtro.
+  // const reservasRealizadasCount = reservas?.length ?? 0;
+  const reservasRealizadasCount = (reservas || []).filter((r) => {
+    const fecha = new Date(r?.createdAt);
+    const ahora = new Date();
+    return (
+      fecha.getFullYear() === ahora.getFullYear() &&
+      fecha.getMonth() <= ahora.getMonth()
+    );
+  }).length;
+
+  const SkeletonRow = ({ height = 280 }) => (
+    <div className="stats-chart-skeleton">
+      <div className="stats-chart-skeleton-line" />
+      <div className="stats-chart-skeleton-rect" style={{ height }} />
+    </div>
+  );
 
   return (
     <div className="stats-container">
@@ -812,59 +878,59 @@ const Estadisticas = () => {
       <div className="indicators-grid">
         <div className="stats-indicator">
           <h2>Numero de reservas realizadas</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
-            {reservas.length}
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
+            {reservasRealizadasCount}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Agencias Registradas</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {agenciasRegistradas}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Reservas Canceladas en las Últimas 24h</h2>
-          <p style={{ color: "#4CAF50" }}>{reservasCanceladas}</p>
+          <p style={{ color: "#AD884E" }}>{reservasCanceladas}</p>
         </div>
         <div className="stats-indicator">
           <h2>Agencias Nuevas (Últimas 24h)</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#4CAF50" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {agenciasNuevas}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Reservas garantizadas en las Últimas 24h</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2ECC71" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {reservasCompletadas24h}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Reservas Realizadas (Últimas 24h)</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#3498DB" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {reservasUltimas24h}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Promedio de Huéspedes por Reserva</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#9B59B6" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {promedioHuespedes}
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Tasa de reservas garantizadas </h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#E67E22" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {tasaConversion}%
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Travel Window</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#16A085" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {promedioEstadia} noches
           </p>
         </div>
         <div className="stats-indicator">
           <h2>Booking Window</h2>
-          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#2980B9" }}>
+          <p style={{ fontSize: "27px", fontWeight: "bold", color: "#AD884E" }}>
             {formatBookingWindow(bookingWindow)}
           </p>
         </div>
@@ -875,115 +941,157 @@ const Estadisticas = () => {
         <div className="chart-wrapper">
           {/* -------------------- Gráfico de reservas por mes ------------------------ */}
           <h2 style={{ textAlign: "center" }}>Reservas por Mes</h2>
-          <VictoryChart
-            theme={VictoryTheme.material}
-            domainPadding={20}
-            width={480} // Reducido de 400
-            height={300} // Reducido de 300
-            padding={{ left: 80, right: 20, top: 20, bottom: 50 }}
-          >
-            <VictoryAxis
-              tickFormat={reservasPorMes?.map((d) => d.mes)}
-              style={{
-                tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
-              }}
-            />
-            <VictoryAxis
-              dependentAxis
-              tickFormat={(x) => `${x} reservas`}
-              style={{
-                tickLabels: { fontSize: 11, padding: 5, fontFamily: "Roboto" },
-              }}
-            />
-            <VictoryBar
-              data={reservasPorMes}
-              x="mes"
-              y="reservas"
-              style={{ data: { fill: "#4CAF50" } }}
-              labels={({ datum }) => `${datum.reservas}`}
-            />
-          </VictoryChart>
+          {isChartsLoading ? (
+            <SkeletonRow height={280} />
+          ) : (
+            <VictoryChart
+              theme={VictoryTheme.material}
+              domainPadding={20}
+              width={480} // Reducido de 400
+              height={300} // Reducido de 300
+              padding={{ left: 80, right: 20, top: 20, bottom: 50 }}
+            >
+              <VictoryAxis
+                tickFormat={reservasPorMesFiltradas.map((d) => d.mes)}
+                style={{
+                  tickLabels: {
+                    fontSize: 11,
+                    padding: 5,
+                    fontFamily: "Roboto",
+                  },
+                }}
+              />
+              <VictoryAxis
+                dependentAxis
+                tickFormat={(x) => `${x} reservas`}
+                style={{
+                  tickLabels: {
+                    fontSize: 11,
+                    padding: 5,
+                    fontFamily: "Roboto",
+                  },
+                }}
+              />
+              <VictoryBar
+                data={reservasPorMesFiltradas}
+                x="mes"
+                y="reservas"
+                style={{ data: { fill: chartPalette[0] } }}
+                labels={({ datum }) => `${datum.reservas}`}
+              />
+            </VictoryChart>
+          )}
         </div>
 
         {/* ------------------- Gráfica de Reservas por Hotel ----------------------*/}
         <div className="chart-wrapper">
           <h2 style={{ textAlign: "center" }}>Reservas por hotel</h2>
-          <VictoryChart
-            theme={VictoryTheme.material}
-            domainPadding={20}
-            width={600}
-            height={400}
-            padding={{ left: 100, right: 30, top: 20, bottom: 100 }}
-          >
-            <VictoryAxis
-              tickFormat={reservasPorHotel?.map((d) => d.hotel)}
-              style={{
-                tickLabels: { angle: -45, fontSize: 12, textAnchor: "end" },
-              }}
-            />
-            <VictoryAxis
-              dependentAxis
-              tickFormat={(x) => `${x} reservas`}
-              style={{ tickLabels: { fontSize: 12 } }}
-            />
-            <VictoryBar
-              data={reservasPorHotel}
-              x="hotel"
-              y="reservas"
-              style={{ data: { fill: "#FF5733" } }}
-              labels={({ datum }) => `${datum.reservas}`}
-            />
-          </VictoryChart>
+          {isChartsLoading ? (
+            <SkeletonRow height={340} />
+          ) : (
+            <VictoryChart
+              theme={VictoryTheme.material}
+              domainPadding={20}
+              width={600}
+              height={400}
+              padding={{ left: 100, right: 30, top: 20, bottom: 100 }}
+            >
+              <VictoryAxis
+                tickFormat={reservasPorHotel?.map((d) => d.hotel)}
+                style={{
+                  tickLabels: {
+                    angle: -45,
+                    fontSize: 12,
+                    textAnchor: "end",
+                  },
+                }}
+              />
+              <VictoryAxis
+                dependentAxis
+                tickFormat={(x) => `${x} reservas`}
+                style={{ tickLabels: { fontSize: 12 } }}
+              />
+              <VictoryBar
+                data={reservasPorHotel}
+                x="hotel"
+                y="reservas"
+                style={{ data: { fill: chartPalette[2] } }}
+                labels={({ datum }) => `${datum.reservas}`}
+              />
+            </VictoryChart>
+          )}
         </div>
 
         {/* Gráfica de Reservas por Ciudad */}
         <div className="chart-wrapper">
           <h2 style={{ textAlign: "center" }}>Número de reservas por Ciudad</h2>
-          <VictoryPie
-            data={reservasPorCiudad}
-            colorScale={["#85c1e9", "#a2d9ce", "#d7bde2"]}
-            labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
-            style={{
-              labels: {
-                fontSize: 10,
-                fontWeight: "bold",
-                fill: "#333",
-                fontFamily: "Roboto",
-              },
-            }}
-            innerRadius={80}
-            labelRadius={80}
-          />
+          {isChartsLoading ? (
+            <SkeletonRow height={320} />
+          ) : (
+            <VictoryPie
+              data={reservasPorCiudad}
+              colorScale={chartPalette}
+              labels={({ datum }) => `${datum.x}: ${datum.y} reservas`}
+              style={{
+                labels: {
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  fill: "#333",
+                  fontFamily: "Roboto",
+                },
+              }}
+              padAngle={2}
+              innerRadius={80}
+              labelRadius={80}
+            />
+          )}
         </div>
 
-        {/*#region  Gráfica de Estados de Pago */}
+        {/* Gráfica de Estados de Pago (con leyenda al lado) */}
         <div className="chart-wrapper">
           <h2 style={{ textAlign: "center" }}>
             Estados de pago en tiempo real
           </h2>
-          <VictoryPie
-            data={estadosPago}
-            colorScale={[
-              "#f39c12",
-              "#36a3c4",
-              "#e0577a",
-              "#3a963f",
-              "#bd1f1f",
-              "#b58a2d",
-            ]}
-            style={{
-              labels: {
-                fontWeight: "bolder",
-                fontSize: 9,
-                fill: "#232222",
-                fontFamily: "Roboto",
-              },
-            }}
-            labelRadius={({ innerRadius }) => innerRadius + 70}
-            innerRadius={50}
-            padAngle={2}
-            animate={{ duration: 1000 }}
-          />
+          {isChartsLoading ? (
+            <SkeletonRow height={380} />
+          ) : (
+            <div className="payment-status-row">
+              <div className="payment-status-chart">
+                <VictoryPie
+                  data={estadosPago}
+                  width={520}
+                  height={360}
+                  radius={145}
+                  innerRadius={70}
+                  padAngle={2}
+                  labels={() => ""}
+                  style={{
+                    data: {
+                      fill: ({ datum }) => getPaymentStatusColor(datum.x),
+                      stroke: "#ffffff",
+                      strokeWidth: 2,
+                    },
+                  }}
+                  animate={{ duration: 1000 }}
+                />
+              </div>
+
+              <div className="payment-status-legend">
+                {(estadosPago || []).map((item, idx) => (
+                  <div className="legend-item" key={`${item.x}-${idx}`}>
+                    <span
+                      className="legend-swatch"
+                      style={{
+                        backgroundColor: getPaymentStatusColor(item.x),
+                      }}
+                    />
+                    <span className="legend-label">{item.x}</span>
+                    <span className="legend-value">{item.y}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

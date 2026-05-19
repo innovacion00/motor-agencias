@@ -524,6 +524,21 @@ const getHotelName = (hotel) => {
   return hotel?.name || "Hotel no encontrado";
 };
 
+const hotelNombreStoragePorId = {
+  1: "azuan",
+  3: "madisson",
+  4: "aixo",
+  5: "abi",
+  6: "avexi",
+  8: "rodadero",
+  9: "marina",
+  10: "windsor",
+  44: "sansiraka",
+  48: "axis",
+  56: "boquilla",
+  123: "playasalguero",
+};
+
 const plan_alimentacion = {
   9: false, //marina
   1: false, //azuan
@@ -544,8 +559,8 @@ const plan_alimentacion = {
 const hotelesExentosIVA = new Set([56, 123]);
 
 // Add these constants near the top with other price constants
-const MASCOTA_PRECIO_COP = 50000;
-const MASCOTA_PRECIO_USD = 10;
+const MASCOTA_PRECIO_COP = 75000;
+const MASCOTA_PRECIO_USD = 21;
 
 // Utilidad para formatear fechas cortas en el stepper
 const formatDate = (dateString) => {
@@ -676,6 +691,7 @@ export const Cid = ({ id }) => {
     //Hotel avexi/azuan/Marina
     "Habitacion Doble Standard",
     "Habitacion Cuadruple Standard",
+    ,
     //Hotel Bocagrande
     "Doble ",
     "Triple ",
@@ -726,7 +742,7 @@ export const Cid = ({ id }) => {
   // Función para obtener el límite de habitaciones según el tipo
   const obtenerLimiteHabitaciones = (roomName, count) => {
     if (habitacionesConLimiteEspecial.includes(roomName)) {
-      return count + 3;
+      return count ;
     }
     return count;
   };
@@ -791,6 +807,15 @@ export const Cid = ({ id }) => {
   //Enviar datos de reserva
   const enviardatos = () => {
     localStorage.setItem("datosreserva", JSON.stringify(datohabitacion));
+    const hotelActual = habitaciones?.hotel || {};
+    const hotelId = Number(hotelActual.id ?? id);
+    const hotelSeleccionado = {
+      id: hotelId,
+      nombre: hotelNombreStoragePorId[hotelId] || getHotelName(hotelActual),
+      ciudad: hotelActual.city ?? selectedCity ?? "",
+      imagen: hotelActual.image ?? hotel?.image ?? "",
+    };
+    localStorage.setItem("hotelSeleccionado", JSON.stringify(hotelSeleccionado));
   };
 
   //Use effect selectedCity
@@ -962,6 +987,32 @@ export const Cid = ({ id }) => {
     });
   };
   console.log(mostrarTraslados);
+
+  const obtenerBedsPorTipoHabitacion = (roomName = "") => {
+    const nombre = roomName.toLowerCase();
+
+    if (nombre.includes("sextuple") || nombre.includes("séxtuple")) return 6;
+    if (nombre.includes("quintuple") || nombre.includes("quíntuple")) return 5;
+    if (
+      nombre.includes("cuadruple") ||
+      nombre.includes("cuádruple") ||
+      nombre.includes("cuadrúple")
+    )
+      return 4;
+    if (nombre.includes("familiar")) return 3;
+    if (nombre.includes("triple")) return 3;
+    if (
+      nombre.includes("doble") ||
+      nombre.includes("double") ||
+      nombre.includes("twin") ||
+      nombre.includes("junior") ||
+      nombre.includes("matrimonial")
+    ) {
+      return 2;
+    }
+    // Valor por defecto para no bloquear el flujo si el tipo no coincide.
+    return 2;
+  };
 
   // Cálculo de camas totales seleccionadas vs número de adultos
   const totalBedsSeleccionadas = datohabitacion.reduce(
@@ -1266,7 +1317,7 @@ export const Cid = ({ id }) => {
                           display: 'block',
                           marginTop: '5px'
                         }}>
-                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                          Nota: Para llegadas entra 10:00pm y 6:00am no es posible realizar el traslado.
                         </span>
                       </label>
                     </div>
@@ -1296,7 +1347,7 @@ export const Cid = ({ id }) => {
                           display: 'block',
                           marginTop: '5px'
                         }}>
-                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                          Nota: Para llegadas entra 10:00pm y 6:00am no es posible realizar el traslado.
                         </span>
                       </label>
                     </div>
@@ -1324,7 +1375,7 @@ export const Cid = ({ id }) => {
                           display: 'block',
                           marginTop: '5px'
                         }}>
-                          Nota: Para llegadas entre 12:00 AM y 4:00 AM se aplicará un recargo adicional por servicio nocturno.
+                         Nota: Para llegadas entra 10:00pm y 6:00am no es posible realizar el traslado.
                         </span>
                       </label>
                     </div>
@@ -1447,7 +1498,8 @@ export const Cid = ({ id }) => {
                       Para pagos antes del check-in
                     </p>
                     <p>
-                      <i className="fas fa-bed"></i> {dato.beds} personas
+                      <i className="fas fa-bed"></i>{" "}
+                      {obtenerBedsPorTipoHabitacion(dato.roomName)} personas
                     </p>
                     <p className="price"></p>
                     <p className="price">
@@ -1569,7 +1621,7 @@ export const Cid = ({ id }) => {
                                     : "amountBeforeTax"
                                 ] || "Sin precio disponible",
                                 NombreH: dato.roomName,
-                                beds: dato.beds,
+                                beds: obtenerBedsPorTipoHabitacion(dato.roomName),
                                 hotelid: habitaciones?.hotel?.roomcloud_id,
                                 ciudad: habitaciones?.hotel?.city,
                                 hotelidAutocore: habitaciones?.hotel?.id,
@@ -1642,19 +1694,27 @@ export const Cid = ({ id }) => {
               ));
             })()}
           </div>
-          <div className={styles.reservation}>
-            <h3>Reserva</h3>
-            <hr />
-            <br />
-            <h3>{getHotelName(habitaciones?.hotel)}</h3>
-            <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
-            <p>
-              {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
-            </p>
-            <h4> ({rangosfechas.nights} noches )</h4>
-            <br />
-            <hr />
+          <div
+            className={`${styles.reservation} ${styles.reservationLayout}`}
+          >
+            <div className={styles.reservationHeader}>
+              <h3>Reserva</h3>
+              <hr />
+              <br />
+              <h3>{getHotelName(habitaciones?.hotel)}</h3>
+              <p>
+                {checkin} <i className={"fas fa-arrow-right"}></i> {checkout}
+              </p>
+              <h4> ({rangosfechas.nights} noches )</h4>
+              <br />
+              <hr />
+            </div>
 
+            <div className={styles.reservationCount}>
+              <h3>Habitaciones a reservar: {contadorHabitaciones}</h3>
+            </div>
+
+            <div className={styles.reservationSelectedList}>
             {datohabitacion.map((dato, index) => (
               <div key={index} style={{ position: "relative" }}>
                 {" "}
@@ -1671,9 +1731,16 @@ export const Cid = ({ id }) => {
                   </h5>
 
                   <h5>Tipo de plan: {planDeAlimentacionFormateado}</h5>
-                  {dato.exentoIVA && (
-                    <h5>Este hotel está exento del cobro de IVA.</h5>
+                  {ninos + adultos > 16 && (
+                    <h5>
+                      El beneficio de tourconductor aplica cuando el número de
+                      habitaciones es igual o mayor a 15.
+                    </h5>
                   )}
+                  {dato.exentoIVA && (
+                    <h5>Este hotel está exento del cobros de IVA.</h5>
+                  )}
+
                   {tipoTraslado && (
                     <h5>
                       Traslado seleccionado: {" "}
@@ -1735,6 +1802,7 @@ export const Cid = ({ id }) => {
                 </ul>
               </div>
             ))}
+            </div>
 
             <button
               onClick={handleReservarClick}
@@ -1768,6 +1836,18 @@ export const Cid = ({ id }) => {
                 if (!(!puedeReservar || isSearchingFlights)) {
                   e.target.style.backgroundColor = "#0056b3";
                   e.target.style.transform = "scale(1.1)";
+            <div className={styles.reservationFooter}>
+            <a href="/reservas">
+              <button
+                onClick={enviardatos}
+                disabled={!puedeReservar}
+                data-tooltip-id="tooltip-generar-cotizacion"
+                data-tooltip-content={
+                  !puedeReservar
+                    ? datohabitacion.length === 0
+                      ? "Selecciona las habitaciones que deseas reservar"
+                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                    : "Crear una reserva personalizada para el cliente."
                 }
               }}
               onMouseLeave={(e) => {
@@ -1877,10 +1957,11 @@ export const Cid = ({ id }) => {
                 Generar cotización
               </button>
             </a>
-          <Tooltip 
-            id="tooltip-generar-cotizacion"
-            className="custom-tooltip"
-          />
+            <Tooltip
+              id="tooltip-generar-cotizacion"
+              className="custom-tooltip"
+            />
+            </div>
           </div>
         </div>
       </div>

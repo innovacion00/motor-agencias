@@ -228,6 +228,7 @@ const Tabla = () => {
     try {
 
       const { data, meta } = await getReservas(role, page, itemsPerPage);
+      console.log("getReservas -> meta:", meta);
       const reservasObtenidas = data ?? reservasNano.get();
       
       setReservas(reservasObtenidas);
@@ -264,6 +265,10 @@ const Tabla = () => {
 
       }, 0)
     : 0;
+  
+  const totalAmountToDisplay = Number(
+    paginationMeta?.sumaTotalesNoCanceladas ?? totalAmount
+  );
 
   const formatCurrency = (value) => {
     if (!value || isNaN(value)) return "$$$";
@@ -289,7 +294,17 @@ const Tabla = () => {
   };
 
   const handleSearchInputChange = (event) => {
-    setSearchTerm(event.target.value);
+    let value = event.target.value;
+    
+    // Si es búsqueda por código de reserva, convertir a mayúsculas y limitar a 10 caracteres
+    if (searchType === "codigo") {
+      value = value.toUpperCase();
+      if (value.length > 10) {
+        value = value.substring(0, 10);
+      }
+    }
+    
+    setSearchTerm(value);
   };
 
   const handleSearchSubmit = async (event) => {
@@ -781,7 +796,7 @@ const Tabla = () => {
           }
         `}
       </style>
-      <h1>Consultar mis reservas</h1>
+      <h1 className={styles.pageTitle}>Consultar mis reservas</h1>
       <br />
       <div className={styles.containerfilters}>
 
@@ -801,7 +816,6 @@ const Tabla = () => {
         </select>
         <input
           type="text"
-
           placeholder={
             searchType === "codigo"
               ? "Ingrese el código de reserva..."
@@ -816,10 +830,11 @@ const Tabla = () => {
               : "Ingrese el término de búsqueda..."
           }
           value={searchTerm}
-
           onChange={handleSearchInputChange}
           className={styles.searchInput}
           disabled={isTextSearchDisabled}
+          maxLength={searchType === "codigo" ? 10 : undefined}
+          style={searchType === "codigo" ? { textTransform: "uppercase" } : {}}
         />
 
         <button
@@ -870,7 +885,6 @@ const Tabla = () => {
             <Calendar
               date={selectedDate || new Date()}
               onChange={handleDateSelect}
-              minDate={new Date()}
             />
           </div>
         )}
@@ -927,6 +941,14 @@ const Tabla = () => {
         >
           Pago segundo abono
         </button>
+        <button
+          type="button"
+          onClick={() => handleStatusSelect("6")}
+          className={`${styles.statusButton} ${selectedStatus === "6" ? styles.active : ""}`}
+          disabled={isStatusFilterDisabled}
+        >
+          Reserva abonada
+        </button>
         {selectedStatus !== null && (
           <button
             type="button"
@@ -939,6 +961,7 @@ const Tabla = () => {
         )}
       </div>
 
+      <div className={styles.tableScroll}>
       <table>
         <thead>
           <tr>
@@ -1013,6 +1036,8 @@ const Tabla = () => {
                       format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                     ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                       format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
+                    ) : dato.status == "6" ? (
+                      format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                     ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                       format(dato.fechaLimitePago2, "DD/MM/YYYY", "es")
                     ) : (
@@ -1037,6 +1062,8 @@ const Tabla = () => {
                         `${formatCurrency(dato.totalMitad)} USD`
                       ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} USD`
+                      ) : dato.status == "6" ? (
+                        `${formatCurrency(dato.total)} USD`
                       ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} USD`
                       ) : (
@@ -1060,6 +1087,8 @@ const Tabla = () => {
                         `${formatCurrency(dato.totalMitad)} COP`
                       ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} COP`
+                      ) : dato.status == "6" ? (
+                        `${formatCurrency(dato.total)} COP`
                       ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                         `${formatCurrency(dato.totalMitad)} COP`
                       ) : (
@@ -1097,6 +1126,10 @@ const Tabla = () => {
                     ) : dato.status == "5" && dato.pagadoPrimeraMitad == true ? (
                       <span className={`${styles.status} ${styles.abonado}`}>
                         Abonado primera mitad
+                      </span>
+                    ) : dato.status == "6" ? (
+                      <span className={`${styles.status} ${styles.aboned}`}>
+                        Reserva abonada
                       </span>
                     ) : dato.status == "1" && dato.pagadoPrimeraMitad == true ? (
                       <span className={`${styles.status} ${styles.proces}`}>
@@ -1150,7 +1183,7 @@ const Tabla = () => {
                   Total:
                 </td>
                 <td style={{ fontWeight: "bold" }}>
-                  {formatCurrency(totalAmount)}
+                  {formatCurrency(totalAmountToDisplay)}
                 </td>
                 <td colSpan="2"></td>
               </tr>
@@ -1158,6 +1191,7 @@ const Tabla = () => {
           )}
         </tbody>
       </table>
+      </div>
 
       {/* Mostrar paginación solo cuando no está cargando */}
       {!isLoading && (

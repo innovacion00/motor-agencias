@@ -9,10 +9,12 @@ body {
 
 
 .container {
-    width: 80%;
+    width: 100%;
+    max-width: 1200px;
     height: auto;
     margin: 0 auto;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .breadcrumb {
@@ -35,6 +37,8 @@ body {
     color: #1C3D5A;
     margin-bottom: 20px;
     font-weight: 700;
+    line-height: 1.25;
+    padding-bottom: 20px;
 }
 
 .filter {
@@ -45,6 +49,8 @@ body {
 .filter select {
     padding: 10px;
     font-size: 14px;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .hotel {
@@ -58,9 +64,12 @@ body {
 }
 
 .hotel img {
-    width: 450px;
+    width: 100%;
+    max-width: 450px;
+    min-width: 0;
     height: auto;
     object-fit: cover;
+    flex-shrink: 0;
 }
 
 .hotel_info {
@@ -77,24 +86,31 @@ body {
     margin: 0;
     font-size: 20px;
     color: #2c3e50;
+    line-height: 1.35;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.5rem;
 }
 
-.hotel_info a {
+.hotel_info h3 a {
     color: #1C3D5A;
-    padding-left: 10px;
-    text-decoration: none;
+    padding-left: 0;
     font-size: 14px;
-    text-align: left;
     text-decoration: underline;
-    
+    white-space: nowrap;
 }
 
-.hotel_info a:hover {
+.hotel_info h3 a:hover {
     color: #26547B;
 }
 
 .hotel_info .icons {
     margin: 10px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    align-items: center;
 }
 
 .hotel_info .icons i {
@@ -124,6 +140,8 @@ body {
     font-size: 18px;
     color: #1C3D5A;
     margin-bottom: 10px;
+    line-height: 1.45;
+    word-break: break-word;
 }
 
 .hotel_info .specs {
@@ -195,10 +213,13 @@ button:active{
     background-color: #ff9e2f;
     padding: 20px;
     border-radius: 8px;
-    display: flexbox; 
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 15px;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .search_form_container {
@@ -247,10 +268,16 @@ button:active{
     margin-top: 10px;
 }
 
-.icons img {
-    width: 26px;
-    height: 26px;
-    margin-right: 10px;
+.hotel_info .icons img,
+.hotel_info .icon_image {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
+    max-height: 20px;
+    object-fit: contain;
+    margin-right: 0;
+    flex-shrink: 0;
+    vertical-align: middle;
 }
 
 .stepper {
@@ -318,3 +345,110 @@ button:active{
     font-size: 14px;
     color: #00263b;
   }
+.hotel_info > a {
+    align-self: flex-start;
+}
+
+.hotel_info > a button {
+    width: 100%;
+    max-width: 280px;
+}
+
+@media (max-width: 900px) {
+    .container {
+        padding: 16px 14px;
+    }
+
+    .title {
+        font-size: 26px;
+        margin-bottom: 12px;
+    }
+
+    .filter {
+        float: none;
+        margin-top: 0;
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .filter select {
+        width: 100%;
+    }
+
+    .hotel {
+        flex-direction: column;
+    }
+
+    .hotel img {
+        max-width: none;
+        width: 100%;
+        max-height: 240px;
+    }
+
+    .hotel_info {
+        padding: 16px;
+    }
+
+    .hotel_info h3 {
+        font-size: 18px;
+    }
+
+    .hotel_info h3 a {
+        white-space: normal;
+        width: 100%;
+    }
+
+    .discount {
+        top: 10px;
+        right: 10px;
+    }
+
+    .hotel_info > a {
+        align-self: stretch;
+    }
+
+    .hotel_info > a button {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 12px 10px;
+    }
+
+    .breadcrumb {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .search_form_wrapper {
+        padding: 14px 10px;
+        border-radius: 0;
+        gap: 10px;
+    }
+
+    .hotel_info .price {
+        font-size: 16px;
+    }
+
+    .hotel_info .specs {
+        font-size: 14px;
+    }
+
+    .hotel_info .icons img,
+    .hotel_info .icon_image {
+        width: 18px;
+        height: 18px;
+        max-width: 18px;
+        max-height: 18px;
+    }
+
+    .hotel_info > a button {
+        max-width: 100%;
+    }
+}

@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./styles/gestionar.module.css";
 import { format } from "@formkit/tempo";
 import { currency } from "../../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
 import { hoteles, habitaciones } from "./InfoHoteles";
 import Cookies from "js-cookie";
+import { Calendar } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import {
   generarLinkPago,
   generarLinkPagoBilletera,
@@ -109,6 +112,8 @@ function getAirlineLogo(carrierCode) {
     `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${encodeURIComponent(code || "?")}`
   );
 }
+/** Mismo criterio que en FormularioReserva (Hotel Axis Inn / Autocore). */
+const AXIS_HOTEL_AUTOCORE_ID = 48;
 
 //UseState
 const Gestionar = ({ reservas }) => {
@@ -147,6 +152,42 @@ const Gestionar = ({ reservas }) => {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [isChangingStatus, setIsChangingStatus] = useState(false);
+  const [nuevoEstado, setNuevoEstado] = useState(reservas?.status?.toString() ?? "0");
+
+  const [fechaLimitePago, setFechaLimitePago] = useState(null);
+  const [fechaLimitePago2, setFechaLimitePago2] = useState(null);
+  const [showFechaLimitePagoPicker, setShowFechaLimitePagoPicker] =
+    useState(false);
+  const [showFechaLimitePago2Picker, setShowFechaLimitePago2Picker] =
+    useState(false);
+  const [isSavingFechasPago, setIsSavingFechasPago] = useState(false);
+  const fechaLimitePagoRef = useRef(null);
+  const fechaLimitePago2Ref = useRef(null);
+  const correosAutorizadosFechasPago = [
+    "carlosdceballos30@gmail.com",
+    "innovacion@gehsuites.com",
+    "malejadigital97@gmail.com",
+    "yltamara21@gmail.com",
+    "angelicavreservas@gmail.com",
+  ];
+  const puedeGestionarFechasPago =
+    datosDelUsuario?.role?.includes("super-admin") &&
+    correosAutorizadosFechasPago.includes(
+      datosDelUsuario?.email?.toLowerCase?.() ?? ""
+    );
+
+  // Estados de reserva mapeados (igual que en Tabla.jsx y Movimientos.jsx)
+  const ESTADOS_RESERVA = {
+    "0": "Pendiente de pago",
+    "1": "En proceso",
+    "2": "Pago rechazado",
+    "3": "Pago aprobado",
+    "4": "Cancelado",
+    "5": "Abonado primera mitad",
+    "6": "Reserva abonada",
+  };
 
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
@@ -162,6 +203,48 @@ const Gestionar = ({ reservas }) => {
       });
     }
   }, [reservas]);
+
+  useEffect(() => {
+    const parseIsoDate = (value) => {
+      if (!value || typeof value !== "string") return null;
+      const parsed = new Date(`${value}T00:00:00`);
+      return Number.isNaN(parsed.getTime()) ? null : parsed;
+    };
+    setFechaLimitePago(parseIsoDate(reservas?.fechaLimitePago));
+    setFechaLimitePago2(parseIsoDate(reservas?.fechaLimitePago2));
+  }, [reservas?.fechaLimitePago, reservas?.fechaLimitePago2]);
+
+  // Cerrar calendarios al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        showFechaLimitePagoPicker &&
+        fechaLimitePagoRef.current &&
+        !fechaLimitePagoRef.current.contains(event.target)
+      ) {
+        setShowFechaLimitePagoPicker(false);
+      }
+      if (
+        showFechaLimitePago2Picker &&
+        fechaLimitePago2Ref.current &&
+        !fechaLimitePago2Ref.current.contains(event.target)
+      ) {
+        setShowFechaLimitePago2Picker(false);
+      }
+    };
+
+    if (showFechaLimitePagoPicker || showFechaLimitePago2Picker) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFechaLimitePagoPicker, showFechaLimitePago2Picker]);
+
+  useEffect(() => {
+    setNuevoEstado(reservas?.status?.toString() ?? "0");
+  }, [reservas?.status]);
 
   const handleTitularChange = (e) => {
     const { name, value } = e.target;
@@ -238,7 +321,7 @@ const Gestionar = ({ reservas }) => {
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
 
-    if (reservas?.mascotas) {
+    if (Number(reservas?.mascotasNumber || 0) > 0) {
       setMostrarMascotas(true);
     } else {
       setMostrarMascotas(false);
@@ -316,6 +399,70 @@ const Gestionar = ({ reservas }) => {
       }
     }
     return response;
+  };
+
+  const guardarFechasLimitePago = async () => {
+    if (!reservas?._id) return;
+    if (!puedeGestionarFechasPago) return;
+    if (!fechaLimitePago || !fechaLimitePago2) {
+      Swal.fire({
+        title: "Fechas requeridas",
+        text: "Selecciona las dos fechas límite de pago.",
+        icon: "warning",
+        confirmButtonColor: "#26547B",
+      });
+      return;
+    }
+
+    const toIsoDate = (date) => date.toISOString().split("T")[0];
+
+    try {
+      setIsSavingFechasPago(true);
+      Swal.fire({
+        title: "Guardando fechas...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => Swal.showLoading(),
+      });
+
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/fechas-pago/${reservas._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            fechaLimitePago: toIsoDate(fechaLimitePago),
+            fechaLimitePago2: toIsoDate(fechaLimitePago2),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("No se pudieron actualizar las fechas de pago");
+      }
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Fechas límite de pago actualizadas.",
+        icon: "success",
+        timer: 1200,
+        showConfirmButton: false,
+        confirmButtonColor: "#26547B",
+      }).then(() => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error("Error guardando fechas límite de pago:", error);
+      Swal.fire({
+        title: "Error",
+        text: "No se pudieron actualizar las fechas límite de pago.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    } finally {
+      setIsSavingFechasPago(false);
+    }
   };
 
   const obtenerSaldo = async () => {
@@ -534,19 +681,104 @@ const Gestionar = ({ reservas }) => {
       );
     }
   };
+
+  //#region Cambiar estado de reserva (llamado al seleccionar en el dropdown)
+  const handleCambiarEstado = async (statusSeleccionado) => {
+    if (statusSeleccionado === (reservas?.status?.toString() ?? "0")) return;
+
+    try {
+      setIsChangingStatus(true);
+      Swal.fire({
+        title: "Cambiando estado...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => Swal.showLoading(),
+      });
+
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/status/${reservas._id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ status: parseInt(statusSeleccionado, 10) }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al actualizar el estado");
+      }
+
+      Swal.fire({
+        title: "¡Éxito!",
+        text: "Estado de la reserva actualizado correctamente",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+        confirmButtonColor: "#26547B",
+      }).then(() => window.location.reload());
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+      setNuevoEstado(reservas?.status?.toString() ?? "0"); // Revertir al valor anterior
+      Swal.fire({
+        title: "Error",
+        text: error.message || "No se pudo cambiar el estado. Intente nuevamente.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    } finally {
+      setIsChangingStatus(false);
+    }
+  };
+  //#endregion
   
   //#region Cancelar reservas
   const cancelarReserva = async (reservaId) => {
     try {
-      const response = await fetchWithToken(
-        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
-        {
-          method: "DELETE",
-          body: JSON.stringify({
-            reservaId: reservaId,
-          }),
-        }
+      setIsCancelling(true);
+
+      Swal.fire({
+        title: "Cancelando reserva...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const hotelAutocoreId = Number(
+        reservas?.hotelidAutocore ?? reservas?.hotelId ?? 0
       );
+      const hotelNombre = String(reservas?.hotel || "").toLowerCase();
+      const isAxisHotel =
+        hotelAutocoreId === AXIS_HOTEL_AUTOCORE_ID ||
+        hotelNombre.includes("axis");
+
+      const response = isAxisHotel
+        ? await fetchWithToken(
+            `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
+            {
+              method: "DELETE",
+              body: JSON.stringify({
+                reservaId: reservaId,
+              }),
+            }
+          )
+        : await fetchWithToken(
+            `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/mytool/cancelar`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                localizador: reservas?.reservaChatbotId,
+                canalVentaId: 101,
+                usuarioCancela: "Lucia",
+                maquinaId: 1,
+              }),
+            }
+          );
 
       //#region Validar respuesta api
       if (!response.ok) {
@@ -580,6 +812,8 @@ const Gestionar = ({ reservas }) => {
         "Ocurrió un error al cancelar la reserva. Intenta nuevamente.",
         "error"
       );
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -874,6 +1108,10 @@ const Gestionar = ({ reservas }) => {
         <p className={`${styles.estadoPago} ${styles.abonado}`}>
           Abonado primera mitad
         </p>
+      ) : reservas?.status == 6 ? (
+        <p className={`${styles.estadoPago} ${styles.aboned}`}>
+          Reserva abonada
+        </p>
       ) : reservas?.status == 1 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.proces}`}>
           Pago total en proceso
@@ -913,7 +1151,7 @@ const Gestionar = ({ reservas }) => {
                 src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Icono_telefono.png"
                 alt="logo_telefono"
               />{" "}
-              <span>+57 3336025021</span>
+              <span>+57 3336025669</span>
             </p>
 
             <div className={styles.infoFechas}>
@@ -954,8 +1192,8 @@ const Gestionar = ({ reservas }) => {
                   <div className={styles.contenHabi}>
                     <div className={styles.imgHabi}>
                       <img
-                        src={habitaciones[dato.id]?.url}
-                        alt='habita'
+                        src={habitaciones[dato.room_id]?.url || habitaciones[dato.id]?.url}
+                        alt='img-habitacion'
                       />
                     </div>
                     <div className={styles.infoHabitaciones}>
@@ -1411,6 +1649,12 @@ const Gestionar = ({ reservas }) => {
                 autenticado en una notaría.
               </p>
               <br />
+              <p style={{fontWeight:"bold", color:"red"}}>
+              *Si en la plataforma Booking Connect únicamente se visualiza un pago 
+              correspondiente al 50% de la reserva el dia antes del check-in, 
+              nos veremos en la obligación de solicitar directamente al cliente el pago del monto restante en recepción.
+              </p>
+              <br />
               <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
               <p style={{fontFamily:"Roboto"}}>
                 <br />
@@ -1448,6 +1692,7 @@ const Gestionar = ({ reservas }) => {
           </div>
           <div className={styles.Retenciones}>
             <p>Información sobre las retenciones en caso de que aplique</p>
+            <div className={styles.tableScrollWrapper}>
             <table>
               <thead>
                 <tr>
@@ -1476,6 +1721,7 @@ const Gestionar = ({ reservas }) => {
                 </tr>
               </tbody>
             </table>
+            </div>
 
             {/* <TablaDesglose precio={reservas?.total}/> */}
             <br />
@@ -1635,6 +1881,13 @@ const Gestionar = ({ reservas }) => {
                     {formatCurrency(reservas?.totalMitad)}
                   </p>
                 </div>
+              ) : reservas?.status == "6" ? (
+                <div className={styles.totalPago}>
+                  <p>Total + impuestos</p>
+                  <p className={styles.totalP}>
+                    {formatCurrency(reservas?.total)}
+                  </p>
+                </div>
               ) : reservas?.status == "1" &&
                 reservas.pagadoPrimeraMitad == true ? (
                 <div className={styles.totalPago}>
@@ -1652,11 +1905,13 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
+                  reservas?.status == "6" ||
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
-                    reservas?.status == "4"
+                    reservas?.status == "4" ||
+                    reservas?.status == "6"
                     ? styles.disabledButtonp
                     : ""
                   }`}
@@ -1671,6 +1926,7 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
                   reservas?.status == "5" ||
+                  reservas?.status == "6" ||
                   reservas?.pagadoPrimeraMitad ||
                   isLoading
                 }
@@ -1678,6 +1934,7 @@ const Gestionar = ({ reservas }) => {
                     reservas?.status == "3" ||
                     reservas?.status == "4" ||
                     reservas?.status == "5" ||
+                    reservas?.status == "6" ||
                     reservas?.pagadoPrimeraMitad
                     ? styles.disabledButtonp
                     : ""
@@ -1691,12 +1948,14 @@ const Gestionar = ({ reservas }) => {
                   reservas?.status == "1" ||
                   reservas?.status == "3" ||
                   reservas?.status == "4" ||
+                  reservas?.status == "6" ||
                   
                   isLoading
                 }
                 className={`${styles.pagarButton} ${reservas?.status == "1" ||
                     reservas?.status == "3" ||
                     reservas?.status == "4" 
+                    || reservas?.status == "6"
                     
                     ? styles.disabledButtonp
                     : ""
@@ -1724,15 +1983,44 @@ const Gestionar = ({ reservas }) => {
           <div className={styles.gestionarReserv}>
             <p>Gestionar reserva</p>
             <div className={styles.acciones}>
+              {/* Cambiar estado de la reserva - visible para super-admin o correos autorizados */}
+              {(datosDelUsuario?.role?.includes("super-admin") &&
+                ["carlosdceballos30@gmail.com", "innovacion@gehsuites.com", "malejadigital97@gmail.com","yltamara21@gmail.com","angelicavreservas@gmail.com"].includes(
+              
+                  datosDelUsuario?.email?.toLowerCase?.() ?? ""
+                )) && (
+                <div className={styles.cambiarEstadoWrapper}>
+                  <select
+                    value={nuevoEstado}
+                    onChange={(e) => {
+                      const valor = e.target.value;
+                      if (valor === (reservas?.status?.toString() ?? "0")) return;
+                      setNuevoEstado(valor);
+                      handleCambiarEstado(valor);
+                    }}
+                    disabled={isChangingStatus}
+                    className={styles.estadoSelect}
+                  >
+                    {Object.entries(ESTADOS_RESERVA).map(([valor, etiqueta]) => (
+                      <option key={valor} value={valor}>
+                        {etiqueta}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
               {/* <a>Modificar reserva</a> */}
 
               <button
                 onClick={() => confirmarCancelacion(reservas._id)}
-                disabled={isCancellationDisabled()}
-                className={`${styles.cancelarButton} ${isCancellationDisabled() ? styles.disabledButtonc : ""
-                  }`}
+                disabled={isCancellationDisabled() || isCancelling}
+                className={`${styles.cancelarButton} ${
+                  isCancellationDisabled() || isCancelling
+                    ? styles.disabledButtonc
+                    : ""
+                }`}
               >
-                Cancelar reserva
+                {isCancelling ? "Cancelando..." : "Cancelar reserva"}
               </button>
               {/* <button
                 onClick={imprimirVoucher}
@@ -1745,6 +2033,74 @@ const Gestionar = ({ reservas }) => {
               </button> */}
             </div>
           </div>
+          {puedeGestionarFechasPago && (
+            <div className={styles.gestionarReserv}>
+              <p>Modificar fechas de pago</p>
+              <div className={styles.acciones}>
+                <div className={styles.fechasPagoContainer}>
+                  <div ref={fechaLimitePagoRef} style={{ position: "relative" }}>
+                    <p className={styles.fechaPagoLabel}>Fecha límite pago 1</p>
+                    <input
+                      type="text"
+                      value={
+                        fechaLimitePago
+                          ? fechaLimitePago.toISOString().split("T")[0]
+                          : ""
+                      }
+                      onFocus={() => setShowFechaLimitePagoPicker(true)}
+                      readOnly
+                      className={styles.fechaPagoInput}
+                    />
+                    {showFechaLimitePagoPicker && (
+                      <div className={styles.calendarioWrapper}>
+                        <Calendar
+                          date={fechaLimitePago || new Date()}
+                          onChange={(date) => {
+                            setFechaLimitePago(date);
+                            setShowFechaLimitePagoPicker(false);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div ref={fechaLimitePago2Ref} style={{ position: "relative" }}>
+                    <p className={styles.fechaPagoLabel}>Fecha límite pago 2</p>
+                    <input
+                      type="text"
+                      value={
+                        fechaLimitePago2
+                          ? fechaLimitePago2.toISOString().split("T")[0]
+                          : ""
+                      }
+                      onFocus={() => setShowFechaLimitePago2Picker(true)}
+                      readOnly
+                      className={styles.fechaPagoInput}
+                    />
+                    {showFechaLimitePago2Picker && (
+                      <div className={styles.calendarioWrapper}>
+                        <Calendar
+                          date={fechaLimitePago2 || new Date()}
+                          onChange={(date) => {
+                            setFechaLimitePago2(date);
+                            setShowFechaLimitePago2Picker(false);
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  onClick={guardarFechasLimitePago}
+                  disabled={isSavingFechasPago}
+                  className={styles.guardarFechasPagoButton}
+                >
+                  {isSavingFechasPago ? "Actualizando..." : "Actualizar fechas de pago"}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,9 +1,14 @@
-/* src/styles/swiperSlider.css */
+/* Banners Swiper: conservar proporción; no forzar altura fija (evita estiramiento) */
 .swiper-slide img {
-        width: 85%;
-        height: 70vh;
-         
-  }
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(70vh, 560px);
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  margin: 0 auto;
+}
 
  
 /* Cambiar el color de las flechas */

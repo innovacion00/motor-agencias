@@ -141,15 +141,7 @@ import RouteProtection from "../components/RouteProtection.astro";
             <br />
             <h3>Servicios generales</h3>
             <div class="service-list">
-              <div class="service-item">
-                <span
-                  ><img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
-                    alt="check icon"
-                  />
-                  Lavanderia/Tintoreria
-                </span>
-              </div>
+              
               <div class="service-item">
                 <span
                   ><img
@@ -966,6 +958,12 @@ import RouteProtection from "../components/RouteProtection.astro";
         border: none;
         border-radius: 5px;
         cursor: pointer;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 30px 10px 20px 10px;
+        }
       }
     </style>
   </html></BaseLayout

@@ -7,7 +7,7 @@ async function fetchProtectedData() {
 }
 import BaseLayout from "../layouts/BaseLayout.astro";
 import DropdownSearch from "../components/DropdownSearch";
-import CarrouselA from "../components/Carrouseles/CarrouselAvexi";
+import CarrouselA from "../components/Carrouseles/Carrouselmarques";
 import RouteProtection from "../components/RouteProtection.astro";
 ---
 
@@ -36,46 +36,35 @@ import RouteProtection from "../components/RouteProtection.astro";
         </div>
 
         <!-- Sección General -->
+
         <div id="generalSection" class="section active">
           <div class="gallery">
             <CarrouselA client:load />
             <!-- <img alt="Hotel lobby with reception desk and seating area" class="main-image" height="400"
-            src="https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg" width="800" /> -->
-            <!-- <div class="side-images">
+            src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1" width="800" />
+          <div class="side-images">
             <img alt="Hotel dining area with tables and chairs" height="150"
               src="https://www.gehsuites.com/multimedia/galerias/galeriaazuan6270.jpg" width="250" />
             <img alt="Close-up of a breakfast dish with eggs and toast" height="150"
-              src="https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg" width="250" />
+              src="https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg" width="250" />
           </div> -->
           </div>
           <br />
-          <h2 style={{ fontSize: "18px" }}>Hotel Avexi Suites ⭐⭐⭐</h2>
+          <h2 style={{ fontSize: "18px" }}>Hotel boutique El Marqués ⭐⭐⭐⭐</h2>
           <br />
           <p>
-            Ubicado entre el mar Caribe y la bahía de Cartagena de Indias, en el
-            animado distrito comercial y turístico de Bocagrande, este hotel
-            ofrece fácil acceso a todas las atracciones y opciones de
-            entretenimiento que la ciudad moderna y amurallada tiene para ti.
+            Hotel boutique El Marqués by GEH Suites es un hotel boutique ubicado en el Centro Histórico de Cartagena, dentro de la emblemática Ciudad Amurallada. 
+            Ocupa una casa colonial del siglo XVII restaurada, que conserva su arquitectura original y la combina con comodidades modernas y atención personalizada.
+            Gracias a su excelente ubicación, los huéspedes pueden visitar caminando los principales atractivos turísticos como Plaza Santo Domingo, Plaza de Bolívar,
             <br /><br />
-            En el Hotel Avexi Suites pensamos en todos los detalles para que tengas
-            un descanso ideal y un hospedaje cómodo, por eso contamos con habitaciones
-            confortables, diseñadas especialmente para que tu estadía sea una experiencia
-            inolvidable.
+            Museo de la Inquisición, Plaza San Pedro Claver, así como iglesias, museos, boutiques y una amplia oferta de restaurantes de gastronomía local, nacional e internacional.
+            Es una opción ideal para parejas, familias y viajeros que desean alojarse en el corazón del Centro Histórico y vivir una experiencia auténtica en Cartagena.
           </p>
           <br />
           <hr />
           <div class="services">
             <h3>Servicios destacados</h3>
             <div class="service-list">
-              <div class="service-item">
-                <span
-                  ><img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png"
-                    alt="check icon"
-                  />
-                  Cerca a la playa
-                </span>
-              </div>
               <div class="service-item">
                 <span
                   ><img
@@ -88,19 +77,19 @@ import RouteProtection from "../components/RouteProtection.astro";
               <div class="service-item">
                 <span
                   ><img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
                     alt="check icon"
                   />
-                  Transporte al aereopuerto (adicional)
+                  Acceso a piscina (incluido)
                 </span>
               </div>
               <div class="service-item">
                 <span
                   ><img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
                     alt="check icon"
                   />
-                  Estacionamiento gratuito (Sujeto a disponibilidad)
+                  Aire acondicionado
                 </span>
               </div>
               <div class="service-item">
@@ -166,17 +155,6 @@ import RouteProtection from "../components/RouteProtection.astro";
                     src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
                     alt="check icon"
                   />
-
-                  Estacionamiento gratuito (Sujeto a disponibilidad)
-                </span>
-              </div>
-              <div class="service-item">
-                <span
-                  ><img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
-                    alt="check icon"
-                  />
-
                   Wifi en todas las areas del hotel
                 </span>
               </div>
@@ -186,8 +164,16 @@ import RouteProtection from "../components/RouteProtection.astro";
                     src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
                     alt="check icon"
                   />
-
-                  Servicio de despertador
+                  Duchas con agua caliente
+                </span>
+              </div>
+              <div class="service-item">
+                <span
+                  ><img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                    alt="check icon"
+                  />
+                  Ubicación en el Centro Histórico
                 </span>
               </div>
               <div class="service-item">
@@ -222,16 +208,15 @@ import RouteProtection from "../components/RouteProtection.astro";
               </div>
             </div>
           </div>
-
+          <!-- Botones en la parte inferior -->
           <div class="info-box">
             <div class="contact-info">
               <i class="fas fa-phone-alt"> </i>
               +57 333 602 50 21
               <i class="fas fa-map-marker-alt" style="margin-left: 20px;"> </i>
-              Bocagrande Cra 3 N 4-86. Cartagena de Indias, Bolívar Cra. 3 #8-156,
-              Cartagena de Indias, Provincia de Cartagena, Bolívar
+              Calle Nuestra Señora del Carmen #33- 41, Cartagena de Indias, Bolívar
               <a
-                href="https://www.google.com/maps/place/Hotel+Avexi+Suites+By+GEH+Suites/@10.3982749,-75.5613593,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef62f3dacf7d4b7:0xf58b384d5cb2a6ee!5m2!4m1!1i2!8m2!3d10.3982696!4d-75.5587844!16s%2Fg%2F11h8967kdh?hl=es&entry=ttu&g_ep=EgoyMDI1MDQwMi4xIKXMDSoJLDEwMjExNDUzSAFQAw%3D%3D"
+                href="https://www.google.com/maps/place/El+Marqu%C3%A9s+Hotel+Boutique/@10.4234306,-75.5520041,20.54z/data=!4m9!3m8!1s0x8ef625b9c0555555:0xb580041a0f727000!5m2!4m1!1i2!8m2!3d10.4235819!4d-75.5522379!16s%2Fg%2F1tfzsznw?entry=ttu&g_ep=EgoyMDI2MDMxMC4wIKXMDSoASAFQAw%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -239,10 +224,10 @@ import RouteProtection from "../components/RouteProtection.astro";
               >
             </div>
             <!-- <div class="buttons">
-            <button>
-              Ver habitaciones
-            </button>
-          </div> -->
+    <button>
+      Ver habitaciones
+    </button>
+  </div> -->
           </div>
         </div>
 
@@ -250,33 +235,33 @@ import RouteProtection from "../components/RouteProtection.astro";
         <!-- Sección Habitaciones -->
 
         <div id="roomsSection" class="section">
-          <!-- Habitación Doble estandar -->
+          <!-- Habitación Doble deluxe -->
 
           <div class="room">
             <div class="room-header">
               <div class="room-gallery">
                 <div class="room-main-image-container">
                   <img
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1"
-                    alt="Habitación Doble Estándar"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe.jpg"
+                    alt="Habitación Deluxe estandar"
                     class="room-main-image"
                   />
                 </div>
                 <div class="room-small-images-container">
                   <img
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243542684.jpg?k=d7436a8698ed6c1bae01f7618ccb8d9e8d7454221f19e46fdcabe6e21619490a&o=&hp=1"
-                    alt="Imagen pequeña 1"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe2.jpg"
+                    alt="habitacion_deluxe 2"
                     class="room-small-image"
                   />
                   <img
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243542610.jpg?k=2cf75ad03a472256d6b2e402fd8d462ce679052a32d0df13c6e7dac56c3d1136&o=&hp=1"
-                    alt="Imagen pequeña 2"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe3.jpg"
+                    alt="habitacion_deluxe3"
                     class="room-small-image"
                   />
                 </div>
               </div>
               <div class="room-details">
-                <h3>Doble Estándar</h3>
+                <h3>Habitacion Deluxe</h3>
                 <p>Habitación acogedora con cama doble, ideal para parejas.</p>
                 <br />
                 <hr />
@@ -345,42 +330,42 @@ import RouteProtection from "../components/RouteProtection.astro";
                 <!-- <button class="availability-button">Ver disponibilidad</button> -->
               </div>
             </div>
-            <!-- Habitación Cuadruple -->
+            <!-- Habitación Junior -->
           </div>
           <div class="room">
             <div class="room-header">
               <div class="room-gallery">
                 <div class="room-main-image-container">
                   <img
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543715.jpg?k=7a47cd6af5f8971556ec91581b60c011e0544430470ef73311dd1663eb7dae96&o=&hp=1"
-                    alt="Habitación Doble Estándar"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior.jpg"
+                    alt="Habitación Junior"
                     class="room-main-image"
                   />
                 </div>
                 <div class="room-small-images-container">
                   <img
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543709.jpg?k=4e2e40743d7fb17a4ea1e2935d754059afb8f5720967603bd3da5c394dcae6a0&o=&hp=1"
-                    alt="Imagen pequeña 1"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior2.jpg"
+                    alt="Cuadruple Imagen pequeña 1 "
                     class="room-small-image"
                   />
                   <img
-                    src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/243578871.jpg?k=ebf8b988149c7de3f4a215414ad21456a89edb50f5a4d5ba48d5d82a75dba745&o=&hp=1"
-                    alt="Imagen pequeña 2"
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior3.jpg"
+                    alt="Cuadruple Imagen pequeña 2"
                     class="room-small-image"
                   />
                 </div>
               </div>
               <div class="room-details">
-                <h3>Cuadruple Estándar</h3>
+                <h3>Junior Suite</h3>
                 <p>
-                  Habitación amplia con una cama doble y una cama individual,
-                  perfecta para tres personas.
+                  Amplia suite con cama king size, ideal para una estancia
+                  en pareja.
                 </p>
                 <br />
                 <hr />
                 <br />
                 <div class="room-icons">
-                  <span>🛏 1x Cama Doble, 1x Litera o Camarote</span>
+                  <span>🛏 1x Cama king size</span>
                   <span>📶 Wifi gratuito</span>
                   <span>❄️ Aire acondicionado</span>
                 </div>
@@ -444,13 +429,201 @@ import RouteProtection from "../components/RouteProtection.astro";
               </div>
             </div>
           </div>
+        <!-- Junior suite twin -->
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin1.jpg"
+                    alt="Habitación Deluxe estandar"
+                    class="room-main-image"
+                  />
+                </div>
+                <div class="room-small-images-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin2.jpg"
+                    alt="habitacion_deluxe 2"
+                    class="room-small-image"
+                  />
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin3.jpg"
+                    alt="habitacion_deluxe3"
+                    class="room-small-image"
+                  />
+                </div>
+              </div>
+              <div class="room-details">
+                <h3>Junior suite twin</h3>
+                <p>Habitación acogedora con 2 cama doble.Perfecto tres huespedes</p>
+                <br />
+                <hr />
+                <br />
+                <div class="room-icons">
+                  <span>🛏 2 camas dobles king size</span>
+                  <span>📶 Wifi gratuito</span>
+                  <span>❄️ Aire acondicionado</span>
+                </div>
+                <br />
+                <hr />
+                <br />
+                <div class="room-services">
+                  <h4>Instalaciones</h4>
+                  <ul>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Aire acondicionado
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Caja de seguridad
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Baño con ducha
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Toallas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Artículos de aseo
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Pantuflas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Wifi gratuito
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> TV Satelital
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="availability-button">Ver disponibilidad</button> -->
+              </div>
+            </div>
+            <!-- Habitación Suite -->
+          </div>
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite.jpg"
+                    alt="Habitación suite"
+                    class="room-main-image"
+                  />
+                </div>
+                <div class="room-small-images-container">
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite2.jpg"
+                    alt="habitacion suite 2"
+                    class="room-small-image"
+                  />
+                  <img
+                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite3.jpg"
+                    alt="habitacion suite 3"
+                    class="room-small-image"
+                  />
+                </div>
+              </div>
+              <div class="room-details">
+                <h3>Suite</h3>
+                <p>Habitación acogedora con cama doble, Excelente opcion para una instancia mas grande y comoda.</p>
+                <br />
+                <hr />
+                <br />
+                <div class="room-icons">
+                  <span>🛏 1 cama king size</span>
+                  <span>📶 Wifi gratuito</span>
+                  <span>❄️ Aire acondicionado</span>
+                </div>
+                <br />
+                <hr />
+                <br />
+                <div class="room-services">
+                  <h4>Instalaciones</h4>
+                  <ul>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Aire acondicionado
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Caja de seguridad
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Baño con ducha
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Toallas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Artículos de aseo
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Pantuflas
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> Wifi gratuito
+                    </li>
+                    <li>
+                      <img
+                        src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png"
+                        alt="check icon"
+                      /> TV Satelital
+                    </li>
+                  </ul>
+                </div>
+                <!-- <button class="availability-button">Ver disponibilidad</button> -->
+              </div>
+            </div>
+          </div>
+          <!-- Añadir otra hab -->
         </div>
-
-        <!-- Botones en la parte inferior -->
       </div>
 
       <script>
-
         // Seleccionamos los botones y las secciones
         const generalBtn = document.getElementById("generalBtn");
         const roomsBtn = document.getElementById("roomsBtn");

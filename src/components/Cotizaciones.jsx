@@ -285,7 +285,7 @@ const Cotizaciones = () => {
         {/* Columna Rechazadas */}
         <div className="column">
           <div className="column-header">
-            <span>Rechazadas</span>
+            <span>Rechazadas</span>|
             <span className="count">{getCotizacionesByStatus(2).length}</span>
           </div>
           {renderCotizacionesCards(getCotizacionesByStatus(2))}

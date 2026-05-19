@@ -34,6 +34,31 @@ const nombreHotelId = (hotelId) => {
     return hotelMap[hotelId] || "Hotel no encontrado";
 };
 
+// Función para obtener la dirección del hotel basado en el ID
+const direccionHotelId = (hotelId) => {
+    const direccionMap = {
+        // Hoteles Cartagena
+        1: "Bocagrande Cra 3 N° 8-156, Cartagena de Indias, Bolívar", // Hotel Azuan
+        4: "Cra. 1 #47-10, Marbella, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Aixo
+        5: "Cartagena de indias, Barrio Marbella carrera 2 número 47- 10", // Hotel Abi
+        6: "Bocagrande Cra 3 N° 4-86, Cartagena de Indias, Bolívar", // Hotel Avexi
+        7: "Bocagrande Avenida San Martin Cra 2 N 7-159, Cartagena de Indias, Bolívar", // Hotel Bocagrande
+        9: "Bocagrande Cra 3 N° 4 -32, Cartagena de Indias, Bolívar", // Hotel Marina
+        56: "Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar", // Hotel Boquilla
+        // Hoteles Santa Marta
+        8: "Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena", // Hotel Rodadero
+        2: "Calle 11 # 2 - 29 Centro Histórico, Santa Marta, Magdalena", // Hotel 1525
+        48: "Carrera 3 No. 10 - 40, El Rodadero, 470001 Santa Marta", // Hotel Axis
+        44: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena", // Hotel Sansiraka
+        123: "CRA 4 N° 23F05 Gaira, 470002", // Playa Salguero Hotel
+        // Hoteles Bogotá
+        10: "Chapinero, Calle 95 #9-97, Bogotá, Colombia", // Hotel Windsor
+        3: "Cra 18 #93 - 97, Barrio el Chico, Bogotá, Colombia", // Hotel Madisson
+    };
+
+    return direccionMap[hotelId] || "Dirección no disponible";
+};
+
 // Función para obtener las imágenes del hotel basado en el ID
 const getHotelImagesById = (hotelId) => {
     const hotelImagesMap = {
@@ -158,6 +183,26 @@ const generarDescripcionPension = (planAlimentacion) => {
         // Por defecto, solo desayuno
         return "Incluye desayuno y servicios básicos";
     }
+};
+
+const textoTrasladoDesdeInfoTransporte = (info) => {
+    if (!info) return null;
+    if (info.tipo) {
+        if (info.tipo === 'aeropuerto_hotel') return 'Aeropuerto al hotel';
+        if (info.tipo === 'hotel_aeropuerto') return 'Hotel al aeropuerto';
+        if (info.tipo === 'ambos') return 'Aeropuerto al hotel | Hotel al aeropuerto';
+        return String(info.tipo);
+    }
+    const tr = info.tipoRecogida;
+    if (tr === 0) return 'Aeropuerto al hotel';
+    if (tr === 1) return 'Hotel al aeropuerto';
+    if (tr === 2) return 'Aeropuerto al hotel | Hotel al aeropuerto';
+    return 'Incluido';
+};
+
+const nombresToursValidos = (infoToures) => {
+    if (!infoToures?.nombres || !Array.isArray(infoToures.nombres)) return [];
+    return infoToures.nombres.map((n) => String(n || '').trim()).filter(Boolean);
 };
 
 export const CotizacionCreada = ({ id }) => {
@@ -471,6 +516,8 @@ export const CotizacionCreada = ({ id }) => {
     // Calcular markup si existe
     const markupAmount = cotizacion.markup ? cotizacion.markup - total : 0;
     const markupPorcentaje = total > 0 ? Math.round((markupAmount / total) * 100) : 0;
+    const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
+    const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
 
     // Función para descargar PDF
     const handleDownloadPDF = async () => {
@@ -651,7 +698,7 @@ export const CotizacionCreada = ({ id }) => {
                             <h3 className="subtitle">{hotelName}</h3>
                             <div className="contact-item">
                                 <MapPin className="icon" />
-                                <span>Bocagrande Cra 3 N° 4-86. Cartagena de Indias, Bolívar</span>
+                                <span>{direccionHotelId(candidateHotelId || roomsData[0]?.hotelidAutocore || 1)}</span>
                                 <div className="contact-item">
                                     <Phone className="icon" />
                                     <span>+57 333 602 50 21</span>
@@ -709,6 +756,14 @@ export const CotizacionCreada = ({ id }) => {
                                 <div className="date-item">
                                     <p className="label">Habitaciones</p>
                                     <p className="value">{roomsData.length}</p>
+                                </div>
+                                <div className="date-item">
+                                    <p className="label">Traslados</p>
+                                    <p className="value">{textoTrasladoResumen || 'No incluidos'}</p>
+                                </div>
+                                <div className="date-item">
+                                    <p className="label">Tours</p>
+                                    <p className="value">{toursNombresResumen.length > 0 ? toursNombresResumen.join(', ') : 'No incluidos'}</p>
                                 </div>
                             </div>
 
@@ -795,19 +850,17 @@ export const CotizacionCreada = ({ id }) => {
                                                 {cotizacion?.infoTransporte ? (
                                                     <div>
                                                         <p><strong>Traslado incluido:</strong> Sí</p>
-                                                        {cotizacion.infoTransporte.tipo && (
-                                                            <p><strong>Tipo de traslado:</strong> {cotizacion.infoTransporte.tipo}</p>
-                                                        )}
+                                                        <p><strong>Tipo de traslado:</strong> {textoTrasladoResumen}</p>
                                                     </div>
                                                 ) : (
                                                     <p><strong>Traslado incluido:</strong> No</p>
                                                 )}
 
-                                                {cotizacion?.infoToures && Array.isArray(cotizacion.infoToures.nombres) && cotizacion.infoToures.nombres.length > 0 ? (
+                                                {toursNombresResumen.length > 0 ? (
                                                     <div>
                                                         <p><strong>Tours incluidos:</strong></p>
                                                         <ul style={{ marginLeft: '20px', marginTop: '5px' }}>
-                                                            {cotizacion.infoToures.nombres.map((nombreTour, index) => (
+                                                            {toursNombresResumen.map((nombreTour, index) => (
                                                                 <li key={index}>{nombreTour || `Tour ${index + 1}`}</li>
                                                             ))}
                                                         </ul>
@@ -998,20 +1051,22 @@ export const CotizacionCreada = ({ id }) => {
                         <div style={{ display: 'grid', gap: '10px' }}>
                             <button
                                 onClick={handleAceptar}
+                                disabled={decision !== null}
                                 style={{
                                     fontWeight: '500',
-                                    backgroundColor: '#059669',
+                                    backgroundColor: decision !== null ? '#9ca3af' : '#059669',
                                     color: 'white',
                                     padding: '12px 16px',
                                     border: 'none',
                                     borderRadius: '5px',
-                                    cursor: 'pointer',
+                                    cursor: decision !== null ? 'not-allowed' : 'pointer',
                                     fontSize: '14px',
                                     width: '100%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '8px'
+                                    gap: '8px',
+                                    opacity: decision !== null ? 0.6 : 1
                                 }}
                             >
                                 <CheckCircle size={18} />
@@ -1019,20 +1074,22 @@ export const CotizacionCreada = ({ id }) => {
                             </button>
                             <button
                                 onClick={handleRechazar}
+                                disabled={decision !== null}
                                 style={{
                                     fontWeight: '500',
-                                    backgroundColor: 'white',
-                                    color: '#ef4444',
+                                    backgroundColor: decision !== null ? '#f3f4f6' : 'white',
+                                    color: decision !== null ? '#9ca3af' : '#ef4444',
                                     padding: '12px 16px',
-                                    border: '1px solid #ef4444',
+                                    border: `1px solid ${decision !== null ? '#9ca3af' : '#ef4444'}`,
                                     borderRadius: '5px',
-                                    cursor: 'pointer',
+                                    cursor: decision !== null ? 'not-allowed' : 'pointer',
                                     fontSize: '14px',
                                     width: '100%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: '8px'
+                                    gap: '8px',
+                                    opacity: decision !== null ? 0.6 : 1
                                 }}
                             >
                                 <XCircle size={18} />

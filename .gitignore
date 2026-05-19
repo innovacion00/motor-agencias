@@ -1,24 +1,80 @@
-# build output
-dist/
-
-# generated types
-.astro/
-
-# dependencies
+# Dependencies
 node_modules/
 
-# logs
+# Build output
+dist/
+build/
+.output/
+
+# Astro
+.astro/
+
+# Vite
+*.local
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# environment variables
+# Environment variables (nunca subir credenciales)
 .env
+.env.*
+!.env.example
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
 .env.production
+.env.production.local
 
-# macOS-specific files
-.DS_Store
+# Cache
+.cache/
+.parcel-cache/
+.turbo/
+.eslintcache
+*.tsbuildinfo
 
-# jetbrains setting folder
+# Testing
+coverage/
+.nyc_output/
+
+# Package manager
+.pnpm-store/
+.npm/
+.yarn/
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# IDEs y editores
 .idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Netlify (build local)
+.netlify/
+
+# Vercel
+.vercel/
+
+# Otros
+*.bak
+*.tmp
+.temp/
+tmp/
+temp/

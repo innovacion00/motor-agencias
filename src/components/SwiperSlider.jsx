@@ -11,6 +11,7 @@ import 'swiper/css/pagination';
 const SwiperSlider = () => {
   return (
     <Swiper
+      className="swiper-home-hero"
       modules={[Navigation, Pagination, Autoplay, EffectFade]} // Habilitar módulos
       spaceBetween={30}
       slidesPerView= {1}
@@ -25,11 +26,11 @@ const SwiperSlider = () => {
       {/* <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ChatGPT%20Image%2024%20nov%202025,%2009_48_26%20a.m..png" alt="Banner servicio temporalmente inactivo" />
       </SwiperSlide> */}
-      <SwiperSlide>
+      {/* <SwiperSlide>
       <a href="/BookingConnectIA">
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20geh%20ia.jpg" alt="Banner LucIA" />
         </a>
-      </SwiperSlide>
+      </SwiperSlide> */}
       <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner%20playa%20salguero.jpg" alt="Banner playa salguero" />
       </SwiperSlide>

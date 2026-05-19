@@ -522,7 +522,7 @@ const UserDashboard = () => {
                     <div className="pending-payment-item">
                       <div>Total:{formatCurrency(dato.total)} COP</div>
                     </div>
-                    <hr style={{ marginBottom: "10px", color: "green" }} />
+                    <hr className="dashboard-reserva-hr" aria-hidden="true" />
                   </tr>
                 ))}
               </div>
@@ -534,7 +534,9 @@ const UserDashboard = () => {
       </div>
 
       {isPoliciesModalOpen && (
-        <div style={{
+        <div
+          className="userdashboard-modal-overlay"
+          style={{
           position: "fixed",
           inset: 0,
           background: "rgba(0,0,0,0.4)",
@@ -542,10 +544,13 @@ const UserDashboard = () => {
           alignItems: "center",
           justifyContent: "center",
           zIndex: 1000,
+          padding: "12px",
+          boxSizing: "border-box",
         }}>
           <div style={{
             background: "#fff",
             width: "min(90vw, 720px)",
+            maxWidth: "100%",
             maxHeight: "85vh",
             borderRadius: "8px",
             boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
@@ -577,7 +582,7 @@ const UserDashboard = () => {
                 }}
               />
             </div>
-            <div style={{
+            <div className="userdashboard-modal-footer" style={{
               padding: "12px 20px",
               borderTop: "1px solid #eee",
               display: "flex",
