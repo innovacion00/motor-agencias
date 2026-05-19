@@ -18,8 +18,8 @@ import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
 
-/** Mismo criterio que en FormularioReserva (Hotel Axis Inn / Autocore). */
-const AXIS_HOTEL_AUTOCORE_ID = 48;
+/** Mismo criterio que en FormularioReserva (Axis, Boquilla / Autocore). */
+const LEGACY_RESERVA_HOTEL_AUTOCORE_IDS = new Set([48, 56]);
 
 //UseState
 const Gestionar = ({ reservas }) => {
@@ -658,11 +658,12 @@ const Gestionar = ({ reservas }) => {
         reservas?.hotelidAutocore ?? reservas?.hotelId ?? 0
       );
       const hotelNombre = String(reservas?.hotel || "").toLowerCase();
-      const isAxisHotel =
-        hotelAutocoreId === AXIS_HOTEL_AUTOCORE_ID ||
-        hotelNombre.includes("axis");
+      const isLegacyHotel =
+        LEGACY_RESERVA_HOTEL_AUTOCORE_IDS.has(hotelAutocoreId) ||
+        hotelNombre.includes("axis") ||
+        hotelNombre.includes("boquilla");
 
-      const response = isAxisHotel
+      const response = isLegacyHotel
         ? await fetchWithToken(
             `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/cancelar-reserva`,
             {
