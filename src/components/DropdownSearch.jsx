@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas";
 import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
+import { puedeAccederVueloHotel } from "../utils/correosVueloHotel";
 
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -32,6 +33,7 @@ const DropdownSearch = () => {
   const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
   const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
   const [selectedOriginIata, setSelectedOriginIata] = useState("");
+  const [puedeVerVueloHotel, setPuedeVerVueloHotel] = useState(false);
 
   const destinationMapping = {
     CARTAGENA: { name: "Cartagena de Indias", iataCode: "CTG" },
@@ -88,6 +90,33 @@ const DropdownSearch = () => {
       Modal.setAppElement(document.body);
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("datosUsuario");
+      if (!raw) {
+        setPuedeVerVueloHotel(false);
+        return;
+      }
+      const datos = JSON.parse(raw);
+      setPuedeVerVueloHotel(puedeAccederVueloHotel(datos?.email));
+    } catch {
+      setPuedeVerVueloHotel(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!puedeVerVueloHotel && botonactivado === "flight") {
+      setbotonactivado("single");
+      setIncludesFlight(false);
+      setOrigin("");
+      setSelectedOriginIata("");
+      try {
+        localStorage.setItem("tipoBusqueda", "1");
+      } catch (e) {}
+      localStorage.removeItem("datosDelVuelo");
+    }
+  }, [puedeVerVueloHotel, botonactivado]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -438,14 +467,16 @@ const DropdownSearch = () => {
         >
           Reserva para grupos
         </button>
-        <button
-          className={`${styles.button} ${
-            botonactivado == "flight" ? styles.active : ""
-          }`}
-          onClick={handleFlightReservation}
-        >
-          Vuelo + Hotel
-        </button>
+        {puedeVerVueloHotel && (
+          <button
+            className={`${styles.button} ${
+              botonactivado == "flight" ? styles.active : ""
+            }`}
+            onClick={handleFlightReservation}
+          >
+            Vuelo + Hotel
+          </button>
+        )}
       </div>
       <br />
 

@@ -157,9 +157,26 @@ const FormularioReserva = () => {
   const [numPasajeros, setNumPasajeros] = useState(1);
   const [flightData, setFlightData] = useState(null);
   const [baggageData, setBaggageData] = useState(null);
+  const CEDULA_DOCUMENT_EXPIRATION = "2060-09-08";
+
+  const requiresDocumentExpirationDate = (tipoDocumento) =>
+    tipoDocumento === "pasaporte" || tipoDocumento === "otro";
+
+  const getDocumentExpiration = (passenger) => {
+    const tipo = passenger?.tipoDocumento || "";
+    if (tipo === "cedulaC" || tipo === "cedulaE") {
+      return CEDULA_DOCUMENT_EXPIRATION;
+    }
+    if (requiresDocumentExpirationDate(tipo)) {
+      return passenger?.fechaCaducidadDocumento || "";
+    }
+    return "";
+  };
+
   const createEmptyPassenger = () => ({
     tipoDocumento: "",
     numeroDocumento: "",
+    fechaCaducidadDocumento: "",
     nombreCompleto: "",
     apellidos: "",
     fechaNacimiento: "",
@@ -175,6 +192,7 @@ const FormularioReserva = () => {
   const [formData, setFormData] = useState({
     tipoDocumento: "",
     numeroDocumento: "",
+    fechaCaducidadDocumento: "",
     nombreCompleto: "",
     apellidos: "",
     fechaNacimiento: "",
@@ -366,6 +384,20 @@ const FormularioReserva = () => {
   };
 
   const totalRetenciones = totalRetencionesF();
+
+  const parseFlightPackageTotalPrice = () => {
+    try {
+      const packageData = JSON.parse(localStorage.getItem("flightPackageData") || "null");
+      const raw = packageData?.totalPrice ?? packageData?.flightBookPrice ?? 0;
+      const parsed = parseFloat(String(raw).replace(/,/g, ""));
+      return Number.isFinite(parsed) ? parsed : 0;
+    } catch {
+      return 0;
+    }
+  };
+
+  const precioVueloPaquete = vuelosActivados ? parseFlightPackageTotalPrice() : 0;
+  const totalReservaConVuelo = totalRetenciones + precioVueloPaquete;
   // console.log(totalRetenciones)
   //  console.log(checkin);
   const {
@@ -382,21 +414,30 @@ const FormularioReserva = () => {
   console.log(enviartraslado);
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [id]: type === "checkbox" ? checked : value,
+    const nextValue = type === "checkbox" ? checked : value;
+    setFormData((prev) => {
+      const next = { ...prev, [id]: nextValue };
+      if (id === "tipoDocumento" && !requiresDocumentExpirationDate(nextValue)) {
+        next.fechaCaducidadDocumento = "";
+      }
+      return next;
     });
   };
 
   // Manejador por índice para formularios de pasajeros
   const handleChangeIndexed = (index, e) => {
     const { id, value, type, checked } = e.target;
+    const nextValue = type === "checkbox" ? checked : value;
     setFormDataList((prev) => {
       const next = [...prev];
-      next[index] = {
+      const updated = {
         ...next[index],
-        [id]: type === "checkbox" ? checked : value,
+        [id]: nextValue,
       };
+      if (id === "tipoDocumento" && !requiresDocumentExpirationDate(nextValue)) {
+        updated.fechaCaducidadDocumento = "";
+      }
+      next[index] = updated;
       return next;
     });
   };
@@ -539,7 +580,7 @@ const FormularioReserva = () => {
       document_number: passenger.numeroDocumento || "",
       document_issuance: "CO",
       document_issuance_date: "2020-01-15",
-      document_expiration: "2026-12-28",
+      document_expiration: getDocumentExpiration(passenger),
       document_residence: "ARONA",
       country_id: "CO",
       address: "Calle Noname 7",
@@ -1050,6 +1091,19 @@ const FormularioReserva = () => {
         });
         return;
       }
+      if (
+        requiresDocumentExpirationDate(p.tipoDocumento) &&
+        !p.fechaCaducidadDocumento?.trim()
+      ) {
+        Swal.fire({
+          icon: "error",
+          title: "Complete la información",
+          text: `Ingrese la fecha de caducidad del documento del pasajero #${i + 1}`,
+          showConfirmButton: false,
+          timer: 3500,
+        });
+        return;
+      }
     }
 
     const packageIdFromStorage = localStorage.getItem("flightPackageId");
@@ -1080,8 +1134,15 @@ const FormularioReserva = () => {
       );
     };
 
+    const totalVueloPaquete = parseFloat(
+      packageDataFromStorage?.totalPrice ?? packageDataFromStorage?.flightBookPrice ?? 0
+    );
+    const totalConVuelo = Math.round(
+      totalRetenciones + (Number.isFinite(totalVueloPaquete) ? totalVueloPaquete : 0)
+    );
+
     const informacionD = JSON.stringify({
-      total: Math.round(totalRetenciones),
+      total: totalConVuelo,
       mascotasNumber: reserva[0]?.mascotas || null,
       adicionAlmuerzo: almuerzo,
       adicionCena: cena,
@@ -1826,8 +1887,8 @@ const FormularioReserva = () => {
               Precio total a pagar:{" "}
               <strong>
                 {divisaSelec == "USD"
-                  ? `${formatCurrency(totalRetenciones)} USD `
-                  : `${formatCurrency(totalRetenciones)} COP `}
+                  ? `${formatCurrency(totalReservaConVuelo)} USD `
+                  : `${formatCurrency(totalReservaConVuelo)} COP `}
               </strong>
             </p>
             <p>
@@ -1924,6 +1985,27 @@ const FormularioReserva = () => {
                 <option value="pasaporte">Pasaporte</option>
                 <option value="otro">Otro</option>
               </select>
+              {requiresDocumentExpirationDate(formData.tipoDocumento) && (
+                <>
+                  <label htmlFor="fechaCaducidadDocumento">
+                    Fecha de caducidad del documento <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <input
+                    id="fechaCaducidadDocumento"
+                    type="date"
+                    value={formData.fechaCaducidadDocumento}
+                    onChange={handleChange}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  />
+                </>
+              )}
             </div>
             
             {/*-------------- INPUT NUMERO DE DOCUMENTO -------------- */}
@@ -2403,6 +2485,27 @@ const FormularioReserva = () => {
                     <option value="pasaporte">Pasaporte</option>
                     <option value="otro">Otro</option>
                   </select>
+                  {requiresDocumentExpirationDate(pax.tipoDocumento) && (
+                    <>
+                      <label htmlFor="fechaCaducidadDocumento">
+                        Fecha de caducidad del documento <span style={{ color: "red" }}>*</span>
+                      </label>
+                      <input
+                        id="fechaCaducidadDocumento"
+                        type="date"
+                        value={pax.fechaCaducidadDocumento}
+                        onChange={(e) => handleChangeIndexed(idx, e)}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          padding: "8px",
+                          marginBottom: "10px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                        }}
+                      />
+                    </>
+                  )}
                 </div>
 
                 <div>
