@@ -14,9 +14,16 @@ const BusquedaCartagena = () => {
   const [hotelesDisponibles, setHotelesDisponibles] = useState([]);
   const currentCurrency = useStore(currency); // COP o USD
   const [nochesyedades1, setnochesyedades] = useState({});
+  const [infoVuelo, setinfoVuelo] = useState()
   const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
   
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
+  };
 
   //Objeto de imagenes  para las fachadas
   const hotelImages = {
@@ -235,7 +242,9 @@ const BusquedaCartagena = () => {
     const adult =
       data.reduce((acumulador, tAdults) => acumulador + tAdults.adults, 0) || 0;
 
-    localStorage.setItem("cantAdultos", adult); //cantidad de adultos
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("cantAdultos", adult);
+    }
     return adult;
   };
 
@@ -243,15 +252,15 @@ const BusquedaCartagena = () => {
   const cantNinos = (data) => {
     const ninos =
       data.reduce((acumulador, tChildren) => {
-        // Validar si children_ages existe y no está vacío
         if (tChildren.children_ages) {
           return acumulador + tChildren.children_ages.split(",").length;
         }
-        return acumulador; // Si no existe, no suma nada
+        return acumulador;
       }, 0) || 0;
 
-    localStorage.setItem("cantNinos", ninos); //cantidad de niños
-
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("cantNinos", ninos);
+    }
     return ninos;
   };
 
@@ -267,26 +276,23 @@ const BusquedaCartagena = () => {
 
   // Usar useEffect para cargar datos de localStorage y la store
   useEffect(() => {
-    // Recuperar la ciudad desde el localStorage
+    if (typeof window === 'undefined') return;
+
     const category = JSON.parse(localStorage.getItem("datosUsuario"));
     setcategoria(category);
     const storedCity = localStorage.getItem("selectedCity");
     if (storedCity) {
-      const transformedCity = cityMap[storedCity] || "Ciudad desconocida"; // Transforma o asigna un fallback
+      const transformedCity = cityMap[storedCity] || "Ciudad desconocida";
       setCiudad(transformedCity);
     }
-    if (typeof window !== "undefined") {
-      const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));
-      const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
-      setnochesyedades(nochesyedades);
-      if (disponibilidadLocal) {
-        disponibilidad.set(disponibilidadLocal);
-        setHotelesDisponibles(disponibilidadLocal);
-
-        //console.log("Datos recuperados de LocalStorage:", disponibilidadLocal);  //datos de disponibilidad localS
-      } else {
-        // console.log("No hay datos disponibles en LocalStorage.");
-      }
+    const datosVuelo = JSON.parse(localStorage.getItem("datosDelVuelo"));
+    setinfoVuelo(datosVuelo);
+    const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));
+    const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
+    setnochesyedades(nochesyedades);
+    if (disponibilidadLocal) {
+      disponibilidad.set(disponibilidadLocal);
+      setHotelesDisponibles(disponibilidadLocal);
     }
   }, []);
   console.log(hotelesDisponibles);
@@ -298,16 +304,46 @@ const BusquedaCartagena = () => {
 
   return (
     <>
-     
-
       <div className={styles.search_form_wrapper}>
         <DropdownSearch client:load />
       </div>
-      <div className={styles.container}>
+      <br />
+      <div className={styles.container}>    
         <div className={styles.breadcrumb}>
           <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
         </div>
 
+      {(infoVuelo?.active === true || infoVuelo?.activado === true) && (
+      <div className={styles.stepper}>
+  <div className={styles.step}>
+    <div className={styles.stepnumberActive}>1</div>
+    <div className={styles.steptitleActive}>Alojamiento</div>
+    <div className={styles.stepcontentActive}>
+      Seleccione el alojamiento <br />
+      {nochesyedades1.nights} noches, {hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños
+    </div>
+  </div>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>2</div>
+    <div className={styles.steptitle}>Vuelo</div>
+    <div className={styles.stepcontent}>
+      {infoVuelo?.origin} ⇆ {infoVuelo?.destinationName}<br/>
+      {nochesyedades1?.dateRange ? 
+        `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
+        'Fechas no seleccionadas'}
+    </div>
+  </div>
+  <div className={styles.step}>
+    <div className={styles.stepnumber}>3</div>
+    <div className={styles.steptitle}>Adicionales</div>
+    <div className={styles.stepcontent}>
+      ¡Disfruta al máximo tu viaje!
+      Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
+    </div>
+  </div>
+</div>
+      )}
+<br />
         <div className={styles.title}>Resultados {Ciudad}</div>
         {/* <div className={styles.filter}>
           <select>

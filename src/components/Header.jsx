@@ -96,6 +96,18 @@ const Header = () => {
     window.location.href = "/tablerousuario";
   };
 
+  const handleClick = () => {
+    localStorage.removeItem("datosDelVuelo");
+    localStorage.removeItem("dataVuelo");
+    localStorage.removeItem("datosReservaVuelos");
+    localStorage.removeItem("cantAdultos");
+    localStorage.removeItem("cantNinos");
+    localStorage.removeItem("nochesyedades");
+    localStorage.removeItem("datosreserva");
+    localStorage.removeItem("data");
+    // console.log("datos");
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".profile-menu")) {
@@ -115,7 +127,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <a href="/">
+        <a href="/" onClick={handleClick}>
           <img
             src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/gehlogo.png"
             alt="GH Suites Logo"

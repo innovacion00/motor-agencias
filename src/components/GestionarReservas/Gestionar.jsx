@@ -18,6 +18,100 @@ import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
 
+/** Código de vuelo en ida/vuelta (outbound / inbound). */
+function getLegFlightCode(leg) {
+  if (!leg || typeof leg !== "object") return "—";
+  if (leg.flightCode != null && leg.flightCode !== "") return String(leg.flightCode);
+  if (leg.flightNumber != null && leg.flightNumber !== "") {
+    const carrier = leg.carrierCode ?? leg.airlineCode ?? "";
+    return `${carrier}${leg.flightNumber}`.trim() || String(leg.flightNumber);
+  }
+  const segs = leg.segments;
+  if (Array.isArray(segs) && segs.length > 0) {
+    const s = segs[0];
+    const num = s.flightNumber ?? s.number ?? s.flight_num;
+    const carrier = s.carrierCode ?? s.airlineCode ?? "";
+    if (num != null && num !== "") return `${carrier}${num}`.trim() || String(num);
+    if (s.flightCode != null && s.flightCode !== "") return String(s.flightCode);
+  }
+  return "—";
+}
+
+/** Texto: ciudad (IATA) → ciudad (IATA) para un tramo. */
+function getLegRouteLine(leg) {
+  if (!leg || typeof leg !== "object") return "—";
+  const segs = leg.segments;
+  if (Array.isArray(segs) && segs.length > 0) {
+    const first = segs[0];
+    const last = segs[segs.length - 1];
+    const oCode = first.departureCode || first.origin || leg.origin || "—";
+    const dCode = last.arrivalCode || last.destination || leg.destination || "—";
+    const oCity = first.departureCityName || leg.originCity || "";
+    const dCity = last.arrivalCityName || leg.destinationCity || "";
+    if (oCity && dCity) return `${oCity} (${oCode}) → ${dCity} (${dCode})`;
+    return `${oCode} → ${dCode}`;
+  }
+  const oCode = leg.origin || leg.departureCode || "—";
+  const dCode = leg.destination || leg.arrivalCode || "—";
+  const oCity = leg.originCity || leg.departureCityName || "";
+  const dCity = leg.destinationCity || leg.arrivalCityName || "";
+  if (oCity && dCity) return `${oCity} (${oCode}) → ${dCity} (${dCode})`;
+  return `${oCode} → ${dCode}`;
+}
+
+/** Nombre comercial de la aerolínea (airlineName) por tramo. */
+function getLegAirlineName(leg) {
+  if (!leg || typeof leg !== "object") return "—";
+  if (leg.airlineName != null && String(leg.airlineName).trim() !== "") {
+    return String(leg.airlineName);
+  }
+  const segs = leg.segments;
+  if (Array.isArray(segs) && segs.length > 0) {
+    const s = segs[0];
+    if (s.airlineName != null && String(s.airlineName).trim() !== "") {
+      return String(s.airlineName);
+    }
+    const code = s.carrierCode ?? s.airlineCode;
+    if (code) return String(code);
+  }
+  return "—";
+}
+
+/** Código IATA de aerolínea (para logo), primer segmento del tramo. */
+function getLegCarrierCode(leg) {
+  if (!leg || typeof leg !== "object") return "";
+  const segs = leg.segments;
+  if (Array.isArray(segs) && segs.length > 0) {
+    const s = segs[0];
+    const code = s.carrierCode ?? s.airlineCode;
+    if (code != null && String(code).trim() !== "") return String(code).trim();
+  }
+  const code = leg.carrierCode ?? leg.airlineCode;
+  return code != null ? String(code).trim() : "";
+}
+
+/** Misma lógica que Vuelosdisponibles.jsx — logos por código de aerolínea. */
+function getAirlineLogo(carrierCode) {
+  const airlineLogos = {
+    AV: "https://content.r9cdn.net/rimg/provider-logos/airlines/v/AV.png?crop=false&width=108&height=92&fallback=default2.png&_v=9da891fb64018166c1a5228d9c46e5ef",
+    LA: "https://content.r9cdn.net/rimg/provider-logos/airlines/v/LA.png?crop=false&width=108&height=92&fallback=default1.png&_v=e2abb15ddcd9bf090836299b76d255e0",
+    CM: "https://content.r9cdn.net/rimg/provider-logos/airlines/v/CM.png?crop=false&width=108&height=92&fallback=default1.png&_v=a61544cffd06cf2178b9a97659b98650",
+    UA: "https://content.r9cdn.net/rimg/provider-logos/airlines/v/UA.png?crop=false&width=108&height=92&fallback=default1.png&_v=5549857010860b629834720579d831e5",
+    B6: "https://s202.q4cdn.com/521076508/files/doc_downloads/logos/JetBlue-Logo_Blue.png",
+    NH: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVvcvOq8qQLYp_o4IDIPXVVdHkLpgZLha6Fg&s",
+    EK: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png",
+    IB: "https://www.latamairlines.com/content/dam/latamxp/sites/alianzas/aerolineas-images_0011_iberia-Airlines.png",
+    UX: "https://logodownload.org/wp-content/uploads/2019/10/air-europa-logo-0.png",
+    JA: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyzD0GhR6Cb4t8ChiJwTz6QdgKQAHtsAhKjA&s",
+    VB: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Nuevo_vivaaerobus_logotipo_original.jpg",
+    P5:"https://imgproxy.domestika.org/unsafe/s:1200:1200/dpr:1/rs:fill/ex:true/el:true/plain/src://project-covers/000/508/871/508871-original.png?1558801782",
+  };
+  const code = (carrierCode || "").toUpperCase();
+  return (
+    airlineLogos[code] ||
+    `https://via.placeholder.com/40x40/0066CC/FFFFFF?text=${encodeURIComponent(code || "?")}`
+  );
+}
 //UseState
 const Gestionar = ({ reservas }) => {
   // console.log(reservas); // Datos de la reserva
@@ -36,6 +130,7 @@ const Gestionar = ({ reservas }) => {
   const [userData, setUserData] = useState(null);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
+  const [mostrarInfoVuelos, setMostrarInfoVuelos] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
     Number(reservas?.reservation.children) +
@@ -416,7 +511,7 @@ const Gestionar = ({ reservas }) => {
     try {
       const linkP = await generarLinkPagoBilletera(id, booleano); // Llamada a la API
       console.log(linkP);
-      if (linkP.link) {
+      if (linkP.link) {      
         window.location.href = linkP.link; // Redireccionar al link generado
       } else {
         alert("No se pudo generar el link de pago.");
@@ -759,10 +854,10 @@ const Gestionar = ({ reservas }) => {
       confirmButtonColor: "#26547B",
       denyButtonColor: "#4B70B2",
       showClass: {
-        popup: "animate__animated animate__fadeInDown animate__faster",
+        popup: "animate__animated animate__fadeInDown animate__slowest",
       },
       hideClass: {
-        popup: "animate__animated animate__fadeOutUp animate__faster",
+        popup: "animate__animated animate__fadeOutUp animate__slowest",
       },
     }).then((result) => {
       if (result.isConfirmed || result.isDenied) {
@@ -783,10 +878,10 @@ const Gestionar = ({ reservas }) => {
           confirmButtonText: "Sí, pagar",
           cancelButtonText: "Cancelar",
           showClass: {
-            popup: "animate__animated animate__fadeInDown animate__faster",
+            popup: "animate__animated animate__fadeInDown slowest",
           },
           hideClass: {
-            popup: "animate__animated animate__fadeOutUp animate__faster",
+            popup: "animate__animated animate__fadeOutUp animate__slowest",
           },
         }).then((confirmResult) => {
           if (confirmResult.isConfirmed) {
@@ -1224,6 +1319,157 @@ const Gestionar = ({ reservas }) => {
                 Tienes plazo de hacer el segundo pago hasta el {reservas?.fechaLimitePago2}
               </p>
 
+                {Array.isArray(reservas?.vuelo) && reservas.vuelo.length > 0 && (
+                  <div style={{ marginTop: "12px", width: "100%" }}>
+                    <button
+                      type="button"
+                      onClick={() => setMostrarInfoVuelos((v) => !v)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        background: "#f0f4f8",
+                        border: "1px solid #c5d4e0",
+                        borderRadius: "6px",
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        color: "#1C3D5A",
+                        width: "100%",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <span>Información de vuelo</span>
+                      <span aria-hidden>{mostrarInfoVuelos ? "▲" : "▼"}</span>
+                    </button>
+                    {mostrarInfoVuelos && (
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          padding: "12px",
+                          background: "#fafbfc",
+                          border: "1px solid #e2e8f0",
+                          borderRadius: "6px",
+                          fontSize: "0.95rem",
+                        }}
+                      >
+                        {reservas.vuelo.map((item, vIdx) => {
+                          const r = item?.respuestaMaarLab || {};
+                          const f = r.flight || {};
+                          const outbound = f.outbound || f.Outbound;
+                          const inbound = f.inbound || f.Inbound;
+                          const pasajeros = Array.isArray(r.passengers)
+                            ? r.passengers
+                            : [];
+                          return (
+                            <div
+                              key={item?._id || item?.packageId || vIdx}
+                              style={{
+                                marginBottom:
+                                  vIdx < reservas.vuelo.length - 1 ? "16px" : 0,
+                                paddingBottom:
+                                  vIdx < reservas.vuelo.length - 1 ? "16px" : 0,
+                                borderBottom:
+                                  vIdx < reservas.vuelo.length - 1
+                                    ? "1px solid #e2e8f0"
+                                    : "none",
+                              }}
+                            >
+                              <p style={{ margin: "0 0 6px", fontWeight: 600 }}>
+                                Ida — Código: {getLegFlightCode(outbound)}
+                              </p>
+                              <p
+                                style={{
+                                  margin: "0 0 4px",
+                                  paddingLeft: "4px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  flexWrap: "wrap",
+                                }}
+                              >
+                                <img
+                                  src={getAirlineLogo(getLegCarrierCode(outbound))}
+                                  alt=""
+                                  width={24}
+                                  height={24}
+                                  style={{ objectFit: "contain", flexShrink: 0 }}
+                                />
+                                <span>
+                                  <strong>Aerolínea:</strong> {getLegAirlineName(outbound)}
+                                </span>
+                              </p>
+                              <p style={{ margin: "0 0 10px", paddingLeft: "4px" }}>
+                                {getLegRouteLine(outbound)}
+                              </p>
+                              <p style={{ margin: "0 0 6px", fontWeight: 600 }}>
+                                Vuelta — Código: {getLegFlightCode(inbound)}
+                              </p>
+                              <p
+                                style={{
+                                  margin: "0 0 4px",
+                                  paddingLeft: "4px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                  flexWrap: "wrap",
+                                }}
+                              >
+                                <img
+                                  src={getAirlineLogo(getLegCarrierCode(inbound))}
+                                  alt=""
+                                  width={24}
+                                  height={24}
+                                  style={{ objectFit: "contain", flexShrink: 0 }}
+                                />
+                                <span>
+                                  <strong>Aerolínea:</strong> {getLegAirlineName(inbound)}
+                                </span>
+                              </p>
+                              <p style={{ margin: "0 0 10px", paddingLeft: "4px" }}>
+                                {getLegRouteLine(inbound)}
+                              </p>
+                              {!outbound && !inbound && (
+                                <p style={{ margin: "4px 0", fontSize: "0.9em", color: "#64748b" }}>
+                                  Fechas reserva:{" "}
+                                  {f.DepartureDate || "—"} → {f.ArrivalDate || "—"}
+                                </p>
+                              )}
+                              <p style={{ margin: "4px 0" }}>
+                                <strong>Total vuelo:</strong>{" "}
+                                {r.totalPrice ?? f.totalPrice ?? "—"}{" "}
+                                {r.currency || ""}
+                              </p>
+                              <p style={{ margin: "4px 0" }}>
+                                <strong>Estado:</strong> {r.status || "—"}
+                                {r.stage ? ` (${r.stage})` : ""}
+                              </p>
+                              {pasajeros.length > 0 && (
+                                <div style={{ marginTop: "10px" }}>
+                                  <strong>Pasajeros ({pasajeros.length})</strong>
+                                  <ul
+                                    style={{
+                                      margin: "6px 0 0",
+                                      paddingLeft: "20px",
+                                    }}
+                                  >
+                                    {pasajeros.map((p, pIdx) => (
+                                      <li key={p.passengerId ?? pIdx} style={{ marginBottom: "6px" }}>
+                                        {p.name} {p.surname} — {p.document_type}:{" "}
+                                        {p.id_number}
+                                        {p.email ? ` · ${p.email}` : ""}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               
               <p className={styles.total}>

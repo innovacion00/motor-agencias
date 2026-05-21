@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +8,7 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Roboto', sans-serif;
   line-height: 1.6;
   color: #ffffff;
   background-color: #f4f4f4;
@@ -62,36 +64,6 @@ header nav a:hover {
   color: #1C3D5A;
 }
 
-/* Estilos para la lista de hoteles */
-/* .hotel-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  padding: 2rem;
-  justify-content: center;
-}
-
-.hotel-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1rem;
-  width: 300px;
-  text-align: center;
-}
-
-.hotel-card img {
-  max-width: 100%;
-  border-radius: 8px;
-}
-
-.hotel-card h3 {
-  margin: 0.5rem 0;
-}
-
-.hotel-card p {
-  color: #1C3D5A;
-} */
 
 /* Estilos de pie de página */
 footer {

@@ -242,16 +242,7 @@ body {
   margin-left: 10px;
 }
 
-/* .room_details .discount {
-  background-color: #ff6f61;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 14px;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-} */
+
 
 /* Boton seleccionar las habitaciones */
 
@@ -659,20 +650,7 @@ color: #2c3e50;
 margin-top: 5px;
 }
 
-/* .search_criteria button {
-background-color: #fff;
-border-style: solid;
-border-width: 2px;
-border-color: #1C3D5A;
-color: #1C3D5A;
-padding: 10px 20px;
-border-radius: 4px;
-cursor: pointer;
-}
 
-.search_criteria button:hover {
-background-color: #c8cdd370;
-} */
 
 .cards {
 display: flex;
@@ -1075,18 +1053,13 @@ font-size: 15px;
 }
 
 .touresSection {
-
 padding: 15px;
 background-color: #f8f9fa;
 border-radius: 8px;
 margin: 0 auto;
 }
 
-h4 {
-color: #343a40;
-margin-bottom: 20px;
-font-size: 18px;
-}
+
 
 .tour_item {
 display: flex;

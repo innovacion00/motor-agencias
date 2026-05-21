@@ -6,6 +6,9 @@ import Modal from "react-modal";
 import styles from "../../public/styles/DropdownSearch.module.css";
 import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
+import { currency } from "../stores/divisas";
+import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
+import { puedeAccederVueloHotel } from "../utils/correosVueloHotel";
 
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -24,6 +27,19 @@ const DropdownSearch = () => {
     startDate: new Date(),
     endDate: new Date(),
   });
+  const [includesFlight, setIncludesFlight] = useState(false);
+  const [origin, setOrigin] = useState("");
+  const [originSuggestions, setOriginSuggestions] = useState([]);
+  const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
+  const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
+  const [selectedOriginIata, setSelectedOriginIata] = useState("");
+  const [puedeVerVueloHotel, setPuedeVerVueloHotel] = useState(false);
+
+  const destinationMapping = {
+    CARTAGENA: { name: "Cartagena de Indias", iataCode: "CTG" },
+    BOGOTA: { name: "Bogotá", iataCode: "BOG" },
+    SANTA_MARTA: { name: "Santa Marta", iataCode: "SMR" },
+  };
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,6 +47,13 @@ const DropdownSearch = () => {
     MIN_ROOMS: 1,
     MAX_ROOMS: 9,
   });
+
+  const normalizeText = (text = "") =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
 
   //  // Función para generar fechas bloqueadas desde el 26 de diciembre de 2025 hasta el 12 de enero de 2026
   //  const generateBlockedDates = () => {
@@ -57,6 +80,7 @@ const DropdownSearch = () => {
   };
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
+  const originSuggestionsRef = useRef(null);
 
   // Configurar el appElement para react-modal
   useEffect(() => {
@@ -66,6 +90,33 @@ const DropdownSearch = () => {
       Modal.setAppElement(document.body);
     }
   }, []);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("datosUsuario");
+      if (!raw) {
+        setPuedeVerVueloHotel(false);
+        return;
+      }
+      const datos = JSON.parse(raw);
+      setPuedeVerVueloHotel(puedeAccederVueloHotel(datos?.email));
+    } catch {
+      setPuedeVerVueloHotel(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!puedeVerVueloHotel && botonactivado === "flight") {
+      setbotonactivado("single");
+      setIncludesFlight(false);
+      setOrigin("");
+      setSelectedOriginIata("");
+      try {
+        localStorage.setItem("tipoBusqueda", "1");
+      } catch (e) {}
+      localStorage.removeItem("datosDelVuelo");
+    }
+  }, [puedeVerVueloHotel, botonactivado]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -78,11 +129,26 @@ const DropdownSearch = () => {
       ) {
         setShowDateRange(false);
       }
+      if (
+        originSuggestionsRef.current &&
+        !originSuggestionsRef.current.contains(event.target)
+      ) {
+        setShowOriginSuggestions(false);
+      }
     };
 
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (debouncedSearch.current) {
+        clearTimeout(debouncedSearch.current);
+      }
     };
   }, []);
 
@@ -92,6 +158,74 @@ const DropdownSearch = () => {
       0,
       Math.round((endDate.getTime() - startDate.getTime()) / msInDay)
     );
+  };
+
+  // Función para buscar ciudades con debounce
+  const searchCities = async (keyword) => {
+    if (keyword.length < 3) {
+      setOriginSuggestions([]);
+      setShowOriginSuggestions(false);
+      return;
+    }
+
+    setIsSearchingOrigin(true);
+    try {
+      const query = normalizeText(keyword);
+      const suggestions = IATA_SEARCH_MAP.filter((city) => {
+        const cityName = normalizeText(city.name);
+        const cityIata = normalizeText(city.iataCode);
+        return cityName.includes(query) || cityIata.includes(query);
+      }).slice(0, 20);
+
+      setOriginSuggestions(suggestions);
+      setShowOriginSuggestions(suggestions.length > 0);
+    } catch (error) {
+      console.error("Error buscando ciudades:", error);
+      setOriginSuggestions([]);
+      setShowOriginSuggestions(false);
+    } finally {
+      setIsSearchingOrigin(false);
+    }
+  };
+
+  // Debounce para la búsqueda de ciudades
+  const debouncedSearch = useRef(null);
+
+  const handleOriginChange = (e) => {
+    const value = e.target.value;
+    setOrigin(value);
+    setSelectedOriginIata(""); // Reset IATA code when typing
+
+    // Clear previous timeout
+    if (debouncedSearch.current) {
+      clearTimeout(debouncedSearch.current);
+    }
+
+    // Set new timeout for search
+    debouncedSearch.current = setTimeout(() => {
+      searchCities(value);
+    }, 300);
+  };
+
+  const handleOriginSelect = (city) => {
+    setOrigin(city.name);
+    setSelectedOriginIata(city.iataCode);
+    setShowOriginSuggestions(false);
+    
+    // Actualizar localStorage con los datos del vuelo
+    const datosDelVuelo = {
+      tipoReserva: "flight",
+      activado: true,
+      origin: city.name,
+      originIata: city.iataCode,
+      originCountryCode: city.countryCode,
+      destination: destination,
+      destinationName: destinationMapping[destination]?.name || destination,
+      destinationIata: destinationMapping[destination]?.iataCode || "",
+      destinationCountryCode: "CO",
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
   };
 
   // Función para obtener la fecha mínima (mañana)
@@ -128,6 +262,13 @@ const DropdownSearch = () => {
     }
   };
 
+  const setSelectedCurrency = (code) => {
+    try {
+      localStorage.setItem("selectedCurrency", code);
+      currency.set(code);
+    } catch (e) {}
+  };
+
   const handleGroupReservation = () => {
     setRooms(
       Array.from({ length: 10 }, () => ({
@@ -138,6 +279,17 @@ const DropdownSearch = () => {
     );
     setLimits({ MIN_ROOMS: 10, MAX_ROOMS: 40 });
     setbotonactivado("group");
+    setIncludesFlight(false);
+    setOrigin("");
+    setSelectedCurrency("COP");
+    // Guardar tipo de búsqueda en localStorage: 2 = Reserva para grupos
+    try {
+      localStorage.setItem("tipoBusqueda", "2");
+    } catch (e) {}
+    
+    // Limpiar datos del vuelo del localStorage
+    localStorage.removeItem("datosDelVuelo");
+    
     mostrarTooltip(
       "Reserva para grupos seleccionado. (Beneficio tourconductor)"
     );
@@ -153,8 +305,49 @@ const DropdownSearch = () => {
     );
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("single");
+    setIncludesFlight(false);
+    setOrigin("");
+    setSelectedCurrency("COP");
+    // Guardar tipo de búsqueda en localStorage: 1 = Única fecha
+    try {
+      localStorage.setItem("tipoBusqueda", "1");
+    } catch (e) {}
+    
+    // Limpiar datos del vuelo del localStorage
+    localStorage.removeItem("datosDelVuelo");
+    
     mostrarTooltip(
       "Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)"
+    );
+  };
+
+  const handleFlightReservation = () => {
+    setRooms(
+      Array.from({ length: 1 }, () => ({
+        adults: 2,
+        children0to4: 0,
+        children5to17: 0,
+      }))
+    );
+    setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
+    setbotonactivado("flight");
+    setIncludesFlight(true);
+    setSelectedCurrency("USD");
+    // Guardar tipo de búsqueda en localStorage: 3 = Vuelo + hotel
+    try {
+      localStorage.setItem("tipoBusqueda", "3");
+    } catch (e) {}
+    
+    // Guardar datos del vuelo en localStorage
+    const datosDelVuelo = {
+      tipoReserva: "flight",
+      activado: true,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
+    
+    mostrarTooltip(
+      "Reserva para vuelo + hotel seleccionado"
     );
   };
 
@@ -164,6 +357,15 @@ const DropdownSearch = () => {
         icon: "error",
         title: "Oops...",
         text: "Por favor selecciona una ciudad",
+      });
+      return;
+    }
+
+    if (includesFlight && !selectedOriginIata) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Por favor selecciona una ciudad de origen valida para el vuelo",
       });
       return;
     }
@@ -193,9 +395,31 @@ const DropdownSearch = () => {
       layout,
       nights,
       dateRange,
+      includesFlight,
+      origin: includesFlight ? origin : null,
     };
 
     localStorage.setItem("nochesyedades", JSON.stringify(nochesyedades));
+    
+    // Si es vuelo + hotel, guardar datos completos del vuelo
+    if (includesFlight) {
+      const datosDelVuelo = {
+        tipoReserva: "flight",
+        activado: true,
+        origin: origin,
+        originIata: selectedOriginIata,
+        originCountryCode: originSuggestions.find(city => city.name === origin)?.countryCode || 'CO',
+        destination: destination,
+        destinationName: destinationMapping[destination]?.name || destination,
+        destinationIata: destinationMapping[destination]?.iataCode || "",
+        destinationCountryCode: "CO",
+        dateRange: dateRange,
+        nights: nights,
+        layout: layout,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
+    }
 
     try {
       const objetohotel = {
@@ -243,10 +467,103 @@ const DropdownSearch = () => {
         >
           Reserva para grupos
         </button>
+        {puedeVerVueloHotel && (
+          <button
+            className={`${styles.button} ${
+              botonactivado == "flight" ? styles.active : ""
+            }`}
+            onClick={handleFlightReservation}
+          >
+            Vuelo + Hotel
+          </button>
+        )}
       </div>
       <br />
 
       {tooltip && <div className={styles.tooltip}>{tooltip}</div>}
+
+      {includesFlight && (
+        <div className={styles.dropdown} style={{ position: 'relative' }}>
+          <input
+            type="text"
+            value={origin}
+            onChange={handleOriginChange}
+            onFocus={() => {
+              if (origin.length >= 3 && originSuggestions.length > 0) {
+                setShowOriginSuggestions(true);
+              }
+            }}
+            placeholder="Buscar ciudad de origen..."
+            className={styles.searchInput}
+          />
+          {isSearchingOrigin && (
+            <div style={{ 
+              position: 'absolute', 
+              top: '100%', 
+              left: 0, 
+              right: 0, 
+              background: 'white', 
+              border: '1px solid #ddd',
+              padding: '10px',
+              zIndex: 1000
+            }}>
+              Buscando...
+            </div>
+          )}
+          {showOriginSuggestions && originSuggestions.length > 0 && (
+            <div 
+              ref={originSuggestionsRef}
+              style={{ 
+                position: 'absolute', 
+                top: '100%', 
+                left: 0, 
+                right: 0, 
+                background: 'white', 
+                border: '1px solid #ddd',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                zIndex: 1000
+              }}
+            >
+              {originSuggestions.map((city, index) => (
+                <div
+                  key={index}
+                  onClick={() => handleOriginSelect(city)}
+                  style={{
+                    padding: '10px',
+                    cursor: 'pointer',
+                    borderBottom: '1px solid #eee',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#f5f5f5';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'white';
+                  }}
+                >
+                  <span>{city.name}</span>
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-end',
+                    textAlign: 'right'
+                  }}>
+                    <span style={{ color: '#666', fontSize: '12px' }}>
+                      {city.iataCode}
+                    </span>
+                    <span style={{ color: '#999', fontSize: '10px' }}>
+                      {city.countryCode}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/*------------------------ Dropdown de destino ------------------------*/}
 

@@ -7,6 +7,7 @@ import { useStore } from '@nanostores/react';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { refreshToken } from '../stores/authtoken';
+import VueloCotizacionDetalle from './VueloCotizacionDetalle';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -765,7 +766,17 @@ export const CotizacionCreada = ({ id }) => {
                                     <p className="label">Tours</p>
                                     <p className="value">{toursNombresResumen.length > 0 ? toursNombresResumen.join(', ') : 'No incluidos'}</p>
                                 </div>
+                                {Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0 && (
+                                    <div className="date-item">
+                                        <p className="label">Vuelo</p>
+                                        <p className="value">Paquete vuelo + hotel</p>
+                                    </div>
+                                )}
                             </div>
+
+                            {Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0 && (
+                                <VueloCotizacionDetalle vueloArray={cotizacion.vuelo} />
+                            )}
 
                             {/* Tabla de Habitaciones */}
                             <div className="table-wrapper">
@@ -867,6 +878,10 @@ export const CotizacionCreada = ({ id }) => {
                                                     </div>
                                                 ) : (
                                                     <p><strong>Tours incluidos:</strong> Ninguno</p>
+                                                )}
+
+                                                {Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0 && (
+                                                    <p><strong>Vuelo incluido:</strong> Sí (paquete vuelo + hotel)</p>
                                                 )}
 
                                                 <p><strong>Servicios básicos incluidos:</strong></p>
