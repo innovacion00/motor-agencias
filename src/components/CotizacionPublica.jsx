@@ -3,6 +3,7 @@ import { MapPin, Phone, ChevronDown, User, Mail, Calendar, CreditCard, CheckCirc
 import '/public/styles/Cotizacion.css';
 import { useStore } from '@nanostores/react';
 import Swal from 'sweetalert2';
+import VueloCotizacionDetalle from './VueloCotizacionDetalle';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -538,8 +539,20 @@ export const CotizacionPublica = ({ id }) => {
                                     : 'No incluidos'}
                             </div>
                         </div>
+                        {Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0 && (
+                            <div style={{ backgroundColor: 'transparent', padding: 0, borderRadius: 0, borderLeft: 'none' }}>
+                                <div style={{ fontWeight: 'bold', color: '#886b43', fontSize: '14px' }}>Vuelo</div>
+                                <div style={{ color: '#333', marginTop: '5px' }}>Paquete vuelo + hotel incluido</div>
+                            </div>
+                        )}
                     </div>
                 </div>
+
+                {Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0 && (
+                    <section style={{ margin: '24px 0' }}>
+                        <VueloCotizacionDetalle vueloArray={cotizacion.vuelo} />
+                    </section>
+                )}
 
                 {/* GALERÍA DEL HOTEL */}
                 {roomsData.length > 0 && (
@@ -577,6 +590,9 @@ export const CotizacionPublica = ({ id }) => {
                         )}
                         {toursNombresResumen.length > 0 && (
                             <li style={{ margin: '8px 0', lineHeight: '1.8' }}><strong>Tours:</strong> {toursNombresResumen.join(', ')}</li>
+                        )}
+                        {Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0 && (
+                            <li style={{ margin: '8px 0', lineHeight: '1.8' }}><strong>Vuelo:</strong> Paquete aéreo incluido (vuelo + hotel)</li>
                         )}
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Check-in 3:00 pm y check-out 12:00 pm</li>
                         <li style={{ margin: '8px 0', lineHeight: '1.8' }}>Servicio de guarda equipaje sin costo adicional</li>

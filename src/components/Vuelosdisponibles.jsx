@@ -26,7 +26,8 @@ const VuelosDisponibles = () => {
   const [loadingExtras, setLoadingExtras] = useState(false);
   const [baggageOptions, setBaggageOptions] = useState([]);
   const [packageData, setPackageData] = useState(null);
-  
+  const [modoCotizacion, setModoCotizacion] = useState(false);
+
   // Mapeo de IDs de hotel a nombres
   const hotelNames = {
     9: "Hotel Marina Suites",
@@ -106,6 +107,34 @@ const VuelosDisponibles = () => {
     }).format(parseFloat(price));
   };
 
+  const obtenerTrm = (datosReserva) => {
+    if (!Array.isArray(datosReserva) || datosReserva.length === 0) return null;
+    const trm = datosReserva.find((r) => r?.trm != null)?.trm ?? datosReserva[0]?.trm;
+    const parsed = parseFloat(trm);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  };
+
+  const convertirPrecioVuelo = (precioUsd, divisaSelec, trm) => {
+    const precio = parseFloat(precioUsd) || 0;
+    if (divisaSelec === 'USD') return precio;
+    return trm ? precio * trm : precio;
+  };
+
+  const getPrecioConTrm = (precioUsd) => {
+    const divisaSelec =
+      (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+    let trm = null;
+    try {
+      trm = obtenerTrm(JSON.parse(localStorage.getItem('datosreserva')));
+    } catch {
+      /* sin datosreserva en localStorage */
+    }
+    if (!trm && hotelReservationData) {
+      trm = obtenerTrm([hotelReservationData]);
+    }
+    return convertirPrecioVuelo(precioUsd, divisaSelec, trm);
+  };
+
   // Función para obtener el nombre de la aerolínea
   const getAirlineName = (carrierCode, dictionaries) => {
     return dictionaries?.carriers?.[carrierCode] || carrierCode;
@@ -145,6 +174,12 @@ const VuelosDisponibles = () => {
     return code;
   };
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setModoCotizacion(localStorage.getItem('modoCotizacion') === 'true');
+    }
+  }, []);
+
   // Cargar datos del localStorage al montar el componente
   useEffect(() => {
     const loadFlightData = () => {
@@ -152,6 +187,7 @@ const VuelosDisponibles = () => {
         const dataVuelo = JSON.parse(localStorage.getItem('dataVuelo'));
         const datosDelVuelo = JSON.parse(localStorage.getItem('datosDelVuelo'));
         const datosReserva = JSON.parse(localStorage.getItem('datosreserva'));
+        const trm = obtenerTrm(datosReserva);
         
         // Verificar si la respuesta tiene la nueva estructura
         const hasNewStructure = dataVuelo && (dataVuelo.recommendedFlights || dataVuelo.flights);
@@ -225,8 +261,9 @@ const VuelosDisponibles = () => {
               const returnFlight = offer.inbound; // Nota: en la nueva estructura es "inbound" no "return"
               
               // Seleccionar precio en divisa acorde a la búsqueda
-              const selectedCurrency = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
-              const totalPrice = parseFloat(offer.totalPrice || 0);
+              const divisaSelec = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+              const precioUsd = parseFloat(offer.totalPrice || 0);
+              const totalPrice = convertirPrecioVuelo(precioUsd, divisaSelec, trm);
               const passengers = offer.pricePerPassenger?.length || dataVuelo.Passengers?.NumberOfAdults || 1;
               const pricePerPerson = totalPrice / passengers;
 
@@ -306,7 +343,7 @@ const VuelosDisponibles = () => {
                   total: formatPrice(totalPrice),
                   passengers: passengers,
                   includesTaxes: true,
-                  currency: offer.CurrencyCode || selectedCurrency
+                  currency: offer.CurrencyCode || divisaSelec
                 },
                 bestDeal: offer.bestDeal || false
               };
@@ -340,8 +377,13 @@ const VuelosDisponibles = () => {
             const returnFlight = itineraries[1];
             
             // Seleccionar precio en divisa acorde a la búsqueda
-            const selectedCurrency = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
-            const totalPrice = parseFloat(selectedCurrency === 'USD' ? (offer.price?.total || offer.price?.base) : (offer.price?.base));
+            const divisaSelec = (typeof window !== 'undefined' && localStorage.getItem('selectedCurrency')) || 'COP';
+            const precioUsd = parseFloat(
+              divisaSelec === 'USD'
+                ? (offer.price?.total || offer.price?.base)
+                : (offer.price?.base)
+            );
+            const totalPrice = convertirPrecioVuelo(precioUsd, divisaSelec, trm);
             const passengers = offer.travelerPricings.length;
             const pricePerPerson = totalPrice / passengers;
 
@@ -878,12 +920,11 @@ const VuelosDisponibles = () => {
         }
       }
 
-      // Cerrar el modal y redirigir a la página de reservas
       handleCloseBaggageModal();
-      
-      // Redirigir a la página de reservas
+
       if (typeof window !== 'undefined') {
-        window.location.href = '/reservas';
+        const esCotizacion = localStorage.getItem('modoCotizacion') === 'true';
+        window.location.href = esCotizacion ? '/cotizacionpagina' : '/reservas';
       }
     } catch (error) {
       console.error('Error al confirmar equipaje:', error);
@@ -899,7 +940,7 @@ const VuelosDisponibles = () => {
 
   // Formatear precio de equipaje
   const formatBaggagePrice = (baggageId) => {
-    const price = getBaggagePrice(baggageId);
+    const price = getPrecioConTrm(getBaggagePrice(baggageId));
     if (price === 0) return '+$0';
     return `+${formatPrice(price)}`;
   };
@@ -910,14 +951,16 @@ const VuelosDisponibles = () => {
       return '0';
     }
     
-    // Obtener el precio base del paquete
-    const basePrice = parseFloat(packageData.totalPrice || packageData.flightBookPrice || 0);
+    // Obtener el precio base del paquete (USD) y convertir a COP con trm si aplica
+    const basePrice = getPrecioConTrm(
+      parseFloat(packageData.totalPrice || packageData.flightBookPrice || 0)
+    );
     
     // Sumar los precios de todos los equipajes seleccionados por pasajero
     let totalBaggagePrice = 0;
     Object.values(selectedBaggageByPassenger).forEach(baggageId => {
       if (baggageId && baggageId !== 'none') {
-        totalBaggagePrice += getBaggagePrice(baggageId);
+        totalBaggagePrice += getPrecioConTrm(getBaggagePrice(baggageId));
       }
     });
     
@@ -1078,7 +1121,7 @@ const VuelosDisponibles = () => {
                               onClick={() => handleSelectFare(option.id, passengerId)}
                             >
                               <div className={styles.fareName}>{option.baggageName}</div>
-                              <div className={styles.farePrice}>+{formatPrice(parseFloat(option.pricingDetail))}</div>
+                              <div className={styles.farePrice}>+{formatPrice(getPrecioConTrm(option.pricingDetail))}</div>
                               <div className={styles.farePriceLabel}>
                                 {option.bagsAllowed} maleta{option.bagsAllowed > 1 ? 's' : ''} • {option.weightPerBag} kg c/u
                               </div>
@@ -1399,7 +1442,7 @@ const VuelosDisponibles = () => {
       {/* Sidebar de reserva */}
       <div className={styles.sidebar}>
         <div className={styles.reservationSummary}>
-          <h2 className={styles.reservationTitle}>Reserva</h2>
+          <h2 className={styles.reservationTitle}>{modoCotizacion ? 'Cotización' : 'Reserva'}</h2>
           
           {/* Información del hotel */}
           <div className={styles.hotelInfo}>
@@ -1513,7 +1556,7 @@ const VuelosDisponibles = () => {
               onClick={handleContinue}
               disabled={loadingBaggageData}
             >
-              {loadingBaggageData ? 'Cargando...' : 'Continuar'}
+              {loadingBaggageData ? 'Cargando...' : (modoCotizacion ? 'Continuar a cotización' : 'Continuar')}
             </button>
           ) : (
             <button 

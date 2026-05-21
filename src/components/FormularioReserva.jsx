@@ -385,12 +385,26 @@ const FormularioReserva = () => {
 
   const totalRetenciones = totalRetencionesF();
 
+  const obtenerTrm = (reservas) => {
+    if (!Array.isArray(reservas) || reservas.length === 0) return null;
+    const trm = reservas.find((r) => r?.trm != null)?.trm ?? reservas[0]?.trm;
+    const parsed = parseFloat(trm);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  };
+
+  const aplicarTrmSiCop = (precioUsd) => {
+    const precio = parseFloat(String(precioUsd).replace(/,/g, "")) || 0;
+    if (divisaSelec === "USD") return precio;
+    const trm = obtenerTrm(datosreserva);
+    return trm ? precio * trm : precio;
+  };
+
   const parseFlightPackageTotalPrice = () => {
     try {
       const packageData = JSON.parse(localStorage.getItem("flightPackageData") || "null");
       const raw = packageData?.totalPrice ?? packageData?.flightBookPrice ?? 0;
       const parsed = parseFloat(String(raw).replace(/,/g, ""));
-      return Number.isFinite(parsed) ? parsed : 0;
+      return Number.isFinite(parsed) ? aplicarTrmSiCop(parsed) : 0;
     } catch {
       return 0;
     }
@@ -1134,7 +1148,7 @@ const FormularioReserva = () => {
       );
     };
 
-    const totalVueloPaquete = parseFloat(
+    const totalVueloPaquete = aplicarTrmSiCop(
       packageDataFromStorage?.totalPrice ?? packageDataFromStorage?.flightBookPrice ?? 0
     );
     const totalConVuelo = Math.round(
@@ -1301,6 +1315,20 @@ const FormularioReserva = () => {
     }).format(value);
   };
 
+  const formatearMontoDisplay = (monto) => {
+    const precio = parseFloat(monto) || 0;
+    if (divisaSelec === "USD") {
+      return `$${precio.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+    }
+    return formatCurrency(precio);
+  };
+
+  const formatearPrecioVueloUsd = (precioUsd) =>
+    formatearMontoDisplay(aplicarTrmSiCop(precioUsd));
+
   // Función para obtener el logo de la aerolínea
   const getAirlineLogo = (carrierCode) => {
     const airlineLogos = {
@@ -1360,9 +1388,16 @@ const FormularioReserva = () => {
 
   // Procesar datos del vuelo desde datosReservaVuelos o dataVueloEquipaje
   const processedFlightData = useMemo(() => {
+    const monedaDisplay = divisaSelec || "COP";
+
     // Primero intentar con dataVueloEquipaje si existe
     if (baggageData && baggageData.flight) {
       const flightFromEquipaje = baggageData.flight;
+      const pasajerosPrecio = flightFromEquipaje.pricePerPassenger?.map((p) => ({
+        ...p,
+        total: aplicarTrmSiCop(p.total),
+        currency: monedaDisplay,
+      }));
       return {
         flightId: flightFromEquipaje.flightId,
         outbound: {
@@ -1392,12 +1427,18 @@ const FormularioReserva = () => {
           logo: getAirlineLogo(flightFromEquipaje.inbound?.segments?.[0]?.airlineCode),
         },
         pricing: {
-          total: baggageData.totalPrice || baggageData.flightBookPrice,
-          perPerson: flightFromEquipaje.pricePerPassenger?.[0]?.total || (parseFloat(baggageData.totalPrice || 0) / (flightFromEquipaje.pricePerPassenger?.length || 1)),
+          total: aplicarTrmSiCop(baggageData.totalPrice || baggageData.flightBookPrice),
+          totalWithoutLuggage: aplicarTrmSiCop(baggageData.flightBookPrice),
+          perPerson: aplicarTrmSiCop(
+            flightFromEquipaje.pricePerPassenger?.[0]?.total ||
+              (parseFloat(baggageData.totalPrice || 0) /
+                (flightFromEquipaje.pricePerPassenger?.length || 1))
+          ),
+          pricePerPassenger: pasajerosPrecio,
           passengers: flightFromEquipaje.pricePerPassenger?.length || 1,
-          currency: baggageData.currency || "USD",
-          includesTaxes: true
-        }
+          currency: monedaDisplay,
+          includesTaxes: true,
+        },
       };
     }
     
@@ -1432,13 +1473,23 @@ const FormularioReserva = () => {
         outbound: processFlightSegment(flightData.outbound),
         return: processFlightSegment(flightData.inbound),
         pricing: {
-          total: flightData.totalPrice || flightData.TotalPriceWithoutLuggage,
-          totalWithoutLuggage: flightData.TotalPriceWithoutLuggage,
-          perPerson: flightData.pricePerPassenger?.[0]?.total || (parseFloat(flightData.totalPrice || 0) / (flightData.pricePerPassenger?.length || 1)),
-          pricePerPassenger: flightData.pricePerPassenger,
+          total: aplicarTrmSiCop(
+            flightData.totalPrice || flightData.TotalPriceWithoutLuggage
+          ),
+          totalWithoutLuggage: aplicarTrmSiCop(flightData.TotalPriceWithoutLuggage),
+          perPerson: aplicarTrmSiCop(
+            flightData.pricePerPassenger?.[0]?.total ||
+              parseFloat(flightData.totalPrice || 0) /
+                (flightData.pricePerPassenger?.length || 1)
+          ),
+          pricePerPassenger: flightData.pricePerPassenger?.map((p) => ({
+            ...p,
+            total: aplicarTrmSiCop(p.total),
+            currency: monedaDisplay,
+          })),
           passengers: flightData.pricePerPassenger?.length || 1,
-          currency: flightData.CurrencyCode || "USD",
-          includesTaxes: true
+          currency: monedaDisplay,
+          includesTaxes: true,
         },
         baggage: {
           cabin: flightData.cabin_luggage_include || false,
@@ -1449,7 +1500,7 @@ const FormularioReserva = () => {
     }
     
     return null;
-  }, [flightData, baggageData]);
+  }, [flightData, baggageData, divisaSelec, datosreserva]);
 
   const onSubmit = (data) => {
     console.log("Datos enviados:", data);
@@ -1707,7 +1758,7 @@ const FormularioReserva = () => {
                     </p>
                     {baggageData.luggage.map((luggage, idx) => (
                       <p key={idx} style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}>
-                        Pasajero {parseInt(luggage.passengerId) + 1}: {luggage.baggageName} - {luggage.pricingDetail} {baggageData.currency || "USD"}
+                        Pasajero {parseInt(luggage.passengerId) + 1}: {luggage.baggageName} - {formatearPrecioVueloUsd(luggage.pricingDetail)} {divisaSelec || "COP"}
                       </p>
                     ))}
                   </div>
@@ -1785,32 +1836,29 @@ const FormularioReserva = () => {
                   <div style={{ marginTop: "10px" }}>
                     {processedFlightData.pricing.pricePerPassenger.map((passenger, idx) => (
                       <p key={idx} style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}>
-                        Pasajero {parseInt(passenger.passenger_id) + 1} ({passenger.passenger_type}): {passenger.currency === "USD" 
-                          ? `$${parseFloat(passenger.total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                          : formatCurrency(parseFloat(passenger.total))
-                        } {passenger.currency || processedFlightData.pricing.currency}
+                        Pasajero {parseInt(passenger.passenger_id) + 1} ({passenger.passenger_type}): {formatearMontoDisplay(passenger.total)} {divisaSelec || "COP"}
                       </p>
                     ))}
                   </div>
                 )}
                 {processedFlightData.pricing.perPerson && !processedFlightData.pricing.pricePerPassenger && (
                   <p style={{ margin: "5px 0", fontSize: "14px", color: "#666" }}>
-                    Por persona: {typeof processedFlightData.pricing.perPerson === 'string' ? processedFlightData.pricing.perPerson : formatCurrency(processedFlightData.pricing.perPerson)} {processedFlightData.pricing.currency || divisaSelec || "COP"}
+                    Por persona: {typeof processedFlightData.pricing.perPerson === "string"
+                      ? processedFlightData.pricing.perPerson
+                      : formatearMontoDisplay(processedFlightData.pricing.perPerson)}{" "}
+                    {divisaSelec || "COP"}
                   </p>
                 )}
                 {processedFlightData.pricing.totalWithoutLuggage && processedFlightData.pricing.total && parseFloat(processedFlightData.pricing.total) > parseFloat(processedFlightData.pricing.totalWithoutLuggage) && (
                   <p style={{ margin: "5px 0", fontSize: "12px", color: "#666" }}>
-                    Precio sin equipaje: {processedFlightData.pricing.currency === "USD" 
-                      ? `$${parseFloat(processedFlightData.pricing.totalWithoutLuggage).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                      : formatCurrency(parseFloat(processedFlightData.pricing.totalWithoutLuggage))
-                    } {processedFlightData.pricing.currency}
+                    Precio sin equipaje: {formatearMontoDisplay(processedFlightData.pricing.totalWithoutLuggage)} {divisaSelec || "COP"}
                   </p>
                 )}
                 <p style={{ margin: "5px 0", fontSize: "16px", fontWeight: "600", color: "#2c3e50" }}>
-                  Total {processedFlightData.pricing.passengers || 1} persona(s): {processedFlightData.pricing.currency === "USD" 
-                    ? `$${parseFloat(processedFlightData.pricing.total || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                    : typeof processedFlightData.pricing.total === 'string' ? processedFlightData.pricing.total : formatCurrency(parseFloat(processedFlightData.pricing.total || 0))
-                  } {processedFlightData.pricing.currency || divisaSelec || "COP"}
+                  Total {processedFlightData.pricing.passengers || 1} persona(s): {typeof processedFlightData.pricing.total === "string"
+                    ? processedFlightData.pricing.total
+                    : formatearMontoDisplay(processedFlightData.pricing.total)}{" "}
+                  {divisaSelec || "COP"}
                 </p>
                 {processedFlightData.pricing.includesTaxes && (
                   <p style={{ margin: "5px 0", fontSize: "12px", color: "#28a745" }}>
@@ -1827,17 +1875,12 @@ const FormularioReserva = () => {
                   Precio total con equipaje
                 </p>
                 <p style={{ margin: "5px 0", fontSize: "18px", fontWeight: "700", color: "#2c3e50" }}>
-                  {baggageData.currency === "USD" 
-                    ? `$${parseFloat(baggageData.totalPrice || baggageData.flightBookPrice || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                    : formatCurrency(parseFloat(baggageData.totalPrice || baggageData.flightBookPrice || 0))
-                  } {baggageData.currency || divisaSelec || "USD"}
+                  {formatearPrecioVueloUsd(baggageData.totalPrice || baggageData.flightBookPrice || 0)}{" "}
+                  {divisaSelec || "COP"}
                 </p>
                 {baggageData.flightBookPrice && baggageData.totalPrice && parseFloat(baggageData.totalPrice) > parseFloat(baggageData.flightBookPrice) && (
                   <p style={{ margin: "5px 0", fontSize: "12px", color: "#666" }}>
-                    Precio base: {baggageData.currency === "USD" 
-                      ? `$${parseFloat(baggageData.flightBookPrice).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                      : formatCurrency(parseFloat(baggageData.flightBookPrice))
-                    } {baggageData.currency || "USD"}
+                    Precio base: {formatearPrecioVueloUsd(baggageData.flightBookPrice)} {divisaSelec || "COP"}
                   </p>
                 )}
               </div>

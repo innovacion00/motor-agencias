@@ -618,6 +618,7 @@ export const Cid = ({ id }) => {
   });
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isSearchingFlights, setIsSearchingFlights] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null); // 'reservar' | 'cotizar'
   const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
   const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
 
@@ -630,32 +631,73 @@ export const Cid = ({ id }) => {
     setIsOpen(false);
   }
 
+  const ejecutarFlujoReserva = async () => {
+    const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+    if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+      enviardatos();
+      localStorage.removeItem('modoCotizacion');
+      window.location.href = "/reservas";
+      return;
+    }
+
+    setIsSearchingFlights(true);
+    try {
+      const success = await searchFlights();
+      if (success) {
+        enviardatos();
+        localStorage.removeItem('modoCotizacion');
+        window.location.href = "/dispoVuelos";
+      }
+    } catch (error) {
+      console.error('Error en la búsqueda de vuelos:', error);
+    } finally {
+      setIsSearchingFlights(false);
+    }
+  };
+
+  const ejecutarFlujoCotizacion = async () => {
+    const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+    if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+      enviardatos();
+      localStorage.removeItem('modoCotizacion');
+      window.location.href = "/cotizacionpagina";
+      return;
+    }
+
+    setIsSearchingFlights(true);
+    try {
+      const success = await searchFlights();
+      if (success) {
+        enviardatos();
+        localStorage.setItem('modoCotizacion', 'true');
+        window.location.href = "/dispoVuelos";
+      }
+    } catch (error) {
+      console.error('Error en la búsqueda de vuelos:', error);
+    } finally {
+      setIsSearchingFlights(false);
+    }
+  };
+
+  const requiereUpgradeModal = () =>
+    [1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA";
+
   const handleReservarClick = async () => {
-    // Solo mostrar el modal para hoteles específicos en Cartagena
-    if ([1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA") {
+    if (requiereUpgradeModal()) {
+      setPendingAction('reservar');
       setShowUpgradeModal(true);
     } else {
-      // Decidir destino según tipoBusqueda
-      const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-      if (tipoBusqueda === 1 || tipoBusqueda === 2) {
-        enviardatos();
-        window.location.href = "/reservas";
-        return;
-      }
+      await ejecutarFlujoReserva();
+    }
+  };
 
-      // Realizar consulta de vuelos cuando tipoBusqueda === 3
-      setIsSearchingFlights(true);
-      try {
-        const success = await searchFlights();
-        if (success) {
-          enviardatos();
-          window.location.href = "/dispoVuelos";
-        }
-      } catch (error) {
-        console.error('Error en la búsqueda de vuelos:', error);
-      } finally {
-        setIsSearchingFlights(false);
-      }
+  const handleCotizarClick = async () => {
+    if (!puedeReservar || isSearchingFlights) return;
+    if (requiereUpgradeModal()) {
+      setPendingAction('cotizar');
+      setShowUpgradeModal(true);
+    } else {
+      await ejecutarFlujoCotizacion();
     }
   };
 
@@ -1629,6 +1671,10 @@ export const Cid = ({ id }) => {
                                   regexSeleccionado.test(product.roomName) || 
                                   regexSeleccionado.test(product.rateDescription)
                                 )?.rateId,
+                                trm: dato.products?.find((product) =>
+                                  regexSeleccionado.test(product.roomName) ||
+                                  regexSeleccionado.test(product.rateDescription)
+                                )?.trm,
                                 mascotas: mostrarMascotas ? cantidadMascotas : 0,
                               },
                             ]);
@@ -1875,78 +1921,77 @@ export const Cid = ({ id }) => {
               currentHotelId={Number(id)}
               onSelectUpgrade={handleUpgradeSelect}
               onContinue={async () => {
-                const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-                if (tipoBusqueda === 1 || tipoBusqueda === 2) {
-                  enviardatos();
-                  window.location.href = "/reservas";
-                  return;
-                }
-
-                setIsSearchingFlights(true);
-                try {
-                  const success = await searchFlights();
-                  if (success) {
-                    enviardatos();
-                    window.location.href = "/dispoVuelos";
-                  }
-                } catch (error) {
-                  console.error('Error en la búsqueda de vuelos:', error);
-                } finally {
-                  setIsSearchingFlights(false);
+                if (pendingAction === 'cotizar') {
+                  await ejecutarFlujoCotizacion();
+                } else {
+                  await ejecutarFlujoReserva();
                 }
               }}
             />
-            <a href="/cotizacionpagina">
-              <button
-                onClick={enviardatos}
-                disabled={!puedeReservar}
-                data-tooltip-id="tooltip-generar-cotizacion"
-                data-tooltip-content={
-                  !puedeReservar
-                    ? datohabitacion.length === 0
-                      ? "Selecciona habitaciones para generar una cotización"
-                      : "Selecciona más habitaciones hasta cubrir el número de adultos."
-                    : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."
+            <button
+              type="button"
+              onClick={handleCotizarClick}
+              disabled={!puedeReservar || isSearchingFlights}
+              data-tooltip-id="tooltip-generar-cotizacion"
+              data-tooltip-content={
+                !puedeReservar
+                  ? datohabitacion.length === 0
+                    ? "Selecciona habitaciones para generar una cotización"
+                    : "Selecciona más habitaciones hasta cubrir el número de adultos."
+                  : "Crear y enviar una cotización personalizada al cliente. El cliente podrá revisar todos los detalles, aceptar o rechazar la oferta directamente desde el enlace que recibirá."
+              }
+              data-tooltip-place="left"
+              style={{
+                marginTop: "12px",
+                padding: "8px 16px",
+                backgroundColor: (!puedeReservar || isSearchingFlights) ? "#d3d3d3" : "#26547B",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: (!puedeReservar || isSearchingFlights) ? "not-allowed" : "pointer",
+                fontWeight: "bold",
+                transition: "background-color 0.3s ease, transform 0.2s ease",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                width: "100%"
+              }}
+              onMouseEnter={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#0056b3";
+                  e.target.style.transform = "scale(1.1)";
                 }
-                data-tooltip-place="left"
-                style={{
-                  marginTop: "12px",
-                  padding: "8px 16px",
-                  backgroundColor: !puedeReservar ? "#d3d3d3" : "#26547B",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: !puedeReservar ? "not-allowed" : "pointer",
-                  fontWeight: "bold",
-                  transition: "background-color 0.3s ease, transform 0.2s ease",
-                  width: "100%"
-                }}
-                onMouseEnter={(e) => {
-                  if (!!puedeReservar) {
-                    e.target.style.backgroundColor = "#0056b3";
-                    e.target.style.transform = "scale(1.1)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!!puedeReservar) {
-                    e.target.style.backgroundColor = "#26547B";
-                    e.target.style.transform = "scale(1)";
-                  }
-                }}
-                onMouseDown={(e) => {
-                  if (!!puedeReservar) {
-                    e.target.style.backgroundColor = "#003f7f";
-                  }
-                }}
-                onMouseUp={(e) => {
-                  if (!!puedeReservar) {
-                    e.target.style.backgroundColor = "#0056b3";
-                  }
-                }}
-              >
-                Generar cotización
-              </button>
-            </a>
+              }}
+              onMouseLeave={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#26547B";
+                  e.target.style.transform = "scale(1)";
+                }
+              }}
+              onMouseDown={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#003f7f";
+                }
+              }}
+              onMouseUp={(e) => {
+                if (!(!puedeReservar || isSearchingFlights)) {
+                  e.target.style.backgroundColor = "#0056b3";
+                }
+              }}
+            >
+              {isSearchingFlights && (
+                <div style={{
+                  width: "16px",
+                  height: "16px",
+                  border: "2px solid #ffffff",
+                  borderTop: "2px solid transparent",
+                  borderRadius: "50%",
+                  animation: "spin 1s linear infinite"
+                }}></div>
+              )}
+              {isSearchingFlights ? "Buscando vuelos..." : "Generar cotización"}
+            </button>
             <Tooltip
               id="tooltip-generar-cotizacion"
               className="custom-tooltip"

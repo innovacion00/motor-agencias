@@ -7,6 +7,14 @@ import Cookies from 'js-cookie';
 import { refreshToken } from '../stores/authtoken';
 import { Tooltip } from 'react-tooltip';
 import FormularioRetenciones from './desglose/FormularioRetenciones';
+import VueloCotizacionDetalle from './VueloCotizacionDetalle';
+import {
+  tieneVueloEnCotizacion,
+  parsePrecioVueloPaquete,
+  buildVueloArrayParaCotizacion,
+  getOrigenIataCotizacion,
+  generarHtmlVueloCotizacion,
+} from '../utils/vueloCotizacion';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -240,10 +248,16 @@ export default function ReservaHotelComponent() {
 
   const totalRetenciones = totalRetencionesF();
 
+  const incluyeVuelo = tieneVueloEnCotizacion();
+  const precioVuelo = incluyeVuelo ? parsePrecioVueloPaquete(divisaSelec, datosReserva) : 0;
+  const baseCombinada = totalRetenciones + precioVuelo;
+
   // Calcular markup (admite coma o punto como separador decimal)
   const markupPorcentaje = parseFloat(String(markup).replace(',', '.')) || 0;
-  const markupAmount = Math.round(totalRetenciones * (markupPorcentaje / 100));
-  const totalConMarkup = totalRetenciones + markupAmount;
+  const markupAmount = Math.round(baseCombinada * (markupPorcentaje / 100));
+  const totalConMarkup = baseCombinada + markupAmount;
+  const totalParaPost = Math.round(baseCombinada);
+  const markupParaPost = Math.round(totalConMarkup);
 
   // Función para manejar los datos de retenciones
   const manejarDatos = (datosHijo, rtePorcentajes) => {
@@ -494,15 +508,23 @@ export default function ReservaHotelComponent() {
     const checkin = format(fechasreserva?.dateRange?.startDate, "YYYY-MM-DD", "es");
     const checkout = format(fechasreserva?.dateRange?.endDate, "YYYY-MM-DD", "es");
     const noches = datosReserva[0]?.nights || 1;
-    const precioPorNocheCalc = totalConMarkup && noches > 0 ? (totalConMarkup / noches) : 0;
-    const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
+    const vueloArray = buildVueloArrayParaCotizacion();
+    const precioVueloPdf = incluyeVuelo ? precioVuelo : 0;
+    const baseCombinadaPdf = totalRetenciones + precioVueloPdf;
+    const markupAmountPdf = Math.round(baseCombinadaPdf * (markupPorcentaje / 100));
+    const totalConMarkupPdf = baseCombinadaPdf + markupAmountPdf;
+    const precioPorNocheCalc = totalConMarkupPdf && noches > 0 ? (totalConMarkupPdf / noches) : 0;
+    const totalSinIvaConMarkup = exentoIva ? totalConMarkupPdf : Math.round(totalConMarkupPdf / 1.19);
     const totalHuespedes = cantadultos + cantninos;
     const habitaciones = datosReserva.length;
     const precioPorNoche = datosReserva[0]?.precioBase || 0;
     const subtotalFormateado = subtotal.toLocaleString();
     const ivaFormateado = iva.toLocaleString();
     const totalFormateado = totalRetenciones.toLocaleString();
-    const totalConMarkupFormateado = totalConMarkup.toLocaleString();
+    const totalConMarkupFormateado = totalConMarkupPdf.toLocaleString();
+    const precioVueloFormateado = precioVueloPdf.toLocaleString();
+    const totalFormateadoPaquete = totalConMarkupPdf.toLocaleString();
+    const htmlVuelo = generarHtmlVueloCotizacion(vueloArray, divisaSelec || "COP", datosReserva);
     const nombreCompleto = `${formData.nombreCompleto} ${formData.apellidos}`;
     const planAlimentacion = datosReserva[0]?.plandealimentacion || "Solo desayuno";
     const mascotas = datosReserva[0]?.mascotas || 0;
@@ -618,7 +640,7 @@ export default function ReservaHotelComponent() {
 
           /* --- SECTIONS GENERAL --- */
           .section {
-              padding: 25px 40px;
+              padding: 10px 40px;
               page-break-inside: avoid;
               break-inside: avoid;
           }
@@ -789,6 +811,94 @@ export default function ReservaHotelComponent() {
               break-inside: avoid;
           }
 
+          /* --- VUELO (PDF) --- */
+          .flight-section {
+              padding: 12px 40px 8px;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .flight-section h2 {
+              margin-top: 0;
+              margin-bottom: 10px;
+              padding-bottom: 8px;
+          }
+
+          .flight-box {
+              border: 1px solid #e8dcc8;
+              border-left: 4px solid var(--primary-color);
+              border-radius: 8px;
+              background: var(--bg-accent);
+              padding: 12px 14px;
+              page-break-inside: avoid;
+              break-inside: avoid;
+          }
+
+          .flight-package--sep {
+              margin-bottom: 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px dashed #ddd;
+          }
+
+          .flight-meta {
+              font-size: 0.8rem;
+              color: var(--text-light);
+              margin-bottom: 8px;
+          }
+
+          .flight-leg {
+              display: flex;
+              gap: 10px;
+              align-items: flex-start;
+              padding: 6px 0;
+          }
+
+          .flight-leg + .flight-leg {
+              border-top: 1px dashed #e8dcc8;
+          }
+
+          .flight-leg-badge {
+              flex-shrink: 0;
+              min-width: 52px;
+              text-align: center;
+              font-size: 0.65rem;
+              font-weight: 700;
+              letter-spacing: 0.4px;
+              color: var(--white);
+              background: var(--primary-dark);
+              padding: 4px 6px;
+              border-radius: 4px;
+              line-height: 1.2;
+          }
+
+          .flight-leg-body {
+              flex: 1;
+              font-size: 0.88rem;
+              line-height: 1.3;
+              color: var(--text-dark);
+          }
+
+          .flight-leg-route {
+              color: var(--text-light);
+              font-size: 0.82rem;
+              margin-top: 2px;
+          }
+
+          .flight-summary {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-top: 8px;
+              padding-top: 8px;
+              border-top: 2px solid var(--primary-color);
+              font-size: 0.9rem;
+          }
+
+          .flight-summary strong {
+              color: var(--primary-dark);
+              font-size: 1rem;
+          }
+
           /* --- FOOTER --- */
           footer {
               background-color: var(--text-dark);
@@ -888,10 +998,20 @@ export default function ReservaHotelComponent() {
                   <label>Tours</label>
                   <span>${toursPdf.length > 0 ? toursPdf.join(", ") : "No incluidos"}</span>
               </div>
+              ${precioVueloPdf > 0 ? `
+              <div class="detail-item">
+                  <label>Vuelo</label>
+                  <span>Paquete vuelo + hotel incluido</span>
+              </div>
+              ` : ''}
           </div>
       </div>
 
-      <div class="section" style="padding-top: 0;">
+      ${htmlVuelo}
+
+      <div class="section" style="padding-top: 8px;">
+           <br>
+          <h2>Galería del Hotel</h2>
           <div class="gallery-container">
               <div class="main-gallery-image">
                   <img src="${getHotelImagesById(datosReserva[0]?.hotelidAutocore).main}" alt="Vista principal" />
@@ -926,6 +1046,7 @@ export default function ReservaHotelComponent() {
                   : ""
               }
               ${toursPdfHtml}
+              ${precioVueloPdf > 0 ? `<li><strong>Vuelo:</strong> Paquete aéreo incluido ($${precioVueloFormateado}).</li>` : ""}
           </ul>
       </div>
 
@@ -955,9 +1076,21 @@ export default function ReservaHotelComponent() {
                   <span>${exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</span>
                   <span>$${ivaFormateado}</span>
               </div>
+              ${precioVueloPdf > 0 ? `
+              <div class="price-row">
+                  <span>Vuelo (sin markup)</span>
+                  <span>$${precioVueloFormateado}</span>
+              </div>
+              ` : ''}
+              ${markupPorcentaje > 0 ? `
+              <div class="price-row">
+                  <span>Markup (${markupPorcentaje}%)</span>
+                  <span>$${markupAmountPdf.toLocaleString()}</span>
+              </div>
+              ` : ''}
               <div class="price-row total">
                   <span>Total a Pagar</span>
-                  <span>$${totalConMarkupFormateado}</span>
+                  <span>$${totalFormateadoPaquete}</span>
               </div>
           </div>
 
@@ -1096,10 +1229,15 @@ export default function ReservaHotelComponent() {
         );
       };
 
+      const vueloPayload = buildVueloArrayParaCotizacion();
+      const origenIata = getOrigenIataCotizacion();
+
       const informacionD = JSON.stringify({
-        total: Math.round(totalRetenciones),
-        markup: Math.round(totalConMarkup),
+        total: totalParaPost,
+        markup: markupParaPost,
         porcentajemarkup: markupPorcentaje,
+        ...(origenIata ? { origenIata } : {}),
+        ...(vueloPayload.length > 0 ? { vuelo: vueloPayload } : {}),
         mascotasNumber: datosReserva[0]?.mascotas || null,
         adicionAlmuerzo: false,
         hotelInfo:{
@@ -1195,6 +1333,9 @@ export default function ReservaHotelComponent() {
           title: "Cotización enviada",
           text: "Se ha enviado la cotización con éxito.",
         });
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('modoCotizacion');
+        }
         window.location.href = `/cotizaciones/${data._id}`;
       } else {
         throw new Error("o intente nuevamente mas tarde");
@@ -1563,6 +1704,12 @@ export default function ReservaHotelComponent() {
                       </td>
                       <td className="td-total-amount">${totalRetenciones.toLocaleString()}</td>
                     </tr>
+                    {incluyeVuelo && precioVuelo > 0 && (
+                      <tr className="table-subtotal">
+                        <td colSpan="4" className="td-total">Vuelo (sin markup)</td>
+                        <td className="td-amount">${precioVuelo.toLocaleString()}</td>
+                      </tr>
+                    )}
                     {markupPorcentaje > 0 && (
                       <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
                         <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
@@ -1570,6 +1717,16 @@ export default function ReservaHotelComponent() {
                         </td>
                         <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
                           ${totalConMarkup.toLocaleString()}
+                        </td>
+                      </tr>
+                    )}
+                    {incluyeVuelo && markupPorcentaje === 0 && (
+                      <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
+                        <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
+                          Total paquete (hotel + vuelo)
+                        </td>
+                        <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
+                          ${baseCombinada.toLocaleString()}
                         </td>
                       </tr>
                     )}
@@ -1769,11 +1926,27 @@ export default function ReservaHotelComponent() {
               </div>
             </div>
 
+            {incluyeVuelo && (
+              <div className="card" style={{ marginBottom: "16px" }}>
+                <h3 style={{ margin: "0 0 12px", fontSize: "1rem", color: "#1C3D5A" }}>Vuelo incluido en la cotización</h3>
+                <VueloCotizacionDetalle
+                  vueloArray={buildVueloArrayParaCotizacion()}
+                  collapsible={false}
+                />
+              </div>
+            )}
+
             <div className="price-section">
               <div className="price-row">
-                <span className="price-label">Precio base</span>
+                <span className="price-label">Precio base (hotel)</span>
                 <span className="price-value">${totalRetenciones.toLocaleString()}</span>
               </div>
+              {incluyeVuelo && precioVuelo > 0 && (
+                <div className="price-row">
+                  <span className="price-label">Vuelo (sin markup)</span>
+                  <span className="price-value">${precioVuelo.toLocaleString()}</span>
+                </div>
+              )}
               {markupPorcentaje > 0 && (
                 <>
                   <div className="price-row">
