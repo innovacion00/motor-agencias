@@ -186,3 +186,21 @@ export const searchFlights = async () => {
   }
 };
 
+/** true solo si el usuario inició búsqueda vuelo+hotel con datos completos en localStorage */
+export const esFlujoVueloHotelActivo = () => {
+  if (typeof window === 'undefined') return false;
+  const tipo = parseInt(localStorage.getItem('tipoBusqueda'), 10);
+  if (tipo !== 3) return false;
+  try {
+    const datos = JSON.parse(localStorage.getItem('datosDelVuelo') || 'null');
+    return !!(
+      datos?.originIata &&
+      datos?.destinationIata &&
+      datos?.dateRange?.startDate &&
+      datos?.dateRange?.endDate
+    );
+  } catch {
+    return false;
+  }
+};
+

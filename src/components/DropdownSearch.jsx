@@ -106,15 +106,20 @@ const DropdownSearch = () => {
   }, []);
 
   useEffect(() => {
-    if (!puedeVerVueloHotel && botonactivado === "flight") {
-      setbotonactivado("single");
-      setIncludesFlight(false);
-      setOrigin("");
-      setSelectedOriginIata("");
-      try {
-        localStorage.setItem("tipoBusqueda", "1");
-      } catch (e) {}
-      localStorage.removeItem("datosDelVuelo");
+    if (!puedeVerVueloHotel) {
+      const tipo = parseInt(localStorage.getItem("tipoBusqueda"), 10);
+      if (tipo === 3) {
+        try {
+          localStorage.setItem("tipoBusqueda", "1");
+        } catch (e) {}
+        localStorage.removeItem("datosDelVuelo");
+      }
+      if (botonactivado === "flight") {
+        setbotonactivado("single");
+        setIncludesFlight(false);
+        setOrigin("");
+        setSelectedOriginIata("");
+      }
     }
   }, [puedeVerVueloHotel, botonactivado]);
 
@@ -400,9 +405,20 @@ const DropdownSearch = () => {
     };
 
     localStorage.setItem("nochesyedades", JSON.stringify(nochesyedades));
+
+    // Sincronizar tipoBusqueda con el modo actual (evita valor obsoleto en localStorage)
+    if (includesFlight && puedeVerVueloHotel) {
+      localStorage.setItem("tipoBusqueda", "3");
+    } else if (botonactivado === "group") {
+      localStorage.setItem("tipoBusqueda", "2");
+      localStorage.removeItem("datosDelVuelo");
+    } else {
+      localStorage.setItem("tipoBusqueda", "1");
+      localStorage.removeItem("datosDelVuelo");
+    }
     
     // Si es vuelo + hotel, guardar datos completos del vuelo
-    if (includesFlight) {
+    if (includesFlight && puedeVerVueloHotel) {
       const datosDelVuelo = {
         tipoReserva: "flight",
         activado: true,

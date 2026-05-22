@@ -10,7 +10,7 @@ import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
 import { Tooltip } from 'react-tooltip';
 import UpgradeModal from './UpgradeModal';
-import { searchFlights } from '../utils/flightSearch';
+import { searchFlights, esFlujoVueloHotelActivo } from '../utils/flightSearch';
 
 const hotelesData = {
   9: {
@@ -632,8 +632,7 @@ export const Cid = ({ id }) => {
   }
 
   const ejecutarFlujoReserva = async () => {
-    const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-    if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+    if (!esFlujoVueloHotelActivo()) {
       enviardatos();
       localStorage.removeItem('modoCotizacion');
       window.location.href = "/reservas";
@@ -656,8 +655,7 @@ export const Cid = ({ id }) => {
   };
 
   const ejecutarFlujoCotizacion = async () => {
-    const tipoBusqueda = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-    if (tipoBusqueda === 1 || tipoBusqueda === 2) {
+    if (!esFlujoVueloHotelActivo()) {
       enviardatos();
       localStorage.removeItem('modoCotizacion');
       window.location.href = "/cotizacionpagina";
