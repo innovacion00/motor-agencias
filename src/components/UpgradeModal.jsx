@@ -1,3 +1,4 @@
+// Desactivado temporalmente: no se importa desde DisponibilidadH hasta reformular la lógica de upgrades.
 import React from 'react';
 import styles from './UpgradeModal.module.css';
 
@@ -22,21 +23,9 @@ const hotelUpgrades = {
       name: "Hotel Marina Suites",
       image: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
       price: "+$100.000"
-    },
-    {
-      id: 7, // Bocagrande
-      name: "Hotel Bocagrande Suites",
-      image: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg",
-      price: "+$200.000"
     }
   ],
   9: [ // Marina
-    {
-      id: 7, // Bocagrande
-      name: "Hotel Bocagrande Suites", 
-      image: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg",
-      price: "+$200.000"
-    },
     {
       id: 4, // Aixo
       name: "Hotel Aixo Suites",

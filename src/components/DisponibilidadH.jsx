@@ -9,7 +9,6 @@ import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
 import { Tooltip } from 'react-tooltip';
-import UpgradeModal from './UpgradeModal';
 import { searchFlights, esFlujoVueloHotelActivo } from '../utils/flightSearch';
 
 const hotelesData = {
@@ -616,9 +615,7 @@ export const Cid = ({ id }) => {
     dateRange: {},
     layout: [],
   });
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [isSearchingFlights, setIsSearchingFlights] = useState(false);
-  const [pendingAction, setPendingAction] = useState(null); // 'reservar' | 'cotizar'
   const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
   const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
 
@@ -677,31 +674,13 @@ export const Cid = ({ id }) => {
     }
   };
 
-  const requiereUpgradeModal = () =>
-    [1, 6, 9].includes(Number(id)) && habitaciones?.hotel?.city === "CARTAGENA";
-
   const handleReservarClick = async () => {
-    if (requiereUpgradeModal()) {
-      setPendingAction('reservar');
-      setShowUpgradeModal(true);
-    } else {
-      await ejecutarFlujoReserva();
-    }
+    await ejecutarFlujoReserva();
   };
 
   const handleCotizarClick = async () => {
     if (!puedeReservar || isSearchingFlights) return;
-    if (requiereUpgradeModal()) {
-      setPendingAction('cotizar');
-      setShowUpgradeModal(true);
-    } else {
-      await ejecutarFlujoCotizacion();
-    }
-  };
-
-  const handleUpgradeSelect = (newHotelId) => {
-    // Redirigir a la página del nuevo hotel
-    window.location.href = `/hoteles/${newHotelId}`;
+    await ejecutarFlujoCotizacion();
   };
 
   const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
@@ -1913,19 +1892,6 @@ export const Cid = ({ id }) => {
               )}
               {isSearchingFlights ? "Buscando vuelos..." : "Reservar ahora"}
             </button>
-            <UpgradeModal 
-              isOpen={showUpgradeModal}
-              onClose={() => setShowUpgradeModal(false)}
-              currentHotelId={Number(id)}
-              onSelectUpgrade={handleUpgradeSelect}
-              onContinue={async () => {
-                if (pendingAction === 'cotizar') {
-                  await ejecutarFlujoCotizacion();
-                } else {
-                  await ejecutarFlujoReserva();
-                }
-              }}
-            />
             <button
               type="button"
               onClick={handleCotizarClick}
