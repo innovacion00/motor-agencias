@@ -9,6 +9,7 @@ import { getdisponibility } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas";
 import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
 import { puedeAccederVueloHotel } from "../utils/correosVueloHotel";
+import { limpiarFlujoVueloHotel, limpiarDatosPaqueteVuelo } from "../utils/flightSearch";
 
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -112,7 +113,7 @@ const DropdownSearch = () => {
         try {
           localStorage.setItem("tipoBusqueda", "1");
         } catch (e) {}
-        localStorage.removeItem("datosDelVuelo");
+        limpiarFlujoVueloHotel();
       }
       if (botonactivado === "flight") {
         setbotonactivado("single");
@@ -292,9 +293,8 @@ const DropdownSearch = () => {
       localStorage.setItem("tipoBusqueda", "2");
     } catch (e) {}
     
-    // Limpiar datos del vuelo del localStorage
-    localStorage.removeItem("datosDelVuelo");
-    
+    limpiarFlujoVueloHotel();
+
     mostrarTooltip(
       "Reserva para grupos seleccionado. (Beneficio tourconductor)"
     );
@@ -318,9 +318,8 @@ const DropdownSearch = () => {
       localStorage.setItem("tipoBusqueda", "1");
     } catch (e) {}
     
-    // Limpiar datos del vuelo del localStorage
-    localStorage.removeItem("datosDelVuelo");
-    
+    limpiarFlujoVueloHotel();
+
     mostrarTooltip(
       "Reserva para única fecha seleccionado (Cap. maxima 9 habitaciones)"
     );
@@ -411,9 +410,11 @@ const DropdownSearch = () => {
       localStorage.setItem("tipoBusqueda", "3");
     } else if (botonactivado === "group") {
       localStorage.setItem("tipoBusqueda", "2");
+      limpiarDatosPaqueteVuelo();
       localStorage.removeItem("datosDelVuelo");
     } else {
       localStorage.setItem("tipoBusqueda", "1");
+      limpiarDatosPaqueteVuelo();
       localStorage.removeItem("datosDelVuelo");
     }
     

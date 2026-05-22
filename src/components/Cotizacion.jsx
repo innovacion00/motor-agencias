@@ -15,6 +15,7 @@ import {
   getOrigenIataCotizacion,
   generarHtmlVueloCotizacion,
 } from '../utils/vueloCotizacion';
+import { esFlujoVueloHotelActivo, limpiarFlujoVueloHotel } from '../utils/flightSearch';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -197,6 +198,10 @@ export default function ReservaHotelComponent() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
+    if (!esFlujoVueloHotelActivo()) {
+      limpiarFlujoVueloHotel();
+    }
+
     const divisa = localStorage.getItem("selectedCurrency");
     setdivisaSelec(divisa);
     const datosDelUsuario = JSON.parse(localStorage.getItem('datosUsuario'));

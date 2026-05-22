@@ -204,3 +204,30 @@ export const esFlujoVueloHotelActivo = () => {
   }
 };
 
+/** Elimina paquete de vuelo seleccionado y datos de consulta (no borra datosDelVuelo del buscador). */
+export const limpiarDatosPaqueteVuelo = () => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem('flightPackageId');
+    localStorage.removeItem('flightPackageData');
+    localStorage.removeItem('dataVueloEquipaje');
+    localStorage.removeItem('dataVuelo');
+    localStorage.removeItem('modoCotizacion');
+    localStorage.removeItem('datosReservaVuelos');
+  } catch {
+    /* ignore */
+  }
+};
+
+/** Limpia todo lo relacionado con vuelo+hotel (búsqueda y paquete). Usar en flujo solo hotel. */
+export const limpiarFlujoVueloHotel = () => {
+  if (typeof window === 'undefined') return;
+  limpiarDatosPaqueteVuelo();
+  try {
+    localStorage.removeItem('datosDelVuelo');
+    localStorage.setItem('tipoBusqueda', '1');
+  } catch {
+    /* ignore */
+  }
+};
+

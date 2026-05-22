@@ -9,7 +9,7 @@ import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
 import { Tooltip } from 'react-tooltip';
-import { searchFlights, esFlujoVueloHotelActivo } from '../utils/flightSearch';
+import { searchFlights, esFlujoVueloHotelActivo, limpiarFlujoVueloHotel } from '../utils/flightSearch';
 
 const hotelesData = {
   9: {
@@ -630,8 +630,8 @@ export const Cid = ({ id }) => {
 
   const ejecutarFlujoReserva = async () => {
     if (!esFlujoVueloHotelActivo()) {
+      limpiarFlujoVueloHotel();
       enviardatos();
-      localStorage.removeItem('modoCotizacion');
       window.location.href = "/reservas";
       return;
     }
@@ -653,8 +653,8 @@ export const Cid = ({ id }) => {
 
   const ejecutarFlujoCotizacion = async () => {
     if (!esFlujoVueloHotelActivo()) {
+      limpiarFlujoVueloHotel();
       enviardatos();
-      localStorage.removeItem('modoCotizacion');
       window.location.href = "/cotizacionpagina";
       return;
     }

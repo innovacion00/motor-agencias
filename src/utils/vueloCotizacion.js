@@ -1,5 +1,7 @@
 /** Utilidades compartidas para vuelos en cotizaciones (payload, precio, UI). */
 
+import { esFlujoVueloHotelActivo } from './flightSearch';
+
 export function getLegFlightCode(leg) {
   if (!leg || typeof leg !== "object") return "—";
   if (leg.flightCode != null && leg.flightCode !== "") return String(leg.flightCode);
@@ -104,20 +106,24 @@ export function aplicarTrmSiCop(precioUsd, divisaSelec, datosReserva) {
   return trm ? precio * trm : precio;
 }
 
+/**
+ * true solo si el usuario está en flujo vuelo+hotel (tipoBusqueda 3, fechas/origen)
+ * y ya seleccionó un paquete de vuelo en dispoVuelos.
+ */
 export function tieneVueloEnCotizacion() {
   if (typeof window === "undefined") return false;
+  if (!esFlujoVueloHotelActivo()) return false;
   try {
     const packageId = localStorage.getItem("flightPackageId");
     const packageData = JSON.parse(localStorage.getItem("flightPackageData") || "null");
-    const datosDelVuelo = JSON.parse(localStorage.getItem("datosDelVuelo") || "null");
-    return !!(packageId || packageData?.packageId || datosDelVuelo?.activado);
+    return !!(packageId || packageData?.packageId);
   } catch {
     return false;
   }
 }
 
 export function parsePrecioVueloPaquete(divisaSelec, datosReserva) {
-  if (typeof window === "undefined") return 0;
+  if (typeof window === "undefined" || !tieneVueloEnCotizacion()) return 0;
   try {
     const packageData = JSON.parse(localStorage.getItem("flightPackageData") || "null");
     const raw = packageData?.totalPrice ?? packageData?.flightBookPrice ?? 0;
@@ -129,7 +135,7 @@ export function parsePrecioVueloPaquete(divisaSelec, datosReserva) {
 }
 
 export function getOrigenIataCotizacion() {
-  if (typeof window === "undefined") return undefined;
+  if (typeof window === "undefined" || !esFlujoVueloHotelActivo()) return undefined;
   try {
     const datosDelVuelo = JSON.parse(localStorage.getItem("datosDelVuelo") || "{}");
     return datosDelVuelo?.originIata || undefined;
@@ -148,7 +154,7 @@ function buildRespuestaMaarLab(packageData, equipajeData) {
 }
 
 export function buildVueloArrayParaCotizacion() {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined" || !tieneVueloEnCotizacion()) return [];
   try {
     const packageId =
       localStorage.getItem("flightPackageId") ||
