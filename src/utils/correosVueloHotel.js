@@ -15,7 +15,6 @@ export const CORREOS_VUELO_HOTEL = [
 "angelicavreservas@gmail.com",
 "malejadigital97@gmail.com",
 "alejandrodussan@gmail.com",
-"carlosdceballos30@gmail.com",
 "sekelbi99@hotmail.com",
 ].map((correo) => correo.toLowerCase());
 
