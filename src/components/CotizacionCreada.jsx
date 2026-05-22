@@ -519,6 +519,8 @@ export const CotizacionCreada = ({ id }) => {
     const markupPorcentaje = total > 0 ? Math.round((markupAmount / total) * 100) : 0;
     const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
     const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
+    const cotizacionIncluyeVuelo =
+        Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0;
 
     // Función para descargar PDF
     const handleDownloadPDF = async () => {
@@ -828,7 +830,7 @@ export const CotizacionCreada = ({ id }) => {
                                         {markupAmount > 0 && (
                                             <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
                                                 <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
-                                                    Precio total para tu cliente ({markupPorcentaje}%)
+                                                    Precio total para tu cliente
                                                 </td>
                                                 <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
                                                     ${cotizacion.markup.toLocaleString()}
@@ -1027,7 +1029,8 @@ export const CotizacionCreada = ({ id }) => {
                         </div>
                     </div>
 
-                    {/* Recuadro: Aceptar / Rechazar cotización */}
+                    {/* Aceptar / Rechazar: no aplica en cotizaciones con vuelo */}
+                    {!cotizacionIncluyeVuelo && (
                     <div className="card sidebar-card" style={{ marginTop: '16px' }}>
                        
 
@@ -1113,6 +1116,7 @@ export const CotizacionCreada = ({ id }) => {
                         </div>
                         )}
                     </div>
+                    )}
                 </div>
             </div>
             <Tooltip id="tooltip-precio-agencia" className="custom-tooltip" />

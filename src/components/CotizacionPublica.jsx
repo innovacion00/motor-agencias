@@ -435,6 +435,8 @@ export const CotizacionPublica = ({ id }) => {
     const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
     const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
     const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
+    const cotizacionIncluyeVuelo =
+        Array.isArray(cotizacion?.vuelo) && cotizacion.vuelo.length > 0;
 
     return (
         <div className="container" ref={containerRef}>
@@ -687,9 +689,9 @@ export const CotizacionPublica = ({ id }) => {
                     </ul>
                 </section>
 
-                {/* ESTADO DE LA COTIZACIÓN Y BOTONES */}
+                {/* ESTADO Y BOTONES: no aplica en cotizaciones con vuelo */}
+                {!cotizacionIncluyeVuelo && (
                 <div style={{ marginTop: '24px' }}>
-                    {/* Mostrar mensaje según el status */}
                     {cotizacion.status === 1 && (
                         <div style={{
                             padding: '16px',
@@ -777,6 +779,8 @@ export const CotizacionPublica = ({ id }) => {
                             </button>
                         </div>
                     )}
+                </div>
+                )}
                 {/* CONTACTO */}
                 <div style={{ backgroundColor: '#886b43', color: '#fff', padding: '20px', borderRadius: '5px', marginTop: '30px', textAlign: 'center' }}>
                     <h2 style={{ color: '#fff', borderBottom: '2px solid #fff', margin: 0, paddingBottom: '10px' }}>¿Preguntas?</h2>
@@ -785,8 +789,6 @@ export const CotizacionPublica = ({ id }) => {
                     <br />
                     
                     <p>Desarrollado por <a href="https://www.gehsuites.com" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '18px', fontWeight: 'bold', textDecoration: 'none' }}>GEH Suites</a></p>
-                </div>
-
                 </div>
             </div>
         </div>
