@@ -379,7 +379,6 @@ const DropdownSearch = () => {
     setLimits({ MIN_ROOMS: 1, MAX_ROOMS: 9 });
     setbotonactivado("flight");
     setIncludesFlight(true);
-    setSelectedCurrency("USD");
     // Guardar tipo de búsqueda en localStorage: 3 = Vuelo + hotel
     try {
       localStorage.setItem("tipoBusqueda", "3");

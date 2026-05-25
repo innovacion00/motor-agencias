@@ -1,5 +1,6 @@
 /** Agencias autorizadas para ver y usar la búsqueda Vuelo + Hotel */
 export const CORREOS_VUELO_HOTEL = [
+
 "aljornastravelcoop@gmail.com",
 "escapateagencia@gmail.com",
 "viajayparchateve@gmail.com",
@@ -16,6 +17,7 @@ export const CORREOS_VUELO_HOTEL = [
 "malejadigital97@gmail.com",
 "alejandrodussan@gmail.com",
 "sekelbi99@hotmail.com",
+"carlosdceballos30@gmail.com"
 ].map((correo) => correo.toLowerCase());
 
 export const puedeAccederVueloHotel = (email) => {
