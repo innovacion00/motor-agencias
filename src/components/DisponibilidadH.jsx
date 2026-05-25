@@ -9,7 +9,13 @@ import { useStore } from "@nanostores/react";
 import { toursData } from "../stores/InfoTours";
 import ToursCs from "./ToursCs";
 import { Tooltip } from 'react-tooltip';
-import { searchFlights, esFlujoVueloHotelActivo, limpiarFlujoVueloHotel } from '../utils/flightSearch';
+import Swal from 'sweetalert2';
+import {
+  searchFlights,
+  esFlujoVueloHotelActivo,
+  esModoBusquedaVueloHotel,
+  limpiarDatosPaqueteVuelo,
+} from '../utils/flightSearch';
 
 const hotelesData = {
   9: {
@@ -629,8 +635,19 @@ export const Cid = ({ id }) => {
   }
 
   const ejecutarFlujoReserva = async () => {
-    if (!esFlujoVueloHotelActivo()) {
-      limpiarFlujoVueloHotel();
+    if (esModoBusquedaVueloHotel()) {
+      if (!esFlujoVueloHotelActivo()) {
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Datos de vuelo incompletos',
+          text: 'Vuelve al buscador, selecciona origen, destino y fechas en modo Vuelo + Hotel y realiza la búsqueda antes de continuar.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#26547B',
+        });
+        return;
+      }
+    } else {
+      limpiarDatosPaqueteVuelo();
       enviardatos();
       window.location.href = "/reservas";
       return;
@@ -652,8 +669,19 @@ export const Cid = ({ id }) => {
   };
 
   const ejecutarFlujoCotizacion = async () => {
-    if (!esFlujoVueloHotelActivo()) {
-      limpiarFlujoVueloHotel();
+    if (esModoBusquedaVueloHotel()) {
+      if (!esFlujoVueloHotelActivo()) {
+        await Swal.fire({
+          icon: 'warning',
+          title: 'Datos de vuelo incompletos',
+          text: 'Vuelve al buscador, selecciona origen, destino y fechas en modo Vuelo + Hotel y realiza la búsqueda antes de continuar.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#26547B',
+        });
+        return;
+      }
+    } else {
+      limpiarDatosPaqueteVuelo();
       enviardatos();
       window.location.href = "/cotizacionpagina";
       return;

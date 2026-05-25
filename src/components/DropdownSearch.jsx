@@ -35,6 +35,7 @@ const DropdownSearch = () => {
   const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
   const [selectedOriginIata, setSelectedOriginIata] = useState("");
   const [puedeVerVueloHotel, setPuedeVerVueloHotel] = useState(false);
+  const [permisoVueloHotelCargado, setPermisoVueloHotelCargado] = useState(false);
 
   const destinationMapping = {
     CARTAGENA: { name: "Cartagena de Indias", iataCode: "CTG" },
@@ -97,32 +98,74 @@ const DropdownSearch = () => {
       const raw = localStorage.getItem("datosUsuario");
       if (!raw) {
         setPuedeVerVueloHotel(false);
+        setPermisoVueloHotelCargado(true);
         return;
       }
       const datos = JSON.parse(raw);
       setPuedeVerVueloHotel(puedeAccederVueloHotel(datos?.email));
     } catch {
       setPuedeVerVueloHotel(false);
+    } finally {
+      setPermisoVueloHotelCargado(true);
     }
   }, []);
 
+  // Restaurar UI desde localStorage cuando ya hay búsqueda vuelo+hotel
   useEffect(() => {
-    if (!puedeVerVueloHotel) {
-      const tipo = parseInt(localStorage.getItem("tipoBusqueda"), 10);
-      if (tipo === 3) {
-        try {
-          localStorage.setItem("tipoBusqueda", "1");
-        } catch (e) {}
-        limpiarFlujoVueloHotel();
+    if (!permisoVueloHotelCargado || !puedeVerVueloHotel) return;
+    const tipo = parseInt(localStorage.getItem("tipoBusqueda"), 10);
+    if (tipo !== 3) return;
+
+    setbotonactivado("flight");
+    setIncludesFlight(true);
+
+    try {
+      const datos = JSON.parse(localStorage.getItem("datosDelVuelo") || "null");
+      const noches = JSON.parse(localStorage.getItem("nochesyedades") || "null");
+      if (datos?.origin) setOrigin(datos.origin);
+      if (datos?.originIata) setSelectedOriginIata(datos.originIata);
+      if (datos?.destination) setDestination(datos.destination);
+      if (noches?.dateRange?.startDate && noches?.dateRange?.endDate) {
+        setDateRange({
+          startDate: new Date(noches.dateRange.startDate),
+          endDate: new Date(noches.dateRange.endDate),
+        });
       }
-      if (botonactivado === "flight") {
-        setbotonactivado("single");
-        setIncludesFlight(false);
-        setOrigin("");
-        setSelectedOriginIata("");
+      if (Array.isArray(noches?.layout) && noches.layout.length > 0) {
+        setRooms(
+          noches.layout.map((room) => {
+            const ages = room.children_ages || [];
+            const children0to4 = ages.filter((a) => a < 5).length;
+            const children5to17 = ages.filter((a) => a >= 5).length;
+            return {
+              adults: room.adults ?? 2,
+              children0to4,
+              children5to17,
+            };
+          })
+        );
       }
+    } catch {
+      /* ignore */
     }
-  }, [puedeVerVueloHotel, botonactivado]);
+  }, [permisoVueloHotelCargado, puedeVerVueloHotel]);
+
+  // Solo resetear vuelo+hotel cuando el permiso ya se verificó y el usuario NO puede usarlo
+  useEffect(() => {
+    if (!permisoVueloHotelCargado) return;
+    if (puedeVerVueloHotel) return;
+
+    const tipo = parseInt(localStorage.getItem("tipoBusqueda"), 10);
+    if (tipo === 3) {
+      limpiarFlujoVueloHotel();
+    }
+    if (botonactivado === "flight") {
+      setbotonactivado("single");
+      setIncludesFlight(false);
+      setOrigin("");
+      setSelectedOriginIata("");
+    }
+  }, [permisoVueloHotelCargado, puedeVerVueloHotel, botonactivado]);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {

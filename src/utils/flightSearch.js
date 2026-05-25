@@ -186,11 +186,16 @@ export const searchFlights = async () => {
   }
 };
 
+/** true si el usuario eligió el modo vuelo+hotel (tipoBusqueda === 3), aunque aún no haya buscado */
+export const esModoBusquedaVueloHotel = () => {
+  if (typeof window === 'undefined') return false;
+  return parseInt(localStorage.getItem('tipoBusqueda'), 10) === 3;
+};
+
 /** true solo si el usuario inició búsqueda vuelo+hotel con datos completos en localStorage */
 export const esFlujoVueloHotelActivo = () => {
   if (typeof window === 'undefined') return false;
-  const tipo = parseInt(localStorage.getItem('tipoBusqueda'), 10);
-  if (tipo !== 3) return false;
+  if (!esModoBusquedaVueloHotel()) return false;
   try {
     const datos = JSON.parse(localStorage.getItem('datosDelVuelo') || 'null');
     return !!(
