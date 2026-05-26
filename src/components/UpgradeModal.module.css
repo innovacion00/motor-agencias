@@ -72,6 +72,15 @@
   background-color: #1C3D5A;
 }
 
+.selectButton:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+}
+
+.selectButton:disabled:hover {
+  background-color: #adb5bd;
+}
+
 .modalFooter {
   display: flex;
   justify-content: space-between;

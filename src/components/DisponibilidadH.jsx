@@ -16,6 +16,11 @@ import {
   esModoBusquedaVueloHotel,
   limpiarDatosPaqueteVuelo,
 } from '../utils/flightSearch';
+import UpgradeModal from './UpgradeModal';
+import {
+  buildUpgradeOptions,
+  resolveUpgradeTargetIds,
+} from '../utils/hotelUpgrades';
 
 const hotelesData = {
   9: {
@@ -622,6 +627,9 @@ export const Cid = ({ id }) => {
     layout: [],
   });
   const [isSearchingFlights, setIsSearchingFlights] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [upgradeOptionsList, setUpgradeOptionsList] = useState([]);
   const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
   const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
 
@@ -700,15 +708,6 @@ export const Cid = ({ id }) => {
     } finally {
       setIsSearchingFlights(false);
     }
-  };
-
-  const handleReservarClick = async () => {
-    await ejecutarFlujoReserva();
-  };
-
-  const handleCotizarClick = async () => {
-    if (!puedeReservar || isSearchingFlights) return;
-    await ejecutarFlujoCotizacion();
   };
 
   const [planDeAlimentacionFormateado, setPlanDeAlimentacionFormateado] =
@@ -1006,7 +1005,76 @@ export const Cid = ({ id }) => {
       ? regexminoristas[planDeAlimentacion]
       : regexMayorista[planDeAlimentacion];
 
-      
+  const resolveCityForUpgrade = () =>
+    habitaciones?.hotel?.city ||
+    selectedCity ||
+    (typeof localStorage !== "undefined"
+      ? localStorage.getItem("selectedCity")
+      : "") ||
+    "";
+
+  const tryOpenUpgradeModal = (action) => {
+    const city = resolveCityForUpgrade();
+
+    let disponibilidadData = [];
+    try {
+      disponibilidadData = JSON.parse(localStorage.getItem("data") || "[]");
+    } catch {
+      disponibilidadData = [];
+    }
+
+    const targets = resolveUpgradeTargetIds(
+      hotelIdNumero,
+      city,
+      disponibilidadData,
+      { currency: currentCurrency, regex: regexSeleccionado }
+    );
+    if (!targets.length) return false;
+
+    const options = buildUpgradeOptions(disponibilidadData, targets, {
+      currency: currentCurrency,
+      regex: regexSeleccionado,
+      formatCurrency,
+    });
+
+    setUpgradeOptionsList(options);
+    setPendingAction(action);
+    setShowUpgradeModal(true);
+    return true;
+  };
+
+  const handleReservarClick = async () => {
+    if (tryOpenUpgradeModal("reservar")) return;
+    await ejecutarFlujoReserva();
+  };
+
+  const handleCotizarClick = async () => {
+    if (!puedeReservar || isSearchingFlights) return;
+    if (tryOpenUpgradeModal("cotizar")) return;
+    await ejecutarFlujoCotizacion();
+  };
+
+  const handleUpgradeSelect = (newHotelId) => {
+    window.location.href = `/hoteles/${newHotelId}`;
+  };
+
+  const handleUpgradeContinue = async () => {
+    const action = pendingAction;
+    setShowUpgradeModal(false);
+    setPendingAction(null);
+
+    if (action === "cotizar") {
+      await ejecutarFlujoCotizacion();
+    } else {
+      await ejecutarFlujoReserva();
+    }
+  };
+
+  const handleUpgradeClose = () => {
+    setShowUpgradeModal(false);
+    setPendingAction(null);
+  };
+
   const checkin = new Date(
     rangosfechas?.dateRange?.startDate
   ).toLocaleDateString();
@@ -1987,6 +2055,13 @@ export const Cid = ({ id }) => {
             <Tooltip
               id="tooltip-generar-cotizacion"
               className="custom-tooltip"
+            />
+            <UpgradeModal
+              isOpen={showUpgradeModal}
+              onClose={handleUpgradeClose}
+              upgrades={upgradeOptionsList}
+              onSelectUpgrade={handleUpgradeSelect}
+              onContinue={handleUpgradeContinue}
             />
             </div>
           </div>
