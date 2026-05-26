@@ -165,9 +165,12 @@ const Gestionar = ({ reservas }) => {
   const correosAutorizadosFechasPago = [
     "carlosdceballos30@gmail.com",
     "innovacion@gehsuites.com",
-    "malejadigital97@gmail.com",
     "yltamara21@gmail.com",
     "angelicavreservas@gmail.com",
+    "briannyscassare2@gmail.com",
+    "orozcosuarez97@gmail.com",
+    "eyleenjimenez18@gmail.com",
+
   ];
   const puedeGestionarFechasPago =
     datosDelUsuario?.role?.includes("super-admin") &&

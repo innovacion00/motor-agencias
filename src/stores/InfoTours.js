@@ -244,32 +244,65 @@ export const toursData = [
      cancellationPolicy: "Reembolso del 80% con cancelación 72 horas antes. 50% con cancelación 48 horas antes. Sin reembolso con menos de 48 horas."
    },
    {
-     id: 7,
-     title: "Tour 7: City Tour Histórico (Compartido)",
+    id: 7,
+    title: "Tour 7: City Tour Histórico ",
+    city:"SANTA_MARTA",
+    description: "En un interesante recorrido por la ciudad más antigua de Suramé- rica visitarás las principales calles, avenidas y atractivos turísticos de la ciudad como por ejemplo: La Catedral Basílica, La Quinta de San Pedro Alejandrino, El Museo del Oro (Banco de la República), El Monumento al Pibe Valderrama y Taganga donde podrás tener una vista panorámica de pescadores.",
+    price: "$125.000 COP por persona",
+    priceUSD: "$35.00 USD por persona",
+    preciocol:"125000",
+    preciousd:"35.00",
+    schedule: "Horario: 8:30 a.m. o 2:30 p.m. a 12:00 a.m. y 6:00 p.m.",
+    duration: "4 Horas",
+    meetingPoint: "",
+    images: {
+      main: "https://www.museobolivariano.org.co/wp-content/uploads/2020/01/quinta-de-san-pedro-aleandrino-008.jpg",
+      side1: "https://d3nmwx7scpuzgc.cloudfront.net/sites/default/files/activity/main-image/gz-museo_del_oro_tairona_640x400_0.jpg",
+      side2: "https://tse1.mm.bing.net/th/id/OIP.Icp5Wxcsdo03y5y0ehb01AHaF7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+    },
+    includes: [
+      "Transporte terrestre",
+      "Conductor guía",
+      "Seguro de viaje",
+      "Entradas a la Quinta de San Pedro Alejandrino",
+      "Hidratación"
+    ],
+    toBring: [
+      "Gafas de sol",   
+      "Dinero extra para consumos adicionales",
+    ],
+    notIncludes: [
+      "Gastos no especificados",
+      
+    ],
+    restrictions: "Está prohibido fumar o consumir alcohol dentro de los vehículos,El pasajero será responsable por cualquier daño ocasionado al vehículo durante el traslado. ",
+    cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
+  },
+   {
+     id: 8,
+     title: "Tour 8: Playa blanca o inka inka",
      city:"SANTA_MARTA",
-     description: "Es un interesante recorrido por la ciudad más antigua de Suramérica visitarás las principales calles, avenidas y atractivos turísticos de la ciudad, como por ejemplo: La Catedral Basílica, La Quinta de San Pedro Alejandrino, El Museo del Oro (Banco de la República), El Monumento al Pibe Valderrama y Taganga donde podrás tener una vista panorámica de pescadores",
-     price: "$132.000 COP por persona",
-     priceUSD: "$30.63 USD por persona",
-     preciocol:"132000",
-     preciousd:"30.63",
-     schedule: "Horario: 8:00 a.m. o 2:00 p.m. a 11:45 a.m. y 5:45 p.m.",
-     duration: "6 Horas",
-     meetingPoint: "Acuario Mundo Marino",
+     description: "A tan solo 45 min de Santa Marta se encuentra Playa Blanca un destino ideal para tomar el sol, caminar entre arena blanca, bañar- se en el mar colorido, disfrutar de deportes acuáticos, entre otras actividades significativas allí.",
+     price: "$50.000 COP por persona",
+     priceUSD: "$25.00 USD por persona",
+     preciocol:"50000",
+     preciousd:"25.00",
+     schedule: "Horario: 9:00 am a 4:00 pm",
+     duration: "8 Horas",
+     meetingPoint: "Muelle del rodadero",
      images: {
        main: "https://www.museobolivariano.org.co/wp-content/uploads/2020/01/quinta-de-san-pedro-aleandrino-008.jpg",
        side1: "https://d3nmwx7scpuzgc.cloudfront.net/sites/default/files/activity/main-image/gz-museo_del_oro_tairona_640x400_0.jpg",
        side2: "https://tse1.mm.bing.net/th/id/OIP.Icp5Wxcsdo03y5y0ehb01AHaF7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
      },
      includes: [
-       "Transporte terrestre",
-       "Conductor guía",
+       "Transporte maritimo",
        "Seguro de viaje",
-       "Entradas a la Quinta de San Pedro Alejandrino",
-       ""
+       
      ],
      toBring: [
-       "Gafas de sol",   
-       "Dinero extra para consumos adicionales",
+       "Llevar ropa cómoda, traje de baño, toallas, bloqueador solar, gafas solares.",   
+       
      ],
      notIncludes: [
        "Gastos no especificados",
@@ -278,94 +311,15 @@ export const toursData = [
      restrictions: "Está prohibido fumar o consumir alcohol dentro de los vehículos,El pasajero será responsable por cualquier daño ocasionado al vehículo durante el traslado. ",
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
    },
-   {
-      id: 8,
-      title: "Tour 8: Solo Playa Blanca (Compartido)",
-      city:"SANTA_MARTA",
-      description: "A tan solo 45 min de Santa Marta se encuentra Playa Blanca un destino ideal para tomar el sol, caminar entre arena blanca, bañarse en el mar colorido, disfrutar de deportes acuáticos, entre otras actividades significativas allí. Saliendo desde el muelle del Rodadero en lancha hasta la hermosa Playa Blanca, donde podrás practicar deportes acuáticos y disfrutar de variadas opciones de comida típica y de un cálido día a pocos minutos desde tu sitio de hospedaje de la playa y sus aguas cristalinas.",
-      price: "$44.000 COP por persona",
-      priceUSD: "$10.21 USD por persona",
-      preciocol:"44000",
-      preciousd:"10.21",
-      schedule: "Horario: 9:00 am a 4:00 pm",
-      duration: "7 Horas",
-      meetingPoint: "Muelle sur del rodadero",
-      images: {
-        main: "https://www.visitsantamarta.com/storage/blogs/Playa%20Blanca..jpg",
-        side1: "https://www.visitsantamarta.com/storage/blogs/Playa%20blanca.jpg",
-        side2: "https://caribbeanecotours.com/wp-content/uploads/2022/02/Playa-blanca-en-santa-marta-800x600-1-870x555-1-600x383.png"
-      },
-      includes: [
-        "Transporte marítimo",
-        "Seguro de viaje",
-      ],
-      toBring: [
-        "Ropa de playa", 
-        "Traje de baño", 
-        "Toalla", 
-        "Protector solar biodegradable", 
-        "Gafas de sol", 
-        "Sombrero", 
-        "Cámara acuática (opcional)", 
-        "Dinero extra para consumos adicionales"
-      ],
-      notIncludes: [
-        "Gastos no especificados",
-        "No incluye carpas , sillas, hamacas",
-        "No incluye almuerzo"
-      ],
-      restrictions: "No hay restricciones específicas de edad, apto para toda la familia.",
-     cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
-    },
-    
     {
       id: 9,
-      title: "Tour 9: Solo Inca Inca (Compartido)",
+      title: "Tour 9: Centro De Vida Marina + Playa Blanca ",
       city:"SANTA_MARTA",
-      description: "Es un escondite sereno cerca del Rodadero que se distingue por sus aguas cálidas y cristalinas, ambiente tranquilo, atrayendo principalmente a los turistas locales. Este hermoso destino es perfecto para quienes buscan escapar de las multitudes y disfrutar de actividades de senderismo en un entorno pacífico. Ya sea que desees relajarte en la playa o explorar los alrededores, Playa Inca Inca te ofrece una experiencia inolvidable. En esta hermosa playa podras: Relajación en la Playa: Playa Inca Inca es conocida por su belleza natural y aguas cristalinas. Puedes relajarte en la arena dorada y disfrutar del sol y el mar",
-      price: "$44.000 COP por persona",
-      priceUSD: "$10.21 USD por persona",
-      preciocol:"44000",
-      preciousd:"10.21",
-      schedule: "Horario: 9:00 am a 4:00 pm",
-      duration: "7 Horas",
-      meetingPoint: "Muelle sur del Rodadero",
-      images: {
-        main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/playa-inca-inca-santa-marta-1.jpg",
-        side1: "https://www.planessantamarta.com.co/wp-content/uploads/2024/04/playa-inca-inca-santa-marta2-1-870x555.jpg",
-        side2: "https://th.bing.com/th/id/R.b2af1bae33f41bc6690a8cabd5826ea9?rik=rd28gZUfFDZ%2fRw&riu=http%3a%2f%2fsantamarta.travel%2fuploads%2f0000%2f2%2f2022%2f05%2f24%2finka-inka-2.jpg&ehk=TeGkqa4bhQWIwKJaN%2f0O%2feMab9PzKqosoZB4%2fO0KWhI%3d&risl=&pid=ImgRaw&r=0"
-      },
-      includes: [
-        "Transporte marítimo",
-        "Seguro de viaje",
-      ],
-      toBring: [
-        "Ropa de playa", 
-        "Traje de baño", 
-        "Toalla", 
-        "Protector solar biodegradable", 
-        "Gafas de sol", 
-        "Sombrero", 
-        "Cámara acuática (opcional)", 
-        "Dinero extra para consumos adicionales",
-      ],
-      notIncludes: [
-        "Gastos no especificados",
-        "No incluye carpas , sillas, hamacas",
-        "No incluye almuerzo (valor adicional con almuerzo: 90.000 )",
-      ],
-      restrictions: "No hay restricciones específicas de edad, apto para toda la familia ",
-     cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
-    },
-    {
-      id: 10,
-      title: "Tour 10: Centro De Vida Marina + Playa Blanca O Inca Inca",
-      city:"SANTA_MARTA",
-      description: "Tu visita al CENTRO DE VIDA MARINA y Playa Blanca será inolvidable, son lugares donde podrás apreciar más de cerca el mundo marino y relajarte con hermosos paisajes. En El CENTRO DE VIDA MARINA podrás apreciar distintas especies de tiburones, rayas, delfines, tortugas, peces exóticos, entro otros animales. Además, podrás aprender más sobre especies marinas extintas y en extinción. Playa Blanca es uno de los lugares más visitados de Santa Marta por sus playas de arena blanca y aguas cristalinas, se encuentra a 20 minutos partiendo desde El Rodadero.",
-      price: "$132.000 COP por persona",
-      priceUSD: "$30.63 USD por persona",
-      preciocol:"132000",
-      preciousd:"30.63",
+      description: "Tu visita a El Acuario y Playa Blanca será inolvidable, son lugares donde podrás apreciar más de cerca el mundo marino y relajarte con hermosos paisajes. En El Acuario podrás apreciar distintas especies de tiburones, rayas, delfines, tortugas, peces exóticos, entro otros animales. Además, podrás aprender más sobre especies marinas extintas y en extinción. Playa Blanca es uno de los lugares más visitados de Santa Marta por sus playas de arena blanca y aguas cristalinas, se encuentra a 20 minutos partiendo desde El Rodadero.",
+      price: "$210.000 COP por persona",
+      priceUSD: "$57.00 USD por persona",
+      preciocol:"210000",
+      preciousd:"57.00",
       schedule: "Horario: 9:00 am a 4:00 pm",
       duration: "7 Horas",
       meetingPoint: "Muelle sur del Rodadero",
@@ -398,16 +352,16 @@ export const toursData = [
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
     },
     {
-      id: 11,
-      title: "Tour 11: Arrecifes - Cabo San Juan Parque Nacional Natural Tayrona (Compartido)",
+      id: 10,
+      title: "Tour 10: Parque Tayrona cabo San Juan ",
       city:"SANTA_MARTA",
-      description: "En el Parque Tayrona, te sorprenderás con lugares inigualables. Como primera parada encontrarás la Playa de las 7 Olas, donde podrás apreciar una de las vistas panorámicas más espectaculares del parque, continúa hasta Playa Neguaje donde abordarás una lancha que al cabo de 15 minutos te llevará hasta la maravillosa Playa Cristal, llena de arena blanca y agua cristalina en donde disfrutarás las formaciones coralinas y de un mundo submarino. Un excelente tour para realizar en familia y amigos.",
-      price: "$165.000 COP por persona",
-      priceUSD: "$38.28 USD por persona",
-      preciocol:"165000",
-      preciousd:"38.28",
-      schedule: "Horario: 6:00 am a 4:00 pm",
-      duration: "10 Horas",
+      description: "Disfruta una espectacular caminata a 34 km de la ciudad de Santa Marta a través de senderos de bosques y hermosas playas paradisiacas donde el paisaje del mar y la naturaleza se entrelazan para formar una perfecta armonía. Llegando a Cañaveral en transporte terrestre, tendre- mos una caminata inicial de 2 horas por senderos de bosque, donde se podrá apreciar la rica variedad de flora y fauna del sector, al término de la cual nos encontraremos del bello paisaje de Arrecifes. Continuaremos nuestro recorrido hasta la Piscina Natural, en caminata a lo largo de la playa. En esta playa podremos disfrutar del mar, si desea seguir cono- ciendo a veinte minutos más está el Cabo San Juan de Guía",
+      price: "$238.000 COP por persona",
+      priceUSD: "$77.00 USD por persona",
+      preciocol:"238000",
+      preciousd:"77.00",
+      schedule: "Horario: 6:00 am a 6:00 pm",
+      duration: "12 Horas",
       meetingPoint: "En el Hotel de su estadía",
       images: {
         main: "https://www.visitsantamarta.com/storage/blogs/Playa%20Cristal%20carpas-zojsp0.jpg",
@@ -416,15 +370,16 @@ export const toursData = [
       },
       includes: [
         "Transporte terrestre",
-        "Transporte marítimo",
         "Entradas al Parque Tayrona",
         "Seguro de viaje",
         "Acompañamiento de un guia turistico"
       ],
       toBring: [
-        "Gafas de sol", 
+        "Llevar ropa cómodal", 
+        "Traje de baño", 
         "Sombrero", 
-        "Dinero extra para consumos adicionales"
+        "Dinero extra para consumos adicionales",
+        "Documento de identidad"
       ],
       notIncludes: [
         "Gastos no especificados",
@@ -434,16 +389,16 @@ export const toursData = [
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
     },
     {
-      id: 12,
-      title: "Tour 12: Bahía Concha (Compartido)",
+      id: 11,
+      title: "Tour 11: Parque Tayrona - Bahía Concha ",
       city:"SANTA_MARTA",
-      description: "Bahía Concha es un lugar tranquilo que te invita al descanso y a disfrutar de una maravillosa playa de arenas blancas, aguas cálidas y transparentes, con un incomparable paisaje del mar, las playas y las montañas que rodean la Bahía. Además, conoce un atractivo natural, que es conocido como La Piedra del Sapo",
-      price: "$110.000 COP por persona",
-      priceUSD: "$25.52 USD por persona",
-      preciocol:"110000",
-      preciousd:"25.52",
-      schedule: "Horario: 6:00 am a 4:00 pm",
-      duration: "10 Horas",
+      description: "Bahía Concha es un lugar tranquilo que te invita al descanso y a disfrutar de una maravillosa playa de arenas blancas, aguas cáli- das y transparentes, con un incomparable paisaje del mar, las playas y las montañas que rodean la Bahía. Además, conoce un atractivo natural, que es conocido como La Piedra del Sapo.",
+      price: "$154.000 COP por persona",
+      priceUSD: "$43.00 USD por persona",
+      preciocol:"154000",
+      preciousd:"43.00",
+      schedule: "Horario: 8:00 am a 4:00 pm",
+      duration: "8 Horas",
       meetingPoint: "En el Hotel de su estadía",
       images: {
         main: "https://magictourcolombia.com/wp-content/uploads/2019/06/BANNER_PARA_BLOG_2.jpg",
@@ -470,16 +425,16 @@ export const toursData = [
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
     },
     {
-      id: 13,
-      title: "Tour 13: Minca + Taganga + Playa Grande (Compartido)",
+      id: 12,
+      title: "Tour 12: Minca + Taganga + Playa Grande",
       city:"SANTA_MARTA",
-      description: "Disfruta este tour completo a Minca, Taganga y Playa Grande. Pasarás medio día en Minca, donde podrás refrescarte en las aguas del río Pozo Azul. El resto del día lo pasarás en las playas de Taganga y Playa Grande, conocidas por sus aguas tranquilas y cristalinas. Ten en cuenta que en este tour a Minca hay una caminata en sendero plano de 25 mnts aproximadamente de ida y 25 mnts aproximadamente de regreso hasta el río Pozo Azul.",
-      price: "$132.000 COP por persona",
-      priceUSD: "$30.63 USD por persona",
-      preciocol:"132000",
-      preciousd:"30.63",
-      schedule: "Horario: 7:30 am a 4:00 pm",
-      duration: "9 Horas",
+      description: "Vive una experiencia que combina montaña y mar en un solo recorrido, visitando dos de los destinos más representativos de Santa Marta. Iniciaremos en Minca, un encantador pueblo ecológico ubicado en las estribaciones de la Sierra Nevada, rodeado de naturaleza, cascadas y cultura cafetera. Posteriormente, continuaremos hacia Taganga, tradicional pueblo de pescadores con hermosas vistas panorámicas del Caribe colombiano, finalizando en Playa Grande, un lugar ideal para disfrutar del mar, el descanso y el ambiente tropical de la región.",
+      price: "$182.000 COP por persona",
+      priceUSD: "$50.00 USD por persona",
+      preciocol:"182000",
+      preciousd:"50.00",
+      schedule: "Horario: 7:00 am a 4:00 pm",
+      duration: "8 Horas",
       meetingPoint: "En el Hotel de su estadía",
       images: {
         main: "https://cdn.baquianos.com/img/blog/2021/4/minca-q2tx640.jpg",
@@ -488,11 +443,10 @@ export const toursData = [
       },
       includes: [
         "Transporte terrestre",
-        "Entradas a los sitios",
         "Seguro de viaje",
         "Acompañamiento de un guia turistico",
-        "Desayuno (frito)",
-        "Almuerzo (tipico)"
+        "Almuerzo (tipico)",
+        "Vestido de baño,"
       ],
       toBring: [
         "Gafas de sol", 
@@ -507,16 +461,16 @@ export const toursData = [
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
     },
     {
-      id: 14,
-      title: "Tour 14: Fiesta Blanca (Compartido)",
+      id: 13,
+      title: "Tour 13: Fiesta Blanca ",
       city:"SANTA_MARTA",
-      description: "Vive una experiencia única a bordo del moderno Katamarán Tayrona, recorriendo las hermosas playas de Santa Marta mientras disfrutas de música en vivo, cócteles y vistas panorámicas. La fiesta continúa en Inca Inca Beach, donde te recibiremos con un snack de bienvenida, música, y un show folclórico que hará de esta noche algo inolvidable",
-      price: "$143.000 COP por persona",
-      priceUSD: "$33.18 USD por persona",
+      description: "Disfruta de una inolvidable experiencia nocturna a bordo de un espectacular catamarán navegando por la hermosa Bahía de Santa Marta. La Fiesta Blanca combina música, ambiente exclusivo y una vista mágica del mar Caribe bajo las estrellas, creando el escenario perfecto para compartir, celebrar y vivir una noche diferente mientras recorres las costas de la ciudad.",
+      price: "$252.000 COP por persona",
+      priceUSD: "$69.18 USD por persona",
       preciocol:"143000",
-      preciousd:"33.18",
-      schedule: "Horario: 5:15 pm a 10:00 pm",
-      duration: "5 Horas",
+      preciousd:"69.18",
+      schedule: "Horario: 5:00 pm a 9:00 pm",
+      duration: "4 Horas",
       meetingPoint: "En el Muelle Norte del Rodero",
       images: {
         main: "https://www.planessantamarta.com.co/wp-content/uploads/2021/06/6-870x555.png",
@@ -524,14 +478,14 @@ export const toursData = [
         side2: "https://www.planessantamarta.com.co/wp-content/uploads/2021/06/fiesta-blanca-tours-santa-marta-870x555.jpeg"
       },
       includes: [
-        "Transporte marítimo (katamaran)",
-        "Snack",
+        "Transporte marítimo",
+        "Acompañamiento de tripulación",
         "Seguro de viaje",
-        "Coctel abordo",
-        "Show en vivo",
+        
         
       ],
       toBring: [ 
+        "Ropa blanca",
         "Dinero extra para consumos adicionales"
       ],
       notIncludes: [
@@ -542,17 +496,17 @@ export const toursData = [
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
     },
     {
-      id: 15,
-      title: "Tour 15: Chiva Rumbera (Compartido)",
+      id: 14,
+      title: "Tour 14: Chiva Rumbera ",
       city:"SANTA_MARTA",
-      description: "La Chiva Rumbera en compartido, con capacidad para hasta 25 personas, y disfruta de un recorrido de 2 horas por las pintorescas calles de Santa Marta, con música y un ambiente festivo. Recorrido panorámico, visita al Parque Simón Bolívar, Bahía de Santa Marta, Marina Internacional y estatua del Pibe. ",
-      price: "$24.200 COP por persona",
-      priceUSD: "$5.61 USD por persona",
-      preciocol:"24200",
-      preciousd:"5.61",
-      schedule: "Horario: 8:00 pm a 10:00 pm",
-      duration: "5 Horas",
-      meetingPoint: "En el hotel de su estadía",
+      description: "Disfruta de una noche llena de música, alegría y cultura caribeña a bordo de una tradicional chiva rumbera recorriendo las principales avenidas y sectores turísticos de Santa Marta. Durante el recorrido podrás apreciar la ciudad iluminada, vivir el ambiente festivo con música crossover y disfrutar de una experiencia típica colombiana mientras conoces la esencia nocturna de la ciudad. ",
+      price: "$42.000 COP por persona",
+      priceUSD: "$12.00 USD por persona",
+      preciocol:"42000",
+      preciousd:"12.00",
+      schedule: "Horario: 2:30 pm a 4:30 pm",
+      duration: "2 Horas",
+      meetingPoint: "",
       images: {
         main: "https://abordak.com/wp-content/uploads/2022/10/Chiva-rumbera-Santa-Marta-420x315.jpg",
         side1: "https://www.planessantamarta.com.co/wp-content/uploads/2023/12/photo-de-chiva-25-pax-santa-marta.jpg",
@@ -561,8 +515,7 @@ export const toursData = [
       includes: [
         "Transporte en chiva",
         "Seguro de viaje",
-        
-        
+        "Conductor guía",
       ],
       toBring: [ 
         "Dinero extra para consumos adicionales"
@@ -575,6 +528,37 @@ export const toursData = [
      cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
     },
 
-
+    {
+      id: 15,
+      title: "Tour 15: Parque Tayrona - Playa Cristal ",
+      city:"SANTA_MARTA",
+      description: "En el Parque Tayrona, te sorprenderás con lugares inigualables. Como primera parada encontrarás la Playa de las 7 Olas, donde podrás apreciar una de las vistas panorámicas más espectaculares del parque, continúa hasta Playa Neguaje donde abordarás una lancha que al cabo de 15 minutos te llevará hasta la maravillo- sa Playa Cristal, llena de arena blanca y agua cristalina en donde disfrutarás las formaciones coralinas y de un mundo submarino. Un excelente tour para realizar en familia y amigos.",
+      price: "$238.000 COP por persona",
+      priceUSD: "$65.33 USD por persona",
+      preciocol:"238000",
+      preciousd:"65.33",
+      schedule: "Horario: 8:30 am a 5:00 pm",
+      duration: "8 Horas",
+      meetingPoint: "",
+      images: {
+        main: "https://abordak.com/wp-content/uploads/2022/10/Chiva-rumbera-Santa-Marta-420x315.jpg",
+        side1: "https://www.planessantamarta.com.co/wp-content/uploads/2023/12/photo-de-chiva-25-pax-santa-marta.jpg",
+        side2: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/5b/09/97/caption.jpg?w=1200&h=-1&s=1"
+      },
+      includes: [
+        "Transporte en chiva",
+        "Seguro de viaje",
+        "Conductor guía",
+      ],
+      toBring: [ 
+        "Dinero extra para consumos adicionales"
+      ],
+      notIncludes: [
+        "Gastos no especificados",
+        
+      ],
+      restrictions: "No hay restricciones específicas de edad pero se recomienda una edad minima de 15 años",
+     cancellationPolicy: "Las cancelaciones notificadas con al menos 4 horas de antelación no generarán cargos.Las cancelaciones dentro de las 12 horas previas al servicio o la no presentación del pasajero (no show) implicarán el cobro completo del servicio."
+    },
   
 ];
