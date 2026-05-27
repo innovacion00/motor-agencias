@@ -228,6 +228,21 @@ export default function ReservaHotelComponent() {
     email: '',
     celular: ''
   });
+  const tiposDocumentoMap = {
+    cedulaC: 'CC',
+    cedulaE: 'CE',
+    pasaporte: 'PA',
+    nit: 'NIT',
+    otro: 'CC',
+    CC: 'CC',
+    CE: 'CE',
+    PA: 'PA',
+    NIT: 'NIT',
+  };
+
+  const normalizarTipoDocumento = (tipoDocumento = '') => {
+    return tiposDocumentoMap[tipoDocumento] || tipoDocumento;
+  };
 
   // Calcular totales basados en los datos de las habitaciones
   const subtotal = datosReserva ? datosReserva.reduce((sum, data) => sum + (data.precio || 0), 0) : 0;
@@ -1088,10 +1103,6 @@ export default function ReservaHotelComponent() {
               </div>
               ` : ''}
               ${markupPorcentaje > 0 ? `
-              <div class="price-row">
-                  <span>Markup (${markupPorcentaje}%)</span>
-                  <span>$${markupAmountPdf.toLocaleString()}</span>
-              </div>
               ` : ''}
               <div class="price-row total">
                   <span>Total a Pagar</span>
@@ -1237,6 +1248,7 @@ export default function ReservaHotelComponent() {
       const vueloPayload = buildVueloArrayParaCotizacion();
       const origenIata = getOrigenIataCotizacion();
 
+      const tipoDocumentoNormalizado = normalizarTipoDocumento(formData.tipoDocumento);
       const informacionD = JSON.stringify({
         total: totalParaPost,
         markup: markupParaPost,
@@ -1252,7 +1264,7 @@ export default function ReservaHotelComponent() {
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
-          tipoDocumento: formData.tipoDocumento,
+          tipoDocumento: tipoDocumentoNormalizado,
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
@@ -1424,10 +1436,10 @@ export default function ReservaHotelComponent() {
                     }}
                   >
                     <option value="">Selecciona una opción</option>
-                    <option value="cedulaC">Cédula de ciudadanía</option>
-                    <option value="cedulaE">Cédula de extranjería</option>
-                    <option value="pasaporte">Pasaporte</option>
-                    <option value="otro">Otro</option>
+                    <option value="CC">Cédula de ciudadanía</option>
+                    <option value="NIT">NIT</option>
+                    <option value="CE">Cédula de extranjería</option>
+                    <option value="PA">Pasaporte</option>
                   </select>
                 </div>
 
