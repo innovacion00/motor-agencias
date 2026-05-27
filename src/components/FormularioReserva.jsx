@@ -158,13 +158,28 @@ const FormularioReserva = () => {
   const [flightData, setFlightData] = useState(null);
   const [baggageData, setBaggageData] = useState(null);
   const CEDULA_DOCUMENT_EXPIRATION = "2060-09-08";
+  const tiposDocumentoMap = {
+    cedulaC: "CC",
+    cedulaE: "CE",
+    pasaporte: "PA",
+    nit: "NIT",
+    otro: "CC",
+    CC: "CC",
+    CE: "CE",
+    PA: "PA",
+    NIT: "NIT",
+  };
+
+  const normalizarTipoDocumento = (tipoDocumento = "") => {
+    return tiposDocumentoMap[tipoDocumento] || tipoDocumento;
+  };
 
   const requiresDocumentExpirationDate = (tipoDocumento) =>
-    tipoDocumento === "pasaporte" || tipoDocumento === "otro";
+    normalizarTipoDocumento(tipoDocumento) === "PA";
 
   const getDocumentExpiration = (passenger) => {
-    const tipo = passenger?.tipoDocumento || "";
-    if (tipo === "cedulaC" || tipo === "cedulaE") {
+    const tipo = normalizarTipoDocumento(passenger?.tipoDocumento || "");
+    if (tipo === "CC" || tipo === "CE") {
       return CEDULA_DOCUMENT_EXPIRATION;
     }
     if (requiresDocumentExpirationDate(tipo)) {
@@ -551,7 +566,7 @@ const FormularioReserva = () => {
   };
 
   const mapDocumentTypeForFlight = (tipoDocumento) => {
-    if (tipoDocumento === "pasaporte") return "PASSPORT";
+    if (normalizarTipoDocumento(tipoDocumento) === "PA") return "PASSPORT";
     return "IDENTITY_CARD";
   };
 
@@ -710,7 +725,7 @@ const FormularioReserva = () => {
           titularInfo: {
             firstName: formData.nombreCompleto,
             lastName: formData.apellidos,
-            tipoDocumento: formData.tipoDocumento,
+            tipoDocumento: normalizarTipoDocumento(formData.tipoDocumento),
             documento: formData.numeroDocumento,
             fechaNacimiento: formData.fechaNacimiento,
           },
@@ -960,14 +975,7 @@ const FormularioReserva = () => {
         titularInfo: {
           firstName: formData.nombreCompleto,
           lastName: formData.apellidos,
-          tipoDocumento:
-            formData.tipoDocumento === "cedulaC"
-              ? "Cédula de ciudadanía"
-              : formData.tipoDocumento === "cedulaE"
-                ? "Cédula de extranjería"
-                : formData.tipoDocumento === "pasaporte"
-                  ? "Pasaporte"
-                  : "Otro",
+          tipoDocumento: normalizarTipoDocumento(formData.tipoDocumento),
           documento: formData.numeroDocumento,
           fechaNacimiento: formData.fechaNacimiento,
         },
@@ -1163,7 +1171,7 @@ const FormularioReserva = () => {
       titularInfo: {
         firstName: titular.nombreCompleto,
         lastName: titular.apellidos,
-        tipoDocumento: titular.tipoDocumento,
+        tipoDocumento: normalizarTipoDocumento(titular.tipoDocumento),
         documento: titular.numeroDocumento,
         fechaNacimiento: titular.fechaNacimiento,
       },
@@ -2023,10 +2031,10 @@ const FormularioReserva = () => {
                 }}
               >
                 <option value="">Selecciona una opción</option>
-                <option value="cedulaC">Cédula de ciudadanía</option>
-                <option value="cedulaE">Cédula de extranjería</option>
-                <option value="pasaporte">Pasaporte</option>
-                <option value="otro">Otro</option>
+                <option value="CC">Cédula de ciudadanía</option>
+                <option value="NIT">NIT</option>
+                <option value="CE">Cédula de extranjería</option>
+                <option value="PA">Pasaporte</option>
               </select>
               {requiresDocumentExpirationDate(formData.tipoDocumento) && (
                 <>
@@ -2523,10 +2531,10 @@ const FormularioReserva = () => {
                     }}
                   >
                     <option value="">Selecciona una opción</option>
-                    <option value="cedulaC">Cédula de ciudadanía</option>
-                    <option value="cedulaE">Cédula de extranjería</option>
-                    <option value="pasaporte">Pasaporte</option>
-                    <option value="otro">Otro</option>
+                    <option value="CC">Cédula de ciudadanía</option>
+                    <option value="NIT">NIT</option>
+                    <option value="CE">Cédula de extranjería</option>
+                    <option value="PA">Pasaporte</option>
                   </select>
                   {requiresDocumentExpirationDate(pax.tipoDocumento) && (
                     <>

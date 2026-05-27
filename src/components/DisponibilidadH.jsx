@@ -642,6 +642,20 @@ export const Cid = ({ id }) => {
     setIsOpen(false);
   }
 
+  const waitForNextFrame = () =>
+    new Promise((resolve) => requestAnimationFrame(resolve));
+
+  const navigateWithViewTransition = async (url) => {
+    await waitForNextFrame();
+    if (typeof document !== "undefined" && document.startViewTransition) {
+      document.startViewTransition(() => {
+        window.location.href = url;
+      });
+      return;
+    }
+    window.location.href = url;
+  };
+
   const ejecutarFlujoReserva = async () => {
     if (esModoBusquedaVueloHotel()) {
       if (!esFlujoVueloHotelActivo()) {
@@ -657,7 +671,7 @@ export const Cid = ({ id }) => {
     } else {
       limpiarDatosPaqueteVuelo();
       enviardatos();
-      window.location.href = "/reservas";
+      await navigateWithViewTransition("/reservas");
       return;
     }
 
@@ -667,7 +681,7 @@ export const Cid = ({ id }) => {
       if (success) {
         enviardatos();
         localStorage.removeItem('modoCotizacion');
-        window.location.href = "/dispoVuelos";
+        await navigateWithViewTransition("/dispoVuelos");
       }
     } catch (error) {
       console.error('Error en la búsqueda de vuelos:', error);
@@ -691,7 +705,7 @@ export const Cid = ({ id }) => {
     } else {
       limpiarDatosPaqueteVuelo();
       enviardatos();
-      window.location.href = "/cotizacionpagina";
+      await navigateWithViewTransition("/cotizacionpagina");
       return;
     }
 
@@ -701,7 +715,7 @@ export const Cid = ({ id }) => {
       if (success) {
         enviardatos();
         localStorage.setItem('modoCotizacion', 'true');
-        window.location.href = "/dispoVuelos";
+        await navigateWithViewTransition("/dispoVuelos");
       }
     } catch (error) {
       console.error('Error en la búsqueda de vuelos:', error);
@@ -1055,7 +1069,7 @@ export const Cid = ({ id }) => {
   };
 
   const handleUpgradeSelect = (newHotelId) => {
-    window.location.href = `/hoteles/${newHotelId}`;
+    navigateWithViewTransition(`/hoteles/${newHotelId}`);
   };
 
   const handleUpgradeContinue = async () => {

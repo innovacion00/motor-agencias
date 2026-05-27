@@ -522,7 +522,7 @@ import RouteProtection from "../components/RouteProtection.astro";
         <!-- </div> -->
 
         <!-- Sección Bogotá -->
-        <div id="bogota" class="content active">
+        <div id="bogota" class="content">
           <h2>Bogota</h2>
           <p>
             Un destino ideal para todo tipo de actividades turisticas,
@@ -698,7 +698,7 @@ import RouteProtection from "../components/RouteProtection.astro";
         </div>
 
         <!-- Sección Santa Marta -->
-        <div id="santamarta" class="content active">
+        <div id="santamarta" class="content">
           <h2>Santa Marta</h2>
           <p>
             Destino ideal para los amantes de la cultura, la aventura y el
@@ -973,167 +973,69 @@ import RouteProtection from "../components/RouteProtection.astro";
         </div>
 
         <!-- Sección Cartago, Valle del Cauca -->
-        <div id="cartagovalledelcauca" class="content active">
-          <h2>Cartago, Valle del Cauca</h2>
-          <p>
-            Ubicada en el departamento del Valle del Cauca, conocida como la
-            villa del roble.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
-              <img
-                alt="Hotel Danubio"
-                height="200"
-                src="https://www.gehsuites.com/images/10.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logodanubio.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Danubio</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png"
-                    alt="icon_pool"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png"
-                    alt="icon_parking"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png"
-                    alt="icon_wind"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="/infodanubio"> <button>Ver hotel</button></a>
-                </div>
-              </div>
-            </div>
-            <!-- Repite las tarjetas de hotel para Cartago aquí -->
-          </div>
-        </div>
-
+       
         <!-- Sección Mompox -->
-        <div id="mompox" class="content active">
-          <h2>Mompox</h2>
-          <p>
-            Ubicada en el departamento de Bolívar, es considerada una magna Isla
-            rodeada por el Rio Magdalena.
-          </p>
-          <div class="hotels">
-            <div class="hotel">
-              <img
-                alt="Hotel Jardines Evans"
-                height="200"
-                src="https://www.gehsuites.com/images/fachada_jardines_eva.jpg"
-                width="300"
-              />
-              <div class="info">
-                <div class="hotel-header">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/logojardines.png"
-                    alt="logo_hotel"
-                    class="hotel-logo"
-                  />
-                  <h3>Hotel Jardines Evans</h3>
-                </div>
-                <div class="icons">
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png"
-                    alt="icon_coffee"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png"
-                    alt="icon_buffet"
-                    width="24"
-                    height="24"
-                  />
-                  <img
-                    src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png"
-                    alt="icon_van"
-                    width="24"
-                    height="24"
-                  />
-                </div>
-                <div class="button">
-                  <a href="/infojardines"> <button>Ver hotel</button></a>
-                </div>
-              </div>
-            </div>
-            <!-- Repite las tarjetas de hotel para Mompox aquí -->
-          </div>
-        </div>
+       
       </div>
 
       <!-- Script para manejar la visibilidad de las secciones -->
       <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const tabsNav = document.querySelector(".container .nav");
-          const buttons = tabsNav
-            ? tabsNav.querySelectorAll("button")
-            : [];
+        const hideAllCitySections = () => {
+          document.querySelectorAll(".content").forEach((section) => {
+            (section as HTMLElement).style.display = "none";
+            section.classList.remove("active");
+          });
+        };
 
+        const showCitySection = (sectionId) => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            (section as HTMLElement).style.display = "block";
+            section.classList.add("active");
+          }
+        };
+
+        const resetCityTabs = () => {
+          const tabsNav = document.querySelector(".container .nav");
+          if (!tabsNav) return;
+
+          const buttons = tabsNav.querySelectorAll("button");
           if (!buttons.length) return;
 
-          const hideAllSections = () => {
-            const sections = document.querySelectorAll(".content");
+          hideAllCitySections();
+          showCitySection("cartagenadeindias");
 
-            sections.forEach((section) => {
-              (section as HTMLElement).style.display = "none";
-            });
-          };
-
-          const showSection = (sectionId) => {
-            const section = document.getElementById(sectionId);
-            if (section) {
-              (section as HTMLElement).style.display = "block";
-            }
-          };
-
-          buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-              hideAllSections();
-
-              buttons.forEach((btn) => btn.classList.remove("active"));
-              button.classList.add("active");
-
-              const sectionId = button.textContent
-                .trim()
-                .toLowerCase()
-                .replace(/\s+/g, "");
-              showSection(sectionId);
-            });
+          buttons.forEach((btn, index) => {
+            btn.classList.toggle("active", index === 0);
           });
+        };
 
-          // Inicializar mostrando la primera sección
-          hideAllSections();
-          showSection("cartagenadeindias");
+        // View Transitions no vuelve a disparar DOMContentLoaded al regresar al inicio
+        document.addEventListener("astro:page-load", resetCityTabs);
+
+        document.addEventListener("click", (event) => {
+          const button = (event.target as Element | null)?.closest(
+            ".container .nav button"
+          );
+          if (!button) return;
+
+          const tabsNav = document.querySelector(".container .nav");
+          if (!tabsNav || !tabsNav.contains(button)) return;
+
+          const buttons = tabsNav.querySelectorAll("button");
+
+          hideAllCitySections();
+
+          buttons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+
+          const sectionId = button.textContent
+            ?.trim()
+            .toLowerCase()
+            .replace(/\s+/g, "");
+          if (sectionId) {
+            showCitySection(sectionId);
+          }
         });
       </script>
     </body>

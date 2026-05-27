@@ -45,6 +45,20 @@ const DropdownSearch = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const waitForNextFrame = () =>
+    new Promise((resolve) => requestAnimationFrame(resolve));
+
+  const navigateWithViewTransition = async (url) => {
+    await waitForNextFrame();
+    if (typeof document !== "undefined" && document.startViewTransition) {
+      document.startViewTransition(() => {
+        window.location.href = url;
+      });
+      return;
+    }
+    window.location.href = url;
+  };
+
   const [limits, setLimits] = useState({
     MIN_ROOMS: 1,
     MAX_ROOMS: 9,
@@ -480,6 +494,7 @@ const DropdownSearch = () => {
       localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
     }
 
+    let hasNavigated = false;
     try {
       const objetohotel = {
         checkin: dateRange.startDate.toISOString().split("T")[0],
@@ -495,16 +510,20 @@ const DropdownSearch = () => {
         BOGOTA: "/busquedabogota",
         SANTA_MARTA: "/busquedasantamarta",
       };
-      window.location.href = destinations[destination];
+      hasNavigated = true;
+      setIsLoading(false);
+      await navigateWithViewTransition(destinations[destination]);
     } catch (error) {
       // La alerta ya fue mostrada por getdisponibility; solo evitamos navegar
     } finally {
-      setIsLoading(false);
+      if (!hasNavigated) {
+        setIsLoading(false);
+      }
     }
   };
 
-  const handleSearchWithIA = () => {
-    window.location.href = "/BookingConnectIA";
+  const handleSearchWithIA = async () => {
+    await navigateWithViewTransition("/BookingConnectIA");
   };
 
   return (
