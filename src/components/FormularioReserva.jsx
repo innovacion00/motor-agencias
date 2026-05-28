@@ -37,6 +37,7 @@ const plan_alimentacion = {
 const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 
 /** Reservas vía endpoint legacy `/reservas/reservar` (no mytool). */
+const FORCE_LEGACY_RESERVAS = true;
 const LEGACY_RESERVA_HOTEL_AUTOCORE_IDS = new Set([48, 56]); // Axis, Boquilla
 
 const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
@@ -689,7 +690,9 @@ const FormularioReserva = () => {
         );
       };
       const hotelIdAutocore = Number(reserva[0]?.hotelidAutocore);
-      const isLegacyReservation = LEGACY_RESERVA_HOTEL_AUTOCORE_IDS.has(hotelIdAutocore);
+      const isLegacyReservation =
+        FORCE_LEGACY_RESERVAS ||
+        LEGACY_RESERVA_HOTEL_AUTOCORE_IDS.has(hotelIdAutocore);
 
       let informacionD;
       let url;
