@@ -18,6 +18,7 @@ export const CORREOS_VUELO_HOTEL = [
 "alejandrodussan@gmail.com",
 "sekelbi99@hotmail.com",
 "carlosdceballos30@gmail.com",
+"orozcosuarez97@gmail.com"
 ].map((correo) => correo.toLowerCase());
 
 export const puedeAccederVueloHotel = (email) => {
