@@ -495,14 +495,26 @@ const quintuple = {
   56: true, // Boquilla,
 };
 
-const trasladosCartagenaPesos = {
-  0: "38000",
-  1: "76000",
+// Traslados Cartagena: tarifa estándar (Aixo, Abi, Boquilla) vs premium (Azuan, Avexi, Marina)
+const HOTELES_TRASLADO_CARTAGENA_PREMIUM = new Set([1, 6, 9]); // azuan, avexi, marina
+
+const trasladosCartagenaPorTier = {
+  estandar: {
+    pesos: { 0: "38000", 1: "76000" },
+    dolares: { 0: "12", 1: "21" },
+  },
+  premium: {
+    pesos: { 0: "45000", 1: "90000" },
+    dolares: { 0: "14", 1: "25" },
+  },
 };
 
-const trasladosCartagenaDolares = {
-  0: "12",
-  1: "21",
+const getTrasladosCartagenaTarifas = (currency, hotelId) => {
+  const tier = HOTELES_TRASLADO_CARTAGENA_PREMIUM.has(Number(hotelId))
+    ? "premium"
+    : "estandar";
+  const tarifas = trasladosCartagenaPorTier[tier];
+  return currency === "USD" ? tarifas.dolares : tarifas.pesos;
 };
 
 const trasladosSantamartaPesos = {
@@ -823,20 +835,25 @@ export const Cid = ({ id }) => {
     city,
     currency,
     transferType,
-    totalGuests
+    totalGuests,
+    hotelId
   ) => {
     if (!transferType) return 0;
 
-    const precios = {
-      CARTAGENA: currency === 'USD' ? trasladosCartagenaDolares : trasladosCartagenaPesos,
+    const preciosPorCiudad = {
       SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos,
       BOGOTA: currency === 'USD' ? trasladosBogotaDolares : trasladosBogotaPesos
     };
 
+    const precios =
+      city === "CARTAGENA"
+        ? getTrasladosCartagenaTarifas(currency, hotelId)
+        : preciosPorCiudad[city];
+
     // Determinar el índice basado en el tipo de traslado
     const priceIndex = transferType === "ambos" ? 1 : 0;
 
-    const precioBase = precios[city]?.[priceIndex];
+    const precioBase = precios?.[priceIndex];
     if (!precioBase) return 0;
 
     // Calcular número de vehículos necesarios (cada vehículo lleva 4 personas)
@@ -845,7 +862,7 @@ export const Cid = ({ id }) => {
   };
 
   // Modify the calculateTotalPrice function
-  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado, numMascotas = 0) => {
+  const calculateTotalPrice = (basePrice, tours, currency, totalGuests, city, tipoTraslado, numMascotas = 0, hotelId = hotelIdNumero) => {
     const toursPrice = tours.reduce((total, tour) => {
       const tourPrice =
         currency === "USD"
@@ -854,7 +871,7 @@ export const Cid = ({ id }) => {
       return total + tourPrice * totalGuests;
     }, 0);
   
-    const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests);
+    const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests, hotelId);
     
     // Add pet price calculation
     const mascotasPrice = currency === 'USD' 
@@ -1434,7 +1451,7 @@ export const Cid = ({ id }) => {
                         {/* datos de persona en traslados bogota ah/ha */}
                         Aeropuerto al hotel {" "}
                         {selectedCity === 'CARTAGENA' 
-                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          ? `($${getTrasladosCartagenaTarifas(currentCurrency, hotelIdNumero)[0]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
                           ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
                           : selectedCity === 'BOGOTA'
@@ -1464,7 +1481,7 @@ export const Cid = ({ id }) => {
                          {/* datos de persona en traslados bogota ah/ha */}
                         Hotel al Aeropuerto {" "}
                         {selectedCity === 'CARTAGENA' 
-                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[0] : trasladosCartagenaPesos[0]} ${currentCurrency}` 
+                          ? `($${getTrasladosCartagenaTarifas(currentCurrency, hotelIdNumero)[0]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
                           ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
                           : selectedCity === 'BOGOTA'
@@ -1492,7 +1509,7 @@ export const Cid = ({ id }) => {
                          {/* datos de persona en traslados bogota ah/ha */}
                         Aeropuerto al hotel | Hotel al aeropuerto {" "} 
                         {selectedCity === 'CARTAGENA' 
-                          ? `($${currentCurrency === 'USD' ? trasladosCartagenaDolares[1] : trasladosCartagenaPesos[1]} ${currentCurrency}` 
+                          ? `($${getTrasladosCartagenaTarifas(currentCurrency, hotelIdNumero)[1]} ${currentCurrency}` 
                           : selectedCity === 'SANTA_MARTA'
                           ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
                           : selectedCity === 'BOGOTA'
