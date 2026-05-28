@@ -14,6 +14,7 @@ import {
   linkPago,
 } from "../../stores/pagos";
 import Swal from "sweetalert2";
+import { cleanupSweetAlert } from "../../utils/cleanupSweetAlert";
 import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
@@ -150,6 +151,7 @@ const Gestionar = ({ reservas }) => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [isReactivating, setIsReactivating] = useState(false);
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [nuevoEstado, setNuevoEstado] = useState(reservas?.status?.toString() ?? "0");
 
@@ -317,6 +319,8 @@ const Gestionar = ({ reservas }) => {
 
   //#region UseEffect general
   useEffect(() => {
+    cleanupSweetAlert();
+
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
@@ -360,6 +364,8 @@ const Gestionar = ({ reservas }) => {
       setMostrarBeneficio(false);
     }
   }, [reservas?.status, reservas?.cantidadHabitaciones]);
+
+  useEffect(() => () => cleanupSweetAlert(), []);
 
   const infoHoteles = hoteles(reservas?.hotel);
 
@@ -856,12 +862,6 @@ const Gestionar = ({ reservas }) => {
       denyButtonText: "Pagar 50%",
       confirmButtonColor: "#26547B",
       denyButtonColor: "#4B70B2",
-      showClass: {
-        popup: "animate__animated animate__fadeInDown animate__slowest",
-      },
-      hideClass: {
-        popup: "animate__animated animate__fadeOutUp animate__slowest",
-      },
     }).then((result) => {
       if (result.isConfirmed || result.isDenied) {
         const isPagoCompleto = result.isConfirmed;
@@ -880,12 +880,6 @@ const Gestionar = ({ reservas }) => {
           cancelButtonColor: "#d33",
           confirmButtonText: "Sí, pagar",
           cancelButtonText: "Cancelar",
-          showClass: {
-            popup: "animate__animated animate__fadeInDown slowest",
-          },
-          hideClass: {
-            popup: "animate__animated animate__fadeOutUp animate__slowest",
-          },
         }).then((confirmResult) => {
           if (confirmResult.isConfirmed) {
             onClickBilletera(id, isPagoCompleto);
@@ -894,6 +888,89 @@ const Gestionar = ({ reservas }) => {
       }
     });
   };
+
+  //#region Reactivar reserva
+  const reactivarReserva = async () => {
+    const reservaChatbotId = reservas?.reservaChatbotId;
+    if (!reservaChatbotId) {
+      Swal.fire({
+        title: "Error",
+        text: "No se encontró el código de la reserva.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+      return;
+    }
+
+    try {
+      setIsReactivating(true);
+      Swal.fire({
+        title: "Reactivando reserva...",
+        text: "Por favor espere",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        willOpen: () => Swal.showLoading(),
+      });
+
+      const response = await fetchWithToken(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reactivar`,
+        {
+          method: "POST",
+          body: JSON.stringify({ reservaChatbotId }),
+        }
+      );
+
+      if (!response.ok) {
+        let errorMessage = "No se pudo reactivar la reserva.";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorData.error || errorMessage;
+        } catch {
+          /* respuesta no JSON */
+        }
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      const link = data?.linkInfo?.link;
+
+      if (!link) {
+        throw new Error("La respuesta no incluyó un enlace de pago.");
+      }
+
+      Swal.close();
+      window.location.href = link;
+    } catch (error) {
+      console.error("Error al reactivar la reserva:", error);
+      Swal.fire({
+        title: "Error",
+        text: error.message || "Ocurrió un error al reactivar la reserva. Intenta nuevamente.",
+        icon: "error",
+        confirmButtonColor: "#26547B",
+      });
+    } finally {
+      setIsReactivating(false);
+    }
+  };
+
+  const confirmarReactivacion = () => {
+    Swal.fire({
+      title: "¿Reactivar reserva?",
+      text: "Recuerde que: la reactivación de la reserva está sujeta a disponibilidad y debe pagar el 100% de la reserva",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#26547B",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: "Sí, reactivar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        reactivarReserva();
+      }
+    });
+  };
+  //#endregion
 
   //#region Modal cancelar reservas
   const confirmarCancelacion = (reservaId) => {
@@ -2059,6 +2136,21 @@ const Gestionar = ({ reservas }) => {
               </button> */}
             </div>
           </div>
+          {Number(reservas?.status) === 4 && (
+            <div className={styles.gestionarReserv}>
+              <p>Reactivación de reserva</p>
+              <div className={styles.acciones}>
+                <button
+                  type="button"
+                  onClick={confirmarReactivacion}
+                  disabled={isReactivating || !reservas?.reservaChatbotId}
+                  className={styles.reactivarButton}
+                >
+                  {isReactivating ? "Reactivando..." : "Reactivar reserva"}
+                </button>
+              </div>
+            </div>
+          )}
           {puedeGestionarFechasPago && (
             <div className={styles.gestionarReserv}>
               <p>Modificar fechas de pago</p>

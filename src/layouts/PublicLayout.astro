@@ -57,6 +57,14 @@ import { ViewTransitions } from "astro:transitions";
               animation: none;
             }
           }
+
+          ::view-transition {
+            pointer-events: none;
+          }
+
+          .swal2-container {
+            z-index: 20000 !important;
+          }
         </style>
       </>
     )}
@@ -81,3 +89,11 @@ import { ViewTransitions } from "astro:transitions";
     </div>
   </body>
 </html>
+
+<script>
+  import { cleanupSweetAlert } from "../utils/cleanupSweetAlert";
+
+  document.addEventListener("astro:before-swap", () => {
+    cleanupSweetAlert();
+  });
+</script>

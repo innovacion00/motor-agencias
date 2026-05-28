@@ -32,10 +32,10 @@ const SwiperSlider = () => {
         </a>
       </SwiperSlide> */}
       <SwiperSlide >
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner%20playa%20salguero.jpg" alt="Banner playa salguero" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banners%20BookingConnect/banner_vuelo+hotel.jpg.jpeg" alt="Banner vuelo+hotel" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20cotizador.jpg" alt="Banner cotizar 2" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banners%20BookingConnect/Banner2.jpg.jpeg" alt="Banner BC" />
       </SwiperSlide>
       <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20cotizador%202.jpg" alt="Banner cotizar" />
@@ -45,11 +45,7 @@ const SwiperSlider = () => {
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-cashback.jpeg" alt="Banner cashback" /></a>
       </SwiperSlide>
       <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banner-planA.jpeg" alt="Banner plan de alimentacion" />
-      </SwiperSlide>
-      
-      <SwiperSlide>
-        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/slide2.jpeg" alt="Banner principal" />
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banners%20BookingConnect/Banner1.jpg.jpeg" alt="Banner BC" />
       </SwiperSlide>
     </Swiper>
   );

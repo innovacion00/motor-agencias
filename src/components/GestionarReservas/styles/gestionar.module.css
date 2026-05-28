@@ -417,6 +417,25 @@ h3{
     
 }
 
+.reactivarButton {
+    background-color: #26547B;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.reactivarButton:hover:not(:disabled) {
+    background-color: rgb(34, 95, 187);
+}
+
+.reactivarButton:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+}
+
 .fechasPagoContainer{
     display: flex;
     flex-direction: column;
