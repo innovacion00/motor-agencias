@@ -317,10 +317,13 @@ const Gestionar = ({ reservas }) => {
     }
   };
 
-  //#region UseEffect general
+  // Limpieza solo al entrar a la página (evita cerrar Swal en re-renders)
   useEffect(() => {
     cleanupSweetAlert();
+  }, []);
 
+  //#region UseEffect general
+  useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
     setdatosDelUsuario(datosdelusuario); //Seteo de datos de el usuario
     obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia por token
@@ -364,8 +367,6 @@ const Gestionar = ({ reservas }) => {
       setMostrarBeneficio(false);
     }
   }, [reservas?.status, reservas?.cantidadHabitaciones]);
-
-  useEffect(() => () => cleanupSweetAlert(), []);
 
   const infoHoteles = hoteles(reservas?.hotel);
 
@@ -1200,9 +1201,19 @@ const Gestionar = ({ reservas }) => {
           Pago aprobado
         </p>
       ) : reservas?.status == 4 ? (
-        <p className={`${styles.estadoPago} ${styles.cancel}`}>
-          Reserva cancelada
-        </p>
+        <div className={styles.estadoPagoRow}>
+          <p className={`${styles.estadoPago} ${styles.cancel}`}>
+            Reserva cancelada
+          </p>
+          <button
+            type="button"
+            onClick={confirmarReactivacion}
+            disabled={isReactivating || !reservas?.reservaChatbotId}
+            className={styles.reactivarLink}
+          >
+            {isReactivating ? "Reactivando..." : "Reactivar reserva"}
+          </button>
+        </div>
       ) : reservas?.status == 2 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
           Pago total rechazado

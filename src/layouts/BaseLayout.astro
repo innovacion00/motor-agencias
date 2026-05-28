@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer.astro';
 import CurrencySelector from '../components/Cambiardivisas';
 import { ViewTransitions } from "astro:transitions";
+import "sweetalert2/dist/sweetalert2.min.css";
 // import CurrencySelector from '../components/Cambiardivisas';
 
 ---
@@ -21,6 +22,20 @@ import { ViewTransitions } from "astro:transitions";
     <link rel="stylesheet" href="/styles/global.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <style>
+      /* SweetAlert2: z-index y texto (el body global usa color blanco) */
+      .swal2-container {
+        z-index: 20000;
+      }
+
+      .swal2-popup,
+      .swal2-title,
+      .swal2-html-container,
+      .swal2-input,
+      .swal2-textarea {
+        color: #545454;
+      }
+    </style>
     {ENABLE_VIEW_TRANSITIONS && (
       <>
         <ViewTransitions />
@@ -64,13 +79,9 @@ import { ViewTransitions } from "astro:transitions";
             }
           }
 
-          /* Evita que capas de transición bloqueen clicks / SweetAlert2 */
+          /* Evita que capas de transición bloqueen clicks */
           ::view-transition {
             pointer-events: none;
-          }
-
-          .swal2-container {
-            z-index: 20000 !important;
           }
         </style>
       </>
