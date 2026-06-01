@@ -15,6 +15,10 @@ import {
 } from "../../stores/pagos";
 import Swal from "sweetalert2";
 import { cleanupSweetAlert } from "../../utils/cleanupSweetAlert";
+import {
+  puedeGestionarFechasPago,
+  puedeCambiarEstadoReserva,
+} from "../../utils/PermisosExclusivos";
 import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
@@ -164,21 +168,10 @@ const Gestionar = ({ reservas }) => {
   const [isSavingFechasPago, setIsSavingFechasPago] = useState(false);
   const fechaLimitePagoRef = useRef(null);
   const fechaLimitePago2Ref = useRef(null);
-  const correosAutorizadosFechasPago = [
-    "carlosdceballos30@gmail.com",
-    "innovacion@gehsuites.com",
-    "yltamara21@gmail.com",
-    "angelicavreservas@gmail.com",
-    "briannyscassare2@gmail.com",
-    "orozcosuarez97@gmail.com",
-    "eyleenjimenez18@gmail.com",
-
-  ];
-  const puedeGestionarFechasPago =
-    datosDelUsuario?.role?.includes("super-admin") &&
-    correosAutorizadosFechasPago.includes(
-      datosDelUsuario?.email?.toLowerCase?.() ?? ""
-    );
+  const usuarioPuedeGestionarFechasPago =
+    puedeGestionarFechasPago(datosDelUsuario);
+  const usuarioPuedeCambiarEstadoReserva =
+    puedeCambiarEstadoReserva(datosDelUsuario);
 
   // Estados de reserva mapeados (igual que en Tabla.jsx y Movimientos.jsx)
   const ESTADOS_RESERVA = {
@@ -410,7 +403,7 @@ const Gestionar = ({ reservas }) => {
 
   const guardarFechasLimitePago = async () => {
     if (!reservas?._id) return;
-    if (!puedeGestionarFechasPago) return;
+    if (!usuarioPuedeGestionarFechasPago) return;
     if (!fechaLimitePago || !fechaLimitePago2) {
       Swal.fire({
         title: "Fechas requeridas",
@@ -2097,12 +2090,8 @@ const Gestionar = ({ reservas }) => {
           <div className={styles.gestionarReserv}>
             <p>Gestionar reserva</p>
             <div className={styles.acciones}>
-              {/* Cambiar estado de la reserva - visible para super-admin o correos autorizados */}
-              {(datosDelUsuario?.role?.includes("super-admin") &&
-                ["carlosdceballos30@gmail.com", "innovacion@gehsuites.com", "reservasgeh.moreno@gmail.com","yltamara21@gmail.com","angelicavreservas@gmail.com","briannyscassare2@gmail.com","orozcosuarez97@gmail.com","eyleenjimenez18@gmail.com"].includes(
-              
-                  datosDelUsuario?.email?.toLowerCase?.() ?? ""
-                )) && (
+              {/* Cambiar estado de la reserva - visible para super-admin y correos autorizados */}
+              {usuarioPuedeCambiarEstadoReserva && (
                 <div className={styles.cambiarEstadoWrapper}>
                   <select
                     value={nuevoEstado}
@@ -2162,7 +2151,7 @@ const Gestionar = ({ reservas }) => {
               </div>
             </div>
           )}
-          {puedeGestionarFechasPago && (
+          {usuarioPuedeGestionarFechasPago && (
             <div className={styles.gestionarReserv}>
               <p>Modificar fechas de pago</p>
               <div className={styles.acciones}>
