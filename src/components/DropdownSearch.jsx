@@ -8,7 +8,6 @@ import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas";
 import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
-import { puedeAccederVueloHotel } from "../utils/correosVueloHotel";
 import { limpiarFlujoVueloHotel, limpiarDatosPaqueteVuelo } from "../utils/flightSearch";
 
 const DropdownSearch = () => {
@@ -34,8 +33,6 @@ const DropdownSearch = () => {
   const [showOriginSuggestions, setShowOriginSuggestions] = useState(false);
   const [isSearchingOrigin, setIsSearchingOrigin] = useState(false);
   const [selectedOriginIata, setSelectedOriginIata] = useState("");
-  const [puedeVerVueloHotel, setPuedeVerVueloHotel] = useState(false);
-  const [permisoVueloHotelCargado, setPermisoVueloHotelCargado] = useState(false);
 
   const destinationMapping = {
     CARTAGENA: { name: "Cartagena de Indias", iataCode: "CTG" },
@@ -107,26 +104,8 @@ const DropdownSearch = () => {
     }
   }, []);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("datosUsuario");
-      if (!raw) {
-        setPuedeVerVueloHotel(false);
-        setPermisoVueloHotelCargado(true);
-        return;
-      }
-      const datos = JSON.parse(raw);
-      setPuedeVerVueloHotel(puedeAccederVueloHotel(datos?.email));
-    } catch {
-      setPuedeVerVueloHotel(false);
-    } finally {
-      setPermisoVueloHotelCargado(true);
-    }
-  }, []);
-
   // Restaurar UI desde localStorage cuando ya hay búsqueda vuelo+hotel
   useEffect(() => {
-    if (!permisoVueloHotelCargado || !puedeVerVueloHotel) return;
     const tipo = parseInt(localStorage.getItem("tipoBusqueda"), 10);
     if (tipo !== 3) return;
 
@@ -162,24 +141,7 @@ const DropdownSearch = () => {
     } catch {
       /* ignore */
     }
-  }, [permisoVueloHotelCargado, puedeVerVueloHotel]);
-
-  // Solo resetear vuelo+hotel cuando el permiso ya se verificó y el usuario NO puede usarlo
-  useEffect(() => {
-    if (!permisoVueloHotelCargado) return;
-    if (puedeVerVueloHotel) return;
-
-    const tipo = parseInt(localStorage.getItem("tipoBusqueda"), 10);
-    if (tipo === 3) {
-      limpiarFlujoVueloHotel();
-    }
-    if (botonactivado === "flight") {
-      setbotonactivado("single");
-      setIncludesFlight(false);
-      setOrigin("");
-      setSelectedOriginIata("");
-    }
-  }, [permisoVueloHotelCargado, puedeVerVueloHotel, botonactivado]);
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -462,7 +424,7 @@ const DropdownSearch = () => {
     localStorage.setItem("nochesyedades", JSON.stringify(nochesyedades));
 
     // Sincronizar tipoBusqueda con el modo actual (evita valor obsoleto en localStorage)
-    if (includesFlight && puedeVerVueloHotel) {
+    if (includesFlight) {
       localStorage.setItem("tipoBusqueda", "3");
     } else if (botonactivado === "group") {
       localStorage.setItem("tipoBusqueda", "2");
@@ -475,7 +437,7 @@ const DropdownSearch = () => {
     }
     
     // Si es vuelo + hotel, guardar datos completos del vuelo
-    if (includesFlight && puedeVerVueloHotel) {
+    if (includesFlight) {
       const datosDelVuelo = {
         tipoReserva: "flight",
         activado: true,
@@ -545,16 +507,14 @@ const DropdownSearch = () => {
         >
           Reserva para grupos
         </button>
-        {puedeVerVueloHotel && (
-          <button
-            className={`${styles.button} ${
-              botonactivado == "flight" ? styles.active : ""
-            }`}
-            onClick={handleFlightReservation}
-          >
-            Vuelo + Hotel
-          </button>
-        )}
+        <button
+          className={`${styles.button} ${
+            botonactivado == "flight" ? styles.active : ""
+          }`}
+          onClick={handleFlightReservation}
+        >
+          Vuelo + Hotel
+        </button>
       </div>
       <br />
 
