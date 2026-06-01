@@ -1032,7 +1032,7 @@ export const Cid = ({ id }) => {
   };
 
   const regexSeleccionado =
-    categoriagencia == 696
+    categoriagencia == 0
       ? regexminoristas[planDeAlimentacion]
       : regexMayorista[planDeAlimentacion];
 
