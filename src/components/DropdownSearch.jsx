@@ -521,7 +521,7 @@ const DropdownSearch = () => {
       {tooltip && <div className={styles.tooltip}>{tooltip}</div>}
 
       {includesFlight && (
-        <div className={styles.dropdown} style={{ position: 'relative' }}>
+        <div className={styles.dropdown}>
           <input
             type="text"
             value={origin}
@@ -535,68 +535,26 @@ const DropdownSearch = () => {
             className={styles.searchInput}
           />
           {isSearchingOrigin && (
-            <div style={{ 
-              position: 'absolute', 
-              top: '100%', 
-              left: 0, 
-              right: 0, 
-              background: 'white', 
-              border: '1px solid #ddd',
-              padding: '10px',
-              zIndex: 1000
-            }}>
-              Buscando...
-            </div>
+            <div className={styles.suggestionsLoading}>Buscando...</div>
           )}
           {showOriginSuggestions && originSuggestions.length > 0 && (
-            <div 
+            <div
               ref={originSuggestionsRef}
-              style={{ 
-                position: 'absolute', 
-                top: '100%', 
-                left: 0, 
-                right: 0, 
-                background: 'white', 
-                border: '1px solid #ddd',
-                maxHeight: '200px',
-                overflowY: 'auto',
-                zIndex: 1000
-              }}
+              className={styles.suggestionsList}
             >
               {originSuggestions.map((city, index) => (
-                <div
+                <button
                   key={index}
+                  type="button"
+                  className={styles.suggestionItem}
                   onClick={() => handleOriginSelect(city)}
-                  style={{
-                    padding: '10px',
-                    cursor: 'pointer',
-                    borderBottom: '1px solid #eee',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#f5f5f5';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'white';
-                  }}
                 >
-                  <span>{city.name}</span>
-                  <div style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'flex-end',
-                    textAlign: 'right'
-                  }}>
-                    <span style={{ color: '#666', fontSize: '12px' }}>
-                      {city.iataCode}
-                    </span>
-                    <span style={{ color: '#999', fontSize: '10px' }}>
-                      {city.countryCode}
-                    </span>
-                  </div>
-                </div>
+                  <span className={styles.suggestionName}>{city.name}</span>
+                  <span className={styles.suggestionMeta}>
+                    <span>{city.iataCode}</span>
+                    <span>{city.countryCode}</span>
+                  </span>
+                </button>
               ))}
             </div>
           )}
@@ -656,12 +614,19 @@ const DropdownSearch = () => {
 
       {/*--------------- Dropdown para habitaciones ----------------*/}
       <div className={styles.dropdownPeople} ref={dropdownRef}>
-        <div
-          className={styles.dropdownToggle}
+        <button
+          type="button"
+          className={`${styles.dropdownToggle} ${
+            showDropdown ? styles.dropdownToggleOpen : ""
+          }`}
           onClick={() => setShowDropdown(!showDropdown)}
+          aria-expanded={showDropdown}
+          aria-haspopup="dialog"
         >
-          {rooms.length} habitación{rooms.length > 1 ? "es" : ""}
-        </div>
+          <span className={styles.dropdownToggleLabel}>
+            {rooms.length} habitación{rooms.length > 1 ? "es" : ""}
+          </span>
+        </button>
         {showDropdown && (
           <div className={styles.dropdownMenu}>
             {rooms.map((room, index) => (
@@ -765,9 +730,10 @@ const DropdownSearch = () => {
               </div>
               
             ))}
-            <div>
-                  <p style={{ color:"#1C3D5A", justifyContent:"center"}}>Nota: niños de 0 a 4 años ingresan gratis en el alojamiento en las camas incluidas </p>
-                </div>
+            <p className={styles.menuNote}>
+              Nota: niños de 0 a 4 años ingresan gratis en el alojamiento en las
+              camas incluidas.
+            </p>
             <button
               className={styles.addRoomButton} //-----------------------------------------------------------------
               onClick={handleAddRoom}

@@ -99,9 +99,20 @@ export function getDatosUsuario() {
   }
 }
 
+/** Primera validación: solo usuarios con firstLog === true. */
+export function cumpleFirstLog(datos = getDatosUsuario()) {
+  return datos != null && datos.firstLog === true;
+}
+
 export function debeMostrarEncuesta() {
   const datos = getDatosUsuario();
-  return datos != null && datos.encuesta === false;
+  if (!cumpleFirstLog(datos)) return false;
+  return datos.encuesta === false;
+}
+
+export function debeProgramarEncuestaPostLogin(datos) {
+  if (!cumpleFirstLog(datos)) return false;
+  return datos.encuesta === false;
 }
 
 export function programarEncuestaPostLogin() {

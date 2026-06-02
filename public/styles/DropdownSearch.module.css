@@ -1,189 +1,264 @@
 /* src/components/DropdownSearch.module.css */
 
-/* Estilo general del contenedor */
+:root {
+  --ds-navy: #1c3d5a;
+  --ds-navy-dark: #152f47;
+  --ds-orange: #f29c38;
+  --ds-orange-soft: #f5d7b4;
+  --ds-muted: #6b7c8f;
+  --ds-border: rgba(28, 61, 90, 0.12);
+  --ds-radius: 12px;
+  --ds-radius-lg: 16px;
+  --ds-shadow-field: 0 1px 3px rgba(28, 61, 90, 0.06);
+  --ds-shadow-panel: 0 12px 40px rgba(28, 61, 90, 0.12);
+  --ds-focus: 0 0 0 3px rgba(242, 156, 56, 0.2);
+}
+
 .dropdownSearchContainer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    border-radius: 8px;
-    width: 100%;
-    max-width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 1200px;
+}
 
-  }
+.dateButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  width: 100%;
+  max-width: 720px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 14px;
+}
 
-  .dateButtons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;; /* Espaciado entre los botones */
-  }
-  
-  .dateButtons button {
-    background-color: #fdfdfd; /* Color de fondo del botón */
-    border: none;
-    color: #1C3D5A;
-    font-weight: 600;
-    /* font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
-    border-radius: 0.25rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-  }
-  
-  .dateButtons button:hover {
-    background-color: #d9a76e; /* Cambio de color al pasar el cursor */
-  }
+.dateButtons button,
+.button {
+  flex: 1 1 auto;
+  min-width: 120px;
+  background: #fff;
+  border: 1px solid var(--ds-border);
+  color: var(--ds-navy);
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+  box-shadow: var(--ds-shadow-field);
+}
 
-  .dateButtons button.active{
-    background-color: #F4D7B5;
+.dateButtons button:hover,
+.button:hover {
+  border-color: rgba(242, 156, 56, 0.45);
+  background: #fffefb;
+}
+
+.dateButtons button.active,
+.button.active {
+  background: linear-gradient(135deg, var(--ds-navy) 0%, var(--ds-navy-dark) 100%);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(28, 61, 90, 0.25);
+}
+
+/* Campos unificados: select, fechas, habitaciones, origen */
+.dropdown select,
+.datePicker input,
+.dropdownToggle,
+.searchInput {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.6rem 2.25rem 0.6rem 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ds-navy);
+  background-color: #fff;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+  box-shadow: var(--ds-shadow-field);
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dropdown select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  color: var(--ds-muted);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231c3d5a' fill-opacity='0.55' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 12px 8px;
+}
+
+.dropdown select:valid,
+.dropdown select:focus {
+  color: var(--ds-navy);
+}
+
+.datePicker input {
+  width: 100%;
+  max-width: 300px;
+  cursor: pointer;
+}
+
+.datePicker {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dateRangePicker {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 9999;
+  background: #fff;
+  box-shadow: var(--ds-shadow-panel);
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  padding: 12px;
+  animation: dsPanelIn 0.2s ease;
+}
+.confirmDateButton {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ds-navy) 0%, var(--ds-navy-dark) 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.confirmDateButton:hover {
+  background: linear-gradient(135deg, var(--ds-orange) 0%, #e08a28 100%);
+  transform: translateY(-1px);
+}
+
+.dropdownPeople {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dropdownToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 300px;
+  text-align: left;
+  position: relative;
+  cursor: pointer;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.dropdownToggleLabel {
+  flex: 1;
+}
+
+.dropdownToggle::after {
+  content: "";
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  margin-left: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 8'%3E%3Cpath fill='%231c3d5a' fill-opacity='0.5' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform 0.2s ease;
+}
+
+.dropdownToggleOpen::after {
+  transform: rotate(180deg);
+}
+
+.dropdownToggle:hover {
+  border-color: rgba(242, 156, 56, 0.45);
+}
+
+.dropdownToggleOpen {
+  border-color: var(--ds-orange);
+  box-shadow: var(--ds-focus);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-width: 280px;
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 0;
+  padding: 1rem 1.1rem 1.15rem;
+  background: #fff;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-panel);
+  z-index: 1000;
+  animation: dsPanelIn 0.22s ease;
+}
+
+@keyframes dsPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
   }
- 
-  
-  
-  
-  /* Estilo de los selectores y campos */
-  
-  .datePicker input,
-  .dropdownToggle {
-    width: max-content;
-    padding-bottom: 8px;
-    padding-top: 8px;
-    padding-left: 4px;
-    padding-right: 4px;
-    border-radius: 4px;
-    background-color: white;
-    font-size: 16px;
-    color: #1C3D5A;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  /* Ancho específico para los elementos */
-  .dropdown select {
-    width: 200px;
-    height: 40px;
-  }
-  
-  /* Ajuste del ancho del date picker */
-  .datePicker input {
-    width: 260px;
-    height:40px;
-    border:none;
-    display: inline-flex;
-    align-items: center;
-    
-  }
-  
-  .datePicker {
-    position: relative;
-    width: 100%;
-    max-width: 300px;
-  }
-  
-  
-  .dateRangePicker {
-    position:absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    background-color: white;
-    box-shadow: 0px 4px 6px rgba(255, 215, 215, 0.1);
-    border-radius: 8px;
-    padding: 50px;
-  }
-  .dateRangePicker input{
-    width: 100px;
-    
-  }
-  
-  
-  .confirmDateButton {
-    background-color: #9b5a2fdc; /* Ejemplo de fondo verde */
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .confirmDateButton:hover {
-    background-color: #9e5728c4; /* Color al pasar el ratón */
-    transform: scale(1.05);
-  }
-  
-  .confirmDateButton:active {
-    background-color: #743e1ac4; 
-    transform: scale(1.05);
-  }
-  /* Ajuste del dropdown de personas */
-  .dropdownToggle {
-    width: 240px;
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    
-  }
-  
-  /* Dropdown de habitaciones */
-  .dropdownMenu {
-    position: absolute;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 1rem;
-    margin-top: 0.5rem;
-    z-index: 10;
-    width: 250px;
-  }
-  
-  /* Dropdown de personas */
-  .peopleCounter {
-    display: flex;
-    flex-direction: column;
-    gap: 9rem;
-  }
-  
-   .dropdown {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-    max-width: 300px; /* Ajusta el ancho del dropdown */
-  }
-  
-  .dropdown select {
-    width: 100%;
-    padding: 0.55rem 1.4rem 0.55rem 0.8rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: white;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    font-size: 0.95rem;
-    color: #6C757D;
-    position: relative;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"><path fill="%236C757D" d="M2 0L0 2h4z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 0.75rem top 50%;
-    background-size: 0.65rem auto;
-  }
-  .dateRangePicker {
-    position: absolute; /* O usa 'fixed' si quieres que se mantenga en la misma posición en la pantalla */
-    top: 100%; /* Ajusta esto según la ubicación del contenedor padre */
-    left: 0;
-    background: white;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    z-index: 9999; /* Asegura que esté por encima de otros elementos */
-    padding: 10px;
-    border-radius: 8px;
-  }
-  
-  .dropdown select:focus {
-    outline:none;
-    color: #1C3D5A;
-    border-color: #2A9D8F;
-    box-shadow: 0 0 0 2px rgba(42, 157, 143, 0.2);
-  }
+}
+
+.peopleCounter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dropdown select:focus,
+.datePicker input:focus,
+.dropdownToggle:focus-visible,
+.searchInput:focus {
+  outline: none;
+  border-color: var(--ds-orange);
+  box-shadow: var(--ds-focus);
+}
+
+.dropdown select:hover,
+.datePicker input:hover,
+.searchInput:hover {
+  border-color: rgba(242, 156, 56, 0.45);
+}
   
   /* Otros estilos del dropdown */
   .dropdown-text {
@@ -232,25 +307,35 @@
 
 /* Estilo para el botón de búsqueda */
 .searchButton {
-  background-color:#173b5a ; /* Fondo azul */
-  color: white; /* Texto blanco */
-  padding: 10px 20px; /* Espaciado interno */
-  border: none; /* Sin bordes */
-  border-radius: 5px; /* Bordes redondeados */
-  cursor: pointer; /* Cursor de mano al pasar sobre el botón */
-  font-size: 16px; /* Tamaño del texto */
-  transition: background-color 0.3s ease; /* Transición suave para el cambio de color */
+  min-height: 44px;
+  padding: 10px 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ds-navy) 0%, var(--ds-navy-dark) 100%);
+  border: none;
+  border-radius: var(--ds-radius);
+  cursor: pointer;
+  box-shadow: 0 4px 14px #1c3d5a4d;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
-/* Cambio de color al pasar el cursor sobre el botón */
-.searchButton:hover {
-  background-color: #27557e; /* Cambia a un tono más oscuro de azul */
-  transform: scale(1.06);
+.searchButton:hover:not(:disabled) {
+  background: linear-gradient( #1c3d5a4d 100%);
+  box-shadow: 0 6px 18px rgba(242, 156, 56, 0.35);
+  transform: translateY(-1px);
 }
- 
-.searchButton:active {
-  background-color: #112c44; /* Cambia a un tono más oscuro de azul */
-  transform: scale(1.05)
+
+.searchButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.searchButton:disabled {
+  opacity: 0.65;
+  cursor: wait;
 }
 /* Cambia el color de fondo al seleccionar una fecha */
 .rdr-Day--selected {
@@ -299,13 +384,25 @@
   align-items: center;
 }
 
+.counterGroup label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ds-muted);
+  margin-bottom: 6px;
+}
+
 .counter button {
-  background-color: #1C3D5A;
+  background-color: var(--ds-navy);
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .counter span {
@@ -371,86 +468,158 @@ input:checked + .slider::before {
 }
 
 .counter button:hover {
-  background-color: #0056b3; /* Azul más oscuro */
-  transform: scale(1.1);
+  background-color: var(--ds-navy-dark);
+  transform: none;
 }
 
 .counter button:active {
-  background-color: #003f7f;
-  transform: scale(1.05);
+  transform: scale(0.96);
 }
 
-/* Botón de añadir habitación */
+.counter span {
+  min-width: 1.5rem;
+  font-weight: 600;
+  color: var(--ds-navy);
+}
+
 .addRoomButton {
-  background-color: #9b5a2fdc; /* Verde */
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #fff;
+  background: linear-gradient(135deg, var(--ds-orange) 0%, #e08a28 100%);
   border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 10px;
   cursor: pointer;
-  margin-top: 15px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+  box-shadow: 0 4px 12px rgba(242, 156, 56, 0.3);
 }
 
-.addRoomButton:hover {
-  background-color: #915025f8; /* Verde más oscuro */
-  transform: scale(1.05);
+.addRoomButton:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
-.addRoomButton:active {
-  background-color: #a35724f8;
+.addRoomButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-/* Botón de eliminar habitación */
 .removeRoomButton {
-  background-color: #dc3545; /* Rojo */
-  color: #fff;
-  border: none;
+  width: 100%;
+  margin-top: 8px;
   padding: 8px 12px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #b42318;
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+  border-radius: 10px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background 0.2s ease;
 }
 
 .removeRoomButton:hover {
-  background-color: #c82333; /* Rojo más oscuro */
-  transform: scale(1.05);
+  background: #fee4e2;
+  transform: none;
 }
 
-.removeRoomButton:active {
-  background-color: #bd2130;
-}
-
-/* Espaciado para las secciones de la habitación */
 .roomSection {
-  padding: 10px;
-  border-bottom: 1px solid #eaeaea;
-  margin-bottom: 15px;
+  padding: 14px 12px;
+  margin-bottom: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius);
+}
+
+.roomSection:last-of-type {
+  margin-bottom: 8px;
 }
 
 .roomSection h4 {
-
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: var(--ds-navy);
 }
 
-/* Dropdown de habitaciones (Listado de habitaciones) */
-.dropdownMenu {
-  padding: 10px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  max-height: 600px;
-  overflow-x: auto;
-  
+.menuNote {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ds-muted);
+  text-align: center;
+  background: var(--ds-orange-soft);
+  border-radius: 10px;
+  border: 1px solid rgba(242, 156, 56, 0.25);
+}
 
-} 
+.suggestionsList,
+.suggestionsLoading {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: #fff;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-panel);
+  animation: dsPanelIn 0.2s ease;
+}
+
+.suggestionsList {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.suggestionsLoading {
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: var(--ds-muted);
+  text-align: center;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.suggestionItem:hover,
+.suggestionItem:focus-visible {
+  background: #f0f4f8;
+  outline: none;
+}
+
+.suggestionName {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ds-navy);
+}
+
+.suggestionMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--ds-muted);
+}
 
 .modal h2{
   font-size: 25px;
@@ -582,13 +751,14 @@ input:checked + .slider::before {
   accent-color: #1C3D5A;
 }
 
-.searchInput{
- width: 240px;
- padding: 7px;
- margin: auto;
- border: 1px solid #ccc;
- border-radius: 4px;
- position: relative;
+.searchInput {
+  max-width: 300px;
+  margin: 0;
+}
+
+.searchInput::placeholder {
+  color: #9aa8b6;
+  font-weight: 400;
 }
 
 @media (max-width: 768px) {
@@ -669,7 +839,7 @@ input:checked + .slider::before {
   .dateRangePicker {
     width: 94vw;
     max-width: 94vw;
-    padding: 8px;
+    /* padding: 8px; */
   }
 
   .dropdownMenu {

@@ -1,6 +1,8 @@
 import Swal from "sweetalert2";
+import "../../public/styles/Footer.css";
 import styles from "./EncuestaSatisfaccion.module.css";
 import {
+  debeMostrarEncuesta,
   enviarEncuestaApi,
   enviarEncuestaBitrix,
   marcarEncuestaCompletadaLocal,
@@ -131,6 +133,8 @@ function setRating(container, rating) {
 }
 
 export function abrirEncuestaSatisfaccion() {
+  if (!debeMostrarEncuesta()) return;
+
   const ratings = {
     experiencia: 0,
     capacitaciones: 0,
@@ -243,7 +247,7 @@ export function abrirEncuestaSatisfaccion() {
 const EncuestaSatisfaccion = () => (
   <button
     type="button"
-    className="video-button"
+    className="video-button encuesta-footer-button"
     onClick={abrirEncuestaSatisfaccion}
   >
     Encuesta de satisfacción

@@ -101,6 +101,11 @@
     font-size: 14px;
     margin-top: 10px;
     cursor: pointer;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    box-sizing: border-box;
     transition: background-color 0.3s ease;
 }
 
@@ -108,12 +113,35 @@
     background-color: #FFC107; /* Cambia ligeramente el color al pasar el mouse */
 }
 
+.video-button:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
 .botones-footer {
     display: flex;
     flex-direction: row;
     align-items: flex-end;
+    flex-wrap: wrap;
     gap: 10px;
     justify-content: flex-end;
+}
+
+.botones-footer a {
+    text-decoration: none;
+    display: inline-flex;
+}
+
+.botones-footer .video-button,
+.botones-footer .encuesta-footer-button {
+    display: inline-block;
+    min-height: 40px;
+    margin-top: 10px;
+    white-space: normal;
+}
+
+.botones-footer a .video-button {
+    width: 100%;
 }
 
 @media (max-width: 768px) {
@@ -138,7 +166,10 @@
         align-items: stretch;
     }
 
-    .video-button {
+    .video-button,
+    .encuesta-footer-button {
         width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
 }
