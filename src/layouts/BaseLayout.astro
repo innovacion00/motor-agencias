@@ -6,6 +6,7 @@ const ENABLE_VIEW_TRANSITIONS = true;
 import Header from '../components/Header';
 import Footer from '../components/Footer.astro';
 import CurrencySelector from '../components/Cambiardivisas';
+import EncuestaAutoTrigger from '../components/EncuestaAutoTrigger.jsx';
 import { ViewTransitions } from "astro:transitions";
 import "sweetalert2/dist/sweetalert2.min.css";
 // import CurrencySelector from '../components/Cambiardivisas';
@@ -22,6 +23,8 @@ import "sweetalert2/dist/sweetalert2.min.css";
     <link rel="stylesheet" href="/styles/global.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
     <style>
       /* SweetAlert2: z-index y texto (el body global usa color blanco) */
       .swal2-container {
@@ -91,6 +94,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
     <div class="wrapper"> <!-- Añadido: contenedor flex -->
       <!-- <CurrencySelector client:load/> -->
       <CurrencySelector client:load/>
+      <EncuestaAutoTrigger client:load />
       <Header client:load />
       <main>
         <slot />

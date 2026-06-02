@@ -1762,7 +1762,7 @@ const Gestionar = ({ reservas }) => {
               nos veremos en la obligación de solicitar directamente al cliente el pago del monto restante en recepción.
               </p>
               <br />
-              <b style={{fontSize:"16px"}}>Politicas de cancelacion de BookingConnect</b>
+              <b style={{fontSize:"16px"}}>Politicas de cancelacion o modificación de BookingConnect</b>
               <p style={{fontFamily:"Roboto"}}>
                 <br />
                 Reservas con 24 a 72 horas de antelación penalidad del 50%.
@@ -1781,7 +1781,7 @@ const Gestionar = ({ reservas }) => {
               </p>
               <p style={{fontFamily:"Roboto", fontWeight:"bold"}}>
                 <br />
-                NOTA:La cancelación de reservas estará sujeta a validación, de acuerdo con el motivo expuesto, para establecer la procedencia de la penalidad.
+                NOTA:La cancelación o modificación de reservas estará sujeta a validación, de acuerdo con el motivo expuesto, para establecer la procedencia de la penalidad.
               </p>
               <br />
               <p>

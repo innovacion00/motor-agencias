@@ -1,4 +1,6 @@
 ---
+import EncuestaSatisfaccion from './EncuestaSatisfaccion.jsx';
+
 const logoPath = '/path/to/ghsuites-logo.png'; // Cambia esta ruta al logo de GH Suites
 const whatsappIconPath = '/path/to/whatsapp-icon.png'; // Cambia esta ruta al ícono de WhatsApp
 const facebookIconPath = '/path/to/facebook-icon.png'; // Cambia esta ruta al ícono de Facebook
@@ -60,6 +62,7 @@ const instagramIconPath = '/path/to/instagram-icon.png'; // Cambia esta ruta al 
                 <a href="/multimedia" target="_blank" rel="noopener noreferrer"><button class="video-button">Descargar contenido multimedia</button></a>
                 <!-- Botón para ver el video -->
                 <button class="video-button" onclick="window.open('https://www.youtube.com/watch?v=hTKggXZ9HdE', '_blank')">Ver video instructivo</button>
+                <EncuestaSatisfaccion client:load />
             </div>
             <br>
             
