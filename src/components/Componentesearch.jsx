@@ -27,13 +27,13 @@ const BusquedaCartagena = () => {
 
   //Objeto de imagenes  para las fachadas
   const hotelImages = {
-    9: "https://www.gehsuites.com/images/portada_marian_suites.jpg", //marina
+    9: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-marina-suites.jpg", //marina
     1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada-azuan.jpg",
-    6: "https://www.gehsuites.com/images/fachada_avexi.jpg", //avexi
+    6: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-avexi-suites.jpg", //avexi
     7: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg", //bocagrande
     4: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg", //aixo
     5: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg", //abi
-    3: "https://www.gehsuites.com/images/fachada-madison.jpg", //madison
+    3: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg", //madison
     10: "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill", //windsor
     8: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg", //rodadero
     2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525

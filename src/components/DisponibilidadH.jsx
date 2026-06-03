@@ -29,7 +29,7 @@ const hotelesData = {
       "Cra. 3 #4 - 32, Cartagena de Indias, Provincia de Cartagena, Bolívar",
     description:
       "Situado en el centro turístico y comercial de la ciudad de Cartagena de indias, el Hotel Marina Suites es una hermosa propiedad con 42 habitaciones diseñadas para el descanso y relax, con las comodidades necesarias para el disfrute de tus vacaciones en pareja, amigos, familia o para tus actividades de negocios o eventos en la ciudad.",
-    image: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
+    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-marina-suites.jpg",
     habitaciones: [
       {
         nombre: "Doble Estándar",
@@ -51,7 +51,7 @@ const hotelesData = {
       "Cra. 3 #No 4 -86, Cartagena de Indias, Provincia de Cartagena, Bolívar",
     description:
       "Ubicado entre el mar Caribe y la bahía de Cartagena de Indias, en el animado distrito comercial y turístico de Bocagrande, este hotel ofrece fácil acceso a todas las atracciones y opciones de entretenimiento que la ciudad moderna y amurallada tiene para ti.",
-    image: "https://www.gehsuites.com/images/fachada_avexi.jpg",
+    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-avexi-suites.jpg",
     leermas: "/infoavexi",
     mapa: "https://www.google.com/maps/place/Hotel+Avexi+Suites+By+GEH+Suites/@10.3982749,-75.5613593,17z/data=!4m10!3m9!1s0x8ef62f3dacf7d4b7:0xf58b384d5cb2a6ee!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.3982696!4d-75.5587844!16s%2Fg%2F11h8967kdh?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
@@ -62,7 +62,7 @@ const hotelesData = {
     description:
       "Ubicado en Cartagena de Indias – Colombia, y teniendo como vecino las hermosas playas del mar caribe, se abre paso en el moderno y reconocido barrio de Marbella nuestro Hotel Aixo Suites; a solo 5 minutos de la mágica e infranqueable Ciudad Amurallada; podrás revivir y encontrar las hazañas de nuestros héroes, lo colonial de sus calles, la belleza de sus cañones, su diversidad gastronómica y las más reconocidas tiendas y bares para tu diversión.",
     image:
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg",
+      "https://images.trvl-media.com/lodging/22000000/21350000/21343600/21343503/e5e1ec59.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
     leermas: "/infoaixo",
     mapa: "https://www.google.com/maps/place/Hotel+Aixo+Suites+By+GEH/@10.4306705,-75.5330912,15.92z/data=!4m9!3m8!1s0x8ef62f9966357c8d:0x3377f5a11170d0ac!5m2!4m1!1i2!8m2!3d10.436384!4d-75.5363788!16s%2Fg%2F11sv6wc7r6?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D",
   },
@@ -72,7 +72,7 @@ const hotelesData = {
       "Cra. 3 #8-156, Cartagena de Indias, Provincia de Cartagena, Bolívar",
     description:
       "Azuán Suites By GEH Suites, en Cartagena es un hermoso hotel ubicado en el sector moderno de Bocagrande, gozando de una ubicación estratégica a tan solo 15 minutos del aeropuerto Internacional Rafael Núñez.Nuestro hotel está situado a solo 5 minutos de las preciosas playas de Castillo, Bocagrande y Laguito. A 15 minutos de Azuán Suites, encontrarás el misterio que encierra la ciudad amurallada de Cartagena de Indias, sus monumentos y edificaciones históricas: Torre del Reloj, Castillo de San Felipe y sus mágicas calles coloniales.",
-    image: "https://www.gehsuites.com/images/fachada-azuan.jpg",
+    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-azuan-suites.jpg",
     leermas: "/infoazuan",
     mapa: "https://www.google.com/maps/place/Hotel+Azu%C3%A1n+Suites+GEH+Suites/@10.4038589,-75.5531886,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef62f3de5e1d95f:0xba9cfea6defdcf9e!5m2!4m1!1i2!8m2!3d10.4038589!4d-75.5531886!16s%2Fg%2F11b6d6nxfv?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
@@ -102,7 +102,7 @@ const hotelesData = {
     direction: "Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena",
     description:
       "El Hotel Rodadero Inn se encuentra ubicado en la ciudad de Santa Marta, uno de los destinos turísticos más hermosos de Colombia. A orillas del mar Caribe, esta ciudad cuenta con una gran variedad de playas, parques y monumentos históricos que cautivarán a todos nuestros visitantes.",
-    image: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
+    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg",
     leermas: "/inforodadero",
   },
   2: {
@@ -129,7 +129,7 @@ const hotelesData = {
     direction: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena",
     description:
       "En el Hotel Sansiraka, ubicado en la turística zona de El Rodadero, a 13 km de Santa Marta, podrás disfrutar de alojamiento con balcón, Wi-Fi gratuito y una piscina al aire libre. Algunas de nuestras habitaciones cuentan con una acogedora área de estar con TV por cable y balcones privados.",
-    image: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
+    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-sansiraka.jpg",
     leermas: "/infosansiraka",
     mapa: "https://www.google.com/maps/place/Hotel+Sansiraka+By+GEH+Suites./@11.1968691,-74.2284548,17z/data=!4m10!3m9!1s0x8ef4f5613a63c691:0x50eabd7eb9ea10ac!5m3!1s2025-01-17!4m1!1i2!8m2!3d11.1968638!4d-74.2258799!16s%2Fg%2F1tkf20ns?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
@@ -138,7 +138,7 @@ const hotelesData = {
     direction: "Cra. 18 #93-97, Bogotá",
     description:
       "Madisson Inn Hotel Luxury By GEH Suites, nos encontramos ubicados en la Carrera 18 No. 93 – 97, barrio El Chicó, Bogotá, Colombia. Con una excelente ubicación en el norte de la Ciudad, a solo 5 minutos del parque de la 93, muy cerca de la zona T donde están localizados los más destacados restaurantes de la ciudad, cerca de las entidades financieras, centros de negocios, zonas de entretenimiento y casinos.",
-    image: "https://www.gehsuites.com/images/fachada-madison.jpg",
+    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg",
     leermas: "/infomadisson",
     mapa: "https://www.google.com/maps/place/Madisson+Inn+Hotel+%26+Luxury+Suites/@4.6790103,-74.0566063,17z/data=!4m10!3m9!1s0x8e3f98db9c7c66cb:0x6890aeeef651eb89!5m3!1s2025-01-17!4m1!1i2!8m2!3d4.679005!4d-74.0540314!16s%2Fg%2F11b6j76yfq?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
