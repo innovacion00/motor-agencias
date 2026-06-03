@@ -13,6 +13,7 @@ import { limpiarFlujoVueloHotel, limpiarDatosPaqueteVuelo } from "../utils/fligh
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showDestinationMenu, setShowDestinationMenu] = useState(false);
   const [destination, setDestination] = useState("");
   const [botonactivado, setbotonactivado] = useState("single");
   const [tooltip, setTooltip] = useState(null);
@@ -39,6 +40,12 @@ const DropdownSearch = () => {
     BOGOTA: { name: "Bogotá", iataCode: "BOG" },
     SANTA_MARTA: { name: "Santa Marta", iataCode: "SMR" },
   };
+
+  const DESTINATION_OPTIONS = [
+    { value: "CARTAGENA", label: "Cartagena de Indias" },
+    { value: "BOGOTA", label: "Bogotá" },
+    { value: "SANTA_MARTA", label: "Santa Marta" },
+  ];
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -93,7 +100,18 @@ const DropdownSearch = () => {
   };
   const dropdownRef = useRef(null);
   const dateRangeRef = useRef(null);
+  const destinationRef = useRef(null);
   const originSuggestionsRef = useRef(null);
+
+  const handleDestinationSelect = (value) => {
+    setDestination(value);
+    setShowDestinationMenu(false);
+  };
+
+  const destinationLabel =
+    destination && destinationMapping[destination]
+      ? destinationMapping[destination].name
+      : "Selecciona un destino";
 
   // Configurar el appElement para react-modal
   useEffect(() => {
@@ -159,6 +177,12 @@ const DropdownSearch = () => {
         !originSuggestionsRef.current.contains(event.target)
       ) {
         setShowOriginSuggestions(false);
+      }
+      if (
+        destinationRef.current &&
+        !destinationRef.current.contains(event.target)
+      ) {
+        setShowDestinationMenu(false);
       }
     };
 
@@ -563,19 +587,56 @@ const DropdownSearch = () => {
 
       {/*------------------------ Dropdown de destino ------------------------*/}
 
-      <div className={styles.dropdown}>
-        <select
-          value={destination}
-          onChange={(e) => setDestination(e.target.value)}
+      <div className={styles.dropdown} ref={destinationRef}>
+        <button
+          type="button"
+          className={`${styles.dropdownToggle} ${
+            showDestinationMenu ? styles.dropdownToggleOpen : ""
+          } ${!destination ? styles.destinationPlaceholder : ""}`}
+          onClick={() => {
+            setShowDestinationMenu((open) => !open);
+            setShowDropdown(false);
+            setShowDateRange(false);
+          }}
+          aria-expanded={showDestinationMenu}
+          aria-haspopup="listbox"
+          aria-label="Seleccionar destino"
         >
-          <option value="">Selecciona un destino</option>
-          <option value="CARTAGENA">Cartagena de Indias</option>
-          <option value="BOGOTA">Bogotá</option>
-          <option value="SANTA_MARTA">Santa Marta</option>
-        </select>
+          <span className={styles.dropdownToggleLabel}>{destinationLabel}</span>
+        </button>
+        {showDestinationMenu && (
+          <ul
+            className={styles.destinationMenu}
+            role="listbox"
+            aria-label="Destinos disponibles"
+          >
+            {DESTINATION_OPTIONS.map((opt) => (
+              <li key={opt.value} role="presentation">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={destination === opt.value}
+                  className={`${styles.destinationOption} ${
+                    destination === opt.value
+                      ? styles.destinationOptionSelected
+                      : ""
+                  }`}
+                  onClick={() => handleDestinationSelect(opt.value)}
+                >
+                  <span className={styles.destinationOptionLabel}>
+                    {opt.label}
+                  </span>
+                  <span className={styles.destinationOptionCode}>
+                    {destinationMapping[opt.value]?.iataCode}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      {/*------------------------ Selector de rango de fechas------------------------ */}
+      {/*------------------------ Selector de rango de fechas ------------------------ */}
 
       <div className={styles.datePicker} ref={dateRangeRef}>
         <input

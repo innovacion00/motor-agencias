@@ -71,8 +71,7 @@
   box-shadow: 0 4px 12px rgba(28, 61, 90, 0.25);
 }
 
-/* Campos unificados: select, fechas, habitaciones, origen */
-.dropdown select,
+/* Campos unificados: destino, fechas, habitaciones, origen */
 .datePicker input,
 .dropdownToggle,
 .searchInput {
@@ -90,23 +89,6 @@
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
-}
-
-.dropdown select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
-  color: var(--ds-muted);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231c3d5a' fill-opacity='0.55' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.85rem center;
-  background-size: 12px 8px;
-}
-
-.dropdown select:valid,
-.dropdown select:focus {
-  color: var(--ds-navy);
 }
 
 .datePicker input {
@@ -245,7 +227,6 @@
   max-width: 300px;
 }
 
-.dropdown select:focus,
 .datePicker input:focus,
 .dropdownToggle:focus-visible,
 .searchInput:focus {
@@ -254,10 +235,101 @@
   box-shadow: var(--ds-focus);
 }
 
-.dropdown select:hover,
+.dropdownToggle:hover,
 .datePicker input:hover,
 .searchInput:hover {
   border-color: rgba(242, 156, 56, 0.45);
+}
+
+.destinationPlaceholder .dropdownToggleLabel {
+  color: var(--ds-muted);
+  font-weight: 400;
+}
+
+.destinationMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #fff;
+  border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  box-shadow: var(--ds-shadow-panel);
+  animation: dsPanelIn 0.2s ease;
+  overflow: hidden;
+}
+
+.destinationMenu li {
+  margin: 0;
+  padding: 0;
+}
+
+.destinationOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.destinationOption:hover,
+.destinationOption:focus-visible {
+  background: linear-gradient(135deg, #f0f4f8 0%, #f8fafc 100%);
+  outline: none;
+}
+
+.destinationOptionSelected,
+.destinationOptionSelected:hover {
+  background: linear-gradient(
+    135deg,
+    var(--ds-navy) 0%,
+    var(--ds-navy-dark) 100%
+  );
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(28, 61, 90, 0.2);
+}
+
+.destinationOptionLabel {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.destinationOptionSelected .destinationOptionLabel {
+  color: #fff;
+}
+
+.destinationOptionCode {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(28, 61, 90, 0.08);
+  color: var(--ds-muted);
+}
+
+.destinationOption:hover .destinationOptionCode {
+  background: rgba(28, 61, 90, 0.1);
+}
+
+.destinationOptionSelected .destinationOptionCode {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
 }
   
   /* Otros estilos del dropdown */
@@ -785,7 +857,6 @@ input:checked + .slider::before {
     max-width: none;
   }
 
-  .dropdown select,
   .datePicker input,
   .dropdownToggle,
   .searchButton {
@@ -793,9 +864,8 @@ input:checked + .slider::before {
     max-width: none;
   }
 
-  .dropdown select {
-    font-size: 0.9rem;
-    padding: 0.5rem 1.25rem 0.5rem 0.7rem;
+  .destinationMenu {
+    width: 100%;
   }
 
   .dropdownPeople {
@@ -826,9 +896,8 @@ input:checked + .slider::before {
     min-width: 0;
   }
 
-  .dropdown select {
-    font-size: 0.85rem;
-    padding: 0.45rem 1.1rem 0.45rem 0.65rem;
+  .destinationOption {
+    padding: 10px 12px;
   }
 
   .dateButtons button {
