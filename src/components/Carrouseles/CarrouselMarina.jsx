@@ -22,16 +22,16 @@ const SwiperSlider = () => {
       
     >
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/marinasuites1193.jpg" height={400} width={800} alt="mainAvexi" />
+        <img src="https://media.staticontent.com/media/pictures/8ec9a39c-8af0-4aef-9832-b8fe38e6793f/1120x700?op=fit" height={400} width={800} alt="mainAvexi" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg" height={400} width={800}alt="Stand de comida" />
+        <img src="https://media.staticontent.com/media/pictures/b1958594-9b9c-4897-9bcc-b77540b22022/1120x700?op=fit" height={400} width={800}alt="Stand de comida" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/marinasuites7723.jpg" height={400} width={800}alt="livin Avexi" />
+        <img src="https://media.staticontent.com/media/pictures/75489e46-d229-4612-bb4e-3d61064a063f/1120x700?op=fit" height={400} width={800}alt="livin Avexi" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg" height={400} width={800}alt="EstacionDeCafe" />
+        <img src="https://media.staticontent.com/media/pictures/c8356922-9841-4db7-bb6e-9628ad6863f0/1120x700?op=fit" height={400} width={800}alt="EstacionDeCafe" />
       </SwiperSlide>
       
     </Swiper>

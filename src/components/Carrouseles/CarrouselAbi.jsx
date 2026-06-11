@@ -22,19 +22,19 @@ const SwiperSlider = () => {
       
     >
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg" height={400} width={800}alt="letrero abi" />
+        <img src="https://media.staticontent.com/media/pictures/57649af0-f7fb-41ea-bf13-b46428d7f48c/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800}alt="letrero abi" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/galeriaabi14881.jpg" height={400} width={800} alt="mainAvexi" />
+        <img src="https://media.staticontent.com/media/pictures/74839094-092a-471c-9089-bbe30c0a51f1/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800} alt="mainAvexi" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/galeriaabi16972.jpg" height={400} width={800}alt="livin Avexi" />
+        <img src="https://media.staticontent.com/media/pictures/bd238c58-1846-44f6-98ab-5d3b92388402/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800}alt="livin Avexi" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/galeriaabi4255.jpg" height={400} width={800}alt="EstacionDeCafe" />
+        <img src="https://media.staticontent.com/media/pictures/de4aee27-8396-43da-a94b-bc06e5f23064/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800}alt="EstacionDeCafe" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/8abi23361.jpg" height={400} width={800}alt="Stand de comida" />
+        <img src="https://media.staticontent.com/media/pictures/6eb56bec-d67f-4bd6-9385-ab18ab2b9cc6/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800}alt="Stand de comida" />
       </SwiperSlide>
       <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/CuartoAbi.jpg" height={400} width={800}alt="desayunoAvexi" />

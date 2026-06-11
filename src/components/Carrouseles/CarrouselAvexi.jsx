@@ -22,7 +22,7 @@ const SwiperSlider = () => {
       
     >
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg" height={400} width={800} alt="mainAvexi" />
+        <img src="https://media.staticontent.com/media/pictures/bfa3a92f-1dc3-4750-9487-c2d1028df243/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800} alt="mainAvexi" />
       </SwiperSlide>
       <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Avexi-living.jpg" height={400} width={800}alt="livin Avexi" />
@@ -34,7 +34,7 @@ const SwiperSlider = () => {
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/fullBreakfastAvexi.jpg" height={400} width={800}alt="Full Break fast" />
       </SwiperSlide>
       <SwiperSlide >
-        <img src="https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg" height={400} width={800}alt="desayunoAvexi" />
+        <img src="https://media.staticontent.com/media/pictures/a9fde440-2709-446e-96a0-510caeeffece/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1" height={400} width={800}alt="desayunoAvexi" />
       </SwiperSlide>
     </Swiper>
   );
