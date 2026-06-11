@@ -1715,6 +1715,7 @@ const Gestionar = ({ reservas }) => {
               )}
             </div>
             <br />
+            
             <div className={styles.acuerdos}>
               {mostrarBeneficio && (
                 <p>

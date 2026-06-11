@@ -2,7 +2,6 @@ import Swal from "sweetalert2";
 import "../../public/styles/Footer.css";
 import styles from "./EncuestaSatisfaccion.module.css";
 import {
-  debeMostrarEncuesta,
   enviarEncuestaApi,
   enviarEncuestaBitrix,
   marcarEncuestaCompletadaLocal,
@@ -40,6 +39,7 @@ const NIVELES_ESTRELLAS = {
 };
 
 const PLACEHOLDER_RATING = "Seleccione una calificación";
+const MIN_COMENTARIOS_LENGTH = 15;
 
 function buildStarsMarkup() {
   return STAR_VALUES.map(
@@ -76,21 +76,40 @@ function buildSurveyMarkup() {
       <div class="${styles.modalBody}">
         ${questionsHtml}
         <section class="${styles.commentsSection}">
-          <label class="${styles.commentsLabel}" for="encuesta-comentarios">Comentarios adicionales (opcional)</label>
+          <label class="${styles.commentsLabel}" for="encuesta-comentarios">Comentarios adicionales (obligatorio)</label>
+          <p class="${styles.commentsHint}">Mínimo ${MIN_COMENTARIOS_LENGTH} caracteres</p>
           <textarea
             id="encuesta-comentarios"
             class="${styles.textarea}"
             placeholder="Cuéntanos más sobre tu experiencia..."
+            required
+            minlength="${MIN_COMENTARIOS_LENGTH}"
+            aria-required="true"
           ></textarea>
         </section>
       </div>
       <div class="${styles.modalFooter}">
+        <p class="${styles.formError}" data-encuesta-error role="alert" hidden></p>
         <button type="button" class="${styles.submitBtn}" data-encuesta-submit>
           Enviar encuesta
         </button>
       </div>
     </div>
   `;
+}
+
+function showFormError(root, message) {
+  const el = root?.querySelector("[data-encuesta-error]");
+  if (!el) return;
+  el.textContent = message;
+  el.hidden = false;
+}
+
+function hideFormError(root) {
+  const el = root?.querySelector("[data-encuesta-error]");
+  if (!el) return;
+  el.textContent = "";
+  el.hidden = true;
 }
 
 function setSubmitLoading(submitBtn, loading) {
@@ -132,9 +151,8 @@ function setRating(container, rating) {
   }
 }
 
+/** Abre el modal. La elegibilidad (firstLog / encuesta) solo aplica al disparo automático en EncuestaAutoTrigger. */
 export function abrirEncuestaSatisfaccion() {
-  if (!debeMostrarEncuesta()) return;
-
   const ratings = {
     experiencia: 0,
     capacitaciones: 0,
@@ -172,8 +190,13 @@ export function abrirEncuestaSatisfaccion() {
             const value = Number(starBtn.getAttribute("data-star"));
             ratings[id] = value;
             setRating(group, value);
+            hideFormError(root);
           });
         });
+      });
+
+      root.querySelector("#encuesta-comentarios")?.addEventListener("input", () => {
+        hideFormError(root);
       });
 
       const submitBtn = root.querySelector("[data-encuesta-submit]");
@@ -182,23 +205,31 @@ export function abrirEncuestaSatisfaccion() {
       submitBtn?.addEventListener("click", async () => {
         if (submitBtn.disabled) return;
 
+        hideFormError(root);
+
         const incompletas = PREGUNTAS.some(({ id }) => ratings[id] === 0);
         if (incompletas) {
-          await Swal.fire({
-            icon: "warning",
-            title: "Encuesta incompleta",
-            text: "Por favor califique las tres preguntas antes de enviar.",
-            confirmButtonText: "Entendido",
-            confirmButtonColor: "#0058bc",
-          });
+          showFormError(
+            root,
+            "Por favor califique las tres preguntas antes de enviar."
+          );
+          return;
+        }
+
+        const comentariosTextarea = root.querySelector("#encuesta-comentarios");
+        const comentarios = comentariosTextarea?.value?.trim() || "";
+
+        if (comentarios.length < MIN_COMENTARIOS_LENGTH) {
+          showFormError(
+            root,
+            `Por favor escriba sus comentarios (mínimo ${MIN_COMENTARIOS_LENGTH} caracteres).`
+          );
+          comentariosTextarea?.focus();
           return;
         }
 
         setSubmitLoading(submitBtn, true);
         if (closeBtn) closeBtn.disabled = true;
-
-        const comentarios =
-          root.querySelector("#encuesta-comentarios")?.value?.trim() || "";
 
         const surveyPayload = {
           experiencia: ratings.experiencia,
@@ -228,13 +259,10 @@ export function abrirEncuestaSatisfaccion() {
           });
         } catch (error) {
           console.error("Error al enviar encuesta:", error);
-          await Swal.fire({
-            icon: "error",
-            title: "No se pudo enviar",
-            text: "Ocurrió un problema al enviar su encuesta. Por favor, inténtelo más tarde.",
-            confirmButtonText: "Entendido",
-            confirmButtonColor: "#0058bc",
-          });
+          showFormError(
+            root,
+            "No se pudo enviar la encuesta. Por favor, inténtelo más tarde."
+          );
         } finally {
           setSubmitLoading(submitBtn, false);
           if (closeBtn) closeBtn.disabled = false;

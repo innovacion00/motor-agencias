@@ -61,7 +61,7 @@ function getHotelImagesByName(hotelName) {
 	// Mapeo de nombres de hoteles a sus imágenes
 	const hotelImagesMap = {
 		'azuan': {
-			main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
+			main: "https://media-cdn.tripadvisor.com/media/photo-s/0f/d0/76/fd/recepcion.jpg",
 			secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1",
 			secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg",
 			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/244639436.jpg?k=6053b3890a7824a3f1a2e30cf862520be80de97644162b30a3e0097d920efafd&o=&hp=1",
@@ -70,9 +70,9 @@ function getHotelImagesByName(hotelName) {
 			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/244639401.jpg?k=5a15a41671ee0d3ee3adeca39f4fecc9e11da47a48cb3f9f8840645872114a43&o=&hp=1",
 		},
 		'aixo': {
-			main: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
-			secondary1: "https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg",
+			main: "https://images.trvl-media.com/lodging/22000000/21350000/21343600/21343503/e5e1ec59.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
+			secondary1: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/91/3c/59/hotel-aixo-suites.jpg?w=900&h=500&s=1",
+			secondary2: "https://content.r9cdn.net/rimg/himg/b8/ae/29/expedia_group-3592701-148568847-621007.jpg?width=1200&height=630&crop=true",
 			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822217.jpg?k=d6df4249a82e1b056bc2f4a8c4a577bafda2ab323fe80e3687e9c4bab55a9a2e&o=&hp=1",
 			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243822196.jpg?k=b0cf6c2c7473c6904939307e198dbc450595fa7b31276a526636601f50d7cd0b&o=&hp=1",
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/277764369.jpg?k=fd77fa5491ffe7d4798985d53bd83a6d678cf7912730a95da78d224f43e9db91&o=&hp=1",
@@ -97,9 +97,9 @@ function getHotelImagesByName(hotelName) {
 			extra4:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/familiar_boquilla.jpg",
 		},
 		'marina': {
-			main: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
-			secondary1: "https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg",
+			main: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/f3/74/0f/hotel-marina-suites.jpg?w=900&h=500&s=1",
+			secondary1: "https://images.trvl-media.com/lodging/9000000/8180000/8176000/8175916/5a828576.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
+			secondary2: "https://images.trvl-media.com/lodging/9000000/8180000/8176000/8175916/90226ae6.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
 			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243552213.jpg?k=6ae2287058f976690f09ec48b1ea9f1b44deb127fc846bc6e9c976e80c3cdece&o=&hp=1",
 			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243542610.jpg?k=2cf75ad03a472256d6b2e402fd8d462ce679052a32d0df13c6e7dac56c3d1136&o=&hp=1",
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/243543715.jpg?k=7a47cd6af5f8971556ec91581b60c011e0544430470ef73311dd1663eb7dae96&o=&hp=1",
@@ -124,36 +124,36 @@ function getHotelImagesByName(hotelName) {
 			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/278270615.jpg?k=496ffd5ad15ff3a2e0bc2c336cd6f4844af888bb637abe5a5e875b545f339f05&o=&hp=1",
 		},
 		'rodadero': {
-			main: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
-			secondary1: "https://www.gehsuites.com/multimedia/galerias/2rodadero23293.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg",
+			main: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2f/84/50/7a/caption.jpg?w=500&h=400&s=1",
+			secondary1: "https://rodadero-plaza-santa-marta.hotelinsantamarta.com/data/Images/OriginalPhoto/14062/1406283/1406283392/image-santa-marta-magdalena-hotel-rodadero-inn-by-geh-suites-6.JPEG",
+			secondary2: "https://images.trvl-media.com/lodging/93000000/92340000/92332000/92331947/08cdfef1.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
 			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439332.webp?k=be9946ab62f0398843255b2a33a1145d955860e341f24ab15e3ce246d3ebbc40&o=",
 			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439308.webp?k=e119dab3708ce15ad454b328bebaf8b67c0badac44f046676d5e9bc4035d26da&o=",
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439333.webp?k=867e3a6be58a64ccc40ab9484fd8ce06f78e67024f6b842c9d86554d345f5e58&o=",
 			extra4:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/465439330.webp?k=8f3d063550a4618c4990bd8a749429a7403c921a57039861d3ed71526fe854eb&o=",
 		},
 		'axis': {
-			main: "https://www.gehsuites.com/images/YULDAMA-2.jpg",
+			main: "https://images.trvl-media.com/lodging/110000000/109790000/109789900/109789860/9770b3b0.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
 			secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Lobbyaxis.jpeg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg",
+			secondary2: "https://images.trvl-media.com/lodging/110000000/109790000/109789900/109789860/f7ca1d32.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
 			extra1:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Doble-axis.jpeg",
 			extra2:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-axis2.jpeg",
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/109098049.jpg?k=d28963d3d5f71aa4e6fcc2e3864341d453c8d5bd2aeb8875caaf92d9e9b6c63a&o=",
 			extra4:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Familiar-axis.jpeg",
 		},
 		'sansiraka': {
-			main: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
+			main: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-sansiraka.jpg",
 			secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg",
+			secondary2: "https://images.trvl-media.com/lodging/12000000/11580000/11573100/11573048/45f4876b.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
 			extra1:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-Doble-sansiraka.jpeg",
 			extra2:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacion-triple-sansiraka.jpeg",
 			extra3:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Habitacon-cuaruple-sansiraka2.jpeg",
 			extra4:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/Ba%C3%B1o-sansiraka.jpeg",
 		},
 		'windsor': {
-			main: "https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg",
-			secondary1: "https://www.gehsuites.com/multimedia/galerias/16HotelWindsorHouse427.jpg",
-			secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg",
+			main: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/471546979.jpg?k=d8af789ce5ae7619f846087d236503aad8ca8fe7cc4117382827afc4ab346b83&o=",
+			secondary1: "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/9ead703d.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
+			secondary2: "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/w5093h2997x0y85-e99f7444.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
 			extra1:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/471543571.webp?k=54017a86c0d7226bac8c223cd1a3795097ad3a70ce8a7a58ae229466dc0a7e9a&o=",
 			extra2:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/471544101.webp?k=6c3fb4b167056b664463cf80e3069a292560771651fe2884be3744be45c88bf3&o=",
 			extra3:"https://cf.bstatic.com/xdata/images/hotel/max1024x768/471545854.webp?k=52ce0d7e3c23fd6cea937dde4b0c3057f369ace5b7bb91b030caa7d9066d6c3d&o=",
@@ -969,53 +969,41 @@ export default function BookingConnectIA({ agencyName = "{Nombre_agencia}" }) {
 			autoResize(textareaRef);
 		}
 
-		sendMessageToAPI(trimmed, activeId);
+		sendMessageToAPI(trimmed);
 	}
 
-	async function sendMessageToAPI(userContent, conversationId) {
+	async function sendMessageToAPI(userContent) {
 		setIsResponding(true);
 		
 		try {
-			// URL del endpoint
-			const apiUrl = "https://bookingconnectia.gehsuitesapps.com/api/v1/llm/chat";
-			
-			// Preparar el cuerpo de la petición
-			const requestBody = {
-				message: userContent,
-				conversationId: conversationId || generateId(),
-			};
+			const apiUrl = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/integrations/chat`;
+			const requestBody = { message: userContent };
 
-			// Hacer la petición al endpoint con autenticación
 			const response = await fetchWithToken(apiUrl, {
-				method: 'POST',
-				body: JSON.stringify(requestBody)
+				method: "POST",
+				body: JSON.stringify(requestBody),
 			});
 
+			const data = await response.json().catch(() => null);
+
 			if (!response.ok) {
-				const errorData = await response.json().catch(() => ({ 
-					message: `Error: ${response.status} ${response.statusText}` 
-				}));
-				throw new Error(errorData.message || `Error: ${response.statusText}`);
+				throw new Error(
+					data?.message || `Error: ${response.status} ${response.statusText}`
+				);
 			}
 
-			const data = await response.json();
-			
-			// Verificar que la respuesta tenga el formato esperado
-			if (!data.success || !data.data || !data.data.response) {
-				throw new Error(data.message || "Respuesta del servidor en formato incorrecto");
+			if (!data?.ok || typeof data.reply !== "string") {
+				throw new Error(data?.message || "Respuesta del servidor en formato incorrecto");
 			}
-			
-			// Extraer el mensaje de respuesta
-			const responseMessage = data.data.response;
-			
-			// Agregar respuesta del asistente a la conversación
-			const assistantMessage = { 
-				role: "assistant", 
-				content: responseMessage
+
+			const assistantMessage = {
+				role: "assistant",
+				content: data.reply,
 			};
-			
+
 			updateActiveConversation((conv) => ({
 				...conv,
+				...(data.conversationId ? { serverConversationId: data.conversationId } : {}),
 				messages: [...conv.messages, assistantMessage],
 			}));
 			

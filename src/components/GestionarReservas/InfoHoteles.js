@@ -3,7 +3,7 @@ export const hoteles = (hotel) => {
         //hotel Cartagena
         case 'Hotel Azuan':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/fachada-azuan.jpg',
+                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-azuan-suites.jpg',
                 ubicacion: 'Bocagrande Cra 3 N° 8-156, / Cartagena de Indias, Bolívar'
             };
 
@@ -15,19 +15,19 @@ export const hoteles = (hotel) => {
 
         case 'Hotel Marina':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/portada_marian_suites.jpg',
+                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-marina-suites.jpg',
                 ubicacion: 'Bocagrande Cra 3 N° 4 -32, / Cartagena de Indias, Bolívar'
             };
 
         case 'Hotel Aixo':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/galeria_11_aixo.jpg',
+                imgHotel: 'https://images.trvl-media.com/lodging/22000000/21350000/21343600/21343503/e5e1ec59.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill',
                 ubicacion: 'Cartagena de indias, Barrio Marbella carrera 2 número 47- 10'
             };
 
         case 'Hotel Avexi':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/fachada_avexi.jpg',
+                imgHotel: 'https://media-cdn.tripadvisor.com/media/photo-s/1a/fe/a1/45/hotel-avexi-suites.jpg',
                 ubicacion: 'Bocagrande Cra 3 N° 4-86, / Cartagena de Indias, Bolívar'
             };
 
@@ -38,25 +38,25 @@ export const hoteles = (hotel) => {
             };
         case 'Hotel Abi':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/fachada_hotel_abi.jpg',
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_hotelabi.webp',
                 ubicacion: 'Cartagena de indias, Barrio Marbella carrera 2 número 47- 10'
             };
         //Hoteles Bogota
         case 'Hotel Windsor':
             return {
-                imgHotel: 'https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg',
+                imgHotel: 'https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill',
                 ubicacion: 'Chapinero, Calle 95 #9-97'
 
             };
         case 'Hotel Madisson':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/fachada-madison.jpg',
+                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg',
                 ubicacion: 'Cra 18 #93 - 97, Barrio el Chico, Bogotá, Colombia'
             };
         //hoteles santa marta
         case 'Hotel Rodadero':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/fachada_rodadero_1.jpg',
+                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg',
                 ubicacion: 'Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena'
             };
         case 'Hotel 1525':
@@ -66,12 +66,12 @@ export const hoteles = (hotel) => {
             };
         case 'Hotel Axis':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/YULDAMA-2.jpg',
+                imgHotel: 'https://lh3.googleusercontent.com/gps-cs-s/APNQkAFyKLIV-KL00AscAsho4TN3S52z40KYPnmouRUjhzZi6Cb7JqPdBnW_gdCcL7hSk30V9L8dxECA-qKPTmy_cAFFE9lrb-1vPvL18C6QmIIqlwWTXA6HfiF2u-DJUv6DAgH4TwZgMsjzqud2=s680-w680-h510-rw',
                 ubicacion: 'Carrera 3 No. 10 - 40, El Rodadero, 470001 Santa Marta'
             };
         case 'Hotel Sansiraka':
             return {
-                imgHotel: 'https://www.gehsuites.com/images/SANSIRAKA-portada.jpg',
+                imgHotel: 'https://sansiraka-santa-marta.hotelinsantamarta.com/data/Images/OriginalPhoto/16322/1632232/1632232604/image-santa-marta-magdalena-hotel-sansiraka-suites-by-geh-suites-24.JPEG',
                 ubicacion: 'Cra. 4 #15-65, Gaira, Santa Marta, Magdalena'
             };
         case 'Playa Salguero Hotel':
