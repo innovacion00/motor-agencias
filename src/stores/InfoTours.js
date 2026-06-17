@@ -283,17 +283,17 @@ export const toursData = [
      title: "Tour 8: Playa blanca o inka inka",
      city:"SANTA_MARTA",
      description: "A tan solo 45 min de Santa Marta se encuentra Playa Blanca un destino ideal para tomar el sol, caminar entre arena blanca, bañar- se en el mar colorido, disfrutar de deportes acuáticos, entre otras actividades significativas allí.",
-     price: "$50.000 COP por persona",
+     price: "$70.000 COP por persona",
      priceUSD: "$25.00 USD por persona",
-     preciocol:"50000",
-     preciousd:"25.00",
+     preciocol:"70000",
+     preciousd:"22.00",
      schedule: "Horario: 9:00 am a 4:00 pm",
      duration: "8 Horas",
      meetingPoint: "Muelle del rodadero",
      images: {
-       main: "https://www.museobolivariano.org.co/wp-content/uploads/2020/01/quinta-de-san-pedro-aleandrino-008.jpg",
-       side1: "https://d3nmwx7scpuzgc.cloudfront.net/sites/default/files/activity/main-image/gz-museo_del_oro_tairona_640x400_0.jpg",
-       side2: "https://tse1.mm.bing.net/th/id/OIP.Icp5Wxcsdo03y5y0ehb01AHaF7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+       main: "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/0f/e3/e5/b9.jpg",
+       side1: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSq3qmiehzmyiKfVtKklc2nThkyFzP5ZTEacg&s",
+       side2: "https://media.tacdn.com/media/attractions-splice-spp-674x446/15/6f/ef/2d.jpg"
      },
      includes: [
        "Transporte maritimo",
@@ -541,9 +541,9 @@ export const toursData = [
       duration: "8 Horas",
       meetingPoint: "",
       images: {
-        main: "https://abordak.com/wp-content/uploads/2022/10/Chiva-rumbera-Santa-Marta-420x315.jpg",
-        side1: "https://www.planessantamarta.com.co/wp-content/uploads/2023/12/photo-de-chiva-25-pax-santa-marta.jpg",
-        side2: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/5b/09/97/caption.jpg?w=1200&h=-1&s=1"
+        main: "https://spacesbucketmagictours.sfo3.digitaloceanspaces.com/blog/featured/01KCJJXMJXECXKY6F290QV19HW.jpg",
+        side1: "https://hotelparquetayrona.com/wp-content/uploads/2025/06/como-llegar-al-parque-tayrona.jpg",
+        side2: "https://expotur-eco.com/wp-content/uploads/2019/10/parque-tayrona-santa-marta-colombia-expotur.jpg"
       },
       includes: [
         "Transporte en chiva",
