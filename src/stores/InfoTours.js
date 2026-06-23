@@ -257,7 +257,7 @@ export const toursData = [
     meetingPoint: "",
     images: {
       main: "https://www.museobolivariano.org.co/wp-content/uploads/2020/01/quinta-de-san-pedro-aleandrino-008.jpg",
-      side1: "https://d3nmwx7scpuzgc.cloudfront.net/sites/default/files/activity/main-image/gz-museo_del_oro_tairona_640x400_0.jpg",
+      side1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/city%20tour%20santa%20marta.jpeg",
       side2: "https://tse1.mm.bing.net/th/id/OIP.Icp5Wxcsdo03y5y0ehb01AHaF7?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
     },
     includes: [
@@ -363,8 +363,8 @@ export const toursData = [
       schedule: "Horario: 6:00 am a 6:00 pm",
       duration: "12 Horas",
       meetingPoint: "En el Hotel de su estadía",
-      images: {
-        main: "https://www.visitsantamarta.com/storage/blogs/Playa%20Cristal%20carpas-zojsp0.jpg",
+      images: { 
+        main: "https://spacesbucketmagictours.sfo3.digitaloceanspaces.com/blog/featured/01KCJJXMJXECXKY6F290QV19HW.jpg",
         side1: "https://denomades.imgix.net/destinos/santa-marta/978/neguanje-y-playa-cristal-id978-4ef1.jpg",
         side2: "https://www.planessantamarta.com.co/wp-content/uploads/2015/01/Paisaje-playa-cabo-san-juan-parque-tayrona.jpg"
       },
@@ -541,7 +541,7 @@ export const toursData = [
       duration: "8 Horas",
       meetingPoint: "",
       images: {
-        main: "https://spacesbucketmagictours.sfo3.digitaloceanspaces.com/blog/featured/01KCJJXMJXECXKY6F290QV19HW.jpg",
+        main: "https://www.visitsantamarta.com/storage/blogs/Playa%20Cristal%20carpas-zojsp0.jpg",
         side1: "https://hotelparquetayrona.com/wp-content/uploads/2025/06/como-llegar-al-parque-tayrona.jpg",
         side2: "https://expotur-eco.com/wp-content/uploads/2019/10/parque-tayrona-santa-marta-colombia-expotur.jpg"
       },
