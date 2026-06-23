@@ -12,8 +12,10 @@ export const searchFlights = async () => {
   try {
     // Obtener datos del localStorage
     const datosDelVuelo = JSON.parse(localStorage.getItem('datosDelVuelo'));
-    const cantAdultos = parseInt(localStorage.getItem('cantAdultos')) || 1;
-    const cantNinos = parseInt(localStorage.getItem('cantNinos')) || 0;
+    const nochesyedades = JSON.parse(localStorage.getItem('nochesyedades') || 'null');
+    const layout = datosDelVuelo?.layout || nochesyedades?.layout || [];
+    const cantAdultos = layout.reduce((sum, room) => sum + (room.adults || 0), 0) || 1;
+    const cantNinos = layout.reduce((sum, room) => sum + (room.children_ages?.length || 0), 0);
     const selectedCurrency = (localStorage.getItem('selectedCurrency') || 'COP').toUpperCase();
 
     // Validar que existan los datos necesarios
@@ -58,6 +60,17 @@ export const searchFlights = async () => {
         hideClass: {
           popup: "animate__animated animate__fadeOutUp animate__faster",
         },
+      });
+      return false;
+    }
+
+    if (cantAdultos > 9) {
+      await Swal.fire({
+        icon: 'warning',
+        title: 'Límite de pasajeros excedido',
+        text: `La búsqueda de vuelos permite máximo 9 adultos por consulta. Actualmente tienes ${cantAdultos} adultos. Por favor reduce el número de huéspedes para incluir vuelos.`,
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#26547B',
       });
       return false;
     }

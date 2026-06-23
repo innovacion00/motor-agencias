@@ -247,7 +247,7 @@ export const toursData = [
     id: 7,
     title: "Tour 7: City Tour Histórico ",
     city:"SANTA_MARTA",
-    description: "En un interesante recorrido por la ciudad más antigua de Suramé- rica visitarás las principales calles, avenidas y atractivos turísticos de la ciudad como por ejemplo: La Catedral Basílica, La Quinta de San Pedro Alejandrino, El Museo del Oro (Banco de la República), El Monumento al Pibe Valderrama y Taganga donde podrás tener una vista panorámica de pescadores.",
+    description: "En un interesante recorrido por la ciudad más antigua de Suramé-rica visitarás las principales calles, avenidas y atractivos turísticos de la ciudad como por ejemplo: La Catedral Basílica, La Quinta de San Pedro Alejandrino, El Museo del Oro (Banco de la República), El Monumento al Pibe Valderrama y Taganga donde podrás tener una vista panorámica de pescadores.",
     price: "$125.000 COP por persona",
     priceUSD: "$35.00 USD por persona",
     preciocol:"125000",
