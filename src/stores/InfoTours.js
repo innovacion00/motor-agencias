@@ -159,7 +159,7 @@ export const toursData = [
    },
    {
      id: 5,
-     title: "Tour 5: Palmarito Beach  ",
+     title: "Tour 5: Palmarito Beach",
      city:"CARTAGENA",
      description: "Disfruta de un día inolvidable en Palmarito Beach, un exclusivo club de playa ubicado en Cartagena, ideal para familias, parejas o grupos de amigos que buscan relajarse frente al mar. El tour incluye transporte en lancha ida y regreso con salida desde la Playa del Nuevo Hospital de Bocagrande, un coctel de bienvenida al llegar, un almuerzo tipo buffet con diversas opciones, y el uso completo de las instalaciones del club. Podrás disfrutar de camas, sillas asoleadoras o kioskos de palma (asignados según disponibilidad), acceso a la piscina, parque infantil para los más pequeños, y una zona de hamacas para descansar cómodamente. Palmarito Beach ofrece un ambiente tranquilo y natural, perfecto para desconectarse de la rutina y disfrutar de un día de sol, playa y descanso en el Caribe colombiano.",
      price: "$ 250.000 por persona",

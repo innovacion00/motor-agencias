@@ -64,11 +64,11 @@ export const searchFlights = async () => {
       return false;
     }
 
-    if (cantAdultos > 9) {
+    if (cantAdultos > 5) {
       await Swal.fire({
         icon: 'warning',
         title: 'Límite de pasajeros excedido',
-        text: `La búsqueda de vuelos permite máximo 9 adultos por consulta. Actualmente tienes ${cantAdultos} adultos. Por favor reduce el número de huéspedes para incluir vuelos.`,
+        text: `La búsqueda de vuelos permite máximo 5 adultos por consulta. Actualmente tienes ${cantAdultos} adultos. Por favor reduce el número de huéspedes para incluir vuelos o cotiza solo hotel.`,
         confirmButtonText: 'Entendido',
         confirmButtonColor: '#26547B',
       });
