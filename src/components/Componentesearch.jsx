@@ -27,9 +27,9 @@ const BusquedaCartagena = () => {
 
   //Objeto de imagenes  para las fachadas
   const hotelImages = {
-    9: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-marina-suites.jpg", //marina
+    9: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelMarina.webp", //marina
     1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada-azuan.jpg",
-    6: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-avexi-suites.jpg", //avexi
+    6: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelavexi.jpg", //avexi
     7: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg", //bocagrande
     4: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg", //aixo
     5: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg", //abi

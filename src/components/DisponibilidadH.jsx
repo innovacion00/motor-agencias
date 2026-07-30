@@ -29,7 +29,7 @@ const hotelesData = {
       "Cra. 3 #4 - 32, Cartagena de Indias, Provincia de Cartagena, Bolívar",
     description:
       "Situado en el centro turístico y comercial de la ciudad de Cartagena de indias, el Hotel Marina Suites es una hermosa propiedad con 42 habitaciones diseñadas para el descanso y relax, con las comodidades necesarias para el disfrute de tus vacaciones en pareja, amigos, familia o para tus actividades de negocios o eventos en la ciudad.",
-    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-marina-suites.jpg",
+    image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelMarina.webp",
     habitaciones: [
       {
         nombre: "Doble Estándar",
@@ -51,7 +51,7 @@ const hotelesData = {
       "Cra. 3 #No 4 -86, Cartagena de Indias, Provincia de Cartagena, Bolívar",
     description:
       "Ubicado entre el mar Caribe y la bahía de Cartagena de Indias, en el animado distrito comercial y turístico de Bocagrande, este hotel ofrece fácil acceso a todas las atracciones y opciones de entretenimiento que la ciudad moderna y amurallada tiene para ti.",
-    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-avexi-suites.jpg",
+    image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelavexi.jpg",
     leermas: "/infoavexi",
     mapa: "https://www.google.com/maps/place/Hotel+Avexi+Suites+By+GEH+Suites/@10.3982749,-75.5613593,17z/data=!4m10!3m9!1s0x8ef62f3dacf7d4b7:0xf58b384d5cb2a6ee!5m3!1s2025-01-17!4m1!1i2!8m2!3d10.3982696!4d-75.5587844!16s%2Fg%2F11h8967kdh?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },
@@ -72,7 +72,7 @@ const hotelesData = {
       "Cra. 3 #8-156, Cartagena de Indias, Provincia de Cartagena, Bolívar",
     description:
       "Azuán Suites By GEH Suites, en Cartagena es un hermoso hotel ubicado en el sector moderno de Bocagrande, gozando de una ubicación estratégica a tan solo 15 minutos del aeropuerto Internacional Rafael Núñez.Nuestro hotel está situado a solo 5 minutos de las preciosas playas de Castillo, Bocagrande y Laguito. A 15 minutos de Azuán Suites, encontrarás el misterio que encierra la ciudad amurallada de Cartagena de Indias, sus monumentos y edificaciones históricas: Torre del Reloj, Castillo de San Felipe y sus mágicas calles coloniales.",
-    image: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-azuan-suites.jpg",
+    image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelAzuan.webp",
     leermas: "/infoazuan",
     mapa: "https://www.google.com/maps/place/Hotel+Azu%C3%A1n+Suites+GEH+Suites/@10.4038589,-75.5531886,17z/data=!3m1!4b1!4m9!3m8!1s0x8ef62f3de5e1d95f:0xba9cfea6defdcf9e!5m2!4m1!1i2!8m2!3d10.4038589!4d-75.5531886!16s%2Fg%2F11b6d6nxfv?hl=es&entry=ttu&g_ep=EgoyMDI1MDExMC4wIKXMDSoASAFQAw%3D%3D",
   },

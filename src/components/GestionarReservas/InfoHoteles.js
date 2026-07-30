@@ -3,7 +3,7 @@ export const hoteles = (hotel) => {
         //hotel Cartagena
         case 'Hotel Azuan':
             return {
-                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-azuan-suites.jpg',
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelAzuan.webp',
                 ubicacion: 'Bocagrande Cra 3 N° 8-156, / Cartagena de Indias, Bolívar'
             };
 
@@ -15,7 +15,7 @@ export const hoteles = (hotel) => {
 
         case 'Hotel Marina':
             return {
-                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-marina-suites.jpg',
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelMarina.webp',
                 ubicacion: 'Bocagrande Cra 3 N° 4 -32, / Cartagena de Indias, Bolívar'
             };
 
@@ -50,13 +50,13 @@ export const hoteles = (hotel) => {
             };
         case 'Hotel Madisson':
             return {
-                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg',
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelMadisson.webp',
                 ubicacion: 'Cra 18 #93 - 97, Barrio el Chico, Bogotá, Colombia'
             };
         //hoteles santa marta
         case 'Hotel Rodadero':
             return {
-                imgHotel: 'https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg',
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelRodadero.webp',
                 ubicacion: 'Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena'
             };
         case 'Hotel 1525':
@@ -66,7 +66,7 @@ export const hoteles = (hotel) => {
             };
         case 'Hotel Axis':
             return {
-                imgHotel: 'https://lh3.googleusercontent.com/gps-cs-s/APNQkAFyKLIV-KL00AscAsho4TN3S52z40KYPnmouRUjhzZi6Cb7JqPdBnW_gdCcL7hSk30V9L8dxECA-qKPTmy_cAFFE9lrb-1vPvL18C6QmIIqlwWTXA6HfiF2u-DJUv6DAgH4TwZgMsjzqud2=s680-w680-h510-rw',
+                imgHotel: 'https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelAxis.webp',
                 ubicacion: 'Carrera 3 No. 10 - 40, El Rodadero, 470001 Santa Marta'
             };
         case 'Hotel Sansiraka':
