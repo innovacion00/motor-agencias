@@ -431,7 +431,19 @@ export const CotizacionPublica = ({ id }) => {
     const exentoIva = !!cotizacion?.exentoIva;
     const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
     const total = subtotal + iva;
-    const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : total;
+
+    // Total sin markup que asume la agencia: cotizacion.total ya incluye hospedaje + vuelo
+    const retencionesTotal =
+        (cotizacion?.reteFuente?.resultado || 0) +
+        (cotizacion?.reteIca?.resultado || 0) +
+        (cotizacion?.reteIva?.resultado || 0);
+    const totalAgencia = Math.round(
+        typeof cotizacion?.total === 'number' && cotizacion.total > 0
+            ? cotizacion.total
+            : total - retencionesTotal
+    );
+
+    const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : totalAgencia;
     const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
     const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
     const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);

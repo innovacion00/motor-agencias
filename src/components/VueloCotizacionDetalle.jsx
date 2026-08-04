@@ -6,7 +6,7 @@ import {
   getLegAirlineName,
   getLegCarrierCode,
   getAirlineLogo,
-  getTotalVueloDisplay,
+  formatTotalVueloDisplay,
   getMonedaVueloDisplay,
 } from "../utils/vueloCotizacion";
 
@@ -20,7 +20,7 @@ const VueloCotizacionDetalle = ({ vueloArray, collapsible = true, style = {} }) 
       {vueloArray.map((item, vIdx) => {
         const { r, outbound, inbound, segments } = getTramosDesdeItemVuelo(item);
         const pasajeros = Array.isArray(r.passengers) ? r.passengers : [];
-        const totalVuelo = getTotalVueloDisplay(item);
+        const totalVuelo = formatTotalVueloDisplay(item);
         const moneda = getMonedaVueloDisplay(item);
 
         return (

@@ -513,10 +513,25 @@ export const CotizacionCreada = ({ id }) => {
     const exentoIva = !!cotizacion?.exentoIva;
     const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
     const total = subtotal + iva;
-    
+
+    // Total de hospedaje que realmente asume la agencia (descontando retenciones)
+    const retencionesTotal =
+        (cotizacion?.reteFuente?.resultado || 0) +
+        (cotizacion?.reteIca?.resultado || 0) +
+        (cotizacion?.reteIva?.resultado || 0);
+    const totalHospedaje = total - retencionesTotal;
+
+    // cotizacion.total se guarda como hospedaje + vuelo (sin markup)
+    const totalAgencia = Math.round(
+        typeof cotizacion?.total === 'number' && cotizacion.total > 0
+            ? cotizacion.total
+            : totalHospedaje
+    );
+    const precioVuelo = Math.max(0, Math.round(totalAgencia - totalHospedaje));
+
     // Calcular markup si existe
-    const markupAmount = cotizacion.markup ? cotizacion.markup - total : 0;
-    const markupPorcentaje = total > 0 ? Math.round((markupAmount / total) * 100) : 0;
+    const markupAmount = cotizacion.markup ? cotizacion.markup - totalAgencia : 0;
+    const markupPorcentaje = totalAgencia > 0 ? Math.round((markupAmount / totalAgencia) * 100) : 0;
     const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
     const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
     const cotizacionIncluyeVuelo =
@@ -814,18 +829,24 @@ export const CotizacionCreada = ({ id }) => {
                                             <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</td>
                                             <td className="td-amount">${iva.toLocaleString()}</td>
                                         </tr>
+                                        {cotizacionIncluyeVuelo && precioVuelo > 0 && (
+                                            <tr className="table-subtotal">
+                                                <td colSpan="4" className="td-total">Vuelo (sin markup)</td>
+                                                <td className="td-amount">${precioVuelo.toLocaleString()}</td>
+                                            </tr>
+                                        )}
                                         <tr className="table-total">
                                             <td colSpan="4" className="td-total-label">Precio total para la agencia
                                                 <img
                                                     src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
                                                     alt="Información"
                                                     data-tooltip-id="tooltip-precio-agencia"
-                                                    data-tooltip-content="Este valor no se mostrará en la cotización"
+                                                    data-tooltip-content="Incluye hospedaje y vuelo (sin markup). Este valor no se mostrará en la cotización"
                                                     data-tooltip-place="right"
                                                     style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
                                                 />
                                             </td>
-                                            <td className="td-total-amount">${total.toLocaleString()}</td>
+                                            <td className="td-total-amount">${totalAgencia.toLocaleString()}</td>
                                         </tr>
                                         {markupAmount > 0 && (
                                             <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
@@ -961,18 +982,24 @@ export const CotizacionCreada = ({ id }) => {
                                 <span className="price-label">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</span>
                                 <span className="price-value">${iva.toLocaleString()}</span>
                             </div>
+                            {cotizacionIncluyeVuelo && precioVuelo > 0 && (
+                                <div className="price-row">
+                                    <span className="price-label">Vuelo (sin markup)</span>
+                                    <span className="price-value">${precioVuelo.toLocaleString()}</span>
+                                </div>
+                            )}
                             <div className="price-row" style={{ borderTop: "1px solid #e5e7eb", paddingTop: "8px", marginTop: "8px" }}>
                                 <span className="price-label" style={{ fontWeight: "600" }}>Precio total para la agencia
                                     <img
                                         src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
                                         alt="Información"
                                         data-tooltip-id="tooltip-precio-agencia"
-                                        data-tooltip-content="Este valor no se mostrará en la cotización"
+                                        data-tooltip-content="Incluye hospedaje y vuelo (sin markup). Este valor no se mostrará en la cotización"
                                         data-tooltip-place="right"
                                         style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
                                     />
                                 </span>
-                                <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${total.toLocaleString()}</span>
+                                <span className="price-value" style={{ fontWeight: "600", color: "#059669" }}>${totalAgencia.toLocaleString()}</span>
                             </div>
                             {markupAmount > 0 && (
                                 <div className="price-row">

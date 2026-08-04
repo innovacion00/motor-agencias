@@ -151,6 +151,7 @@ const FormularioReserva = () => {
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
   const [esExtranjero, setesExtranjero] = useState(false);
   const [facturaE, setfacturaE] = useState(false);
+  const [facturaTipo, setfacturaTipo] = useState(""); // "cliente" | "agencia"
   const [planDeAlimentacion, setplanDeAlimentacion] = useState();
   const [divisaSelec, setdivisaSelec] = useState("COP");
   // Modo vuelo+hotel (formularios dinámicos por pasajero)
@@ -309,6 +310,47 @@ const FormularioReserva = () => {
       console.error('Error al cargar datos del vuelo:', e);
     }
   }, []);
+
+  // Autocompletar los datos de factura electrónica con los del titular cuando se factura al cliente
+  useEffect(() => {
+    if (!facturaE || facturaTipo !== "cliente") return;
+    const titularCliente = vuelosActivados ? formDataList[0] : formData;
+    const nombreFactura = `${titularCliente?.nombreCompleto || ""} ${titularCliente?.apellidos || ""}`.trim();
+    const nitFactura = titularCliente?.numeroDocumento || "";
+    const telefonoFactura = titularCliente?.celular || "";
+    const emailFactura = agencia?.email || "";
+
+    setFormData((prev) => {
+      if (
+        prev.nombreEmpresa === nombreFactura &&
+        prev.nit === nitFactura &&
+        prev.telefonoF === telefonoFactura &&
+        prev.emailEmpresa === emailFactura
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        nombreEmpresa: nombreFactura,
+        nit: nitFactura,
+        telefonoF: telefonoFactura,
+        emailEmpresa: emailFactura,
+      };
+    });
+  }, [
+    facturaE,
+    facturaTipo,
+    vuelosActivados,
+    agencia,
+    formData.nombreCompleto,
+    formData.apellidos,
+    formData.numeroDocumento,
+    formData.celular,
+    formDataList[0]?.nombreCompleto,
+    formDataList[0]?.apellidos,
+    formDataList[0]?.numeroDocumento,
+    formDataList[0]?.celular,
+  ]);
 
   const mostrarCheckboxes =
     divisaSelec !== "USD" &&
@@ -681,6 +723,33 @@ const FormularioReserva = () => {
       });
       return;
     }
+    if (facturaE && facturaTipo === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Complete la información",
+        text: "Seleccione si la factura electronica es para el cliente o para la agencia",
+        showConfirmButton: false,
+        timer: 3500,
+      });
+      return;
+    }
+    if (
+      facturaE &&
+      facturaTipo === "agencia" &&
+      (formData.nombreEmpresa.trim() === "" ||
+        formData.nit.trim() === "" ||
+        formData.emailEmpresa.trim() === "" ||
+        formData.telefonoF.trim() === "")
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Complete la información",
+        text: "Todos los campos de la factura electronica son obligatorios",
+        showConfirmButton: false,
+        timer: 3500,
+      });
+      return;
+    }
     const enviardatos = async () => {
       const filtrarRetenciones = (retenciones) => {
         return Object.fromEntries(
@@ -689,6 +758,11 @@ const FormularioReserva = () => {
           })
         );
       };
+      const facturaTexto = !facturaE
+        ? ""
+        : facturaTipo === "cliente"
+          ? ` Se ha solicitado generar factura electronica a nombre de cliente con correo de la agencia ${agencia?.email || ""}. `
+          : ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `;
       const hotelIdAutocore = Number(reserva[0]?.hotelidAutocore);
       const isLegacyReservation =
         FORCE_LEGACY_RESERVAS ||
@@ -715,10 +789,10 @@ const FormularioReserva = () => {
 
         const r0 = reserva[0];
         const notesSinRetenciones =
-          `Creada por la agencia: ${agencia?.agencia?.fullName ?? ""}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado:  ${r0?.tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}${r0?.tourSeleccionado && r0.tourSeleccionado.length > 0 ? ` Tours seleccionados: ${r0.tourSeleccionado.map((tour) => tour.title).join(", ")}.` : ""}${r0?.mascotas && r0.mascotas > 0 ? ` Se han enviado ${r0.mascotas} mascota(s).` : ""}  `;
+          `Creada por la agencia: ${agencia?.agencia?.fullName ?? ""}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}. ${valorextranjero == "es extranjero" ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado:  ${r0?.tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaTexto}${r0?.tourSeleccionado && r0.tourSeleccionado.length > 0 ? ` Tours seleccionados: ${r0.tourSeleccionado.map((tour) => tour.title).join(", ")}.` : ""}${r0?.mascotas && r0.mascotas > 0 ? ` Se han enviado ${r0.mascotas} mascota(s).` : ""}  `;
 
         const notesConRetenciones =
-          `Creada por la agencia: ${agencia?.agencia?.fullName ?? ""}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero" ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado: ${r0?.tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}${facturaE ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}${r0?.tourSeleccionado && r0.tourSeleccionado.length > 0 ? ` Tours seleccionados: ${r0.tourSeleccionado.map((tour) => tour.title).join(", ")}.` : ""}${r0?.mascotas && r0.mascotas > 0 ? ` Se han enviado ${r0.mascotas} mascota(s).` : ""}`;
+          `Creada por la agencia: ${agencia?.agencia?.fullName ?? ""}. Reserva de ${noches} noches a nombre de ${formData.nombreCompleto} ${formData.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${valorextranjero == "es extranjero" ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado: ${r0?.tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}${facturaTexto}${r0?.tourSeleccionado && r0.tourSeleccionado.length > 0 ? ` Tours seleccionados: ${r0.tourSeleccionado.map((tour) => tour.title).join(", ")}.` : ""}${r0?.mascotas && r0.mascotas > 0 ? ` Se han enviado ${r0.mascotas} mascota(s).` : ""}`;
 
         const legacyPayload = {
           total: Math.round(totalRetenciones),
@@ -902,10 +976,7 @@ const FormularioReserva = () => {
           ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia."
           : ""
         } Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""
-        } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE
-          ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-          : ""
-        }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+        } ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaTexto}${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
           ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
           : ""
         }${reserva[0].mascotas && reserva[0].mascotas > 0
@@ -923,10 +994,7 @@ const FormularioReserva = () => {
         } ${almuerzo
           ? "La agencia marco la casilla de solicitar almuerzo."
           : ""
-        }${facturaE
-          ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `
-          : ""
-        }${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
+        }${facturaTexto}${reserva[0].tourSeleccionado && reserva[0].tourSeleccionado.length > 0
           ? ` Tours seleccionados: ${reserva[0].tourSeleccionado.map(tour => tour.title).join(', ')}.`
           : ""
         }${reserva[0].mascotas && reserva[0].mascotas > 0
@@ -1131,6 +1199,34 @@ const FormularioReserva = () => {
       }
     }
 
+    if (facturaE && facturaTipo === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Complete la información",
+        text: "Seleccione si la factura electronica es para el cliente o para la agencia",
+        showConfirmButton: false,
+        timer: 3500,
+      });
+      return;
+    }
+    if (
+      facturaE &&
+      facturaTipo === "agencia" &&
+      (formData.nombreEmpresa.trim() === "" ||
+        formData.nit.trim() === "" ||
+        formData.emailEmpresa.trim() === "" ||
+        formData.telefonoF.trim() === "")
+    ) {
+      Swal.fire({
+        icon: "error",
+        title: "Complete la información",
+        text: "Todos los campos de la factura electronica son obligatorios",
+        showConfirmButton: false,
+        timer: 3500,
+      });
+      return;
+    }
+
     const packageIdFromStorage = localStorage.getItem("flightPackageId");
     const packageDataFromStorage = JSON.parse(localStorage.getItem("flightPackageData") || "null");
     const packageId = packageIdFromStorage || packageDataFromStorage?.packageId || "";
@@ -1150,6 +1246,11 @@ const FormularioReserva = () => {
 
     // Usar el primer pasajero como titular para la reserva actual
     const titular = formDataList[0];
+    const facturaTexto = !facturaE
+      ? ""
+      : facturaTipo === "cliente"
+        ? ` Se ha solicitado generar factura electronica a nombre de cliente con correo de la agencia ${agencia?.email || ""}. `
+        : ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} `;
 
     const filtrarRetenciones = (retenciones) => {
       return Object.fromEntries(
@@ -1237,8 +1338,8 @@ const FormularioReserva = () => {
           nights: noches,
           notes:
             DatosRetenciones == null
-              ? `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${titular.nombreCompleto} ${titular.apellidos}. ${titular.esExtranjero ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaE ? ` Se ha solicitado generar factura electronica. Nombre de la empresa: ${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}  `
-              : `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${titular.nombreCompleto} ${titular.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${titular.esExtranjero ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}${facturaE ? `    Se ha solicitado generar factura electronica. Nombre de la empresa:${formData.nombreEmpresa}. Nit: ${formData.nit}. Correo de la empresa:${formData.emailEmpresa}. Telefono de la empresa: ${formData.telefonoF} ` : ""}`,
+              ? `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${titular.nombreCompleto} ${titular.apellidos}. ${titular.esExtranjero ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado:  ${reserva[0].tipoTraslado} ${cena ? "El huésped ha solicitado cena." : ""} ${almuerzo ? "El huésped ha solicitado almuerzo." : ""}${facturaTexto}  `
+              : `Creada por la agencia: ${agencia.agencia.fullName}. Reserva de ${noches} noches a nombre de ${titular.nombreCompleto} ${titular.apellidos}, la agencia marcó que aplica retenciones, verificar en la plataforma Booking Connect porcentajes y valores. ${titular.esExtranjero ? "El huésped es Extranjero. Favor verificar en recepción si cumple con los requisitos de migración Colombia." : ""} Tipo de traslado: ${reserva[0].tipoTraslado} ${cena ? "La agencia marco la casilla de solicitar cena." : ""} ${almuerzo ? "La agencia marco la casilla de solicitar almuerzo." : ""}${facturaTexto}`,
           rooms: habitaciones,
           roomsData: reserva.map((dato, index) => {
             const roomConfig = fechasreserva.layout[index] || {};
@@ -2342,12 +2443,51 @@ const FormularioReserva = () => {
                 type="checkbox"
                 id="facturaElectronica"
                 checked={facturaE}
-                onChange={(e) => setfacturaE(e.target.checked)}
+                onChange={(e) => {
+                  setfacturaE(e.target.checked);
+                  if (!e.target.checked) setfacturaTipo("");
+                }}
               />
             </div>
             <br />
-            {/*-------------- SECCION DATOS DE FACTURA ELECTRONICA -------------- */}
+            {/*-------------- SELECTOR TIPO DE FACTURACION -------------- */}
             {facturaE && (
+              <div style={{ gridColumn: "1 / -1", marginBottom: "10px" }}>
+                <label htmlFor="facturaTipo">
+                  ¿A quién se factura? <span style={{ color: "red" }}>*</span>
+                </label>
+                <select
+                  id="facturaTipo"
+                  value={facturaTipo}
+                  onChange={(e) => setfacturaTipo(e.target.value)}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    padding: "8px",
+                    marginBottom: "10px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                  }}
+                >
+                  <option value="">Seleccione una opción</option>
+                  <option value="cliente">Facturar a cliente</option>
+                  <option value="agencia">Facturar a agencia</option>
+                </select>
+              </div>
+            )}
+            {/*-------------- RESUMEN FACTURA A CLIENTE -------------- */}
+            {facturaE && facturaTipo === "cliente" && (
+              <div style={{ gridColumn: "1 / -1" }}>
+                <h3>Datos factura electronica</h3>
+                <p>Se facturará con los datos del titular de la reserva:</p>
+                <p><strong>Nombre:</strong> {formData.nombreEmpresa || "-"}</p>
+                <p><strong>NIT:</strong> {formData.nit || "-"}</p>
+                <p><strong>Teléfono:</strong> {formData.telefonoF || "-"}</p>
+                <p><strong>Correo:</strong> {formData.emailEmpresa || "-"}</p>
+              </div>
+            )}
+            {/*-------------- SECCION DATOS DE FACTURA ELECTRONICA -------------- */}
+            {facturaE && facturaTipo === "agencia" && (
               <div style={{ gridColumn: "1 / -1" }}>
                 <h3>Datos factura electronica</h3>
                 <form style={{ marginTop: "20px" }}>
@@ -2849,11 +2989,48 @@ const FormularioReserva = () => {
                   type="checkbox"
                   id="facturaElectronica"
                   checked={facturaE}
-                  onChange={(e) => setfacturaE(e.target.checked)}
+                  onChange={(e) => {
+                    setfacturaE(e.target.checked);
+                    if (!e.target.checked) setfacturaTipo("");
+                  }}
                 />
               </div>
               <br />
               {facturaE && (
+                <div>
+                  <label htmlFor="facturaTipo">
+                    ¿A quién se factura? <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <select
+                    id="facturaTipo"
+                    value={facturaTipo}
+                    onChange={(e) => setfacturaTipo(e.target.value)}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "8px",
+                      marginBottom: "10px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                    }}
+                  >
+                    <option value="">Seleccione una opción</option>
+                    <option value="cliente">Facturar a cliente</option>
+                    <option value="agencia">Facturar a agencia</option>
+                  </select>
+                </div>
+              )}
+              {facturaE && facturaTipo === "cliente" && (
+                <div>
+                  <h3>Datos factura electronica</h3>
+                  <p>Se facturará con los datos del titular de la reserva:</p>
+                  <p><strong>Nombre:</strong> {formData.nombreEmpresa || "-"}</p>
+                  <p><strong>NIT:</strong> {formData.nit || "-"}</p>
+                  <p><strong>Teléfono:</strong> {formData.telefonoF || "-"}</p>
+                  <p><strong>Correo:</strong> {formData.emailEmpresa || "-"}</p>
+                </div>
+              )}
+              {facturaE && facturaTipo === "agencia" && (
                 <div>
                   <h3>Datos factura electronica</h3>
                   <form style={{ marginTop: "20px" }}>

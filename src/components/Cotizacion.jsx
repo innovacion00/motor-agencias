@@ -101,9 +101,9 @@ const getHotelImagesById = (hotelId) => {
       secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg"
     },
     4: {
-      main: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
-      secondary1: "https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg"
+      main: "https://media.staticontent.com/media/pictures/223a5234-1faa-42b5-917d-ff767cb45395/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1",
+      secondary1: "https://media.staticontent.com/media/pictures/78704123-88d2-449f-9f84-e1e0a7a2f083/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1",
+      secondary2: "https://media.staticontent.com/media/pictures/e51fa841-77b8-4485-bb28-24820d002c37/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1"
     },
     5: {
       main: "https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg",
@@ -266,10 +266,17 @@ export default function ReservaHotelComponent() {
     }
   };
 
-  const totalRetenciones = totalRetencionesF();
+  // Las retenciones (porcentajes) y el vuelo (conversión por TRM) generan decimales:
+  // se redondean a peso entero en COP y a 2 decimales en USD.
+  const redondearMoneda = (valor) =>
+    divisaSelec === "USD" ? Math.round(valor * 100) / 100 : Math.round(valor);
+
+  const totalRetenciones = redondearMoneda(totalRetencionesF());
 
   const incluyeVuelo = tieneVueloEnCotizacion();
-  const precioVuelo = incluyeVuelo ? parsePrecioVueloPaquete(divisaSelec, datosReserva) : 0;
+  const precioVuelo = redondearMoneda(
+    incluyeVuelo ? parsePrecioVueloPaquete(divisaSelec, datosReserva) : 0
+  );
   const baseCombinada = totalRetenciones + precioVuelo;
 
   // Calcular markup (admite coma o punto como separador decimal)
@@ -1708,25 +1715,25 @@ export default function ReservaHotelComponent() {
                       <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</td>
                       <td className="td-amount">${iva.toLocaleString()}</td>
                     </tr>
-                    <tr className="table-total">
-                      <td colSpan="4" className="td-total-label">Precio total para la agencia
-                        <img
-                          src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
-                          alt="Información"
-                          data-tooltip-id="tooltip-precio-agencia"
-                          data-tooltip-content="Este valor no se mostrará en la cotización"
-                          data-tooltip-place="right"
-                          style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
-                        />
-                      </td>
-                      <td className="td-total-amount">${totalRetenciones.toLocaleString()}</td>
-                    </tr>
                     {incluyeVuelo && precioVuelo > 0 && (
                       <tr className="table-subtotal">
                         <td colSpan="4" className="td-total">Vuelo (sin markup)</td>
                         <td className="td-amount">${precioVuelo.toLocaleString()}</td>
                       </tr>
                     )}
+                    <tr className="table-total">
+                      <td colSpan="4" className="td-total-label">Precio total para la agencia
+                        <img
+                          src="https://space-img.sfo3.digitaloceanspaces.com/Logos/tooltip.png"
+                          alt="Información"
+                          data-tooltip-id="tooltip-precio-agencia"
+                          data-tooltip-content="Incluye hospedaje y vuelo (sin markup). Este valor no se mostrará en la cotización"
+                          data-tooltip-place="right"
+                          style={{ width: "16px", height: "16px", cursor: "help", marginLeft: "6px" }}
+                        />
+                      </td>
+                      <td className="td-total-amount">${baseCombinada.toLocaleString()}</td>
+                    </tr>
                     {markupPorcentaje > 0 && (
                       <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
                         <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
@@ -1734,16 +1741,6 @@ export default function ReservaHotelComponent() {
                         </td>
                         <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
                           ${totalConMarkup.toLocaleString()}
-                        </td>
-                      </tr>
-                    )}
-                    {incluyeVuelo && markupPorcentaje === 0 && (
-                      <tr className="table-total" style={{ backgroundColor: "#f0f9ff", borderTop: "2px solid #059669" }}>
-                        <td colSpan="4" className="td-total-label" style={{ color: "#059669", fontWeight: "600" }}>
-                          Total paquete (hotel + vuelo)
-                        </td>
-                        <td className="td-total-amount" style={{ color: "#059669", fontWeight: "600" }}>
-                          ${baseCombinada.toLocaleString()}
                         </td>
                       </tr>
                     )}

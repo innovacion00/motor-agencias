@@ -196,6 +196,22 @@ export function getMonedaVueloDisplay(item) {
   return r.currency || "";
 }
 
+/**
+ * Total del vuelo listo para mostrar: el proveedor lo entrega con 4 decimales
+ * ("318.3700"), así que se recorta a 2 en USD y a peso entero en COP.
+ */
+export function formatTotalVueloDisplay(item) {
+  const num = parseFloat(String(getTotalVueloDisplay(item)).replace(/,/g, ""));
+  if (!Number.isFinite(num)) return "—";
+  if (String(getMonedaVueloDisplay(item)).toUpperCase() === "COP") {
+    return Math.round(num).toLocaleString("es-CO");
+  }
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 function formatTotalVueloCotizacion(item, divisaSelec, datosReserva) {
   const raw = getTotalVueloDisplay(item);
   const num = aplicarTrmSiCop(raw, divisaSelec, datosReserva);

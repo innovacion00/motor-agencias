@@ -22,6 +22,20 @@ import {
 import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
+import ComprobanteModal from "./ComprobanteModal";
+import { puedeEnviarComprobante } from "./CuentasBancarias";
+
+/**
+ * Interruptor de la función "Subir comprobante de pago" (envío a Bitrix).
+ * En false, el botón no se renderiza y toda la función queda inaccesible.
+ *
+ * PARA REACTIVARLA: poner en true. No hace falta nada más — el código del
+ * modal, el util de Bitrix y el endpoint del backend ya están completos.
+ * Antes de activarla, probar el flujo real contra Bitrix (ver README o
+ * preguntar): crear la negociación, confirmar que el archivo llegue bien y
+ * que la reserva quede en "Pago en proceso".
+ */
+const COMPROBANTE_PAGO_HABILITADO = false;
 
 /** Código de vuelo en ida/vuelta (outbound / inbound). */
 function getLegFlightCode(leg) {
@@ -136,6 +150,7 @@ const Gestionar = ({ reservas }) => {
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [mostrarBeneficio, setMostrarBeneficio] = useState(false);
   const [mostrarInfoVuelos, setMostrarInfoVuelos] = useState(false);
+  const [mostrarModalComprobante, setMostrarModalComprobante] = useState(false);
   const currentCurrency = useStore(currency); // COP o USD
   const sumaHuespe =
     Number(reservas?.reservation.children) +
@@ -2071,7 +2086,36 @@ const Gestionar = ({ reservas }) => {
               >
                 {isLoading ? "Generando link..." : "Pagar con Mi saldo"}
               </button>
+              {/* El hotel debe existir en la lista de Bitrix para poder enviar el comprobante. */}
+              {COMPROBANTE_PAGO_HABILITADO && puedeEnviarComprobante(reservas?.hotel) && (
+                <button
+                  type="button"
+                  onClick={() => setMostrarModalComprobante(true)}
+                  disabled={
+                    reservas?.status == "1" ||
+                    reservas?.status == "3" ||
+                    reservas?.status == "4" ||
+                    reservas?.status == "6"
+                  }
+                  className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                      reservas?.status == "3" ||
+                      reservas?.status == "4" ||
+                      reservas?.status == "6"
+                      ? styles.disabledButtonp
+                      : ""
+                    }`}
+                >
+                  Subir comprobante de pago
+                </button>
+              )}
             </div>
+            {COMPROBANTE_PAGO_HABILITADO && (
+              <ComprobanteModal
+                isOpen={mostrarModalComprobante}
+                onClose={() => setMostrarModalComprobante(false)}
+                reservas={reservas}
+              />
+            )}
             <div className={styles.noticeContainer}>
               {mostrarnota1 && (
                 <p className={styles.notice} disabled={mostrarnota1 == true}>
