@@ -35,6 +35,8 @@ import { puedeEnviarComprobante } from "./CuentasBancarias";
  * preguntar): crear la negociación, confirmar que el archivo llegue bien y
  * que la reserva quede en "Pago en proceso".
  */
+
+//#region Habilitar comprobantes
 const COMPROBANTE_PAGO_HABILITADO = false;
 
 /** Código de vuelo en ida/vuelta (outbound / inbound). */
