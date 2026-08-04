@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { refreshToken } from '../stores/authtoken';
 import VueloCotizacionDetalle from './VueloCotizacionDetalle';
+import { getHotelImagesById, getHotelIdByName } from '../utils/hotelesImagenes';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -58,116 +59,6 @@ const direccionHotelId = (hotelId) => {
     };
 
     return direccionMap[hotelId] || "Dirección no disponible";
-};
-
-// Función para obtener las imágenes del hotel basado en el ID
-const getHotelImagesById = (hotelId) => {
-    const hotelImagesMap = {
-        1: {
-            main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
-            secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg"
-        },
-        4: {
-            main: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
-            secondary1: "https://www.gehsuites.com/multimedia/galerias/aixo9640.jpg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/aixo8287.jpg"
-        },
-        5: {
-            main: "https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg",
-            secondary1: "https://www.gehsuites.com/multimedia/galerias/galeriaabi16972.jpg",
-            secondary2: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
-        },
-        6: {
-            main: "https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg",
-            secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/foodStanAvexi.jpg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg"
-        },
-        7: {
-            main: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena4469.jpg",
-            secondary1: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena2953.jpg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena14676.jpg"
-        },
-        9: {
-            main: "https://www.gehsuites.com/images/portada_marian_suites.jpg ",
-            secondary1: "https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg"
-        },
-        56: {
-            main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
-            secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada2_boquilla.jpg",
-            secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/desayuno_boquilla.jpg"
-        },
-        8: {
-            main: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
-            secondary1: "https://www.gehsuites.com/multimedia/galerias/2rodadero23293.jpg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg"
-        },
-        48: {
-            main: "https://www.gehsuites.com/images/YULDAMA-2.jpg",
-            secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Lobbyaxis.jpeg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg"
-        },
-        44: {
-            main: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
-            secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg"
-        },
-        10: {
-            main: "https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg",
-            secondary1: "https://www.gehsuites.com/multimedia/galerias/16HotelWindsorHouse427.jpg",
-            secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg"
-        },
-        3: {
-            main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison10238.jpg",
-            secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison8955.jpg",
-            secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison6250.jpg"
-        },
-        123: {
-            main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_salguero.jpg",
-            secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/cafeteria2_salguero.jpg",
-            secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/piscina_salguero.jpg"
-        }
-    };
-    return hotelImagesMap[hotelId] || {
-        main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
-        secondary1: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
-        secondary2: "https://www.gehsuites.com/images/portada_marian_suites.jpg"
-    };
-};
-
-// Mapa inverso: nombre -> id para resolver imágenes cuando solo hay nombre
-const getHotelIdByName = (hotelName) => {
-    if (!hotelName) return undefined;
-    const normalized = String(hotelName).trim().toLowerCase();
-    const nameToId = {
-        // Hoteles Cartagena (nombres nuevos y anteriores)
-        "hotel azuan": 1,
-        "hotel azuan suites": 1,
-        "hotel aixo": 4,
-        "hotel aixo suites": 4,
-        "hotel abi": 5,
-        "hotel abi inn": 5,
-        "hotel avexi": 6,
-        "hotel avexi suites": 6,
-        "hotel bocagrande": 7,
-        "hotel bocagrande suites": 7,
-        "hotel marina": 9,
-        "hotel marina suites": 9,
-        "hotel boquilla": 56,
-        "hotel boquilla suites": 56,
-        // Hoteles Santa Marta
-        "hotel rodadero": 8,
-        "hotel 1525": 2,
-        "hotel axis": 48,
-        "hotel axis inn": 48,
-        "hotel sansiraka": 44,
-        "hotel sansiraka inn": 44,
-        // Hoteles Bogotá
-        "hotel windsor": 10,
-        "hotel madisson": 3,
-    };
-    return nameToId[normalized];
 };
 
 // Función para generar la descripción según el tipo de pensión
@@ -719,7 +610,7 @@ export const CotizacionCreada = ({ id }) => {
                                 <span>{direccionHotelId(candidateHotelId || roomsData[0]?.hotelidAutocore || 1)}</span>
                                 <div className="contact-item">
                                     <Phone className="icon" />
-                                    <span>+57 333 602 50 21</span>
+                                    <span>+57 3336025669</span>
                                 </div>
                             </div>
 

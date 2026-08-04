@@ -4,10 +4,10 @@ const EXCLUDED_ROOM_IDS = new Set([164102]);
 export const HOTEL_FACADE_IMAGES = {
   9: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
   1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada-azuan.jpg",
-  6: "https://www.gehsuites.com/images/fachada_avexi.jpg",
+  6: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelavexi.jpg",
   4: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg",
   5: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg",
-  8: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
+  8: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg",
   48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg",
   44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg",
   56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",

@@ -16,6 +16,7 @@ import {
   generarHtmlVueloCotizacion,
 } from '../utils/vueloCotizacion';
 import { esModoBusquedaVueloHotel, limpiarDatosPaqueteVuelo } from '../utils/flightSearch';
+import { getHotelImagesById } from '../utils/hotelesImagenes';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -91,91 +92,6 @@ const textoTrasladoDesdeInfoTransporte = (info) => {
   return "Incluido";
 };
 
-// Función para obtener las imágenes del hotel basado en el ID
-const getHotelImagesById = (hotelId) => {
-  const hotelImagesMap = {
-    // Hoteles Cartagena
-    1: {
-      main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
-      secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244634659.jpg?k=becae71ed93bcf69535c2704fb02e0d97a3e078e017b9356a7a3fcc6d60ca4ee&o=&hp=1",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/1azuan360621.jpg"
-    },
-    4: {
-      main: "https://media.staticontent.com/media/pictures/223a5234-1faa-42b5-917d-ff767cb45395/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1",
-      secondary1: "https://media.staticontent.com/media/pictures/78704123-88d2-449f-9f84-e1e0a7a2f083/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1",
-      secondary2: "https://media.staticontent.com/media/pictures/e51fa841-77b8-4485-bb28-24820d002c37/1120x594?op=TRUNCATE&enlarge=false&gravity=ce_0_0&quality=80&dpr=1"
-    },
-    5: {
-      main: "https://www.gehsuites.com/multimedia/galerias/galeriaabi17741.jpg",
-      secondary1: "https://www.gehsuites.com/multimedia/galerias/galeriaabi16972.jpg",
-      secondary2: "https://www.gehsuites.com/images/fachada_hotel_abi.jpg"
-    },
-    6: {
-      main: "https://www.gehsuites.com/multimedia/galerias/avexi5917.jpg",
-      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/foodStanAvexi.jpg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/avexi7863.jpg"
-    },
-    7: {
-      main: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena4469.jpg",
-      secondary1: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena2953.jpg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/hotelbocagrandecartagena14676.jpg"
-    },
-    9: {
-      main: "https://www.gehsuites.com/images/portada_marian_suites.jpg ",
-      secondary1: "https://www.gehsuites.com/multimedia/galerias/marinasuites6710.jpg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/marinasuites3856.jpg"
-    },
-    56: {
-      main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
-      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada2_boquilla.jpg",
-      secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/desayuno_boquilla.jpg"
-    },
-    // Hoteles Santa Marta
-    8: {
-      main: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg",
-      secondary1: "https://www.gehsuites.com/multimedia/galerias/2rodadero23293.jpg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/galeriarodadero9278.jpg"
-    },
-
-    48: {
-      main: "https://www.gehsuites.com/images/YULDAMA-2.jpg",
-      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Lobbyaxis.jpeg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria2295.jpg"
-    },
-    44: {
-      main: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
-      secondary1: "https://cf.bstatic.com/xdata/images/hotel/max1024x768/535990853.jpg?k=15f0dd4cc6a6e4d3eb35cae6b196c8bab43f3734514a24a24f5f29415e8575ce&o=&hp=1",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/galeria7908.jpg"
-    },
-    41: {
-      main: "https://www.gehsuites.com/images/fachada-azuan.jpg", // Imagen por defecto para Zulita
-      secondary1: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
-      secondary2: "https://www.gehsuites.com/images/portada_marian_suites.jpg"
-    },
-    // Hoteles Bogotá
-    10: {
-      main: "https://www.gehsuites.com/multimedia/galerias/5HotelWindsorHouse704.jpg",
-      secondary1: "https://www.gehsuites.com/multimedia/galerias/16HotelWindsorHouse427.jpg",
-      secondary2: "https://www.gehsuites.com/multimedia/galerias/20HotelWindsorHouse922.jpg"
-    },
-    3: {
-      main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison10238.jpg",
-      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison8955.jpg",
-      secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/madison6250.jpg"
-    },
-    123: {
-      main: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_salguero.jpg",
-      secondary1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/cafeteria2_salguero.jpg",
-      secondary2: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/piscina_salguero.jpg"
-  }
-  };
-
-  return hotelImagesMap[hotelId] || {
-    main: "https://www.gehsuites.com/images/fachada-azuan.jpg",
-    secondary1: "https://www.gehsuites.com/images/galeria_11_aixo.jpg",
-    secondary2: "https://www.gehsuites.com/images/portada_marian_suites.jpg"
-  };
-};
 
 export default function ReservaHotelComponent() {
   const [markup, setMarkup] = useState('');
@@ -557,7 +473,7 @@ export default function ReservaHotelComponent() {
     const mascotas = datosReserva[0]?.mascotas || 0;
     const logoAgenciaUrl = logoAgencia?.imageUrl || "https://res.cloudinary.com/dxxwg5jus/image/upload/v1760559192/agencias/geh%20suites/wphrr94oifquqkikx9ca.jpg";
     const nombreAgencia = agencia?.agencia?.fullName || "Agencia de Viajes";
-    const telefonoAgencia = logoAgencia?.telefono || "+57 333 602 50 21";
+    const telefonoAgencia = logoAgencia?.telefono || "+57 3336025669";
     const emailCliente = formData.email;
     const telefonoCliente = formData.celular;
     const r0 = datosReserva[0] || {};
@@ -1623,7 +1539,7 @@ export default function ReservaHotelComponent() {
                 <span>{direccionHotelId(datosReserva[0].hotelidAutocore)}</span>
                 <div className="contact-item">
                   <Phone className="icon" />
-                  <span>+57 333 602 50 21</span>
+                  <span>+57 3336025669</span>
                 </div>
               </div>
 

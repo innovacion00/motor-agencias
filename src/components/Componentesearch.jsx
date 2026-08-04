@@ -35,7 +35,7 @@ const BusquedaCartagena = () => {
     5: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg", //abi
     3: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg", //madison
     10: "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill", //windsor
-    8: "https://www.gehsuites.com/images/fachada_rodadero_1.jpg", //rodadero
+    8: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg", //rodadero
     2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525
     48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg", //axis
     44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg", //sansiraka
