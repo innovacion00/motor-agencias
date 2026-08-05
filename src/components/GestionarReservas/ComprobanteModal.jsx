@@ -208,6 +208,7 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
       bitrixDealId = await enviarComprobanteBitrix({
         reservas,
         grupoSeleccionado,
+        cuentaIndex,
         monto,
         fechaConsignacion,
         archivo,

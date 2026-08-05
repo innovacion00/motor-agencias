@@ -5,7 +5,7 @@ export const cuentasBancarias = {
     label: 'Econo Hotel Group',
     bitrixId: 6142,
     accounts: [
-      // { banco: 'Banco Davivienda', titular: 'Econo Hotel Group', tipo: 'Cuenta Corriente', numero: '057169988813', nit: '901116843-1' },
+      { banco: 'Banco Davivienda', titular: 'Econo Hotel Group', tipo: 'Cuenta Corriente', numero: '057169988813', nit: '901116843-1' },
       { banco: 'Banco Bancolombia', titular: 'Econo Hotel Group', tipo: 'Cuenta Corriente', numero: '09800001143', nit: '901116843-1' },
     ],
   },
@@ -13,7 +13,7 @@ export const cuentasBancarias = {
     label: 'Dt Hoteles & Inn s.a.s',
     bitrixId: 6146,
     accounts: [
-      // { banco: 'Banco Davivienda', titular: 'DT HOTELES & INN S.A.S', tipo: 'Cuenta Corriente', numero: '0571-6999 0330', nit: '900.725.984-9' },
+      { banco: 'Banco Davivienda', titular: 'DT HOTELES & INN S.A.S', tipo: 'Cuenta Corriente', numero: '0571-6999 0330', nit: '900.725.984-9' },
       { banco: 'Banco Bancolombia', titular: 'DT HOTELES & INN SAS', tipo: 'Cuenta Corriente', numero: '098-000011-52', nit: '900.725.984-9' },
     ],
   },
@@ -21,7 +21,7 @@ export const cuentasBancarias = {
     label: 'Caribe Hoteles & Suites s.a.s',
     bitrixId: 6144,
     accounts: [
-      // { banco: 'Banco Davivienda', titular: 'Caribe Hoteles & suites S.A.S', tipo: 'Cuenta Corriente', numero: '057169989969', nit: '900 801 256-0' },
+      { banco: 'Banco Davivienda', titular: 'Caribe Hoteles & suites S.A.S', tipo: 'Cuenta Corriente', numero: '057169989969', nit: '900 801 256-0' },
       { banco: 'Banco Bancolombia', titular: 'Caribe Hoteles & suites S.A.S', tipo: 'Cuenta Corriente', numero: '098-0000-1054', nit: '900 801 256-0' },
     ],
   },
@@ -30,7 +30,7 @@ export const cuentasBancarias = {
     bitrixId: 6148,
     accounts: [
       { banco: 'Banco Bancolombia', titular: 'SMART STAY SAS', tipo: 'Cuenta Corriente', numero: '08500008723', nit: '901691840-2' },
-      // { banco: 'Banco Davivienda', titular: 'SMART STAY SAS', tipo: 'Cuenta Corriente', numero: '057169987054', nit: '901691840-2' },
+      { banco: 'Banco Davivienda', titular: 'SMART STAY SAS', tipo: 'Cuenta Corriente', numero: '057169987054', nit: '901691840-2' },
     ],
   },
   windsor: {
@@ -103,4 +103,28 @@ export function getHotelBitrixId(hotelNombre) {
 /** Solo se puede enviar comprobante si el hotel existe en la lista de Bitrix. */
 export function puedeEnviarComprobante(hotelNombre) {
   return getHotelBitrixId(hotelNombre) !== null;
+}
+
+// IDs del campo UF_CRM_1718396464904 ("Bank") de Bitrix.
+const BANCO_BITRIX_OTROS = 5210;
+const BANCOS_BITRIX = [
+  { clave: 'bancolombia', id: 5206 },
+  { clave: 'davivienda', id: 5208 },
+  { clave: 'colpatria', id: 5216 },
+  { clave: 'paypal', id: 5212 },
+  { clave: 'payu', id: 5214 },
+  { clave: 'cobre', id: 12604 },
+];
+
+/**
+ * Traduce el nombre del banco de una cuenta al ID de la lista de Bitrix.
+ * Busca por coincidencia parcial para tolerar "Bancolombia" y "Banco Bancolombia".
+ * Si el banco no está en la lista, cae en "Otros" para no bloquear el envío.
+ */
+export function getBancoBitrixId(nombreBanco) {
+  const normalizado = (nombreBanco ?? '').toLowerCase();
+  const encontrado = BANCOS_BITRIX.find(({ clave }) =>
+    normalizado.includes(clave)
+  );
+  return encontrado ? encontrado.id : BANCO_BITRIX_OTROS;
 }

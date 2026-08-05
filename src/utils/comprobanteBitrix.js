@@ -2,6 +2,7 @@ import Cookies from "js-cookie";
 import { refreshToken } from "../stores/authtoken";
 import {
   cuentasBancarias,
+  getBancoBitrixId,
   getHotelBitrixId,
 } from "../components/GestionarReservas/CuentasBancarias";
 
@@ -46,6 +47,7 @@ export function archivoABase64(file) {
 export async function enviarComprobanteBitrix({
   reservas,
   grupoSeleccionado,
+  cuentaIndex = 0,
   monto,
   fechaConsignacion,
   archivo,
@@ -60,6 +62,11 @@ export async function enviarComprobanteBitrix({
   const grupo = cuentasBancarias[grupoSeleccionado];
   if (!grupo?.bitrixId) {
     throw new Error("La razón social seleccionada no está configurada.");
+  }
+
+  const cuenta = grupo.accounts?.[cuentaIndex];
+  if (!cuenta) {
+    throw new Error("La cuenta bancaria seleccionada no es válida.");
   }
 
   const base64 = await archivoABase64(archivo);
@@ -88,7 +95,8 @@ export async function enviarComprobanteBitrix({
       UF_CRM_1755027828331: reservas?.reservaChatbotId ?? "", // Localizador
       UF_CRM_1778689203540: String(reservas?._id ?? ""), // ID interno de la reserva
       UF_CRM_1718393278: [{ fileData: [archivo.name, base64] }], // Comprobante (múltiple)
-      
+      UF_CRM_1718396464904: getBancoBitrixId(cuenta.banco), // Banco de la cuenta elegida
+
     },
   };
 
