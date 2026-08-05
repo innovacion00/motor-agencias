@@ -64,6 +64,7 @@ export async function enviarComprobanteBitrix({
 
   const base64 = await archivoABase64(archivo);
   const montoNumerico = Number(monto);
+  const totalReserva = Number(reservas?.total ?? 0);
   const titular = `${reservas?.reservation?.firstName ?? ""} ${
     reservas?.reservation?.lastName ?? ""
   }`.trim();
@@ -75,17 +76,19 @@ export async function enviarComprobanteBitrix({
       STAGE_ID: "UC_D6ERFN",
       PROBABILITY: null,
       CURRENCY_ID: "COP",
-      OPPORTUNITY: montoNumerico,
+      OPPORTUNITY: totalReserva, // Valor total de la reserva
       CATEGORY_ID: "0",
       UF_CRM_1718636597: [hotelBitrixId], // Hoteles que reservó (múltiple)
       UF_CRM_1719335914: grupo.bitrixId, // Razón social
       UF_CRM_1718394865311: TIPO_OPERACION_TRANSFERENCIA, // Tipo de operación
-      UF_CRM_1730321299: montoNumerico, // Monto
+      UF_CRM_1718396179138: montoNumerico,
       UF_CRM_1718396297448: fechaConsignacion, // Fecha de consignación
       UF_CRM_1718396737556: CANAL_VENTA_BOOKING_CONNECT, // Canal de venta
       UF_CRM_1718739671: reservas?.reservation?.checkin ?? "", // Fecha de check-in
       UF_CRM_1755027828331: reservas?.reservaChatbotId ?? "", // Localizador
+      UF_CRM_1778689203540: String(reservas?._id ?? ""), // ID interno de la reserva
       UF_CRM_1718393278: [{ fileData: [archivo.name, base64] }], // Comprobante (múltiple)
+      
     },
   };
 
