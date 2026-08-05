@@ -37,7 +37,7 @@ import { puedeEnviarComprobante } from "./CuentasBancarias";
  */
 
 //#region Habilitar comprobantes
-const COMPROBANTE_PAGO_HABILITADO = true;
+const COMPROBANTE_PAGO_HABILITADO = false;
 
 /** Código de vuelo en ida/vuelta (outbound / inbound). */
 function getLegFlightCode(leg) {
