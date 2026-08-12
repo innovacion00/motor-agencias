@@ -169,6 +169,79 @@
     font-weight: 500;
   }
 
+  /* Spinner de carga */
+  .cotizaciones-loading {
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #26547B;
+  }
+
+  .cotizaciones-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d7e2ec;
+    border-top-color: #26547B;
+    border-radius: 50%;
+    animation: cotizacionesSpin 0.9s linear infinite;
+  }
+
+  @keyframes cotizacionesSpin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Skeleton loader de las cards */
+  .cotizacion-skeleton {
+    cursor: default;
+  }
+
+  .cotizacion-skeleton:hover {
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .cotizacion-skeleton-badge {
+    height: 20px;
+    width: 90px;
+    border-radius: 12px;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+    animation: skeletonPulse 1.5s infinite;
+  }
+
+  .cotizacion-skeleton-line {
+    height: 12px;
+    width: 100%;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    margin: 8px 0;
+    animation: skeletonPulse 1.5s infinite;
+  }
+
+  .cotizacion-skeleton-line.medium {
+    width: 75%;
+  }
+
+  .cotizacion-skeleton-line.short {
+    width: 55%;
+  }
+
+  @keyframes skeletonPulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.55;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   @media (max-width: 768px) {
     .columns {
       grid-template-columns: 1fr;

@@ -4,6 +4,7 @@ import "../components/styles/cotizaciones.css"
 const Cotizaciones = () => {
     const [cotizaciones, setCotizaciones] = useState([]);
     const [agencyNames, setAgencyNames] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
 
     // Función para obtener el token de las cookies
     const getTokenFromCookies = () => {
@@ -53,6 +54,7 @@ const Cotizaciones = () => {
 
     // Función para traer todas las cotizaciones
     const fetchCotizaciones = async () => {
+        setIsLoading(true);
         try {
             const token = getTokenFromCookies();
             
@@ -96,6 +98,8 @@ const Cotizaciones = () => {
         } catch (error) {
             console.error('Error en la consulta de cotizaciones:', error);
             setCotizaciones([]);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -225,6 +229,23 @@ const Cotizaciones = () => {
         }
     };
 
+    // Card de carga (skeleton loader) mientras se consultan las cotizaciones
+    const SkeletonCard = () => (
+        <div className="card cotizacion-skeleton">
+            <div className="cotizacion-skeleton-badge" />
+            <div className="cotizacion-skeleton-line" />
+            <div className="cotizacion-skeleton-line short" />
+            <div className="cotizacion-skeleton-line medium" />
+        </div>
+    );
+
+    // Muestra varias cards de skeleton por columna
+    const renderSkeletonCards = (cantidad = 3) => (
+        [...Array(cantidad)].map((_, index) => (
+            <SkeletonCard key={`skeleton-${index}`} />
+        ))
+    );
+
     // Función para renderizar las cards de cotizaciones
     const renderCotizacionesCards = (cotizacionesList) => {
         return cotizacionesList.map((cotizacion, index) => {
@@ -254,6 +275,12 @@ const Cotizaciones = () => {
         <div className="container">
       <div className="header">
         <h2>Gestión de cotizaciones</h2>
+        {isLoading && (
+          <div className="cotizaciones-loading" role="status" aria-live="polite">
+            <span className="cotizaciones-spinner" aria-hidden="true" />
+            <span>Cargando cotizaciones...</span>
+          </div>
+        )}
         <div className="search-bar">
         </div>
       </div>
@@ -267,37 +294,37 @@ const Cotizaciones = () => {
         <div className="column">
           <div className="column-header">
             <span>Pendientes</span>
-            <span className="count">{getCotizacionesByStatus(0).length}</span>
+            <span className="count">{isLoading ? '-' : getCotizacionesByStatus(0).length}</span>
           </div>
           <br />
-          {renderCotizacionesCards(getCotizacionesByStatus(0))}
+          {isLoading ? renderSkeletonCards(4) : renderCotizacionesCards(getCotizacionesByStatus(0))}
         </div>
 
         {/* Columna Aceptadas */}
         <div className="column">
           <div className="column-header">
             <span>Aceptadas (Sin Dispo)</span>
-            <span className="count">{getCotizacionesByStatus(1).length}</span>
+            <span className="count">{isLoading ? '-' : getCotizacionesByStatus(1).length}</span>
           </div>
-          {renderCotizacionesCards(getCotizacionesByStatus(1))}
+          {isLoading ? renderSkeletonCards(3) : renderCotizacionesCards(getCotizacionesByStatus(1))}
         </div>
 
         {/* Columna Rechazadas */}
         <div className="column">
           <div className="column-header">
-            <span>Rechazadas</span>|
-            <span className="count">{getCotizacionesByStatus(2).length}</span>
+            <span>Rechazadas</span>
+            <span className="count">{isLoading ? '-' : getCotizacionesByStatus(2).length}</span>
           </div>
-          {renderCotizacionesCards(getCotizacionesByStatus(2))}
+          {isLoading ? renderSkeletonCards(3) : renderCotizacionesCards(getCotizacionesByStatus(2))}
         </div>
 
         {/* Columna Convertidas en reserva */}
         <div className="column">
           <div className="column-header">
             <span>Convertidas en reserva</span>
-            <span className="count">{getCotizacionesByStatus(3).length}</span>
+            <span className="count">{isLoading ? '-' : getCotizacionesByStatus(3).length}</span>
           </div>
-          {renderCotizacionesCards(getCotizacionesByStatus(3))}
+          {isLoading ? renderSkeletonCards(3) : renderCotizacionesCards(getCotizacionesByStatus(3))}
         </div>
       </div>
     </div>
