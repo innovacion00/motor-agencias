@@ -21,6 +21,7 @@ import {
   buildUpgradeOptions,
   resolveUpgradeTargetIds,
 } from '../utils/hotelUpgrades';
+import { buildRatePlanRegex } from '../utils/ratePlanMatchers';
 
 const hotelesData = {
   9: {
@@ -179,7 +180,34 @@ const hotelesData = {
     image:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg",
     leermas:"/infosalguero",
     maps:"https://www.google.com/maps/place/Hotel+Playa+Salguero+By+GEH+Suites/@11.187723,-74.2300729,17z/data=!4m10!3m9!1s0x8ef458ac933bfdff:0x4e2c5201a79272a0!5m3!1s2025-11-19!4m1!1i2!8m2!3d11.187723!4d-74.225202!16s%2Fg%2F11yl4t64f3?entry=ttu&g_ep=EgoyMDI1MTExMS4wIKXMDSoASAFQAw%3D%3D"
-  }
+  },
+  164: {
+    name: "Hotel El Marques Boutique",
+    direction:
+      "Calle #33- 41, Cartagena de Indias, Bolívar",
+    description:
+      "Hotel boutique El Marqués by GEH Suites es un hotel boutique ubicado en el Centro Histórico de Cartagena, dentro de la emblemática Ciudad Amurallada. Ocupa una casa colonial del siglo XVII restaurada, que conserva su arquitectura original y la combina con comodidades modernas y atención personalizada. Gracias a su excelente ubicación, los huéspedes pueden visitar caminando los principales atractivos turísticos como Plaza Santo Domingo, Plaza de Bolívar.",
+    image: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_marques.jpg",
+    habitaciones: [
+      {
+        nombre: "Familiar",
+        imagen:
+          "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687850.jpg?k=9778545d180eb45a8c1efc9be1dcc6096307cbc29f54c3d085a91c5d5ac25509&o=&hp=1",
+      },
+      {
+        nombre: "Delux",
+        imagen:
+          "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687880.jpg?k=372da40f421cb18e3158e3cee258a55df68da3916f5ca7b345f4e62b84cd943d&o=&hp=1",
+      },
+      {
+        nombre: "Junior Suite",
+        imagen:
+          "https://cf.bstatic.com/xdata/images/hotel/max1024x768/244687880.jpg?k=372da40f421cb18e3158e3cee258a55df68da3916f5ca7b345f4e62b84cd943d&o=&hp=1",
+      },
+    ],
+    leermas: "/infomarques",
+    mapa: "https://www.google.com/maps/place/Hotel+Marina+Suites+By+GEH+Suites/@10.3980472,-75.5594753,20z/data=!4m9!3m8!1s0x8ef62f3dacaa4b37:0xa3c318672161c840!5m2!4m1!1i2!8m2!3d10.3980472!4d-75.5592452!16s%2Fg%2F1yh4g_t8v?hl=es&entry=ttu&g_ep=EgoyMDI0MDkwOS4wIKXMDSoASAFQAw%3D%3D",
+  },
 };
 
 const hotelIcons = {
@@ -311,6 +339,15 @@ const hotelIcons = {
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+  ],
+  //Marques
+  164: [
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+    "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
     "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
   ],
@@ -475,6 +512,17 @@ const idRooms = {
     //quintuple
     164102:
     ""
+  },
+  //Marques
+  164: {
+    //familiar
+    168468:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_twin1.jpg",
+    //deluxe
+    168467:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_deluxe.jpg",
+    //suite
+    168466:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_suite2.jpg",
+    //junior suite
+    168465:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/habitacion_junior.jpg"
   }
 };
 
@@ -493,6 +541,7 @@ const quintuple = {
   44: true, //sansiraka
   41: false, //Zulita
   56: true, // Boquilla,
+  164:false, //Marques
 };
 
 // Traslados Cartagena: tarifa estándar (Aixo, Abi, Boquilla) vs premium (Azuan, Avexi, Marina)
@@ -1019,22 +1068,12 @@ export const Cid = ({ id }) => {
   const categoriagencia = categoria?.agencia?.category; //categoria de la agencia
   console.log("categoria de la agencia:", categoriagencia);
 
-  const regexMayorista = {
-    solodesayuno: /\[Booking connect Mayorista\]/i,
-    pensioncompleta: /\[Booking connect Mayorista PA\]/i,
-    mediapension: /\[Booking connect Mayorista PAM\]/i,
-  };
-
-  const regexminoristas = {
-    solodesayuno: /\[Booking connect Neto\]/i,
-    pensioncompleta: /\[Booking connect Neto PA\]/i,
-    mediapension: /\[Booking connect Neto PAM\]/i,
-  };
-
-  const regexSeleccionado =
-    categoriagencia == 0
-      ? regexminoristas[planDeAlimentacion]
-      : regexMayorista[planDeAlimentacion];
+  // Tolera las variantes de nombre del plan entre hoteles
+  // (p. ej. "[Booking Connect – Minorista ]" en El Marques, id 164).
+  const regexSeleccionado = buildRatePlanRegex(
+    categoriagencia,
+    planDeAlimentacion
+  );
 
   const resolveCityForUpgrade = () =>
     habitaciones?.hotel?.city ||

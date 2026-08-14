@@ -42,7 +42,8 @@ const BusquedaCartagena = () => {
     41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
     56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
     123:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg", //Salguero
-    124:""
+    124:"",
+    164:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_marques.jpg"//Marquez
   };
 
   //Objeto con los arreglos de los iconos
@@ -171,6 +172,14 @@ const BusquedaCartagena = () => {
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
+    ],
+    164: [
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
+      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
       "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
     ],

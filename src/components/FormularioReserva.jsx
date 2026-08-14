@@ -51,8 +51,9 @@ const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
   10: 7, // Windsor
   44: 8, // Sansiraka
   48: 8, // Axis
-  56: 8, // El Marques
-  123: 8, // Playa 
+  56: 8, // Boquilla
+  123: 8, // Playa Salguero
+  164: 8, // El Marques
 });
 
 const BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL = Object.freeze({
@@ -121,6 +122,12 @@ const BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL = Object.freeze({
     { roomId: 129034, mapName: "TRIPLE ESTANDAR" },
     { roomId: 129033, mapName: "DOBLE ESTANDAR TWIN" },
     { roomId: 128299, mapName: "DOBLE SUPERIOR" },
+  ]),
+  // El Marques
+  164: Object.freeze([
+    { roomId: 168468, mapName: "Familiar" },
+    { roomId: 168467, mapName: "Delux" },
+    { roomId: 168465, mapName: "Junior Suite" },
   ]),
 });
 
@@ -1656,9 +1663,9 @@ const FormularioReserva = () => {
 
         <h3>Datos de la reserva</h3>
 
-        {reserva?.map((data) => (
+        {reserva?.map((data, index) => (
           <div
-            key={data.roomId || index}
+            key={`${data.roomId}-${index}`}
             className="formulario-reserva-room-card"
             style={{
               border: "1px solid #ddd",
