@@ -1,3 +1,5 @@
+import { conDescuentoHospedaje } from "./descuentoHospedaje";
+
 /** Habitaciones excluidas del cálculo de precio mínimo (misma regla que DisponibilidadH). */
 const EXCLUDED_ROOM_IDS = new Set([164102]);
 
@@ -160,7 +162,10 @@ export function getCheapestRoomPrice(availability, currency, regex) {
     }
   }
 
-  return min === Infinity ? null : min;
+  // Se aplica el descuento de vuelo + hotel para que el modal muestre el mismo
+  // precio que el usuario verá al entrar al hotel. Es un porcentaje uniforme,
+  // así que el orden relativo entre hoteles no cambia.
+  return min === Infinity ? null : conDescuentoHospedaje(min);
 }
 
 export function buildUpgradeOptions(

@@ -10,6 +10,10 @@ const BITRIX_DEAL_URL =
   import.meta.env.PUBLIC_BITRIX_COMPROBANTE_DEAL_URL ??
   "https://gehsuites.bitrix24.com/rest/14/wb7mt7b8mf58q72d/crm.deal.add.json";
 
+const BITRIX_CONTACT_URL =
+  import.meta.env.PUBLIC_BITRIX_COMPROBANTE_CONTACT_URL ??
+  "https://gehsuites.bitrix24.com/rest/10/zutaj6s11aos5hm4/crm.contact.add";
+
 /** Valores fijos de los campos de lista de Bitrix. */
 const TIPO_OPERACION_TRANSFERENCIA = 5328; // UF_CRM_1718394865311
 const CANAL_VENTA_BOOKING_CONNECT = 13468; // UF_CRM_1718396737556
@@ -38,6 +42,45 @@ export function archivoABase64(file) {
     reader.onerror = () => reject(new Error("No se pudo leer el archivo"));
     reader.readAsDataURL(file);
   });
+}
+
+/** Lee la respuesta de un webhook de Bitrix y devuelve `result`, o lanza el error. */
+async function leerRespuestaBitrix(response) {
+  let data = {};
+  try {
+    data = await response.json();
+  } catch {
+    /* respuesta no JSON */
+  }
+
+  if (!response.ok || data.error) {
+    const message =
+      data.error_description || data.error || `Error Bitrix (${response.status})`;
+    throw new Error(message);
+  }
+
+  return data.result;
+}
+
+/**
+ * Crea el contacto del titular en Bitrix24. Se ejecuta antes de la negociación
+ * para poder vincularla con CONTACT_ID.
+ * @returns {Promise<string>} ID del contacto creado.
+ */
+export async function crearContactoBitrix({ nombre }) {
+  const response = await fetch(BITRIX_CONTACT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fields: { NAME: nombre } }),
+  });
+
+  const result = await leerRespuestaBitrix(response);
+
+  if (!result) {
+    throw new Error("Bitrix no devolvió el identificador del contacto.");
+  }
+
+  return String(result);
 }
 
 /**
@@ -75,16 +118,22 @@ export async function enviarComprobanteBitrix({
   const titular = `${reservas?.reservation?.firstName ?? ""} ${
     reservas?.reservation?.lastName ?? ""
   }`.trim();
+  const nombreNegociacion =
+    titular || reservas?.reservaChatbotId || "Comprobante de pago";
+
+  // El contacto debe existir antes de la negociación para poder vincularlo.
+  const contactId = await crearContactoBitrix({ nombre: nombreNegociacion });
 
   const body = {
     fields: {
-      TITLE: titular || reservas?.reservaChatbotId || "Comprobante de pago",
+      TITLE: nombreNegociacion,
       TYPE_ID: "SALE",
       STAGE_ID: "UC_D6ERFN",
       PROBABILITY: null,
       CURRENCY_ID: "COP",
       OPPORTUNITY: totalReserva, // Valor total de la reserva
       CATEGORY_ID: "0",
+      CONTACT_ID: contactId, // Contacto del titular creado justo antes
       UF_CRM_1718636597: [hotelBitrixId], // Hoteles que reservó (múltiple)
       UF_CRM_1719335914: grupo.bitrixId, // Razón social
       UF_CRM_1718394865311: TIPO_OPERACION_TRANSFERENCIA, // Tipo de operación
@@ -106,24 +155,13 @@ export async function enviarComprobanteBitrix({
     body: JSON.stringify(body),
   });
 
-  let data = {};
-  try {
-    data = await response.json();
-  } catch {
-    /* respuesta no JSON */
-  }
+  const result = await leerRespuestaBitrix(response);
 
-  if (!response.ok || data.error) {
-    const message =
-      data.error_description || data.error || `Error Bitrix (${response.status})`;
-    throw new Error(message);
-  }
-
-  if (!data.result) {
+  if (!result) {
     throw new Error("Bitrix no devolvió el identificador de la negociación.");
   }
 
-  return String(data.result);
+  return String(result);
 }
 
 const getApiBaseUrl = () =>

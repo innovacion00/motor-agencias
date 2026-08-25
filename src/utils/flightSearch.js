@@ -4,9 +4,11 @@ import { refreshToken } from '../stores/authtoken';
 
 /**
  * Realiza la consulta de disponibilidad de vuelos
+ * @param {{ mostrarExito?: boolean }} [opciones] - `mostrarExito` en false omite la alerta
+ *   de "Redirigiendo a los vuelos disponibles" (el buscador no redirige a /dispoVuelos).
  * @returns {Promise<boolean>} - true si la consulta fue exitosa, false si falló
  */
-export const searchFlights = async () => {
+export const searchFlights = async ({ mostrarExito = true } = {}) => {
   let loadingSwal = null;
   
   try {
@@ -154,21 +156,23 @@ export const searchFlights = async () => {
     
     console.log('Respuesta de vuelos guardada:', data);
     
-    await Swal.fire({
-      icon: 'success',
-      title: 'Éxito',
-      text: 'Redirigiendo a los vuelos disponibles...',
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      timerProgressBarColor: "#26547B",
-      showClass: {
-        popup: "animate__animated animate__fadeInDown animate__faster",
-      },
-      hideClass: {
-        popup: "animate__animated animate__fadeOutUp animate__faster",
-      },
-    });
+    if (mostrarExito) {
+      await Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Redirigiendo a los vuelos disponibles...',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        timerProgressBarColor: "#26547B",
+        showClass: {
+          popup: "animate__animated animate__fadeInDown animate__faster",
+        },
+        hideClass: {
+          popup: "animate__animated animate__fadeOutUp animate__faster",
+        },
+      });
+    }
 
     return true;
 

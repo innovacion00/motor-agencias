@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import { getdisponibility } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas";
 import { IATA_SEARCH_MAP } from "../utils/iataSearchMap";
-import { limpiarFlujoVueloHotel, limpiarDatosPaqueteVuelo } from "../utils/flightSearch";
+import { limpiarFlujoVueloHotel, limpiarDatosPaqueteVuelo, searchFlights } from "../utils/flightSearch";
 
 const DropdownSearch = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -435,6 +435,15 @@ const DropdownSearch = () => {
       ],
     }));
     localStorage.setItem("selectedCity", destination);
+
+    // La sugerencia de paquete en Santa Marta rota entre hoteles: se avanza una
+    // posición por consulta para no recomendar siempre el mismo.
+    if (destination === "SANTA_MARTA") {
+      const previa = parseInt(localStorage.getItem("rotacionHotelSugerido"), 10);
+      const siguiente = Number.isFinite(previa) ? previa + 1 : 0;
+      localStorage.setItem("rotacionHotelSugerido", String(siguiente));
+    }
+
     setIsLoading(true);
 
     const nochesyedades = {
@@ -461,6 +470,7 @@ const DropdownSearch = () => {
     }
     
     // Si es vuelo + hotel, guardar datos completos del vuelo
+    let busquedaVueloId = null;
     if (includesFlight) {
       const datosDelVuelo = {
         tipoReserva: "flight",
@@ -478,6 +488,7 @@ const DropdownSearch = () => {
         timestamp: new Date().toISOString()
       };
       localStorage.setItem("datosDelVuelo", JSON.stringify(datosDelVuelo));
+      busquedaVueloId = datosDelVuelo.timestamp;
     }
 
     let hasNavigated = false;
@@ -490,6 +501,20 @@ const DropdownSearch = () => {
       };
 
       await getdisponibility(objetohotel);
+
+      // En vuelo + hotel se consulta también la disponibilidad aérea para poder
+      // armar la card de paquete en la página de resultados.
+      if (includesFlight) {
+        // Descarta dataVuelo y el paquete de una búsqueda anterior antes de consultar,
+        // así un fallo no deja una respuesta vieja que la card pinte por error.
+        limpiarDatosPaqueteVuelo();
+        localStorage.removeItem("dataVueloBusquedaId");
+
+        const okVuelos = await searchFlights({ mostrarExito: false });
+        if (okVuelos) {
+          localStorage.setItem("dataVueloBusquedaId", busquedaVueloId);
+        }
+      }
 
       const destinations = {
         CARTAGENA: "/busquedacartagena",

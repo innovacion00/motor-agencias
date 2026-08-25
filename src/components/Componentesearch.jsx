@@ -1,12 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { disponibilidad } from "../stores/disponibilidad";
 import Swal from "sweetalert2";
 import styles from "../../public/styles/componentesearch.module.css";
 import DropdownSearch from "./DropdownSearch";
+import PaqueteVueloHotelCard from "./PaqueteVueloHotelCard";
 import { nightsStore } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
 import CurrencySelector from "./Cambiardivisas";
+import {
+  findMinBaseRate,
+  getHotelSugerido,
+  getPrimerVuelo,
+  calcularTotalPaquete,
+} from "../utils/paqueteVueloHotel";
+import { aplicaDescuentoHospedaje } from "../utils/descuentoHospedaje";
 
 //UseState
 const BusquedaCartagena = () => {
@@ -15,9 +23,13 @@ const BusquedaCartagena = () => {
   const currentCurrency = useStore(currency); // COP o USD
   const [nochesyedades1, setnochesyedades] = useState({});
   const [infoVuelo, setinfoVuelo] = useState()
+  const [dataVuelo, setDataVuelo] = useState(null);
   const [categoria, setcategoria] = useState();
   const [Ciudad, setCiudad] = useState("Cartagena de Indias");
-  
+  const [codigoCiudad, setCodigoCiudad] = useState(null);
+  const [rotacionHotel, setRotacionHotel] = useState(0);
+  const [descuentoHospedaje, setDescuentoHospedaje] = useState(false);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -223,27 +235,11 @@ const BusquedaCartagena = () => {
     return month === 11 && validDays.includes(day);
   };
 
-  // Función existente modificada
-  const findMinBaseRate = (data) => {
-    let minAmount = Infinity;
-
-    data.forEach((entry) => {
-      entry.available_rooms.forEach((room) => {
-        room.products.forEach((product) => {
-          const amount =
-            currentCurrency == "USD"
-              ? product.baseRate.amountBeforeTaxUSD // Antes de impuestos USD
-              : product.baseRate.amountBeforeTax; // Antes de impuestos COP
-          if (amount < minAmount) {
-            minAmount = amount;
-          }
-        });
-      });
-    });
-
-    return minAmount === Infinity
-      ? "*Sin Disponibilidad*"
-      : formatToCurrency(minAmount); // Formatear como moneda colombiana
+  // Precio mínimo del hotel, ya formateado. El cálculo vive en el util para que la
+  // card de paquete y esta lista nunca muestren precios distintos del mismo hotel.
+  const findMinBaseRateFormateado = (data) => {
+    const min = findMinBaseRate(data, currentCurrency, descuentoHospedaje);
+    return min ? formatToCurrency(min.amount) : "*Sin Disponibilidad*";
   };
 
   //Funcion para almacenar la cantidad de adultos
@@ -293,9 +289,22 @@ const BusquedaCartagena = () => {
     if (storedCity) {
       const transformedCity = cityMap[storedCity] || "Ciudad desconocida";
       setCiudad(transformedCity);
+      setCodigoCiudad(storedCity);
     }
+
+    const rotacion = parseInt(localStorage.getItem("rotacionHotelSugerido"), 10);
+    setRotacionHotel(Number.isFinite(rotacion) ? rotacion : 0);
+    setDescuentoHospedaje(aplicaDescuentoHospedaje());
     const datosVuelo = JSON.parse(localStorage.getItem("datosDelVuelo"));
     setinfoVuelo(datosVuelo);
+
+    // Solo se usa la disponibilidad aérea si corresponde a esta búsqueda: el buscador
+    // guarda en dataVueloBusquedaId el timestamp del datosDelVuelo con el que consultó.
+    const busquedaVueloId = localStorage.getItem("dataVueloBusquedaId");
+    if (busquedaVueloId && datosVuelo?.timestamp === busquedaVueloId) {
+      setDataVuelo(JSON.parse(localStorage.getItem("dataVuelo")));
+    }
+
     const disponibilidadLocal = JSON.parse(localStorage.getItem("data"));
     const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
     setnochesyedades(nochesyedades);
@@ -311,6 +320,54 @@ const BusquedaCartagena = () => {
       ? /\[Booking connect Neto\]/i
       : /\[Booking connect Mayorista\]/i; // Expresión regular para validar el roomName
 
+  const esVueloHotel = infoVuelo?.active === true || infoVuelo?.activado === true;
+
+  // Paquete destacado: el hotel sugerido para la ciudad + el primer vuelo de la
+  // respuesta. Se recalcula al cambiar de divisa porque el total mezcla ambos precios.
+  const paquete = useMemo(() => {
+    if (!esVueloHotel || hotelesDisponibles.length === 0) return null;
+
+    const hotelBarato = getHotelSugerido(
+      hotelesDisponibles,
+      currentCurrency,
+      codigoCiudad,
+      rotacionHotel,
+      descuentoHospedaje
+    );
+    const vuelo = getPrimerVuelo(dataVuelo);
+    if (!hotelBarato || !vuelo) return null;
+
+    const personas = (nochesyedades1?.layout || []).reduce(
+      (total, room) =>
+        total + (room.adults || 0) + (room.children_ages?.length || 0),
+      0
+    );
+
+    const precios = calcularTotalPaquete({
+      precioHotel: hotelBarato.precio,
+      precioVueloUsd: vuelo.totalPriceUsd,
+      currency: currentCurrency,
+      trm: hotelBarato.trm,
+      personas,
+    });
+
+    return {
+      hotel: hotelBarato.hotel,
+      vuelo,
+      personas: personas || 1,
+      precios: { ...precios, precioHotel: hotelBarato.precio },
+    };
+  }, [
+    esVueloHotel,
+    hotelesDisponibles,
+    dataVuelo,
+    currentCurrency,
+    nochesyedades1,
+    codigoCiudad,
+    rotacionHotel,
+    descuentoHospedaje,
+  ]);
+
   return (
     <>
       <div className={styles.search_form_wrapper}>
@@ -322,38 +379,29 @@ const BusquedaCartagena = () => {
           <a href="/">Inicio</a> / <a href="/">Resultados de búsqueda</a>
         </div>
 
-      {(infoVuelo?.active === true || infoVuelo?.activado === true) && (
-      <div className={styles.stepper}>
-  <div className={styles.step}>
-    <div className={styles.stepnumberActive}>1</div>
-    <div className={styles.steptitleActive}>Alojamiento</div>
-    <div className={styles.stepcontentActive}>
-      Seleccione el alojamiento <br />
-      {nochesyedades1.nights} noches, {hotelesDisponibles[0]?.availability[0]?.adults || 0} adultos, {cantNinos(hotelesDisponibles[0]?.availability || [])} niños
-    </div>
-  </div>
-  <div className={styles.step}>
-    <div className={styles.stepnumber}>2</div>
-    <div className={styles.steptitle}>Vuelo</div>
-    <div className={styles.stepcontent}>
-      {infoVuelo?.origin} ⇆ {infoVuelo?.destinationName}<br/>
-      {nochesyedades1?.dateRange ? 
-        `${formatDate(nochesyedades1.dateRange.startDate)} - ${formatDate(nochesyedades1.dateRange.endDate)}` : 
-        'Fechas no seleccionadas'}
-    </div>
-  </div>
-  <div className={styles.step}>
-    <div className={styles.stepnumber}>3</div>
-    <div className={styles.steptitle}>Adicionales</div>
-    <div className={styles.stepcontent}>
-      ¡Disfruta al máximo tu viaje!
-      Incluye opciones de traslado, tours, y planes de alimentación entre otros adicionales
-    </div>
-  </div>
-</div>
-      )}
+     
 <br />
-        <div className={styles.title}>Resultados {Ciudad}</div>
+        {esVueloHotel &&
+          (paquete ? (
+            <PaqueteVueloHotelCard
+              hotelId={paquete.hotel.id}
+              hotelNombre={getHotelName(paquete.hotel)}
+              hotelImagen={hotelImages[paquete.hotel.id]}
+              nights={nochesyedades1.nights}
+              vuelo={paquete.vuelo}
+              precios={paquete.precios}
+              currency={currentCurrency}
+              personas={paquete.personas}
+              formatPrecio={formatToCurrency}
+            />
+          ) : (
+            <div className={styles.aviso_sin_vuelo}>
+              No encontramos vuelos para estas fechas. Puedes continuar reservando
+              solo el alojamiento.
+            </div>
+          ))}
+
+        <div className={styles.title} id="resultados">Resultados {Ciudad}</div>
         {/* <div className={styles.filter}>
           <select>
             <option>Menor precio</option>
@@ -405,9 +453,7 @@ const BusquedaCartagena = () => {
                   )}
                 <div className={styles.price}>
                   Desde:{" "}
-                  {`${findMinBaseRate(tipo.availability) !== Infinity
-                    ? findMinBaseRate(tipo.availability)
-                    : "Sin Disponibilidad"} ${currentCurrency}`}{" "}
+                  {`${findMinBaseRateFormateado(tipo.availability)} ${currentCurrency}`}{" "}
                   | Incluye desayuno y seguro
                 </div>
                 {/* Mensaje especial para Bocagrande (id: 7) entre el 01 y 11 de enero de 2026 */}

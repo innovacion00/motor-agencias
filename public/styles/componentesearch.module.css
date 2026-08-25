@@ -195,6 +195,16 @@ button:active{
 }
 
 
+.aviso_sin_vuelo {
+    background-color: #fff6e8;
+    border: 1px solid #f0d3a4;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    color: #7a5514;
+    margin-bottom: 28px;
+}
+
 .discount {
     position: absolute;
     top: 16px;

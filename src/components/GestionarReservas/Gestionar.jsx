@@ -380,6 +380,11 @@ const Gestionar = ({ reservas }) => {
 
   const infoHoteles = hoteles(reservas?.hotel);
 
+  // Hotel Aixo no aplica retencion en la fuente: no se muestra la columna
+  const ocultarRteFuente = String(reservas?.hotel || "")
+    .toLowerCase()
+    .includes("aixo");
+
   //#region Texto del textarea
   const handleChange = (event) => {
     setNota(event.target.value); // Guarda el valor del textarea en el estado
@@ -1822,7 +1827,7 @@ const Gestionar = ({ reservas }) => {
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Rte Fuente</th>
+                  {!ocultarRteFuente && <th>Rte Fuente</th>}
                   <th>Rte Ica</th>
                   <th>Rte Iva</th>
                 </tr>
@@ -1832,7 +1837,9 @@ const Gestionar = ({ reservas }) => {
                   <td>
                     <strong>Porcentaje %</strong>
                   </td>
-                  <td>{reservas?.reteFuente?.porcentaje}%</td>
+                  {!ocultarRteFuente && (
+                    <td>{reservas?.reteFuente?.porcentaje}%</td>
+                  )}
                   <td>{reservas?.reteIca?.porcentaje}%</td>
                   <td>{reservas?.reteIva?.porcentaje}%</td>
                 </tr>
@@ -1840,7 +1847,9 @@ const Gestionar = ({ reservas }) => {
                   <td>
                     <strong>Valor $</strong>
                   </td>
-                  <td>{formatCurrency(reservas?.reteFuente?.resultado)}</td>
+                  {!ocultarRteFuente && (
+                    <td>{formatCurrency(reservas?.reteFuente?.resultado)}</td>
+                  )}
                   <td>{formatCurrency(reservas?.reteIca?.resultado)}</td>
                   <td>{formatCurrency(reservas?.reteIva?.resultado)}</td>
                 </tr>

@@ -1,6 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import './FormularioRetenciones.css'
 
+// Hotel Aixo no aplica retencion en la fuente: no se muestra el campo ni se calcula.
+const HOTEL_AIXO_AUTOCORE_ID = 4
+const HOTEL_AIXO_ROOMCLOUD_ID = 13633
+
+const esHotelAixo = (reserva) => {
+    if (!reserva) return false
+    const autocore = Number(reserva.hotelidAutocore)
+    const roomcloud = Number(reserva.hotelid ?? reserva.hotelId)
+    return autocore === HOTEL_AIXO_AUTOCORE_ID || roomcloud === HOTEL_AIXO_ROOMCLOUD_ID
+}
+
 const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDatos }) => {
     const [isChecked, setIsChecked] = useState(false);
     const [formData, setFormData] = useState({
@@ -21,6 +32,12 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
         setiarRetenciones()
         const reserva = JSON.parse(localStorage.getItem('datosreserva'))
         setDatosReserva(reserva)
+
+        // Hotel Aixo: se limpia cualquier rete fuente que haya quedado de otra reserva
+        if (esHotelAixo(reserva?.[0])) {
+            setReteFuente(0)
+            setFormData((prevData) => ({ ...prevData, reteFuente: "" }))
+        }
     }, [precio])
 
     const handleChange = (e) => {
@@ -141,6 +158,9 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
     const hotelId = DatosReserva[0]?.hotelidAutocore
     const valorDesayuno = precioDesyunos(hotelId)
 
+    // Hotel Aixo: la retencion en la fuente no aplica en este hotel
+    const ocultarRteFuente = esHotelAixo(DatosReserva?.[0])
+
     let desayunos = 0
     let desayunoBase = 0
     let hospedajeBase = 0
@@ -194,13 +214,18 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
         e.preventDefault();
         // console.log("Datos del formulario:", formData);
 
-        const retenciones = calcularRetenciones(formData.reteFuente, formData.reteIca, formData.reteIva, hospedajeBase, desayunoBase, ivaHospedaje)
+        // En Hotel Aixo la rete fuente nunca se aplica: se fuerza en 0 aunque venga un valor previo
+        const datosFormulario = ocultarRteFuente
+            ? { ...formData, reteFuente: 0 }
+            : formData
+
+        const retenciones = calcularRetenciones(datosFormulario.reteFuente, datosFormulario.reteIca, datosFormulario.reteIva, hospedajeBase, desayunoBase, ivaHospedaje)
         setReteFuente(retenciones.calculo_rtf_fte)
         setReteIca(retenciones.calculo_rtf_ica)
         setReteIva(retenciones.calculo_rtf_iva)
-        manejarDatos(retenciones, formData)
+        manejarDatos(retenciones, datosFormulario)
 
-        localStorage.setItem('Retenciones%', JSON.stringify(formData))
+        localStorage.setItem('Retenciones%', JSON.stringify(datosFormulario))
     };
 
     // console.log(isChecked)
@@ -220,8 +245,6 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
             maximumFractionDigits: 0,
         }).format(value);
     };
-
-    const ocultarRteFuente = DatosReserva?.[0]?.hotelId === 13633 || DatosReserva?.[0]?.hotelid === "13633";
 
     return (
         <>
@@ -250,6 +273,9 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                     <div className='container_principal'>
                         <div className='container_retenciones'>
                             <p><strong>IMPORTANTE:</strong> Los valores deben ingresarse en formato numérico, no como porcentajes. Por ejemplo: en lugar de "2%", solo escribe "2".</p>
+                            {ocultarRteFuente && (
+                                <p><strong>NOTA:</strong> En este hotel no aplica la retención en la fuente.</p>
+                            )}
                             <form onSubmit={(event) => handleSubmit(event)} className='formulario_retenciones'>
                                     {!ocultarRteFuente &&
                                 <div>
@@ -291,7 +317,7 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Rte Fuente</th>
+                                        {!ocultarRteFuente && <th>Rte Fuente</th>}
                                         <th>Rte Ica</th>
                                         <th>Rte Iva</th>
                                         <th>Total a Pagar</th>
@@ -300,14 +326,14 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
                                 <tbody>
                                     <tr>
                                         <td></td>
-                                        <td>{formatCurrency(ReteFuente.toFixed(0))}</td>
+                                        {!ocultarRteFuente && <td>{formatCurrency(ReteFuente.toFixed(0))}</td>}
                                         <td>{formatCurrency(ReteIca.toFixed(0))}</td>
                                         <td>{formatCurrency(ReteIva.toFixed(0))}</td>
                                         <td>{formatCurrency(total.toFixed(0))}</td>
                                     </tr>
                                     <tr>
                                         <td></td>
-                                        <td></td>
+                                        {!ocultarRteFuente && <td></td>}
                                         <td></td>
                                         <td></td>
                                         <td><strong></strong></td>

@@ -1370,6 +1370,10 @@ const FormularioReserva = () => {
     });
 
     const enviar = async () => {
+      // Guarda el código si el hotel alcanzó a crearse. La reserva de vuelo se hace
+      // después y necesita ese código, así que un fallo suyo deja el hospedaje creado.
+      let hotelYaReservado = null;
+
       try {
         setbotondesactivado(true);
         const url = `${import.meta.env.PUBLIC_API_URL}/agencias/v1/reservas/reservar?hotelId=${reserva[0].hotelid}`;
@@ -1384,6 +1388,8 @@ const FormularioReserva = () => {
           if (!reservaChatbotId) {
             throw new Error("La reserva de hotel no retornó reservaChatbotId.");
           }
+
+          hotelYaReservado = reservaChatbotId;
 
           await createFlightReservation({
             reservaChatbotId,
@@ -1408,11 +1414,29 @@ const FormularioReserva = () => {
           throw new Error("Error al consultar la API");
         }
       } catch (error) {
-        Swal.fire({
-          icon: "error",
-          title: "Error al realizar la reserva",
-          text: `No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva mas tarde. ${error.message}`,
-        });
+        if (hotelYaReservado) {
+          Swal.fire({
+            icon: "warning",
+            title: "Reserva de hotel creada, vuelo pendiente",
+            html:
+              `Tu reserva de <b>hospedaje quedó registrada</b> con el código <b>${hotelYaReservado}</b>, ` +
+              `pero no se pudo emitir el vuelo.<br><br>` +
+              `<b>No vuelvas a reservar</b>: se duplicaría el hospedaje y se cobraría dos veces.<br><br>` +
+              `Comunícate con reservas@gehsuites.com indicando ese código para completar o ajustar el vuelo.<br><br>` +
+              `<small>Detalle técnico: ${error.message}</small>`,
+            confirmButtonText: "Ir a mis reservas",
+            confirmButtonColor: "#26547B",
+            allowOutsideClick: false,
+          }).then(() => {
+            window.location.href = "/misreservas";
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error al realizar la reserva",
+            text: `No se pudo realizar la reserva. Por favor, Verifica los datos ingresados o intenta hacer la reserva mas tarde. ${error.message}`,
+          });
+        }
         console.error("Error al obtener disponibilidad:", error);
       } finally {
         setbotondesactivado(false);
@@ -1795,7 +1819,7 @@ const FormularioReserva = () => {
                 <h4 style={{ marginTop: 0, marginBottom: "15px", color: "#1C3D5A" }}>
                   Vuelo de ida
                 </h4>
-                <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "10px" }}>
+                <div style={{ display: "flex", alignItems: "cent er", gap: "15px", marginBottom: "10px" }}>
                   {processedFlightData.outbound.logo && (
                     <img
                       src={processedFlightData.outbound.logo}

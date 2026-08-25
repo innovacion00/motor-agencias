@@ -22,6 +22,7 @@ import {
   resolveUpgradeTargetIds,
 } from '../utils/hotelUpgrades';
 import { buildRatePlanRegex } from '../utils/ratePlanMatchers';
+import { aplicaDescuentoHospedaje, conDescuentoHospedaje } from '../utils/descuentoHospedaje';
 
 const hotelesData = {
   9: {
@@ -682,6 +683,7 @@ export const Cid = ({ id }) => {
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
   const [infoVuelo, setinfoVuelo] = useState(null);
+  const [descuentoHospedaje, setDescuentoHospedaje] = useState(false);
   const [nochesyedades1, setnochesyedades] = useState({
     nights: 0,
     dateRange: {},
@@ -956,6 +958,7 @@ export const Cid = ({ id }) => {
     setinfoVuelo(datosVuelo);
     const nochesyedades = JSON.parse(localStorage.getItem("nochesyedades"));
     setnochesyedades(nochesyedades);
+    setDescuentoHospedaje(aplicaDescuentoHospedaje());
   }, []);
 
   // Filtrar tours cada vez que cambie la ciudad seleccionada
@@ -1711,10 +1714,12 @@ export const Cid = ({ id }) => {
                         });
 
                         return productosUnicos?.map((product, idx) => {
-                          const price =
+                          const price = conDescuentoHospedaje(
                             currentCurrency === "USD"
                               ? product?.baseRate?.amountBeforeTaxUSD
-                              : product?.baseRate?.amountBeforeTax;
+                              : product?.baseRate?.amountBeforeTax,
+                            descuentoHospedaje
+                          );
 
                           return (
                             <span key={idx}>
@@ -1782,14 +1787,17 @@ export const Cid = ({ id }) => {
                                 ],
                                 huespedes: adultos + ninos,
                                 precio: calculateTotalPrice(
-                                  dato.products?.find((product) =>
-                                    regexSeleccionado.test(product.roomName) || 
-                                    regexSeleccionado.test(product.rateDescription)
-                                  )?.baseRate?.[
-                                    currentCurrency == "USD"
-                                      ? "amountBeforeTaxUSD"
-                                      : "amountBeforeTax"
-                                  ] || "Sin precio disponible",
+                                  conDescuentoHospedaje(
+                                    dato.products?.find((product) =>
+                                      regexSeleccionado.test(product.roomName) ||
+                                      regexSeleccionado.test(product.rateDescription)
+                                    )?.baseRate?.[
+                                      currentCurrency == "USD"
+                                        ? "amountBeforeTaxUSD"
+                                        : "amountBeforeTax"
+                                    ],
+                                    descuentoHospedaje
+                                  ) || "Sin precio disponible",
                                   selectedTours,
                                   currentCurrency,
                                   ninos + adultos,
@@ -1797,14 +1805,17 @@ export const Cid = ({ id }) => {
                                   tipoTraslado,
                                   cantidadMascotas // Add this parameter
                                 ),
-                                precioBase: dato.products?.find((product) =>
-                                  regexSeleccionado.test(product.roomName) || 
-                                  regexSeleccionado.test(product.rateDescription)
-                                )?.baseRate?.[
-                                  currentCurrency == "USD"
-                                    ? "amountBeforeTaxUSD"
-                                    : "amountBeforeTax"
-                                ] || "Sin precio disponible",
+                                precioBase: conDescuentoHospedaje(
+                                  dato.products?.find((product) =>
+                                    regexSeleccionado.test(product.roomName) ||
+                                    regexSeleccionado.test(product.rateDescription)
+                                  )?.baseRate?.[
+                                    currentCurrency == "USD"
+                                      ? "amountBeforeTaxUSD"
+                                      : "amountBeforeTax"
+                                  ],
+                                  descuentoHospedaje
+                                ) || "Sin precio disponible",
                                 NombreH: dato.roomName,
                                 beds: obtenerBedsPorTipoHabitacion(dato.roomName),
                                 hotelid: habitaciones?.hotel?.roomcloud_id,

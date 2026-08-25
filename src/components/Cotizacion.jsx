@@ -1130,7 +1130,6 @@ export default function ReservaHotelComponent() {
       const infoTransporte =
         primerDatoReserva.incluirTraslado === true && tipodetraslado !== null
           ? {
-              tipo: primerDatoReserva.tipoTraslado,
               // En cotización no pedimos aún número de vuelo ni aerolínea,
               // pero el backend exige strings con longitud mínima; usamos "ND"
               numeroVuelo: "ND",

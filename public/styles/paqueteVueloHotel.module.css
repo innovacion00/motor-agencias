@@ -1,0 +1,253 @@
+.paquete_titulo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1C3D5A;
+    margin: 0 0 12px;
+    line-height: 1.35;
+}
+
+.paquete {
+    display: grid;
+    grid-template-columns: 1.15fr 1.35fr 0.9fr 1fr;
+    background-color: #fff;
+    border: 1px solid #e3e7ec;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.columna {
+    padding: 18px 20px;
+    border-right: 1px solid #e3e7ec;
+    min-width: 0;
+}
+
+.columna:last-child {
+    border-right: none;
+}
+
+.columna_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.columna_titulo {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1C3D5A;
+}
+
+.columna_link {
+    font-size: 13px;
+    color: #26547B;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.columna_link:hover {
+    text-decoration: underline;
+}
+
+/* --- Alojamiento --- */
+
+.alojamiento_body {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.alojamiento_img {
+    width: 92px;
+    height: 78px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background-color: #eef1f4;
+}
+
+.alojamiento_datos {
+    min-width: 0;
+}
+
+.hotel_nombre {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1C3D5A;
+    margin: 0 0 6px;
+    line-height: 1.3;
+}
+
+.hotel_noches {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.hotel_detalle {
+    font-size: 13px;
+    color: #26547B;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.hotel_detalle:hover {
+    text-decoration: underline;
+}
+
+/* --- Vuelo --- */
+
+.tramo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+}
+
+.tramo + .tramo {
+    border-top: 1px solid #f0f2f5;
+}
+
+.tramo_logo {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.tramo_punto {
+    text-align: center;
+    min-width: 52px;
+}
+
+.tramo_iata {
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 0.4px;
+}
+
+.tramo_hora {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1C3D5A;
+    line-height: 1.2;
+}
+
+.tramo_escalas {
+    font-size: 12px;
+    color: #26547B;
+    border-bottom: 1px solid #26547B;
+    padding-bottom: 2px;
+    white-space: nowrap;
+}
+
+/* --- Adicionales --- */
+
+.adicional {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 14px;
+    color: #1C3D5A;
+    text-decoration: none;
+}
+
+.adicional:hover .adicional_mas {
+    background-color: #26547B;
+    color: #fff;
+}
+
+.adicional_mas {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid #26547B;
+    color: #26547B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* --- Precio --- */
+
+.precio_columna {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #fafbfc;
+}
+
+.precio_label {
+    font-size: 13px;
+    color: #666;
+}
+
+.precio_total {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1C3D5A;
+    line-height: 1.2;
+    margin: 2px 0 6px;
+    word-break: break-word;
+}
+
+.precio_detalle {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 3px;
+}
+
+.precio_nota {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 12px;
+}
+
+.precio_boton {
+    width: 100%;
+    background-color: #26547B;
+    color: #fff;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.precio_boton:hover {
+    background-color: #173b5a;
+}
+
+.precio_boton_link {
+    text-decoration: none;
+}
+
+@media (max-width: 900px) {
+    .paquete {
+        grid-template-columns: 1fr;
+    }
+
+    .columna {
+        border-right: none;
+        border-bottom: 1px solid #e3e7ec;
+    }
+
+    .columna:last-child {
+        border-bottom: none;
+    }
+
+    .precio_columna {
+        align-items: stretch;
+    }
+}
