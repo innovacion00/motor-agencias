@@ -26,7 +26,9 @@ const SwiperSlider = () => {
       {/* <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/ChatGPT%20Image%2024%20nov%202025,%2009_48_26%20a.m..png" alt="Banner servicio temporalmente inactivo" />
       </SwiperSlide> */}
-      
+      <SwiperSlide >
+        <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/banner%20geh%20hotel%20+%20vuelo.jpg.jpeg" alt="Banner vuelo+hotel" />
+      </SwiperSlide>
       <SwiperSlide >
         <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/Banners%20BookingConnect/banner_vuelo+hotel.jpg.jpeg" alt="Banner vuelo+hotel" />
       </SwiperSlide>
