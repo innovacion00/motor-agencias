@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import DropdownSearch from "../components/DropdownSearch";
+import RouteProtection from "../components/RouteProtection.astro";
 import VuelosDisponibles from "../components/Vuelosdisponibles";
 
 ---
@@ -27,6 +27,7 @@ import VuelosDisponibles from "../components/Vuelosdisponibles";
       </head>
 
       <body>
+       <RouteProtection />
        <VuelosDisponibles client:only="react"/>
       </body>
     </html>

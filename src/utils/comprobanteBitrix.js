@@ -1,7 +1,6 @@
 import Cookies from "js-cookie";
 import { refreshToken } from "../stores/authtoken";
 import {
-  cuentasBancarias,
   getBancoBitrixId,
   getHotelBitrixId,
 } from "../components/GestionarReservas/CuentasBancarias";
@@ -85,11 +84,13 @@ export async function crearContactoBitrix({ nombre }) {
 
 /**
  * Crea la negociación del comprobante en Bitrix24.
+ * @param {object} args.grupo Grupo de cuentas resuelto (label, bitrixId, accounts)
+ *   proveniente de GET /agencias/v1/reservas/cuentas-bancarias.
  * @returns {Promise<string>} ID de la negociación creada.
  */
 export async function enviarComprobanteBitrix({
   reservas,
-  grupoSeleccionado,
+  grupo,
   cuentaIndex = 0,
   monto,
   fechaConsignacion,
@@ -102,7 +103,6 @@ export async function enviarComprobanteBitrix({
     );
   }
 
-  const grupo = cuentasBancarias[grupoSeleccionado];
   if (!grupo?.bitrixId) {
     throw new Error("La razón social seleccionada no está configurada.");
   }
@@ -168,6 +168,35 @@ const getApiBaseUrl = () =>
   (import.meta.env.PUBLIC_API_URL ?? "http://localhost:3000")
     .trim()
     .replace(/\/+$/, "");
+
+/**
+ * Carga las cuentas bancarias desde el backend (requiere JWT). Los números de
+ * cuenta y NIT dejaron de vivir en el bundle público.
+ * @returns {Promise<object>} Mapa `{ clave: { label, bitrixId, accounts } }`.
+ */
+export async function obtenerCuentasBancarias() {
+  const url = `${getApiBaseUrl()}/agencias/v1/reservas/cuentas-bancarias`;
+  const token = Cookies.get("accessToken");
+  let response = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (response.status === 401) {
+    const newToken = await refreshToken();
+    if (newToken) {
+      response = await fetch(url, {
+        headers: { Authorization: `Bearer ${newToken}` },
+      });
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error("No se pudieron cargar las cuentas bancarias");
+  }
+
+  const data = await response.json();
+  return data.grupos ?? {};
+}
 
 async function fetchWithToken(url, options = {}) {
   let token = Cookies.get("accessToken");

@@ -2,7 +2,7 @@ import { atom } from "nanostores";
 
 import Cookies from 'js-cookie';
 
-export const tokenglobal = atom("13");
+export const tokenglobal = atom(null);
 
 export const validateToken = async () => {
   try {

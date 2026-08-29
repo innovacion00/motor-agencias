@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-modal";
 import Swal from "sweetalert2";
 import styles from "./styles/comprobanteModal.module.css";
-import { cuentasBancarias, getGrupoCuentasPorHotel } from "./CuentasBancarias";
+import { getGrupoCuentasPorHotel } from "./CuentasBancarias";
 import {
   enviarComprobanteBitrix,
   registrarComprobanteEnReserva,
+  obtenerCuentasBancarias,
   TAMANO_MAXIMO_COMPROBANTE,
 } from "../../utils/comprobanteBitrix";
 
@@ -30,6 +31,8 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
   const [dragActivo, setDragActivo] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [copiado, setCopiado] = useState(false);
+  const [grupos, setGrupos] = useState(null);
+  const [cargandoCuentas, setCargandoCuentas] = useState(false);
   const inputFileRef = useRef(null);
 
   useEffect(() => {
@@ -39,7 +42,8 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
   }, []);
 
   // Reinicia el formulario cada vez que se abre el modal, preseleccionando
-  // el grupo de cuentas según el hotel de la reserva (si hay match).
+  // el grupo de cuentas según el hotel de la reserva (si hay match), y carga
+  // las cuentas bancarias desde el backend.
   useEffect(() => {
     if (!isOpen) return;
     const grupoSugerido = getGrupoCuentasPorHotel(reservas?.hotel) || "";
@@ -52,6 +56,20 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
     setDragActivo(false);
     setEnviando(false);
     setCopiado(false);
+
+    setCargandoCuentas(true);
+    obtenerCuentasBancarias()
+      .then(setGrupos)
+      .catch((error) => {
+        console.error("Error cargando cuentas bancarias:", error);
+        Swal.fire({
+          title: "No se pudieron cargar las cuentas",
+          text: "Intenta nuevamente en unos segundos.",
+          icon: "error",
+          confirmButtonColor: "#26547B",
+        });
+      })
+      .finally(() => setCargandoCuentas(false));
   }, [isOpen, reservas?.hotel]);
 
   // Libera la URL de previsualización al reemplazar el archivo o desmontar.
@@ -61,7 +79,7 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
     };
   }, [previewUrl]);
 
-  const grupoActual = grupoSeleccionado ? cuentasBancarias[grupoSeleccionado] : null;
+  const grupoActual = grupoSeleccionado ? grupos?.[grupoSeleccionado] : null;
   const cuentaActual = grupoActual?.accounts?.[cuentaIndex] || null;
 
   const handleMontoChange = (e) => {
@@ -207,7 +225,7 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
     try {
       bitrixDealId = await enviarComprobanteBitrix({
         reservas,
-        grupoSeleccionado,
+        grupo: grupoActual,
         cuentaIndex,
         monto,
         fechaConsignacion,
@@ -296,11 +314,17 @@ const ComprobanteModal = ({ isOpen, onClose, reservas }) => {
             <option value="" disabled>
               Selecciona la razón social
             </option>
-            {Object.entries(cuentasBancarias).map(([key, grupo]) => (
-              <option key={key} value={key}>
-                {grupo.label}
+            {cargandoCuentas ? (
+              <option value="" disabled>
+                Cargando cuentas...
               </option>
-            ))}
+            ) : (
+              Object.entries(grupos ?? {}).map(([key, grupo]) => (
+                <option key={key} value={key}>
+                  {grupo.label}
+                </option>
+              ))
+            )}
           </select>
         </div>
 

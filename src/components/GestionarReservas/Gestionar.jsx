@@ -15,10 +15,7 @@ import {
 } from "../../stores/pagos";
 import Swal from "sweetalert2";
 import { cleanupSweetAlert } from "../../utils/cleanupSweetAlert";
-import {
-  puedeGestionarFechasPago,
-  puedeCambiarEstadoReserva,
-} from "../../utils/PermisosExclusivos";
+import { getPermisosGestion } from "../../utils/permisosGestion";
 import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
@@ -185,10 +182,12 @@ const Gestionar = ({ reservas }) => {
   const [isSavingFechasPago, setIsSavingFechasPago] = useState(false);
   const fechaLimitePagoRef = useRef(null);
   const fechaLimitePago2Ref = useRef(null);
-  const usuarioPuedeGestionarFechasPago =
-    puedeGestionarFechasPago(datosDelUsuario);
-  const usuarioPuedeCambiarEstadoReserva =
-    puedeCambiarEstadoReserva(datosDelUsuario);
+  const [usuarioPuedeGestionarFechasPago, setUsuarioPuedeGestionarFechasPago] =
+    useState(false);
+  const [
+    usuarioPuedeCambiarEstadoReserva,
+    setUsuarioPuedeCambiarEstadoReserva,
+  ] = useState(false);
 
   // Estados de reserva mapeados (igual que en Tabla.jsx y Movimientos.jsx)
   const ESTADOS_RESERVA = {
@@ -330,6 +329,20 @@ const Gestionar = ({ reservas }) => {
   // Limpieza solo al entrar a la página (evita cerrar Swal en re-renders)
   useEffect(() => {
     cleanupSweetAlert();
+  }, []);
+
+  // Permisos de gestión calculados en el backend (correos autorizados en el servidor)
+  useEffect(() => {
+    getPermisosGestion()
+      .then((permisos) => {
+        setUsuarioPuedeGestionarFechasPago(permisos.puedeGestionarFechasPago);
+        setUsuarioPuedeCambiarEstadoReserva(
+          permisos.puedeCambiarEstadoReserva
+        );
+      })
+      .catch((error) =>
+        console.error("Error cargando permisos de gestión:", error)
+      );
   }, []);
 
   //#region UseEffect general
