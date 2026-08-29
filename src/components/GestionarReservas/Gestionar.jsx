@@ -16,7 +16,6 @@ import {
 import Swal from "sweetalert2";
 import { cleanupSweetAlert } from "../../utils/cleanupSweetAlert";
 import { getPermisosGestion } from "../../utils/permisosGestion";
-import jsPDF from "jspdf";
 import TablaDesglose from "../desglose/TablaDesglose";
 import { refreshToken } from "../../stores/authtoken";
 import ComprobanteModal from "./ComprobanteModal";
@@ -1039,7 +1038,7 @@ const Gestionar = ({ reservas }) => {
           return "Por favor ingrese un número válido entre 0 y 100";
         }
       },
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         // Mostrar loading mientras se genera el PDF
         Swal.fire({
@@ -1052,6 +1051,7 @@ const Gestionar = ({ reservas }) => {
         });
 
         const incremento = 1 + Number(result.value) / 100;
+        const { default: jsPDF } = await import("jspdf");
         const doc = new jsPDF();
         const margin = 20;
         let yPos = margin;
