@@ -7,7 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer.astro';
 import CurrencySelector from '../components/Cambiardivisas';
 import EncuestaAutoTrigger from '../components/EncuestaAutoTrigger.jsx';
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import "sweetalert2/dist/sweetalert2.min.css";
 // import CurrencySelector from '../components/Cambiardivisas';
 
@@ -41,7 +41,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
     </style>
     {ENABLE_VIEW_TRANSITIONS && (
       <>
-        <ViewTransitions />
+        <ClientRouter />
         <style>
           main {
             view-transition-name: page-content;

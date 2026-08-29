@@ -2,7 +2,7 @@
 const { title } = Astro.props;
 const ENABLE_VIEW_TRANSITIONS = true;
 import Footer from '../components/Footer.astro';
-import { ViewTransitions } from "astro:transitions";
+import { ClientRouter } from "astro:transitions";
 import "sweetalert2/dist/sweetalert2.min.css";
 ---
 
@@ -33,7 +33,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
     </style>
     {ENABLE_VIEW_TRANSITIONS && (
       <>
-        <ViewTransitions />
+        <ClientRouter />
         <style>
           main {
             view-transition-name: page-content;
