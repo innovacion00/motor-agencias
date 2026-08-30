@@ -423,6 +423,43 @@ export const buscarReservaPorFecha = async (fechaDesde, page = 1) => {
   return result;
 };
 
+// Función para buscar reservas con filtros combinados (q/qType + estado + rango de fechas)
+// Lazy loading, según rol. filtros = { tipo, texto, estado, desde, hasta }
+export const buscarReservasCombinadas = async (rolUsuario, filtros = {}, page = 1) => {
+  const URL = import.meta.env.PUBLIC_API_URL;
+
+  const buildUrl = () => {
+    if (rolUsuario?.includes("super-admin")) {
+      return `${URL}/agencias/v1/reservas`;
+    }
+    if (rolUsuario?.includes("admin")) {
+      return `${URL}/agencias/v1/reservas/reservas-by-agencia`;
+    }
+    return `${URL}/agencias/v1/reservas/reservas-by-user`;
+  };
+
+  const urlBase = buildUrl();
+  const params = [];
+  const texto = (filtros.texto || "").trim();
+  if (texto && filtros.tipo) {
+    params.push(`q=${encodeURIComponent(texto)}`);
+    params.push(`qType=${encodeURIComponent(filtros.tipo)}`);
+  }
+  if (filtros.estado && filtros.estado !== "todos") {
+    params.push(`status=${encodeURIComponent(filtros.estado)}`);
+  }
+  if (filtros.desde) {
+    params.push(`fechaDesde=${encodeURIComponent(filtros.desde)}`);
+  }
+  if (filtros.hasta) {
+    params.push(`fechaHasta=${encodeURIComponent(filtros.hasta)}`);
+  }
+
+  const url = params.length ? `${urlBase}?${params.join("&")}` : urlBase;
+
+  return await buscarUnaPagina(url, token, refreshToken, page, 15);
+};
+
 // Función para buscar reservas por estado de pago - Lazy loading
 export const buscarReservaPorEstado = async (status, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;

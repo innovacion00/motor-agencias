@@ -791,3 +791,149 @@ th {
     font-size: 10px;
   }
 }
+
+/* -------------------- Toolbar compacta de filtros combinables -------------------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  margin-bottom: 16px;
+  background-color: #f5f7fa;
+  border: 1px solid #e0e4e8;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.toolbar input,
+.toolbar select,
+.toolbar button {
+  box-sizing: border-box;
+  height: 38px;
+  font-size: 14px;
+}
+
+.toolSelect {
+  min-width: 165px;
+  padding: 0 34px 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background-color: white;
+  color: #2c4c6d;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c4c6d' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+
+.toolInput {
+  flex: 1 1 200px;
+  min-width: 180px;
+  padding: 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background-color: white;
+  transition: all 0.3s ease-in-out;
+}
+
+.toolDate {
+  width: 150px;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.toolSelect:hover,
+.toolInput:hover,
+.toolDate:hover {
+  border-color: #9F6118;
+  box-shadow: 0 0 5px rgba(159, 97, 24, 0.2);
+}
+
+.toolSelect:focus,
+.toolInput:focus,
+.toolDate:focus {
+  border-color: #9F6118;
+  box-shadow: 0 0 8px rgba(159, 97, 24, 0.4);
+}
+
+.toolInput::placeholder {
+  color: #666;
+  font-size: 14px;
+}
+
+.toolBuscar {
+  padding: 0 22px;
+  font-weight: bold;
+  color: white;
+  background-color: #9F6118;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.toolBuscar:hover:not(:disabled) {
+  background-color: #be6703;
+  box-shadow: 0 4px 8px rgba(159, 97, 24, 0.3);
+  transform: translateY(-1px);
+}
+
+.toolBuscar:disabled,
+.toolLimpiar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.toolLimpiar {
+  padding: 0 18px;
+  font-weight: 500;
+  color: #2c4c6d;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+.toolLimpiar:hover:not(:disabled) {
+  background-color: #e3e3e3;
+  border-color: #bbb;
+}
+
+@media (max-width: 900px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .toolbar input,
+  .toolbar select,
+  .toolbar button {
+    width: 100%;
+  }
+
+  .toolInput {
+    min-width: 0;
+  }
+
+  .toolSelect {
+    min-width: 0;
+  }
+
+  .toolDate {
+    width: 100%;
+  }
+}
