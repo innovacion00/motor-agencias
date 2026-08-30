@@ -111,6 +111,26 @@ import "sweetalert2/dist/sweetalert2.min.css";
   });
 </script>
 
+<script is:inline>
+  // Tabs General/Habitaciones: delegación en document para que funcionen
+  // también tras la navegación cliente (ClientRouter), donde los scripts
+  // de la página destino no siempre se re-ejecutan.
+  document.addEventListener("click", (event) => {
+    const btn = event.target && event.target.closest ? event.target.closest("#generalBtn, #roomsBtn") : null;
+    if (!btn) return;
+    const generalBtn = document.getElementById("generalBtn");
+    const roomsBtn = document.getElementById("roomsBtn");
+    const generalSection = document.getElementById("generalSection");
+    const roomsSection = document.getElementById("roomsSection");
+    if (!generalBtn || !roomsBtn || !generalSection || !roomsSection) return;
+    const goingRooms = btn === roomsBtn;
+    roomsSection.classList.toggle("active", goingRooms);
+    generalSection.classList.toggle("active", !goingRooms);
+    roomsBtn.classList.toggle("active", goingRooms);
+    generalBtn.classList.toggle("active", !goingRooms);
+  });
+</script>
+
 <!-- START Botmaker Webchat-->
 <script>
   (function () {

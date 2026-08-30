@@ -1,32 +1,72 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import "../../public/styles/BusquedaeventosB.css"; // Asegúrate de tener los estilos en un archivo separado
+import "../../public/styles/BusquedaeventosB.css";
 import DropdownSearchEventos from "./DropdownSearchEventos";
-const hoteles = [
+
+const hotelesBogota = [
+  {
+    nombre: "Hotel Windsor House",
+    direccion: "Chapinero, Calle 95 #9-97, Bogotá, Colombia",
+    imagen:
+      "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
+    habitaciones: "118",
+    salones: "9",
+    capacidadPersonas: "250",
+    id: 1,
+    ciudad: "Bogota",
+  },
+  {
+    nombre: "Hotel Madisson Inn",
+    direccion: "Barrio el Chico , Cra 18 #93 - 97, Bogotá, Colombia.",
+    imagen: "https://www.gehsuites.com/images/fachada-madison.jpg",
+    habitaciones: "60",
+    salones: "6",
+    capacidadPersonas: "90",
+    id: 2,
+    ciudad: "Bogota",
+  },
+];
+
+const hotelesSantaMarta = [
   {
     nombre: "Hotel Axis",
     direccion: "Cra. 3 #10-14, El Rodadero, Gaira, Santa Marta, Magdalena",
     imagen: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg",
-    habitaciones:"98",
+    habitaciones: "98",
     salones: "1",
-    capacidadPersonas:"100",
+    capacidadPersonas: "100",
     id: 1,
-    ciudad:"SantaMarta"
+    ciudad: "SantaMarta",
   },
   {
     nombre: "Hotel Sansiraka",
     direccion: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena",
     imagen: "https://www.gehsuites.com/images/SANSIRAKA-portada.jpg",
-    habitaciones:"60",
+    habitaciones: "60",
     salones: "1",
-    capacidadPersonas:"120",
+    capacidadPersonas: "120",
     id: 2,
-    ciudad:"SantaMarta"
-},
-  
+    ciudad: "SantaMarta",
+  },
 ];
 
-export const ResultadosCartagena = () => {
+const CIUDADES = {
+  Bogota: {
+    hoteles: hotelesBogota,
+    titulo: "Resultados Bogotá",
+    rutaResultados: "/eventosbogota",
+    rutaDetalle: "/infowindsor",
+  },
+  SantaMarta: {
+    hoteles: hotelesSantaMarta,
+    titulo: "Resultados Santa Marta",
+    rutaResultados: "/eventosSantamarta",
+    rutaDetalle: "/infosansiraka",
+  },
+};
+
+const ResultadosCartagena = ({ ciudad = "Bogota" }) => {
+  const config = CIUDADES[ciudad] || CIUDADES.Bogota;
   const [datoshotel, setdatoshotel] = useState([]);
 
   useEffect(() => {
@@ -36,7 +76,6 @@ export const ResultadosCartagena = () => {
   //FUNCION PARA ENVIAR DATOS AL LOCALSTORAGE Y REDIRECCIONAR
 
   const handleSeleccionar = (hotel) => {
-    // Crear el objeto con la info del hotel
     const nuevoDatoHotel = {
       nombrehotel: hotel.nombre,
       imagendelhotel: hotel.imagen,
@@ -47,14 +86,10 @@ export const ResultadosCartagena = () => {
       ciudad: hotel.ciudad,
     };
 
-    // Guardar en el localStorage
     localStorage.setItem("infohotel", JSON.stringify(nuevoDatoHotel));
 
-    // Redireccionar
     window.location.href = "/solicitudpresupuesto";
   };
-
-  
 
   return (
     <>
@@ -63,10 +98,10 @@ export const ResultadosCartagena = () => {
       </div>
       <div className="container">
         <div className="breadcrumb">
-          <a href="#">Inicio</a> / <a href="#">Resultados de búsqueda</a>
+          <a href="/eventos">Inicio</a> / <a href={config.rutaResultados}>Resultados de búsqueda</a>
         </div>
-        <h1>Resultados Santa Marta</h1>
-        {hoteles.map((hotel, index) => (
+        <h1>{config.titulo}</h1>
+        {config.hoteles.map((hotel, index) => (
           <div key={index} className="hotel-card">
             <img
               src={hotel.imagen}
@@ -91,7 +126,7 @@ export const ResultadosCartagena = () => {
                 </div>
               </div>
               <div className="links">
-                <a href="/infosansiraka">Ver detalle</a>
+                <a href={config.rutaDetalle}>Ver detalle</a>
                 <button
                   className="quote-btn"
                   onClick={() => handleSeleccionar(hotel)}

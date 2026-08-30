@@ -1,0 +1,172 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import DropdownSearch from "../DropdownSearch";
+import RouteProtection from "../RouteProtection.astro";
+import Carrousel from "../Carrouseles/Carrousel.jsx";
+import HOTELES_DATA from "../../data/hoteles.json";
+
+const { hotel } = Astro.props;
+const estilosCss = HOTELES_DATA.estilos.find((e) => e.id === hotel.estilo)?.css ?? "";
+const tieneHabitaciones = Array.isArray(hotel.habitaciones) && hotel.habitaciones.length > 0;
+const checkIcon = "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png";
+---
+
+{hotel.proteccion && <RouteProtection />}
+
+<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+
+  <div class="search-form-wrapper">
+    <DropdownSearch client:visible />
+  </div>
+
+  <div class="container">
+    <!-- Menú de botones General y Habitaciones -->
+    <div class="nav-tabs">
+      <button id="generalBtn" class="active">General</button>
+      {tieneHabitaciones && <button id="roomsBtn">Habitaciones</button>}
+    </div>
+
+    <!-- Sección General -->
+    <div id="generalSection" class="section active">
+      <div class="gallery">
+        {hotel.carrusel && hotel.carrusel.length ? (
+          <Carrousel images={hotel.carrusel} client:load />
+        ) : (
+          <>
+            <img alt="Hotel" class="main-image" src={hotel.galeria?.principal} />
+            {hotel.galeria?.laterales && (
+              <div class="side-images">
+                {hotel.galeria.laterales.map((src) => (
+                  <img alt="Hotel" height="150" width="250" src={src} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {hotel.tituloStyle ? (
+        <h2 style={hotel.tituloStyle}>{hotel.titulo}</h2>
+      ) : (
+        <h2>{hotel.titulo}</h2>
+      )}
+
+      <br />
+      {hotel.introduccion && hotel.introduccion.map((p) => <p set:html={p} />)}
+
+      <hr />
+
+      <div class="services">
+        <h3>Servicios destacados</h3>
+        <div class="service-list">
+          {hotel.destacados.map((s) => (
+            <div class="service-item">
+              <span>
+                <img src={s.icono} alt="check icon" />
+                {s.texto}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="servicess">
+        <br />
+        <hr />
+        <br />
+        <h3>Servicios generales</h3>
+        <div class="service-list">
+          {hotel.generales.map((s) => (
+            <div class="service-item">
+              <span>
+                <img src={s.icono} alt="check icon" />
+                {s.texto}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="info-box">
+        <div class="contact-info">
+          <i class="fas fa-phone-alt"></i>
+          {hotel.contacto?.telefono}
+          <i class="fas fa-map-marker-alt" style="margin-left: 20px;"></i>
+          {hotel.contacto?.direccion}
+          <a href={hotel.contacto?.mapsUrl} target="_blank" rel="noopener noreferrer">
+            Ver mapa
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Habitaciones -->
+    {tieneHabitaciones && (
+      <div id="roomsSection" class="section">
+        {hotel.habitaciones.map((room) => (
+          <div class="room">
+            <div class="room-header">
+              <div class="room-gallery">
+                <div class="room-main-image-container">
+                  <img src={room.imagenPrincipal} alt={room.nombre} class="room-main-image" />
+                </div>
+                {room.imagenesSecundarias?.length > 0 && (
+                  <div class="room-small-images-container">
+                    {room.imagenesSecundarias.map((src, i) => (
+                      <img src={src} alt={`Imagen pequeña ${i + 1}`} class="room-small-image" />
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div class="room-details">
+                <h3>{room.nombre}</h3>
+                <p>{room.descripcion}</p>
+                <br />
+                <hr />
+                <br />
+                {room.iconos?.length > 0 && (
+                  <div class="room-icons">
+                    {room.iconos.map((ic) => (
+                      <span>{ic}</span>
+                    ))}
+                  </div>
+                )}
+                <br />
+                <hr />
+                <br />
+                {room.instalaciones?.map((sec) => (
+                  <div class="room-services">
+                    <h4>{sec.titulo}</h4>
+                    <ul>
+                      {sec.items.map((it) => (
+                        <li>
+                          <img src={checkIcon} alt="check icon" />
+                          {it}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <script is:inline>
+    function checkAuth() {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        window.location.href = "/";
+      }
+    }
+
+    checkAuth();
+  </script>
+
+  <style set:html={estilosCss} />
+</BaseLayout>

@@ -1,0 +1,48 @@
+---
+import InfoHotel from "../components/infoHotel/InfoHotel.astro";
+import ResultadosBusqueda from "../components/paginasDinamicas/ResultadosBusqueda.astro";
+import ResultadosEventos from "../components/paginasDinamicas/ResultadosEventos.astro";
+import Tablero from "../components/paginasDinamicas/Tablero.astro";
+import HOTELES_DATA from "../data/hoteles.json";
+
+const slug = Astro.params.slug;
+const esTexto = typeof slug === "string";
+
+const hotel =
+  esTexto && slug.startsWith("info")
+    ? HOTELES_DATA.hoteles.find((h) => h.slug === slug.slice(4))
+    : null;
+
+const ciudadesBusqueda = {
+  bogota: "Bogotá",
+  cartagena: "Cartagena de Indias",
+  santamarta: "Santa Marta",
+};
+const ciudadBusqueda =
+  esTexto && slug.startsWith("busqueda") ? ciudadesBusqueda[slug.slice(8)] : null;
+
+const ciudadEventos =
+  esTexto && slug !== "eventos" && slug.startsWith("eventos")
+    ? slug === "eventosbogota"
+      ? "Bogota"
+      : slug === "eventosSantamarta"
+        ? "SantaMarta"
+        : null
+    : null;
+
+const modoTablero =
+  esTexto && slug === "tablerousuario"
+    ? "usuario"
+    : esTexto && slug === "tableroeventos"
+      ? "eventos"
+      : null;
+
+if (!hotel && !ciudadBusqueda && !ciudadEventos && !modoTablero) {
+  return Astro.redirect("/");
+}
+---
+
+{modoTablero && <Tablero modo={modoTablero} />}
+{ciudadEventos && <ResultadosEventos ciudad={ciudadEventos} />}
+{ciudadBusqueda && <ResultadosBusqueda ciudad={ciudadBusqueda} />}
+{hotel && <InfoHotel hotel={hotel} />}
