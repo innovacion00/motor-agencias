@@ -20,6 +20,25 @@ h4{
 h3{
   font-family: "Roboto";
 }
+
+:root {
+  --bc-primary: #26547B;
+  --bc-primary-dark: #1e4060;
+  --bc-accent: #9F6118;
+  --bc-slate: #1C3D5A;
+  --bc-danger: #d33;
+  --bc-danger-dark: #b22;
+  --bc-border: #cfcece;
+  --bc-border-soft: #e2e8f0;
+  --bc-text: #1f2937;
+  --bc-muted: #6b7280;
+  --bc-radius: 10px;
+  --bc-radius-sm: 6px;
+  --bc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 18px rgba(0, 0, 0, 0.07);
+  --bc-shadow: 0 2px 4px rgba(0, 0, 0, 0.05), 0 10px 28px rgba(0, 0, 0, 0.09);
+  --bc-transition: 0.2s ease;
+}
+
 .containerGestionar{
     padding: 2rem clamp(12px, 4vw, 5rem);
     max-width: 100%;
@@ -40,7 +59,7 @@ h3{
     height: auto;
     padding: 8px 12px;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -99,7 +118,7 @@ h3{
 }
 .aboned {
     background-color: #f5ca0c;
-    color: white;
+    color: #4a3b00;
   }
 .cancel {
     background-color: #bd1f1f;
@@ -125,13 +144,14 @@ h3{
     min-height: 518px;
     width: 100%;
     max-width: 100%;
-    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3); 
-    padding: 1rem;
+    box-shadow: var(--bc-shadow-sm);
+    border: 1px solid var(--bc-border-soft);
+    padding: 1.25rem 1rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.25rem;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: var(--bc-radius);
 }
 
 .hotelInfo{
@@ -285,9 +305,9 @@ h3{
     flex: 1 1 320px;
     min-width: 0;
     box-sizing: border-box;
-    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    /* padding: 1rem; */
+    box-shadow: var(--bc-shadow-sm);
+    border: 1px solid var(--bc-border-soft);
+    border-radius: var(--bc-radius);
 }
 
 .containerHuesped .titleHuespe{
@@ -357,8 +377,9 @@ h3{
     min-width: min(264px, 100%);
     flex: 1 1 264px;
     box-sizing: border-box;
-    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+    box-shadow: var(--bc-shadow-sm);
+    border: 1px solid var(--bc-border-soft);
+    border-radius: var(--bc-radius);
 }
 
 .hotelR{
@@ -393,20 +414,33 @@ h3{
     width: 100%;
     height: 40px;
     border: none;
-    border-radius: 4px;
-    background-color: #26547B;
+    border-radius: 8px;
+    background-color: var(--bc-primary);
     color: #ffffff;
     margin-top: .5rem;
     font-weight: 600;
     cursor: pointer;
-    
+    transition: background-color var(--bc-transition), transform var(--bc-transition);
+}
+
+.pagos button:hover:not(:disabled) {
+    background-color: var(--bc-primary-dark);
+    transform: translateY(-1px);
+}
+
+.pagos button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .gestionarReserv{
     /* width: 264px; */
     height: auto;
-    box-shadow: 1px 1px 6px 2px rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
+    box-shadow: var(--bc-shadow-sm);
+    border: 1px solid var(--bc-border-soft);
+    border-radius: var(--bc-radius);
     margin-top: 1.2rem;
 }
 
@@ -428,7 +462,7 @@ h3{
 
 .estadoSelect {
     padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 0.95rem;
     min-width: 200px;
@@ -449,13 +483,25 @@ h3{
     width: 200px;
     height: 40px;
     border: none;
-    border-radius: 4px;
-    background-color: #26547B;
+    border-radius: 8px;
+    background-color: var(--bc-primary);
     color: #ffffff;
     margin-top: .5rem;
     font-weight: 600;
     cursor: pointer;
-    
+    transition: background-color var(--bc-transition), transform var(--bc-transition);
+}
+
+.acciones > button:hover:not(:disabled) {
+    background-color: var(--bc-primary-dark);
+    transform: translateY(-1px);
+}
+
+.acciones > button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .reactivarButton {
@@ -517,44 +563,31 @@ h3{
     margin-top: 12px !important;
 }
 
-.cancelarButton {
-    background-color: #d33; /* Color original */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .cancelarButton:hover:not(:disabled) {
-    background-color: #b22; /* Color más oscuro al pasar el mouse */
-  }
-  
-  .cancelarButton:disabled,
-  .disabledButtonc {
-    background-color: #ccc !important; /* Color gris para el estado deshabilitado */
-    color: #666 !important;
-    cursor: not-allowed !important; /* Indica que no es interactivo */
+.acciones > button.cancelarButton {
+    background-color: var(--bc-danger);
   }
 
-  .pagarButton {
-    background-color: #d33; /* Color original */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  .acciones > button.cancelarButton:hover:not(:disabled) {
+    background-color: var(--bc-danger-dark);
   }
-  
-  .pagarButton:hover:not(:disabled) {
-    background-color: rgb(34, 95, 187); /* Color más oscuro al pasar el mouse */
-  }
-  
+
+  .acciones > button.cancelarButton:disabled,
   .cancelarButton:disabled,
-  .disabledButtonp {
-    background-color: #ccc !important; /* Color gris para el estado deshabilitado */
+  .disabledButtonc {
+    background-color: #ccc !important;
     color: #666 !important;
-    cursor: not-allowed !important; /* Indica que no es interactivo */
+    cursor: not-allowed !important;
+  }
+
+  .pagarButton:hover:not(:disabled) {
+    background-color: var(--bc-primary-dark);
+  }
+
+  .pagarButton:disabled,
+  .disabledButtonp {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
   }
 
   .acuerdos p{

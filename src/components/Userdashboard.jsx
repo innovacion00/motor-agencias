@@ -3,7 +3,7 @@ import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este arch
 import { getReservas, reservasNano } from "../stores/disponibilidad";
 import { VictoryBar, VictoryChart, VictoryAxis, VictoryTheme, VictoryPie } from "victory";
 import { useHover } from "@uidotdev/usehooks";
-import { refreshToken } from "../stores/authtoken";
+import { refreshToken, validateToken } from "../stores/authtoken";
 import Cookies from "js-cookie";
 
 import Swal from "sweetalert2";
@@ -32,12 +32,41 @@ const UserDashboard = () => {
   ];
   //#region Use effect general
   useEffect(() => {
-    const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
-    ObtenerReservas(datosdelusuario.token, datosdelusuario.role[0]);
-    setUserData(datosdelusuario);
-    obtenerSaldo(datosdelusuario.token); // Obtener saldo de la agencia
-    // setciudadSeleccionada(Ciudad)
-    // settokenusuario(token)
+    const cargarDatosUsuario = async () => {
+      let datosdelusuario = null;
+
+      try {
+        datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
+      } catch {
+        datosdelusuario = null;
+      }
+
+      // Si el localStorage está vacío (sesión restaurada por cookies),
+      // validar el token y tomar el usuario desde la cookie datosUsuario.
+      if (!datosdelusuario && Cookies.get("accessToken")) {
+        await validateToken();
+        const cookieRaw = Cookies.get("datosUsuario");
+        try {
+          datosdelusuario = cookieRaw ? JSON.parse(cookieRaw) : null;
+        } catch {
+          datosdelusuario = null;
+        }
+      }
+
+      if (!datosdelusuario) {
+        window.location.href = "/login";
+        return;
+      }
+
+      const rol = Array.isArray(datosdelusuario?.role)
+        ? datosdelusuario.role[0]
+        : "";
+      ObtenerReservas(rol);
+      setUserData(datosdelusuario);
+      obtenerSaldo();
+    };
+
+    cargarDatosUsuario();
   }, []);
 
 
@@ -51,8 +80,8 @@ const UserDashboard = () => {
   };
 
   //#region Reservas obtenidas
-  const ObtenerReservas = async (token, nombreAgencia) => {
-    await getReservas(nombreAgencia);
+  const ObtenerReservas = async (rol) => {
+    await getReservas(rol);
     const reservasObtenidas = reservasNano.get();
     setReservas(reservasObtenidas);
   };
@@ -397,13 +426,13 @@ const UserDashboard = () => {
             onChange={handleImageUpload}
             style={{ display: "none" }} // Oculta el input
           />
-          <h2>{userData?.agencia.fullName}</h2>
+          <h2>{userData?.agencia?.fullName}</h2>
           <p>Correo: {userData?.email}</p>
           <p>Celular:{userData?.telefono}</p>
           <p>
             Tipo de usuario:{" "}
             <span style={{ fontWeight: "bold", color: "#1C3D5A" }}>
-              {userData?.role[0]}
+              {userData?.role?.[0]}
             </span>
           </p>
           <button onClick={openPoliciesModal} className="btn btn-primary">Politicas de las agencias</button>
@@ -477,8 +506,8 @@ const UserDashboard = () => {
               <div>
                 
                 {reservas.slice(0, 3).map((dato, index) => (
-                  <tr className="estadopago" key={index}>
-                    <tr>
+                  <div className="estadopago" key={index}>
+                    <div className="pending-payment-item">
                       {dato.status == "0" &&
                       dato.pagadoPrimeraMitad == false ? (
                         <span className="status pending">Pago pendiente</span>
@@ -511,19 +540,19 @@ const UserDashboard = () => {
                           Pago total en proceso
                         </span>
                       ) : (
-                        <p>Estado no valido</p>
+                        <span>Estado no valido</span>
                       )}
-                    </tr>
-                    <tr className="nombrehotel">Hotel: {dato.hotel}</tr>
-                    <tr className="fechalimit">
-                      Fecha limite de pago: {dato.reservation.checkin}
-                    </tr>
+                    </div>
+                    <div className="nombrehotel">Hotel: {dato?.hotel}</div>
+                    <div className="fechalimit">
+                      Fecha limite de pago: {dato?.reservation?.checkin}
+                    </div>
 
                     <div className="pending-payment-item">
-                      <div>Total:{formatCurrency(dato.total)} COP</div>
+                      <div>Total:{formatCurrency(dato?.total)} COP</div>
                     </div>
                     <hr className="dashboard-reserva-hr" aria-hidden="true" />
-                  </tr>
+                  </div>
                 ))}
               </div>
             </div>
