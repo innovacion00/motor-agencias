@@ -1,6 +1,5 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import RouteProtection from "../RouteProtection.astro";
 import Userdashboard from "../Userdashboard.jsx";
 import UserDashboardEventos from "../UserDashboardEventos.jsx";
 
@@ -10,7 +9,6 @@ const titulo =
 ---
 
 <BaseLayout title={titulo}>
-  <RouteProtection />
   {modo === "eventos" ? (
     <UserDashboardEventos client:load />
   ) : (

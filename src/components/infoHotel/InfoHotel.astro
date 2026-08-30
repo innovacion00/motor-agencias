@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import DropdownSearch from "../DropdownSearch";
-import RouteProtection from "../RouteProtection.astro";
 import Carrousel from "../Carrouseles/Carrousel.jsx";
 import HOTELES_DATA from "../../data/hoteles.json";
 
@@ -10,8 +9,6 @@ const estilosCss = HOTELES_DATA.estilos.find((e) => e.id === hotel.estilo)?.css 
 const tieneHabitaciones = Array.isArray(hotel.habitaciones) && hotel.habitaciones.length > 0;
 const checkIcon = "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png";
 ---
-
-{hotel.proteccion && <RouteProtection />}
 
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
@@ -156,17 +153,6 @@ const checkIcon = "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconch
       </div>
     )}
   </div>
-
-  <script is:inline>
-    function checkAuth() {
-      const token = localStorage.getItem("authToken");
-      if (!token) {
-        window.location.href = "/";
-      }
-    }
-
-    checkAuth();
-  </script>
 
   <style set:html={estilosCss} />
 </BaseLayout>

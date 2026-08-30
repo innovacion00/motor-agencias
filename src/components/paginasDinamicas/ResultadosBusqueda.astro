@@ -1,12 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import RouteProtection from "../RouteProtection.astro";
 import Componentesearch from "../Componentesearch";
 
 const { ciudad } = Astro.props;
 ---
 
 <BaseLayout title={`Resultados ${ciudad} - BookingConnect`}>
-  <RouteProtection />
   <Componentesearch client:load />
 </BaseLayout>

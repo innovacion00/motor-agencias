@@ -1,12 +1,10 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import RouteProtection from "../RouteProtection.astro";
 import Busquedaeventos from "../Busquedaeventos";
 
 const { ciudad } = Astro.props;
 ---
 
 <BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
-  <RouteProtection />
   <Busquedaeventos client:load ciudad={ciudad} />
 </BaseLayout>
