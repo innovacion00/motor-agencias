@@ -1213,6 +1213,28 @@ export const Cid = ({ id }) => {
   const puedeReservar =
     datohabitacion.length > 0 && totalBedsSeleccionadas >= totalAdultos;
 
+  // Hoteles deshabilitados temporalmente (por id numérico de la plataforma).
+  // Madisson = 3.
+  const HOTELES_DESHABILITADOS = new Set([3]);
+  if (HOTELES_DESHABILITADOS.has(Number(id))) {
+    return (
+      <>
+        <div className={styles.search_form_wrapper}>
+          <DropdownSearch client:load />
+        </div>
+        <div className={styles.container}>
+          <div style={{ textAlign: "center", padding: "60px 20px" }}>
+            <h2 style={{ color: "#1C3D5A" }}>{hotel?.name || "Este hotel"}</h2>
+            <p style={{ fontSize: "18px", marginTop: "12px" }}>
+              Hotel deshabilitado temporalmente. Estamos en proceso de
+              renovación de servicios y volverá muy pronto. 🏖️
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <style>{`

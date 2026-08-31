@@ -397,6 +397,10 @@ const Gestionar = ({ reservas }) => {
     .toLowerCase()
     .includes("aixo");
 
+  // Hotel Madisson: pagos deshabilitados temporalmente (negociación en curso)
+  const esMadisson =
+    String(reservas?.hotel || "").toLowerCase().includes("madisson");
+
   //#region Texto del textarea
   const handleChange = (event) => {
     setNota(event.target.value); // Guarda el valor del textarea en el estado
@@ -569,6 +573,7 @@ const Gestionar = ({ reservas }) => {
 
   //#region Boton pagar mitad
   const onClick = async (id, booleano) => {
+    if (esMadisson) return;
     if (
       reservas?.status == "1" ||
       reservas?.status == "3" ||
@@ -580,6 +585,7 @@ const Gestionar = ({ reservas }) => {
   };
   //#region Boton pagar total
   const onClickTotal = async (id, booleano) => {
+    if (esMadisson) return;
     if (
       reservas?.status == "1" ||
       reservas?.status == "3" ||
@@ -593,6 +599,7 @@ const Gestionar = ({ reservas }) => {
 
   //#region Boton pagar billetera
   const onClickBilletera = async (id, booleano) => {
+    if (esMadisson) return;
     if (
       reservas?.status == "1" ||
       reservas?.status == "3" ||
@@ -880,6 +887,7 @@ const Gestionar = ({ reservas }) => {
   //#region Modal Pago mi saldo
 
   const confirmarPago = (id) => {
+    if (esMadisson) return;
     Swal.fire({
       title: "Seleccione el tipo de pago",
       text: "¿Qué porcentaje del valor total desea pagar?",
@@ -983,6 +991,7 @@ const Gestionar = ({ reservas }) => {
   };
 
   const confirmarReactivacion = () => {
+    if (esMadisson) return;
     Swal.fire({
       title: "¿Reactivar reserva?",
       text: "Recuerde que: la reactivación de la reserva está sujeta a disponibilidad y debe pagar el 100% de la reserva",
@@ -1233,14 +1242,16 @@ const Gestionar = ({ reservas }) => {
           <p className={`${styles.estadoPago} ${styles.cancel}`}>
             Reserva cancelada
           </p>
-          <button
-            type="button"
-            onClick={confirmarReactivacion}
-            disabled={isReactivating || !reservas?.reservaChatbotId}
-            className={styles.reactivarLink}
-          >
-            {isReactivating ? "Reactivando..." : "Reactivar reserva"}
-          </button>
+          {!esMadisson && (
+            <button
+              type="button"
+              onClick={confirmarReactivacion}
+              disabled={isReactivating || !reservas?.reservaChatbotId}
+              className={styles.reactivarLink}
+            >
+              {isReactivating ? "Reactivando..." : "Reactivar reserva"}
+            </button>
+          )}
         </div>
       ) : reservas?.status == 2 && reservas.pagadoPrimeraMitad == true ? (
         <p className={`${styles.estadoPago} ${styles.denied}`}>
@@ -2046,91 +2057,113 @@ const Gestionar = ({ reservas }) => {
               ) : (
                 <p>Monto no valido</p>
               )}
-              <button
-                onClick={() => onClick(reservas._id, false)}
-                disabled={
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "6" ||
-                  isLoading
-                }
-                className={`${styles.pagarButton} ${reservas?.status == "1" ||
-                    reservas?.status == "3" ||
-                    reservas?.status == "4" ||
-                    reservas?.status == "6"
-                    ? styles.disabledButtonp
-                    : ""
-                  }`}
-              >
-                {isLoading ? "Generando link..." : "Pagar el 50%"}
-              </button>
-              <br />
-              <button
-                onClick={() => onClickTotal(reservas._id, true)}
-                disabled={
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "5" ||
-                  reservas?.status == "6" ||
-                  reservas?.pagadoPrimeraMitad ||
-                  isLoading
-                }
-                className={`${styles.pagarButton} ${reservas?.status == "1" ||
-                    reservas?.status == "3" ||
-                    reservas?.status == "4" ||
-                    reservas?.status == "5" ||
-                    reservas?.status == "6" ||
-                    reservas?.pagadoPrimeraMitad
-                    ? styles.disabledButtonp
-                    : ""
-                  }`}
-              >
-                {isLoading ? "Generando link..." : "Pagar Total"}
-              </button>
-              <button
-                onClick={() => confirmarPago(reservas._id)}
-                disabled={
-                  reservas?.status == "1" ||
-                  reservas?.status == "3" ||
-                  reservas?.status == "4" ||
-                  reservas?.status == "6" ||
-                  
-                  isLoading
-                }
-                className={`${styles.pagarButton} ${reservas?.status == "1" ||
-                    reservas?.status == "3" ||
-                    reservas?.status == "4" 
-                    || reservas?.status == "6"
-                    
-                    ? styles.disabledButtonp
-                    : ""
-                  }`}
-              >
-                {isLoading ? "Generando link..." : "Pagar con Mi saldo"}
-              </button>
-              {/* El hotel debe existir en la lista de Bitrix para poder enviar el comprobante. */}
-              {COMPROBANTE_PAGO_HABILITADO && puedeEnviarComprobante(reservas?.hotel) && (
-                <button
-                  type="button"
-                  onClick={() => setMostrarModalComprobante(true)}
-                  disabled={
-                    reservas?.status == "1" ||
-                    reservas?.status == "3" ||
-                    reservas?.status == "4" ||
-                    reservas?.status == "6"
-                  }
-                  className={`${styles.pagarButton} ${reservas?.status == "1" ||
+              {esMadisson ? (
+                <div
+                  style={{
+                    backgroundColor: "#FFF4E5",
+                    border: "1px solid #F0B429",
+                    color: "#8a6d1a",
+                    borderRadius: "8px",
+                    padding: "14px 16px",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    textAlign: "center",
+                    marginTop: "12px",
+                  }}
+                >
+                  ⚠️ Los pagos para este hotel están deshabilitados
+                  temporalmente. Estamos renovando nuestro servicio y volverá
+                  muy pronto.
+                </div>
+              ) : (
+                <>
+                  <button
+                    onClick={() => onClick(reservas._id, false)}
+                    disabled={
+                      reservas?.status == "1" ||
                       reservas?.status == "3" ||
                       reservas?.status == "4" ||
-                      reservas?.status == "6"
-                      ? styles.disabledButtonp
-                      : ""
-                    }`}
-                >
-                  Subir comprobante de pago
-                </button>
+                      reservas?.status == "6" ||
+                      isLoading
+                    }
+                    className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                        reservas?.status == "3" ||
+                        reservas?.status == "4" ||
+                        reservas?.status == "6"
+                        ? styles.disabledButtonp
+                        : ""
+                      }`}
+                  >
+                    {isLoading ? "Generando link..." : "Pagar el 50%"}
+                  </button>
+                  <br />
+                  <button
+                    onClick={() => onClickTotal(reservas._id, true)}
+                    disabled={
+                      reservas?.status == "1" ||
+                      reservas?.status == "3" ||
+                      reservas?.status == "4" ||
+                      reservas?.status == "5" ||
+                      reservas?.status == "6" ||
+                      reservas?.pagadoPrimeraMitad ||
+                      isLoading
+                    }
+                    className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                        reservas?.status == "3" ||
+                        reservas?.status == "4" ||
+                        reservas?.status == "5" ||
+                        reservas?.status == "6" ||
+                        reservas?.pagadoPrimeraMitad
+                        ? styles.disabledButtonp
+                        : ""
+                      }`}
+                  >
+                    {isLoading ? "Generando link..." : "Pagar Total"}
+                  </button>
+                  <button
+                    onClick={() => confirmarPago(reservas._id)}
+                    disabled={
+                      reservas?.status == "1" ||
+                      reservas?.status == "3" ||
+                      reservas?.status == "4" ||
+                      reservas?.status == "6" ||
+                      
+                      isLoading
+                    }
+                    className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                        reservas?.status == "3" ||
+                        reservas?.status == "4" 
+                        || reservas?.status == "6"
+                        
+                        ? styles.disabledButtonp
+                        : ""
+                      }`}
+                  >
+                    {isLoading ? "Generando link..." : "Pagar con Mi saldo"}
+                  </button>
+                  {/* El hotel debe existir en la lista de Bitrix para poder enviar el comprobante. */}
+                  {COMPROBANTE_PAGO_HABILITADO && puedeEnviarComprobante(reservas?.hotel) && (
+                    <button
+                      type="button"
+                      onClick={() => setMostrarModalComprobante(true)}
+                      disabled={
+                        reservas?.status == "1" ||
+                        reservas?.status == "3" ||
+                        reservas?.status == "4" ||
+                        reservas?.status == "6"
+                      }
+                      className={`${styles.pagarButton} ${reservas?.status == "1" ||
+                          reservas?.status == "3" ||
+                          reservas?.status == "4" ||
+                          reservas?.status == "6"
+                          ? styles.disabledButtonp
+                          : ""
+                        }`}
+                    >
+                      Subir comprobante de pago
+                    </button>
+                  )}
+                </>
               )}
             </div>
             {COMPROBANTE_PAGO_HABILITADO && (
@@ -2205,7 +2238,7 @@ const Gestionar = ({ reservas }) => {
               </button> */}
             </div>
           </div>
-          {Number(reservas?.status) === 4 && (
+          {Number(reservas?.status) === 4 && !esMadisson && (
             <div className={styles.gestionarReserv}>
               <p>Reactivación de reserva</p>
               <div className={styles.acciones}>

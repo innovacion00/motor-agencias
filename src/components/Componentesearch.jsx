@@ -428,7 +428,9 @@ const BusquedaCartagena = () => {
               <div className={styles.hotel_info}>
                 <h3>
                   {getHotelName(tipo.hotel)}{" "}
-                  <a href={`/hoteles/${tipo.hotel.id}`}>Ver detalle de hotel</a>
+                  {tipo.hotel.id !== 3 && (
+                    <a href={`/hoteles/${tipo.hotel.id}`}>Ver detalle de hotel</a>
+                  )}
                 </h3>
                 <div className={styles.icons}>
                   {hotelIcons[tipo.hotel.id]?.map((iconUrl, index) => (
@@ -470,9 +472,28 @@ const BusquedaCartagena = () => {
                     Estas habitaciones solo están disponibles para dos noches o más
                   </div>
                 )}
-                <a href={`/hoteles/${tipo.hotel.id}`}>
-                  <button>Ver disponibilidad</button>
-                </a>
+                {/* Hotel deshabilitado temporalmente (Madisson id 3): se muestra la tarjeta informativa pero sin botón de reserva */}
+                {tipo.hotel.id === 3 ? (
+                  <div
+                    style={{
+                      marginTop: "12px",
+                      backgroundColor: "#FFF4E5",
+                      border: "1px solid #F0B429",
+                      color: "#8a6d1a",
+                      borderRadius: "8px",
+                      padding: "10px 12px",
+                      fontSize: "14px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    ⚠️ Hotel deshabilitado temporalmente. Estamos renovando
+                    nuestro servicio y volverá muy pronto.
+                  </div>
+                ) : (
+                  <a href={`/hoteles/${tipo.hotel.id}`}>
+                    <button>Ver disponibilidad</button>
+                  </a>
+                )}
               </div>
             </div>
           ))
