@@ -33,24 +33,20 @@ if (!reserva) {
 
 
 <script>
-  import { refreshToken } from "../../stores/authtoken";
   import Cookies from "js-cookie";
 
-  // La validación del lado del cliente ahora puede usar refreshToken
-  async function checkAuth() {
+  // El middleware SSR (src/middleware.ts) ya valida y refresca el token al
+  // cargar la página, por lo que aquí solo verificamos que exista sesión.
+  // (Antes se llamaba a refreshToken() en cada carga, lo que provocaba una
+  // doble rotación del refresh token con el middleware y cierres de sesión
+  // inesperados.)
+  function checkAuth() {
     const token = Cookies.get("accessToken");
     if (!token) {
       window.location.href = "/login";
       return;
     }
-    
-    // Intentar refresh token si es necesario
-    try {
-      await refreshToken();
-    } catch (error) {
-      window.location.href = "/login";
-    }
   }
-  
+
   checkAuth();
 </script>

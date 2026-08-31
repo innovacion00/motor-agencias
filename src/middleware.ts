@@ -90,13 +90,21 @@ async function intentarRefresh(context: any): Promise<ResultadoSesion> {
       });
       return "ok";
     }
+
+    // 401 = el refresh token ya no es válido (vencido o rotado). Se limpia.
+    if (respuesta.status === 401) {
+      limpiarSesion(context);
+      return "invalid";
+    }
+
+    // Otros errores (red, 5xx, etc.): no matar la sesión. El frontend podrá
+    // reintentar el refresh; así evitamos cerrar sesiones válidas por una
+    // caída temporal del backend o una carrera con otra pestaña.
+    return "ok";
   } catch (error) {
     // Backend inalcanzable: no bloquear, el resto de la app dará el error.
     return "ok";
   }
-
-  limpiarSesion(context);
-  return "invalid";
 }
 
 export const onRequest = defineMiddleware(async (context, next) => {
