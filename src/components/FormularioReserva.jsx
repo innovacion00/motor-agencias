@@ -157,7 +157,8 @@ const FormularioReserva = () => {
   const [cantninos, setcantninos] = useState();
   const [botondesactivado, setbotondesactivado] = useState(false); //controlar el boton de reserva
   const [esExtranjero, setesExtranjero] = useState(false);
-  const [facturaE, setfacturaE] = useState(false);
+  // Factura electrónica obligatoria: siempre activa, el usuario solo elige a quién se factura
+  const [facturaE, setfacturaE] = useState(true);
   const [facturaTipo, setfacturaTipo] = useState(""); // "cliente" | "agencia"
   const [planDeAlimentacion, setplanDeAlimentacion] = useState();
   const [divisaSelec, setdivisaSelec] = useState("COP");
@@ -730,7 +731,7 @@ const FormularioReserva = () => {
       });
       return;
     }
-    if (facturaE && facturaTipo === "") {
+    if (facturaTipo === "") {
       Swal.fire({
         icon: "error",
         title: "Complete la información",
@@ -741,7 +742,6 @@ const FormularioReserva = () => {
       return;
     }
     if (
-      facturaE &&
       facturaTipo === "agencia" &&
       (formData.nombreEmpresa.trim() === "" ||
         formData.nit.trim() === "" ||
@@ -1206,7 +1206,7 @@ const FormularioReserva = () => {
       }
     }
 
-    if (facturaE && facturaTipo === "") {
+    if (facturaTipo === "") {
       Swal.fire({
         icon: "error",
         title: "Complete la información",
@@ -1217,7 +1217,6 @@ const FormularioReserva = () => {
       return;
     }
     if (
-      facturaE &&
       facturaTipo === "agencia" &&
       (formData.nombreEmpresa.trim() === "" ||
         formData.nit.trim() === "" ||
@@ -2457,12 +2456,13 @@ const FormularioReserva = () => {
             )}
 
             <div className="formulario-reserva-check-row">
-              <label
-                htmlFor="facturaelectronica"
-                style={{ marginLeft: "10px" }}
-              >
-                ¿Desea factura electronica?
-              </label>
+                <label
+                  htmlFor="facturaelectronica"
+                  style={{ marginLeft: "10px" }}
+                >
+                  ¿Desea factura electronica?{" "}
+                  <span style={{ color: "red" }}>*</span>
+                </label>
               <input
                 style={{
                   width: "15px", // Tamaño más claro y consistente
@@ -2473,9 +2473,10 @@ const FormularioReserva = () => {
                 }}
                 type="checkbox"
                 id="facturaElectronica"
-                checked={facturaE}
+                checked
+                disabled
                 onChange={(e) => {
-                  setfacturaE(e.target.checked);
+                  setfacturaE(true);
                   if (!e.target.checked) setfacturaTipo("");
                 }}
               />
@@ -3007,7 +3008,8 @@ const FormularioReserva = () => {
                   htmlFor="facturaElectronica"
                   style={{ marginLeft: "10px" }}
                 >
-                  ¿Desea factura electronica?
+                  ¿Desea factura electronica?{" "}
+                  <span style={{ color: "red" }}>*</span>
                 </label>
                 <input
                   style={{
@@ -3019,9 +3021,10 @@ const FormularioReserva = () => {
                   }}
                   type="checkbox"
                   id="facturaElectronica"
-                  checked={facturaE}
+                  checked
+                  disabled
                   onChange={(e) => {
-                    setfacturaE(e.target.checked);
+                    setfacturaE(true);
                     if (!e.target.checked) setfacturaTipo("");
                   }}
                 />
