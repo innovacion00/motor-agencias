@@ -140,6 +140,72 @@ h3{
     color: white;
   }
 
+.comprobanteAviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    margin: 0 0 1.25rem 0;
+    background-color: #eef9f0;
+    border: 1px solid #b7e3bf;
+    border-left: 5px solid #3a963f;
+    border-radius: 8px;
+    color: #1f3a24;
+}
+
+.comprobanteIcono {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #3a963f;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+}
+
+.comprobanteContenido {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.comprobanteTitulo {
+    margin: 0 0 6px 0;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.comprobanteDetalle {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    font-size: 14px;
+}
+
+.comprobanteDetalle span {
+    display: inline-flex;
+    align-items: center;
+}
+
+.comprobanteDetalle strong {
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+@media (max-width: 600px) {
+    .comprobanteDetalle {
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
 .card{
     min-height: 518px;
     width: 100%;

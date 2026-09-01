@@ -1273,6 +1273,44 @@ const Gestionar = ({ reservas }) => {
         <p>Estado no valido</p>
       )}
 
+      {(reservas?.comprobantePago &&
+        reservas.comprobantePago.bitrixDealId) && (
+        <div className={styles.comprobanteAviso} role="status">
+          <span className={styles.comprobanteIcono}>✓</span>
+          <div className={styles.comprobanteContenido}>
+            <p className={styles.comprobanteTitulo}>
+              Comprobante de pago subido
+            </p>
+            <div className={styles.comprobanteDetalle}>
+              {reservas.comprobantePago.monto ? (
+                <span>
+                  <strong>Monto:</strong>{" "}
+                  {formatCurrency(reservas.comprobantePago.monto)}
+                </span>
+              ) : null}
+              {reservas.comprobantePago.fechaConsignacion ? (
+                <span>
+                  <strong>Fecha consignación:</strong>{" "}
+                  {reservas.comprobantePago.fechaConsignacion}
+                </span>
+              ) : null}
+              {reservas.comprobantePago.razonSocial ? (
+                <span>
+                  <strong>Consignante:</strong>{" "}
+                  {reservas.comprobantePago.razonSocial}
+                </span>
+              ) : null}
+              {reservas.comprobantePago.bitrixDealId ? (
+                <span>
+                  <strong>Referencia:</strong>{" "}
+                  {reservas.comprobantePago.bitrixDealId}
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={styles.card}>
         <div className={styles.hotelInfo}>
           <p>Datos de la reserva</p>
