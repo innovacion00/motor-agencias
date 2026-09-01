@@ -1645,7 +1645,73 @@ const Gestionar = ({ reservas }) => {
                   ? `$${reservas?.total} USD`
                   : `${formatCurrency(reservas?.total)} COP`}
               </p>
-              
+
+              {Array.isArray(reservas?.desglosePrecios) &&
+                reservas.desglosePrecios.length > 0 && (
+                  <div className={styles.desgloseContainer}>
+                    <p className={styles.desgloseTitulo}>
+                      Desglose de la reserva
+                    </p>
+                    <ul className={styles.desgloseLista}>
+                      {reservas.desglosePrecios.map((item, idx) => {
+                        const moneda =
+                          reservas?.reservation?.currency === "USD"
+                            ? "USD"
+                            : "COP";
+                        const fmt = (v) => {
+                          const signo = Number(v) < 0 ? "-" : "";
+                          const absoluto = Math.abs(Number(v));
+                          return moneda === "USD"
+                            ? `${signo}$${absoluto.toLocaleString("en-US", {
+                                maximumFractionDigits: 2,
+                              })} USD`
+                            : `${signo}${formatCurrency(absoluto)} COP`;
+                        };
+                        const etiqueta =
+                          item.concepto === "hospedaje"
+                            ? "Hospedaje"
+                            : item.concepto === "tour"
+                              ? "Tour"
+                              : item.concepto === "transporte"
+                                ? "Transporte"
+                                : item.concepto === "mascotas"
+                                  ? "Mascotas"
+                                  : item.concepto === "alimentacion"
+                                    ? "Alimentación"
+                                    : item.concepto === "impuestos"
+                                      ? "Impuestos"
+                                      : item.concepto === "retencion"
+                                        ? "Retención"
+                                        : item.concepto === "vuelo"
+                                          ? "Vuelo"
+                                          : item.concepto;
+                        return (
+                          <li key={idx} className={styles.desgloseFila}>
+                            <span className={styles.desgloseConcepto}>
+                              <b>{etiqueta}</b>
+                              {item.detalle ? (
+                                <small> · {item.detalle}</small>
+                              ) : null}
+                            </span>
+                            {item.cantidad != null && (
+                              <span className={styles.desgloseCantidad}>
+                                x{item.cantidad}
+                              </span>
+                            )}
+                            {item.precioUnitario != null && (
+                              <span className={styles.desgloseUnitario}>
+                                c/u {fmt(item.precioUnitario)}
+                              </span>
+                            )}
+                            <span className={styles.desgloseImporte}>
+                              {fmt(item.total)}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
             </div>
             
           </div>

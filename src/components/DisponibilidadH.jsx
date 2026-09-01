@@ -1789,6 +1789,53 @@ export const Cid = ({ id }) => {
                             ) ||
                             habitacionesDelMismoTipo < limiteHabitaciones // Verifica el límite de habitaciones de este tipo específico
                           ) {
+                            const productoSeleccionado = dato.products?.find((product) =>
+                              regexSeleccionado.test(product.roomName) ||
+                              regexSeleccionado.test(product.rateDescription)
+                            );
+                            const baseRate = productoSeleccionado?.baseRate?.[
+                              currentCurrency == "USD"
+                                ? "amountBeforeTaxUSD"
+                                : "amountBeforeTax"
+                            ];
+                            const precioBaseHabitacion = conDescuentoHospedaje(
+                              baseRate,
+                              descuentoHospedaje
+                            );
+                            const basePrecioValido =
+                              typeof precioBaseHabitacion === "number" &&
+                              !Number.isNaN(precioBaseHabitacion);
+                            const huespedesHabitacion = ninos + adultos;
+                            const precioToursHabitacion = (selectedTours || []).reduce(
+                              (total, tour) => {
+                                const tourPrice = parseFloat(
+                                  currentCurrency === "USD"
+                                    ? tour.preciousd
+                                    : tour.preciocol
+                                );
+                                return (
+                                  total +
+                                  (Number.isFinite(tourPrice) ? tourPrice : 0) *
+                                    huespedesHabitacion
+                                );
+                              },
+                              0
+                            );
+                            const precioTrasladoHabitacion =
+                              mostrarTraslados && tipoTraslado != null
+                                ? calculateTransferPrice(
+                                    habitaciones?.hotel?.city,
+                                    currentCurrency,
+                                    tipoTraslado,
+                                    huespedesHabitacion,
+                                    hotelIdNumero
+                                  )
+                                : 0;
+                            const precioMascotasHabitacion =
+                              (mostrarMascotas ? cantidadMascotas : 0) *
+                              (currentCurrency === "USD"
+                                ? MASCOTA_PRECIO_USD
+                                : MASCOTA_PRECIO_COP);
                             setDatohabitacion((prevState) => [
                               ...prevState,
                               {
@@ -1852,6 +1899,12 @@ export const Cid = ({ id }) => {
                                   regexSeleccionado.test(product.rateDescription)
                                 )?.trm,
                                 mascotas: mostrarMascotas ? cantidadMascotas : 0,
+                                precioBaseHabitacion: basePrecioValido
+                                  ? precioBaseHabitacion
+                                  : 0,
+                                precioToursHabitacion,
+                                precioTrasladoHabitacion,
+                                precioMascotasHabitacion,
                               },
                             ]);
                             setcontadorHabitaciones(

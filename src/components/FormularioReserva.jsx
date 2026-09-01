@@ -40,6 +40,165 @@ const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 const FORCE_LEGACY_RESERVAS = true;
 const LEGACY_RESERVA_HOTEL_AUTOCORE_IDS = new Set([48, 56]); // Axis, Boquilla
 
+/**
+ * Construye el desglose de precios (snapshot) que acompaña a la reserva.
+ * La suma de ítems cuadra con el `total` enviado al backend.
+ * Conceptos: hospedaje, tour, transporte, mascotas, alimentacion, impuestos,
+ * retencion (negativo), vuelo.
+ */
+const construirDesglosePrecios = ({
+  reserva,
+  totalHuespedes,
+  divisaSelec,
+  valorIVA,
+  tasaIVA,
+  marcadoCena,
+  marcadoAlmuerzo,
+  cantnoches,
+  DatosRetenciones,
+  RetencionesPorcentaje,
+  precioVueloPaquete,
+  vuelosActivados,
+}) => {
+  const items = [];
+
+  reserva.forEach((dato, index) => {
+    const base = Number(dato.precioBaseHabitacion) || 0;
+    if (base > 0) {
+      items.push({
+        concepto: "hospedaje",
+        detalle: `Habitación ${dato.NombreH || `#${index + 1}`}`,
+        cantidad: 1,
+        precioUnitario: base,
+        total: base,
+      });
+    }
+  });
+
+  const tourSeleccionados = reserva[0]?.tourSeleccionado || [];
+  tourSeleccionados.forEach((tour) => {
+    const tourPrice = parseFloat(
+      divisaSelec === "USD" ? tour.preciousd : tour.preciocol
+    );
+    const precioTour = Number.isFinite(tourPrice) ? tourPrice : 0;
+    const totalTour = precioTour * totalHuespedes;
+    if (totalTour > 0) {
+      items.push({
+        concepto: "tour",
+        detalle: tour.title,
+        cantidad: totalHuespedes,
+        precioUnitario: precioTour,
+        total: totalTour,
+      });
+    }
+  });
+
+  const totalTraslado = reserva.reduce(
+    (t, d) => t + (Number(d.precioTrasladoHabitacion) || 0),
+    0
+  );
+  if (totalTraslado > 0) {
+    items.push({
+      concepto: "transporte",
+      detalle: "Traslado aeropuerto - hotel",
+      total: totalTraslado,
+    });
+  }
+
+  const numeroMascotas = reserva.reduce(
+    (t, d) => t + (Number(d.mascotas) || 0),
+    0
+  );
+  const totalMascotas = reserva.reduce(
+    (t, d) => t + (Number(d.precioMascotasHabitacion) || 0),
+    0
+  );
+  if (totalMascotas > 0) {
+    items.push({
+      concepto: "mascotas",
+      detalle: "Mascotas",
+      cantidad: numeroMascotas,
+      precioUnitario: numeroMascotas > 0 ? totalMascotas / numeroMascotas : 0,
+      total: totalMascotas,
+    });
+  }
+
+  if (marcadoCena > 0) {
+    items.push({
+      concepto: "alimentacion",
+      detalle: "Cena",
+      cantidad: totalHuespedes * cantnoches,
+      precioUnitario: 30000,
+      total: marcadoCena,
+    });
+  }
+  if (marcadoAlmuerzo > 0) {
+    items.push({
+      concepto: "alimentacion",
+      detalle: "Almuerzo",
+      cantidad: totalHuespedes * cantnoches,
+      precioUnitario: 30000,
+      total: marcadoAlmuerzo,
+    });
+  }
+
+  if (valorIVA > 0) {
+    items.push({
+      concepto: "impuestos",
+      detalle: `IVA ${Math.round(tasaIVA * 100)}%`,
+      total: valorIVA,
+    });
+  }
+
+  if (DatosRetenciones != null) {
+    const retenciones = [
+      {
+        etiqueta: "ReteFuente",
+        valor: DatosRetenciones.calculo_rtf_fte,
+        porcentaje: RetencionesPorcentaje?.reteFuente,
+      },
+      {
+        etiqueta: "ReteIca",
+        valor: DatosRetenciones.calculo_rtf_ica,
+        porcentaje: RetencionesPorcentaje?.reteIca,
+      },
+      {
+        etiqueta: "ReteIva",
+        valor: DatosRetenciones.calculo_rtf_iva,
+        porcentaje: RetencionesPorcentaje?.reteIva,
+      },
+    ];
+    retenciones.forEach((r) => {
+      const valor = Number(r.valor) || 0;
+      if (valor > 0) {
+        items.push({
+          concepto: "retencion",
+          detalle: r.porcentaje ? `${r.etiqueta} ${r.porcentaje}%` : r.etiqueta,
+          total: -valor,
+        });
+      }
+    });
+  }
+
+  if (vuelosActivados && precioVueloPaquete > 0) {
+    items.push({
+      concepto: "vuelo",
+      detalle: "Paquete de vuelo",
+      total: precioVueloPaquete,
+    });
+  }
+
+  return items.map((item) => ({
+    concepto: item.concepto,
+    ...(item.detalle ? { detalle: String(item.detalle) } : {}),
+    ...(item.cantidad ? { cantidad: item.cantidad } : {}),
+    ...(item.precioUnitario != null
+      ? { precioUnitario: item.precioUnitario }
+      : {}),
+    total: Math.round(item.total * 100) / 100,
+  }));
+};
+
 const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
   1: 7, // Azuan
   3: 7, // Madisson
@@ -884,6 +1043,20 @@ const FormularioReserva = () => {
               telephone: `${formData.celular}`,
             },
           },
+          desglosePrecios: construirDesglosePrecios({
+            reserva,
+            totalHuespedes,
+            divisaSelec,
+            valorIVA,
+            tasaIVA,
+            marcadoCena,
+            marcadoAlmuerzo,
+            cantnoches,
+            DatosRetenciones,
+            RetencionesPorcentaje,
+            precioVueloPaquete,
+            vuelosActivados,
+          }),
         };
 
         const legacyMissing = [];
@@ -1089,6 +1262,20 @@ const FormularioReserva = () => {
             }
             : null,
         asistentes: [],
+        desglosePrecios: construirDesglosePrecios({
+          reserva,
+          totalHuespedes,
+          divisaSelec,
+          valorIVA,
+          tasaIVA,
+          marcadoCena,
+          marcadoAlmuerzo,
+          cantnoches,
+          DatosRetenciones,
+          RetencionesPorcentaje,
+          precioVueloPaquete,
+          vuelosActivados,
+        }),
       };
 
       const missingFields = [];
@@ -1366,6 +1553,20 @@ const FormularioReserva = () => {
           telephone: `${titular.celular}`,
         },
       },
+      desglosePrecios: construirDesglosePrecios({
+        reserva,
+        totalHuespedes,
+        divisaSelec,
+        valorIVA,
+        tasaIVA,
+        marcadoCena,
+        marcadoAlmuerzo,
+        cantnoches,
+        DatosRetenciones,
+        RetencionesPorcentaje,
+        precioVueloPaquete,
+        vuelosActivados,
+      }),
     });
 
     const enviar = async () => {
