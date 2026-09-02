@@ -76,87 +76,8 @@ const FormularioRetenciones = ({ precio, adults, ninos, fechasreserva, manejarDa
         setNoches(fechasreserva?.nights)
     }
 
-    const precioDesyunos = (hotel) => {
-        switch (hotel) {
-            // azuan
-            case 1:
-                return {
-                    valor: 30000
-                }
-            // aixo
-            case 4:
-                return {
-                    valor: 35000
-                }
-            // Marina
-            case 9:
-                return {
-                    valor: 30000
-                }
-            // Abi
-            case 5:
-                return {
-                    valor: 35000
-                }
-            // Avexi
-            case 6:
-                return {
-                    valor: 30000
-                }
-            // Bocagrande
-            case 7:
-                return {
-                    valor: 35000
-                }
-            // 1525
-            case 2:
-                return {
-                    valor: 30000
-                }
-            // Sansiraka
-            case 44:
-                return {
-                    valor: 35000
-                }
-            // Axis
-            case 48:
-                return {
-                    valor: 30000
-                }
-            // Rodadero
-            case 8:
-                return {
-                    valor: 30000
-                }
-            // Madisson
-            case 3:
-                return {
-                    valor: 50000
-                }
-            // Windsor
-            case 10:
-                return {
-                    valor: 50000
-                }
-            // Zulita
-            case 41:
-                return {
-                    valor: 50000
-                }
-            // Boquilla
-            case 56:
-                return {
-                    valor: 30000
-                }
-            default:
-                return 'Hotel no valido'
-        }
-    }
-
-
     // console.log(DatosReserva[0]?.hotelidAutocore)
     const hotelId = DatosReserva[0]?.hotelidAutocore
-    const valorDesayuno = precioDesyunos(hotelId)
 
     // Hotel Aixo: la retencion en la fuente no aplica en este hotel
     const ocultarRteFuente = esHotelAixo(DatosReserva?.[0])

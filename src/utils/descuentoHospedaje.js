@@ -1,11 +1,15 @@
 import { esFlujoVueloHotelActivo } from "./flightSearch";
+import { getDescuentoHospedaje } from "../stores/preciosExtras";
 
 /**
  * Las búsquedas de vuelo + hotel llevan un descuento sobre la tarifa de
  * habitación. El vuelo y los adicionales (tours, traslados, mascotas) se
  * cobran siempre completos.
  */
-export const DESCUENTO_HOSPEDAJE_VUELO_HOTEL = 0.05;
+/**
+ * Descuento vigente para flujos vuelo+hotel, leído del catálogo precios_extras.
+ */
+export const DESCUENTO_HOSPEDAJE_VUELO_HOTEL = getDescuentoHospedaje();
 
 /** true si la búsqueda vigente es vuelo + hotel y por tanto el hospedaje lleva descuento. */
 export const aplicaDescuentoHospedaje = () => esFlujoVueloHotelActivo();
@@ -25,5 +29,5 @@ export const conDescuentoHospedaje = (
   if (!aplica) return precio;
   const valor = parseFloat(precio);
   if (!Number.isFinite(valor)) return precio;
-  return valor * (1 - DESCUENTO_HOSPEDAJE_VUELO_HOTEL);
+  return valor * (1 - getDescuentoHospedaje());
 };

@@ -17,6 +17,7 @@ import {
 } from '../utils/vueloCotizacion';
 import { esModoBusquedaVueloHotel, limpiarDatosPaqueteVuelo } from '../utils/flightSearch';
 import { getHotelImagesById } from '../utils/hotelesImagenes';
+import { getIvaPorcentaje } from '../stores/preciosExtras';
 
 // Función para obtener el nombre del hotel basado en el ID
 const nombreHotelId = (hotelId) => {
@@ -69,8 +70,6 @@ const direccionHotelId = (hotelId) => {
 
   return direccionMap[hotelId] || "Dirección no disponible";
 };
-
-const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 
 const etiquetaTrasladoDesdeTipo = (tipo) => {
   if (tipo === "aeropuerto_hotel") return "Aeropuerto al hotel";
@@ -162,9 +161,10 @@ export default function ReservaHotelComponent() {
 
   // Calcular totales basados en los datos de las habitaciones
   const subtotal = datosReserva ? datosReserva.reduce((sum, data) => sum + (data.precio || 0), 0) : 0;
-  const hotelExentoIVA = HOTELES_EXENTOS_IVA.has(datosReserva?.[0]?.hotelidAutocore);
+  const tasaIVA = getIvaPorcentaje(datosReserva?.[0]?.hotelidAutocore);
+  const hotelExentoIVA = tasaIVA === 0;
   const exentoIva = huespedExtranjero === true || hotelExentoIVA;
-  const iva = exentoIva ? 0 : (Math.round(subtotal * 0.19) || 0);
+  const iva = exentoIva ? 0 : (Math.round(subtotal * tasaIVA) || 0);
   const total = subtotal + iva;
   const totalConIVA = total; // Para compatibilidad con TablaDesglose y FormularioRetenciones
 
@@ -457,7 +457,7 @@ export default function ReservaHotelComponent() {
     const markupAmountPdf = Math.round(baseCombinadaPdf * (markupPorcentaje / 100));
     const totalConMarkupPdf = baseCombinadaPdf + markupAmountPdf;
     const precioPorNocheCalc = totalConMarkupPdf && noches > 0 ? (totalConMarkupPdf / noches) : 0;
-    const totalSinIvaConMarkup = exentoIva ? totalConMarkupPdf : Math.round(totalConMarkupPdf / 1.19);
+    const totalSinIvaConMarkup = exentoIva ? totalConMarkupPdf : Math.round(totalConMarkupPdf / (1 + tasaIVA));
     const totalHuespedes = cantadultos + cantninos;
     const habitaciones = datosReserva.length;
     const precioPorNoche = datosReserva[0]?.precioBase || 0;

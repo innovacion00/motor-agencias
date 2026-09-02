@@ -1119,3 +1119,19 @@ h3{
   text-align: right;
   margin-left: auto;
 }
+
+.desgloseTotalFila {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 0 0;
+  margin-top: 6px;
+  border-top: 2px solid #1c3d5a;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1c3d5a;
+}
+
+.desgloseTotalFila .desgloseImporte {
+  font-size: 1.1rem;
+}

@@ -4,11 +4,16 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from 'react-tooltip';
 import Cookies from 'js-cookie';
 import { refreshToken } from '../stores/authtoken';
-import { toursData } from '../stores/InfoTours';
+import { obtenerCatalogoTours } from '../stores/preciosExtras';
 import "./BookingConnectIA.css";
 
 const STORAGE_KEY_CONVERSATIONS = "bookingConnectIA.conversations";
 const STORAGE_KEY_ACTIVE_ID = "bookingConnectIA.activeId";
+
+// Catálogo de tours servido por el backend (precios-extras). Se precarga en
+// segundo plano; mientras no haya respuesta, no hay tours que detectar.
+let tourCatalogo = [];
+obtenerCatalogoTours({}).then((cat) => { tourCatalogo = cat; }).catch(() => {});
 
 function generateId() {
 	return "c_" + Math.random().toString(36).slice(2, 10);
@@ -236,7 +241,7 @@ function detectHotelsInText(text) {
 
 // Función para obtener imágenes de tours por número
 function getTourImagesByNumber(tourNumber) {
-	const tour = toursData.find(t => t.id === tourNumber);
+	const tour = tourCatalogo.find(t => t.id === tourNumber);
 	if (!tour || !tour.images) return null;
 	
 	return {
@@ -267,7 +272,7 @@ function detectToursInText(text) {
 				const images = getTourImagesByNumber(i);
 				if (images) {
 					foundTourNumbers.add(i);
-					const tour = toursData.find(t => t.id === i);
+					const tour = tourCatalogo.find(t => t.id === i);
 					detectedTours.push({
 						number: i,
 						name: tour?.title || `Tour ${i}`,

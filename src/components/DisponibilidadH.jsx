@@ -6,7 +6,13 @@ import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { disponibilidad } from "../stores/disponibilidad";
 import { currency } from "../stores/divisas"; //  store de divisa
 import { useStore } from "@nanostores/react";
-import { toursData } from "../stores/InfoTours";
+import {
+  getIvaPorcentaje,
+  getMascotaPrecio,
+  getTarifasTraslado,
+  obtenerCatalogoTours,
+  precargarPreciosExtras,
+} from "../stores/preciosExtras";
 import ToursCs from "./ToursCs";
 import { Tooltip } from 'react-tooltip';
 import Swal from 'sweetalert2';
@@ -545,49 +551,6 @@ const quintuple = {
   164:false, //Marques
 };
 
-// Traslados Cartagena: tarifa estándar (Aixo, Abi, Boquilla) vs premium (Azuan, Avexi, Marina)
-const HOTELES_TRASLADO_CARTAGENA_PREMIUM = new Set([1, 6, 9]); // azuan, avexi, marina
-
-const trasladosCartagenaPorTier = {
-  estandar: {
-    pesos: { 0: "38000", 1: "76000" },
-    dolares: { 0: "12", 1: "21" },
-  },
-  premium: {
-    pesos: { 0: "45000", 1: "90000" },
-    dolares: { 0: "14", 1: "25" },
-  },
-};
-
-const getTrasladosCartagenaTarifas = (currency, hotelId) => {
-  const tier = HOTELES_TRASLADO_CARTAGENA_PREMIUM.has(Number(hotelId))
-    ? "premium"
-    : "estandar";
-  const tarifas = trasladosCartagenaPorTier[tier];
-  return currency === "USD" ? tarifas.dolares : tarifas.pesos;
-};
-
-const trasladosSantamartaPesos = {
-  0: "70000",
-  1: "140000",
-};
-
-const trasladosSantamartaDolares = {
-  0: "17",
-  1: "34",
-};
-
-// Agregar los nuevos objetos para Bogotá
-const trasladosBogotaPesos = {
-  0: "73200",
-  1: "146200",
-};
-
-const trasladosBogotaDolares = {
-  0: "17.7",
-  1: "35.4",
-};
-
 // Función para normalizar el nombre del hotel
 const getHotelName = (hotel) => {
   if (hotel?.id === 123) {
@@ -627,12 +590,6 @@ const plan_alimentacion = {
   41: false, //Zulita
   56: false, // Boquilla,
 };
-
-const hotelesExentosIVA = new Set([56, 123]);
-
-// Add these constants near the top with other price constants
-const MASCOTA_PRECIO_COP = 75000;
-const MASCOTA_PRECIO_USD = 21;
 
 // Utilidad para formatear fechas cortas en el stepper
 const formatDate = (dateString) => {
@@ -680,6 +637,7 @@ export const Cid = ({ id }) => {
   const [modalIsOpen, setIsOpen] = React.useState(false);
   const [selectedCity, setSelectedCity] = useState("");
   const [filteredTours, setFilteredTours] = useState([]);
+  const [toursCatalogo, setToursCatalogo] = useState([]);
   const [mostrarMascotas, setMostrarMascotas] = useState(false);
   const [cantidadMascotas, setCantidadMascotas] = useState(0);
   const [infoVuelo, setinfoVuelo] = useState(null);
@@ -694,7 +652,7 @@ export const Cid = ({ id }) => {
   const [pendingAction, setPendingAction] = useState(null);
   const [upgradeOptionsList, setUpgradeOptionsList] = useState([]);
   const hotelIdNumero = Number(habitaciones?.hotel?.id ?? id);
-  const esHotelExentoIVA = hotelesExentosIVA.has(hotelIdNumero);
+  const esHotelExentoIVA = getIvaPorcentaje(hotelIdNumero) === 0;
 
   function openModal(tour) {
     setIsOpen(true);
@@ -891,15 +849,8 @@ export const Cid = ({ id }) => {
   ) => {
     if (!transferType) return 0;
 
-    const preciosPorCiudad = {
-      SANTA_MARTA: currency === 'USD' ? trasladosSantamartaDolares : trasladosSantamartaPesos,
-      BOGOTA: currency === 'USD' ? trasladosBogotaDolares : trasladosBogotaPesos
-    };
-
-    const precios =
-      city === "CARTAGENA"
-        ? getTrasladosCartagenaTarifas(currency, hotelId)
-        : preciosPorCiudad[city];
+    // Tarifas por ciudad/hotel desde el catálogo precios_extras (con fallback)
+    const precios = getTarifasTraslado(city, currency, hotelId);
 
     // Determinar el índice basado en el tipo de traslado
     const priceIndex = transferType === "ambos" ? 1 : 0;
@@ -925,9 +876,7 @@ export const Cid = ({ id }) => {
     const transferPrice = calculateTransferPrice(city, currency, tipoTraslado, totalGuests, hotelId);
     
     // Add pet price calculation
-    const mascotasPrice = currency === 'USD' 
-      ? (numMascotas * MASCOTA_PRECIO_USD)
-      : (numMascotas * MASCOTA_PRECIO_COP);
+    const mascotasPrice = numMascotas * getMascotaPrecio(currency);
   
     return parseFloat(basePrice) + toursPrice + transferPrice + mascotasPrice;
   };
@@ -961,18 +910,29 @@ export const Cid = ({ id }) => {
     setDescuentoHospedaje(aplicaDescuentoHospedaje());
   }, []);
 
+  // Precargar precios de extras y tours desde el catálogo del backend
+  useEffect(() => {
+    precargarPreciosExtras({
+      hotelId: Number(habitaciones?.hotel?.id ?? id ?? null) || null,
+      currency: currentCurrency,
+    });
+    obtenerCatalogoTours({ currency: currentCurrency })
+      .then(setToursCatalogo)
+      .catch(() => null);
+  }, [currentCurrency]);
+
   // Filtrar tours cada vez que cambie la ciudad seleccionada
   useEffect(() => {
     if (selectedCity) {
       // Filtra los tours que coincidan con la ciudad seleccionada (ignorando mayúsculas/minúsculas)
-      const tours = toursData.filter(
+      const tours = toursCatalogo.filter(
         (tour) => tour.city.toUpperCase() === selectedCity.toUpperCase()
       );
       setFilteredTours(tours);
     } else {
       setFilteredTours([]);
     }
-  }, [selectedCity]);
+  }, [selectedCity, toursCatalogo]);
 
   // Función para abrir el modal con la información del tour seleccionado
   const openTourDetails = (tour) => {
@@ -1513,13 +1473,11 @@ export const Cid = ({ id }) => {
                        <label htmlFor="A a H">
                         {" "}
                         {/* datos de persona en traslados bogota ah/ha */}
-                        Aeropuerto al hotel {" "}
-                        {selectedCity === 'CARTAGENA' 
-                          ? `($${getTrasladosCartagenaTarifas(currentCurrency, hotelIdNumero)[0]} ${currentCurrency}` 
-                          : selectedCity === 'SANTA_MARTA'
-                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
-                          : selectedCity === 'BOGOTA'
-                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
+                        Aeropuerto al hotel{" "}
+                        {selectedCity === 'CARTAGENA' ||
+                        selectedCity === 'SANTA_MARTA' ||
+                        selectedCity === 'BOGOTA'
+                          ? `($${getTarifasTraslado(selectedCity, currentCurrency, hotelIdNumero)[0]} ${currentCurrency}`
                           : ''
                         } cada 4 personas) <span style={{ 
                          color: 'gray',  
@@ -1543,13 +1501,11 @@ export const Cid = ({ id }) => {
                       <label htmlFor="H a A">
                         {" "}
                          {/* datos de persona en traslados bogota ah/ha */}
-                        Hotel al Aeropuerto {" "}
-                        {selectedCity === 'CARTAGENA' 
-                          ? `($${getTrasladosCartagenaTarifas(currentCurrency, hotelIdNumero)[0]} ${currentCurrency}` 
-                          : selectedCity === 'SANTA_MARTA'
-                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[0] : trasladosSantamartaPesos[0]} ${currentCurrency}`
-                          : selectedCity === 'BOGOTA'
-                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[0] : trasladosBogotaPesos[0]} ${currentCurrency}`
+                        Hotel al Aeropuerto{" "}
+                        {selectedCity === 'CARTAGENA' ||
+                        selectedCity === 'SANTA_MARTA' ||
+                        selectedCity === 'BOGOTA'
+                          ? `($${getTarifasTraslado(selectedCity, currentCurrency, hotelIdNumero)[0]} ${currentCurrency}`
                           : ''
                         } cada 4 personas) <span style={{ 
                           color: 'gray', 
@@ -1571,13 +1527,11 @@ export const Cid = ({ id }) => {
                       <label htmlFor="A a H Y H a A">
                         {" "}
                          {/* datos de persona en traslados bogota ah/ha */}
-                        Aeropuerto al hotel | Hotel al aeropuerto {" "} 
-                        {selectedCity === 'CARTAGENA' 
-                          ? `($${getTrasladosCartagenaTarifas(currentCurrency, hotelIdNumero)[1]} ${currentCurrency}` 
-                          : selectedCity === 'SANTA_MARTA'
-                          ? `($${currentCurrency === 'USD' ? trasladosSantamartaDolares[1] : trasladosSantamartaPesos[1]} ${currentCurrency}`
-                          : selectedCity === 'BOGOTA'
-                          ? `($${currentCurrency === 'USD' ? trasladosBogotaDolares[1] : trasladosBogotaPesos[1]} ${currentCurrency}`
+                        Aeropuerto al hotel | Hotel al aeropuerto{" "}
+                        {selectedCity === 'CARTAGENA' ||
+                        selectedCity === 'SANTA_MARTA' ||
+                        selectedCity === 'BOGOTA'
+                          ? `($${getTarifasTraslado(selectedCity, currentCurrency, hotelIdNumero)[1]} ${currentCurrency}`
                           : ''
                         } cada 4 personas) <span style={{ 
                          color: 'gray', 
@@ -1833,9 +1787,7 @@ export const Cid = ({ id }) => {
                                 : 0;
                             const precioMascotasHabitacion =
                               (mostrarMascotas ? cantidadMascotas : 0) *
-                              (currentCurrency === "USD"
-                                ? MASCOTA_PRECIO_USD
-                                : MASCOTA_PRECIO_COP);
+                              getMascotaPrecio(currentCurrency);
                             setDatohabitacion((prevState) => [
                               ...prevState,
                               {

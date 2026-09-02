@@ -16,6 +16,7 @@ import {
   getBookingConnectCategoriesForHotel,
   getBookingConnectRatePlansForHotel,
 } from "../constants/bookingConnectRatePlans";
+import { getAlimentacionPrecio, getIvaPorcentaje } from "../stores/preciosExtras";
 
 const plan_alimentacion = {
   9: false, //marina
@@ -33,8 +34,6 @@ const plan_alimentacion = {
   41: false, //Zulita
   56: true, // Boquilla,
 };
-
-const HOTELES_EXENTOS_IVA = new Set([56, 123]);
 
 /** Reservas vía endpoint legacy `/reservas/reservar` (no mytool). */
 const FORCE_LEGACY_RESERVAS = true;
@@ -128,7 +127,7 @@ const construirDesglosePrecios = ({
       concepto: "alimentacion",
       detalle: "Cena",
       cantidad: totalHuespedes * cantnoches,
-      precioUnitario: 30000,
+      precioUnitario: getAlimentacionPrecio("Cena"),
       total: marcadoCena,
     });
   }
@@ -137,7 +136,7 @@ const construirDesglosePrecios = ({
       concepto: "alimentacion",
       detalle: "Almuerzo",
       cantidad: totalHuespedes * cantnoches,
-      precioUnitario: 30000,
+      precioUnitario: getAlimentacionPrecio("Almuerzo"),
       total: marcadoAlmuerzo,
     });
   }
@@ -527,7 +526,7 @@ const FormularioReserva = () => {
         reserva.plandealimentacion === "Solo desayuno"
     );
 
-  const hotelExentoIVA = HOTELES_EXENTOS_IVA.has(reserva[0]?.hotelidAutocore);
+  const hotelExentoIVA = getIvaPorcentaje(reserva[0]?.hotelidAutocore) === 0;
 
   const [RetencionesPorcentaje, setRetencionesPorcentaje] = useState(null);
   const [DatosRetenciones, setDatosRetenciones] = useState(null);
@@ -585,11 +584,15 @@ const FormularioReserva = () => {
   })();
 
   //CALCULO DEL IVA
-  const marcadoAlmuerzo = almuerzo ? totalHuespedes * cantnoches * 30000 : 0;
-  const marcadoCena = cena ? totalHuespedes * cantnoches * 30000 : 0;
+  const marcadoAlmuerzo = almuerzo
+    ? totalHuespedes * cantnoches * getAlimentacionPrecio("Almuerzo")
+    : 0;
+  const marcadoCena = cena
+    ? totalHuespedes * cantnoches * getAlimentacionPrecio("Cena")
+    : 0;
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
   const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
-  const tasaIVA = 0.19; // Tasa del IVA
+  const tasaIVA = getIvaPorcentaje(reserva[0]?.hotelidAutocore);
   const valorIVA = esExtranjero || hotelExentoIVA ? 0 : totalPrecio * tasaIVA;
   const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
   // console.log(totalConIVA);
@@ -1038,6 +1041,9 @@ const FormularioReserva = () => {
                   quantity: "1",
                   rateId: dato.rateId,
                   unitaryPrice: dato.precio,
+                  precioBase: Number.isFinite(Number(dato.precioBase))
+                    ? Number(dato.precioBase)
+                    : undefined,
                 };
               }),
               telephone: `${formData.celular}`,
@@ -1548,6 +1554,9 @@ const FormularioReserva = () => {
               quantity: "1",
               rateId: dato.rateId,
               unitaryPrice: dato.precio,
+              precioBase: Number.isFinite(Number(dato.precioBase))
+                ? Number(dato.precioBase)
+                : undefined,
             };
           }),
           telephone: `${titular.celular}`,

@@ -157,9 +157,7 @@ const ToursCs = ({isOpen, onRequest, infoToures}) => {
         <div className="tour-policy">
           <h3>Política de anulación y reprogramación</h3>
           <p>
-            Si anula la reserva hasta 48 horas antes del inicio de la actividad,
-            le devolveremos el 100% del pago realizado para reservar. Si anula
-            con una anticipación menor a la indicada, no aplicará devolución.
+            {infoToures?.cancellationPolicy || ""}
           </p>
         </div>
       </div>
