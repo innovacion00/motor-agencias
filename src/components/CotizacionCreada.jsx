@@ -400,10 +400,21 @@ export const CotizacionCreada = ({ id }) => {
         undefined;
 
     // Calcular totales (respetar exención de IVA)
-    const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
+    // El hospedaje se suma por cada habitación; los extras (tours, traslado,
+    // mascotas) se cobran una sola vez por reserva, no por habitación.
+    const tieneDesglose = roomsData.some((r) => r.precioHabitacion != null);
+    const subtotal = tieneDesglose
+        ? roomsData.reduce((sum, room) => sum + (Number(room.precioHabitacion) || 0), 0)
+        : roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
+    const primerosRoom = roomsData[0] || {};
+    const extrasCotizacion = tieneDesglose
+        ? (Number(primerosRoom.precioToursHabitacion) || 0) +
+          (Number(primerosRoom.precioTrasladoHabitacion) || 0) +
+          (Number(primerosRoom.precioMascotasHabitacion) || 0)
+        : 0;
     const exentoIva = !!cotizacion?.exentoIva;
     const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
-    const total = subtotal + iva;
+    const total = subtotal + extrasCotizacion + iva;
 
     // Total de hospedaje que realmente asume la agencia (descontando retenciones)
     const retencionesTotal =
@@ -702,20 +713,28 @@ export const CotizacionCreada = ({ id }) => {
                                         {roomsData.map((room, index) => {
                                             const planAlimentacion = roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Solo desayuno';
                                             const descripcionPension = generarDescripcionPension(planAlimentacion);
+                                            const valorCu = Number(room.precioNocheHabitacion) || 0;
+                                            const valorTotalHab = Number(room.precioHabitacion) || Number(room.unitaryPrice) || 0;
                                             return (
                                             <tr key={room.id || index}>
                                                 <td className="td">{room.nombreHabitacion || 'Habitación estándar'}</td>
                                                 <td className="td">{descripcionPension}</td>
-                                                <td className="td">{reservaInfo.nights || '1'}</td>
-                                                <td className="td">${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</td>
-                                                <td className="td">${room.unitaryPrice ? room.unitaryPrice.toLocaleString() : '0'}</td>
+                                                <td className="td">{Number(room.noches) || reservaInfo.nights || '1'}</td>
+                                                <td className="td">${(tieneDesglose ? valorCu : room.unitaryPrice || 0).toLocaleString()}</td>
+                                                <td className="td">${valorTotalHab.toLocaleString()}</td>
                                             </tr>
                                         );
                                         })}
                                         <tr className="table-subtotal">
-                                            <td colSpan="4" className="td-total">Subtotal</td>
+                                            <td colSpan="4" className="td-total">Subtotal hospedaje</td>
                                             <td className="td-amount">${subtotal.toLocaleString()}</td>
                                         </tr>
+                                        {extrasCotizacion > 0 && (
+                                            <tr className="table-subtotal">
+                                                <td colSpan="4" className="td-total">Extras (tours, traslado, mascotas)</td>
+                                                <td className="td-amount">${extrasCotizacion.toLocaleString()}</td>
+                                            </tr>
+                                        )}
                                         <tr className="table-subtotal">
                                             <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</td>
                                             <td className="td-amount">${iva.toLocaleString()}</td>

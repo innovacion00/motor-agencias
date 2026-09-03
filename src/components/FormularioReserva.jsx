@@ -6,7 +6,6 @@ import FormularioRetenciones from "./desglose/FormularioRetenciones";
 import "./FormularioReserva.css";
 import Swal from "sweetalert2";
 import { format } from "@formkit/tempo";
-import TablaDesglose from "./desglose/TablaDesglose";
 import { currency } from "../stores/divisas";
 import { useStore } from "@nanostores/react";
 import ToursCs from "./ToursCs";
@@ -62,14 +61,16 @@ const construirDesglosePrecios = ({
   const items = [];
 
   reserva.forEach((dato, index) => {
-    const base = Number(dato.precioBaseHabitacion) || 0;
-    if (base > 0) {
+    const total = Number(dato.precioHabitacion) || Number(dato.precioBaseHabitacion) || 0;
+    const noche = Number(dato.precioNocheHabitacion) || 0;
+    const noches = Number(dato.nights) || 1;
+    if (total > 0) {
       items.push({
         concepto: "hospedaje",
         detalle: `Habitación ${dato.NombreH || `#${index + 1}`}`,
-        cantidad: 1,
-        precioUnitario: base,
-        total: base,
+        cantidad: noches,
+        precioUnitario: noche || total / noches,
+        total,
       });
     }
   });
@@ -92,10 +93,8 @@ const construirDesglosePrecios = ({
     }
   });
 
-  const totalTraslado = reserva.reduce(
-    (t, d) => t + (Number(d.precioTrasladoHabitacion) || 0),
-    0
-  );
+  const primera = reserva[0] || {};
+  const totalTraslado = Number(primera.precioTrasladoHabitacion) || 0;
   if (totalTraslado > 0) {
     items.push({
       concepto: "transporte",
@@ -104,14 +103,8 @@ const construirDesglosePrecios = ({
     });
   }
 
-  const numeroMascotas = reserva.reduce(
-    (t, d) => t + (Number(d.mascotas) || 0),
-    0
-  );
-  const totalMascotas = reserva.reduce(
-    (t, d) => t + (Number(d.precioMascotasHabitacion) || 0),
-    0
-  );
+  const numeroMascotas = Number(primera.mascotas) || 0;
+  const totalMascotas = Number(primera.precioMascotasHabitacion) || 0;
   if (totalMascotas > 0) {
     items.push({
       concepto: "mascotas",
@@ -591,10 +584,22 @@ const FormularioReserva = () => {
     ? totalHuespedes * cantnoches * getAlimentacionPrecio("Cena")
     : 0;
   const totalConAdiciones = marcadoCena + marcadoAlmuerzo;
-  const totalPrecio = reserva.reduce((total, data) => total + data.precio, 0); //Calcular valor total de las habitaciones
+  const totalHospedaje = reserva.reduce(
+    (sum, data) => sum + (Number(data.precioHabitacion) || 0),
+    0
+  );
+  // Los extras (tours, traslado, mascotas) se calculan una sola vez por
+  // reserva (todos dependen de la misma selección global), no por habitación.
+  // Cada habitación guarda el mismo valor del total de extras; tomamos el de
+  // la primera para evitar cobros duplicados por N habitaciones.
+  const primeraHab = reserva[0] || {};
+  const totalExtras =
+    (Number(primeraHab.precioToursHabitacion) || 0) +
+    (Number(primeraHab.precioTrasladoHabitacion) || 0) +
+    (Number(primeraHab.precioMascotasHabitacion) || 0);
   const tasaIVA = getIvaPorcentaje(reserva[0]?.hotelidAutocore);
-  const valorIVA = esExtranjero || hotelExentoIVA ? 0 : totalPrecio * tasaIVA;
-  const totalConIVA = totalPrecio + valorIVA + totalConAdiciones; //Calcular valor total + IVA + las adiciones
+  const valorIVA = esExtranjero || hotelExentoIVA ? 0 : totalHospedaje * tasaIVA;
+  const totalConIVA = totalHospedaje + totalExtras + valorIVA + totalConAdiciones;
   // console.log(totalConIVA);
   // let totalRetenciones = DatosRetenciones == null ? (totalConIVA) : (totalConIVA - (DatosRetenciones.calculo_rtf_fte + DatosRetenciones.calculo_rtf_ica + DatosRetenciones.calculo_rtf_iva))
 
@@ -1044,6 +1049,9 @@ const FormularioReserva = () => {
                   precioBase: Number.isFinite(Number(dato.precioBase))
                     ? Number(dato.precioBase)
                     : undefined,
+                  precioNoche: Number.isFinite(Number(dato.precioNocheHabitacion))
+                    ? Number(dato.precioNocheHabitacion)
+                    : undefined,
                 };
               }),
               telephone: `${formData.celular}`,
@@ -1121,7 +1129,11 @@ const FormularioReserva = () => {
           room_id: String(dato?.roomId || ""),
           paxAdultos: roomAdults,
           paxChilds: roomChilds,
-          dayPrice: buildDayPrice(checkin, checkout, dato?.precioBase),
+          dayPrice: buildDayPrice(
+            checkin,
+            checkout,
+            Number(dato?.precioNocheHabitacion) || Number(dato?.precioBase)
+          ),
           guest: [],
         };
       });
@@ -1557,6 +1569,9 @@ const FormularioReserva = () => {
               precioBase: Number.isFinite(Number(dato.precioBase))
                 ? Number(dato.precioBase)
                 : undefined,
+              precioNoche: Number.isFinite(Number(dato.precioNocheHabitacion))
+                ? Number(dato.precioNocheHabitacion)
+                : undefined,
             };
           }),
           telephone: `${titular.celular}`,
@@ -1943,25 +1958,48 @@ const FormularioReserva = () => {
                     : "No se seleccionó traslado"}
             </p>
 
-            {data.tourSeleccionado && data.tourSeleccionado.length > 0 && (
+            {index === 0 && data.tourSeleccionado && data.tourSeleccionado.length > 0 && (
               <p>
                 <strong>Tours seleccionados: </strong>
-                {data.tourSeleccionado.map((tour, index) => (
+                {data.tourSeleccionado.map((tour, i) => (
                   <span key={tour.id}>
-                    {index > 0 ? ", " : ""}
+                    {i > 0 ? ", " : ""}
                     {tour.title}
                   </span>
                 ))}
               </p>
             )}
 
-            <p><strong>Numero de mascotas:</strong> {data.mascotas}</p>
+            {index === 0 && <p><strong>Numero de mascotas:</strong> {data.mascotas}</p>}
 
-            <p style={{ fontWeight: "bold", color: "#2c3e50" }}>
+            <div style={{ fontSize: "0.9rem", lineHeight: "1.5" }}>
+              <p style={{ margin: 0 }}>
+                {`Hospedaje${data.nights ? ` (${data.nights} ${data.nights === 1 ? "noche" : "noches"})` : ""}: `}
+                {divisaSelec == "USD"
+                  ? `${formatCurrency(Number(data.precioHabitacion) || 0)} USD`
+                  : `${formatCurrency(Number(data.precioHabitacion) || 0)} COP`}
+              </p>
+              {!(esExtranjero || hotelExentoIVA) &&
+                (Number(data.precioHabitacion) || 0) > 0 && (
+                  <p style={{ margin: 0 }}>
+                    IVA hospedaje ({Math.round(tasaIVA * 100)}%):{" "}
+                    {divisaSelec == "USD"
+                      ? `${formatCurrency((Number(data.precioHabitacion) || 0) * tasaIVA)} USD`
+                      : `${formatCurrency((Number(data.precioHabitacion) || 0) * tasaIVA)} COP`}
+                  </p>
+                )}
+            </div>
+            <p style={{ fontWeight: "bold", color: "#2c3e50", marginTop: "6px" }}>
               <strong>Total a pagar:</strong>{" "}
               {divisaSelec == "USD"
-                ? `${data.precio} USD`
-                : `${formatCurrency(data.precio)} COP`}
+                ? `${formatCurrency(
+                    (Number(data.precioHabitacion) || 0) +
+                    (!(esExtranjero || hotelExentoIVA) ? (Number(data.precioHabitacion) || 0) * tasaIVA : 0)
+                  )} USD`
+                : `${formatCurrency(
+                    (Number(data.precioHabitacion) || 0) +
+                    (!(esExtranjero || hotelExentoIVA) ? (Number(data.precioHabitacion) || 0) * tasaIVA : 0)
+                  )} COP`}
             </p>
 
             <br />
@@ -2007,6 +2045,54 @@ const FormularioReserva = () => {
             )}
           </div>
         ))}
+
+        {/* Extras de la reserva: se cobran una sola vez por reserva, no por habitación */}
+        {(() => {
+          const primera = reserva[0] || {};
+          const hasExtras =
+            (Number(primera.precioToursHabitacion) || 0) > 0 ||
+            (Number(primera.precioTrasladoHabitacion) || 0) > 0 ||
+            (Number(primera.precioMascotasHabitacion) || 0) > 0;
+          if (!hasExtras) return null;
+          return (
+            <div
+              style={{
+                border: "1px solid #ddd",
+                borderRadius: "5px",
+                padding: "15px",
+                marginBottom: "20px",
+              }}
+            >
+              <h3 style={{ marginTop: 0, color: "#2c3e50" }}>Extras de la reserva</h3>
+              <div style={{ fontSize: "0.9rem", lineHeight: "1.5" }}>
+                {primera.tourSeleccionado && primera.tourSeleccionado.length > 0 && (
+                  <p style={{ margin: 0 }}>
+                    Tours:{" "}
+                    {divisaSelec == "USD"
+                      ? `${formatCurrency(primera.precioToursHabitacion)} USD`
+                      : `${formatCurrency(primera.precioToursHabitacion)} COP`}
+                  </p>
+                )}
+                {(Number(primera.precioTrasladoHabitacion) || 0) > 0 && (
+                  <p style={{ margin: 0 }}>
+                    Traslado:{" "}
+                    {divisaSelec == "USD"
+                      ? `${formatCurrency(primera.precioTrasladoHabitacion)} USD`
+                      : `${formatCurrency(primera.precioTrasladoHabitacion)} COP`}
+                  </p>
+                )}
+                {(Number(primera.precioMascotasHabitacion) || 0) > 0 && (
+                  <p style={{ margin: 0 }}>
+                    Mascotas ({primera.mascotas || 0}):{" "}
+                    {divisaSelec == "USD"
+                      ? `${formatCurrency(primera.precioMascotasHabitacion)} USD`
+                      : `${formatCurrency(primera.precioMascotasHabitacion)} COP`}
+                  </p>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Sección de Datos del Vuelo */}
         {processedFlightData && (
@@ -2269,38 +2355,74 @@ const FormularioReserva = () => {
             borderRadius: "5px",
             padding: "15px",
             marginBottom: "20px",
-            display: "flex",
-            gap: "1rem",
             width: "100%",
-            justifyContent: "space-between",
           }}
         >
-          <div>
-            <h3>Valor total</h3>
+          <h3>Valor total</h3>
 
-            <p>
-              Precio total a pagar:{" "}
-              <strong>
-                {divisaSelec == "USD"
-                  ? `${formatCurrency(totalReservaConVuelo)} USD `
-                  : `${formatCurrency(totalReservaConVuelo)} COP `}
-              </strong>
-            </p>
-            <p>
-              (Hospedaje + A&B {!hotelExentoIVA ? "+ Impuestos incluidos" : ""} + Paquetes y servicios
-              adicionales)
-            </p>
-            {/* {!hotelExentoIVA && (
-            )} */}
-            {/* formuario desglose */}
-            <TablaDesglose precio={totalConIVA} adults={cantadultos} ninos={cantninos} fechasreserva={fechasreserva} totalRetenciones={totalRetenciones} />
-          </div>
-          {divisaSelec == "USD" ||
-            totalRetenciones < 199000 ? (
-            ""
-          ) : (
-            ""
-          )}
+          <p>
+            Precio total a pagar:{" "}
+            <strong>
+              {divisaSelec == "USD"
+                ? `${formatCurrency(totalReservaConVuelo)} USD `
+                : `${formatCurrency(totalReservaConVuelo)} COP `}
+            </strong>
+          </p>
+
+          {(() => {
+            const desglose = construirDesglosePrecios({
+              reserva,
+              totalHuespedes,
+              divisaSelec,
+              valorIVA,
+              tasaIVA,
+              marcadoCena,
+              marcadoAlmuerzo,
+              cantnoches,
+              DatosRetenciones,
+              RetencionesPorcentaje,
+              precioVueloPaquete,
+              vuelosActivados,
+            });
+            if (!desglose || desglose.length === 0) return null;
+            const fmt = (v) =>
+              divisaSelec === "USD"
+                ? `$${Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 })} USD`
+                : `${formatCurrency(v)} COP`;
+            const etiqueta = (c) =>
+              c === "hospedaje" ? "Hospedaje"
+              : c === "tour" ? "Tour"
+              : c === "transporte" ? "Transporte"
+              : c === "mascotas" ? "Mascotas"
+              : c === "alimentacion" ? "Alimentación"
+              : c === "impuestos" ? "Impuestos"
+              : c === "retencion" ? "Retención"
+              : c === "vuelo" ? "Vuelo"
+              : c;
+            return (
+              <div style={{ marginTop: "10px" }}>
+                {desglose.map((item, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "0.9rem",
+                      padding: "3px 0",
+                      borderBottom: "1px dashed #e2e8f0",
+                    }}
+                  >
+                    <span>
+                      <b>{etiqueta(item.concepto)}</b>
+                      {item.detalle ? ` · ${item.detalle}` : ""}
+                      {item.cantidad != null ? ` (x${item.cantidad})` : ""}
+                    </span>
+                    <span>{fmt(item.total)}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
         </div>
         {divisaSelec == "USD" ||
           totalRetenciones < 199000 ? null : (

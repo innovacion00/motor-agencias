@@ -160,12 +160,21 @@ export default function ReservaHotelComponent() {
   };
 
   // Calcular totales basados en los datos de las habitaciones
-  const subtotal = datosReserva ? datosReserva.reduce((sum, data) => sum + (data.precio || 0), 0) : 0;
+  // El hospedaje se suma por cada habitación; los extras (tours, traslado,
+  // mascotas) se cobran una sola vez por reserva, no por habitación.
+  const subtotal = datosReserva
+    ? datosReserva.reduce((sum, data) => sum + (Number(data.precioHabitacion) || 0), 0)
+    : 0;
+  const primeraHabCot = datosReserva?.[0] || {};
+  const extrasCot =
+    (Number(primeraHabCot.precioToursHabitacion) || 0) +
+    (Number(primeraHabCot.precioTrasladoHabitacion) || 0) +
+    (Number(primeraHabCot.precioMascotasHabitacion) || 0);
   const tasaIVA = getIvaPorcentaje(datosReserva?.[0]?.hotelidAutocore);
   const hotelExentoIVA = tasaIVA === 0;
   const exentoIva = huespedExtranjero === true || hotelExentoIVA;
   const iva = exentoIva ? 0 : (Math.round(subtotal * tasaIVA) || 0);
-  const total = subtotal + iva;
+  const total = subtotal + extrasCot + iva;
   const totalConIVA = total; // Para compatibilidad con TablaDesglose y FormularioRetenciones
 
   // Calcular retenciones
@@ -195,9 +204,11 @@ export default function ReservaHotelComponent() {
   );
   const baseCombinada = totalRetenciones + precioVuelo;
 
-  // Calcular markup (admite coma o punto como separador decimal)
+  // El markup (%) se calcula solo sobre la base imponible: hospedaje + extras
+  // (sin IVA ni vuelo). Después se suma al costo total que asume la agencia.
+  const baseImponibleMarkup = subtotal + extrasCot;
   const markupPorcentaje = parseFloat(String(markup).replace(',', '.')) || 0;
-  const markupAmount = Math.round(baseCombinada * (markupPorcentaje / 100));
+  const markupAmount = Math.round(baseImponibleMarkup * (markupPorcentaje / 100));
   const totalConMarkup = baseCombinada + markupAmount;
   const totalParaPost = Math.round(baseCombinada);
   const markupParaPost = Math.round(totalConMarkup);
@@ -454,7 +465,8 @@ export default function ReservaHotelComponent() {
     const vueloArray = buildVueloArrayParaCotizacion();
     const precioVueloPdf = incluyeVuelo ? precioVuelo : 0;
     const baseCombinadaPdf = totalRetenciones + precioVueloPdf;
-    const markupAmountPdf = Math.round(baseCombinadaPdf * (markupPorcentaje / 100));
+    const baseImponibleMarkupPdf = subtotal + extrasCot;
+    const markupAmountPdf = Math.round(baseImponibleMarkupPdf * (markupPorcentaje / 100));
     const totalConMarkupPdf = baseCombinadaPdf + markupAmountPdf;
     const precioPorNocheCalc = totalConMarkupPdf && noches > 0 ? (totalConMarkupPdf / noches) : 0;
     const totalSinIvaConMarkup = exentoIva ? totalConMarkupPdf : Math.round(totalConMarkupPdf / (1 + tasaIVA));
@@ -997,6 +1009,9 @@ export default function ReservaHotelComponent() {
           <h2>Habitaciones Seleccionadas</h2>
           ${datosReserva.map((habitacion, index) => {
               const descripcionPension = generarDescripcionPension(planAlimentacion);
+              const precioNocheHab = Number(habitacion.precioNocheHabitacion) || 0;
+              const precioTotalHab = Number(habitacion.precioHabitacion) || Number(habitacion.precio) || 0;
+              const nochesHab = Number(habitacion.nights) || noches;
               return `
               <div class="room-card">
                   <div class="room-header">
@@ -1004,8 +1019,8 @@ export default function ReservaHotelComponent() {
                   </div>
                   <p style="color: #666; margin-bottom: 15px;">${habitacion.descripcion || descripcionPension}</p>
                   <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
-                      <span>Precio por noche: <strong>$${precioPorNocheCalc.toLocaleString()}</strong></span>
-                      <span>Total Habitación: <strong>$${totalSinIvaConMarkup.toLocaleString()}</strong></span>
+                      <span>Precio por noche: <strong>$${precioNocheHab.toLocaleString()}</strong></span>
+                      <span>Total Habitación (<strong>${nochesHab}</strong> noche(s)): <strong>$${precioTotalHab.toLocaleString()}</strong></span>
                   </div>
               </div>
               `;
@@ -1016,7 +1031,17 @@ export default function ReservaHotelComponent() {
           <h2 style="margin-top: 30px;">Resumen de Tarifas</h2>
           <div class="pricing-box">
               <div class="price-row">
-                  <span>${exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</span>
+                  <span>Subtotal hospedaje (${datosReserva.length} hab.)</span>
+                  <span>$${subtotalFormateado}</span>
+              </div>
+              ${extrasCot > 0 ? `
+              <div class="price-row">
+                  <span>Extras (tours/traslado/mascotas)</span>
+                  <span>$${extrasCot.toLocaleString()}</span>
+              </div>
+              ` : ''}
+              <div class="price-row">
+                  <span>${exentoIva ? 'IVA 0% (Exento extranjero)' : `IVA ${Math.round(tasaIVA * 100)}%`}</span>
                   <span>$${ivaFormateado}</span>
               </div>
               ${precioVueloPdf > 0 ? `
@@ -1025,7 +1050,24 @@ export default function ReservaHotelComponent() {
                   <span>$${precioVueloFormateado}</span>
               </div>
               ` : ''}
+              ${
+                DatosRetenciones != null &&
+                (Number(DatosRetenciones.calculo_rtf_fte) || 0) +
+                  (Number(DatosRetenciones.calculo_rtf_ica) || 0) +
+                  (Number(DatosRetenciones.calculo_rtf_iva) || 0) > 0
+                  ? `
+              <div class="price-row">
+                  <span>Retenciones (RTE)</span>
+                  <span>-$${(total - totalRetenciones).toLocaleString()}</span>
+              </div>
+              `
+                  : ''
+              }
               ${markupPorcentaje > 0 ? `
+              <div class="price-row">
+                  <span>Markup (${markupPorcentaje}%)</span>
+                  <span>+$${markupAmountPdf.toLocaleString()}</span>
+              </div>
               ` : ''}
               <div class="price-row total">
                   <span>Total a Pagar</span>
@@ -1170,6 +1212,87 @@ export default function ReservaHotelComponent() {
       const vueloPayload = buildVueloArrayParaCotizacion();
       const origenIata = getOrigenIataCotizacion();
 
+      // Desglose de precios (snapshot): hospedaje por habitación + extras una sola
+      // vez (tours por total de huéspedes, traslado, mascotas) + IVA + vuelo +
+      // retenciones + markup. Se guarda en la cotización y lo hereda la reserva.
+      const totalHuespedesCot = cantadultos + cantninos;
+      const desgloseCot = [];
+      datosReserva.forEach((dato, index) => {
+        const totalHab = Number(dato.precioHabitacion) || 0;
+        const nocheHab = Number(dato.precioNocheHabitacion) || 0;
+        if (totalHab > 0) {
+          desgloseCot.push({
+            concepto: "hospedaje",
+            detalle: `Habitación ${dato.NombreH || `#${index + 1}`}`,
+            cantidad: Number(dato.nights) || noches || 1,
+            precioUnitario: nocheHab || totalHab / (Number(dato.nights) || noches || 1),
+            total: Math.round(totalHab * 100) / 100,
+          });
+        }
+      });
+      (datosReserva[0]?.tourSeleccionado || []).forEach((tour) => {
+        const precioTour =
+          parseFloat(divisaSelec === "USD" ? tour.preciousd : tour.preciocol) || 0;
+        const totalTour = precioTour * totalHuespedesCot;
+        if (totalTour > 0) {
+          desgloseCot.push({
+            concepto: "tour",
+            detalle: tour.title,
+            cantidad: totalHuespedesCot,
+            precioUnitario: precioTour,
+            total: Math.round(totalTour * 100) / 100,
+          });
+        }
+      });
+      const primeraHabCotD = datosReserva?.[0] || {};
+      const totalTrasladoCot = Number(primeraHabCotD.precioTrasladoHabitacion) || 0;
+      if (totalTrasladoCot > 0) {
+        desgloseCot.push({ concepto: "transporte", detalle: "Traslado aeropuerto - hotel", total: totalTrasladoCot });
+      }
+      const totalMascotasCot = Number(primeraHabCotD.precioMascotasHabitacion) || 0;
+      if (totalMascotasCot > 0) {
+        desgloseCot.push({
+          concepto: "mascotas",
+          detalle: "Mascotas",
+          cantidad: Number(primeraHabCotD.mascotas) || 0,
+          precioUnitario:
+            Number(primeraHabCotD.mascotas) > 0
+              ? totalMascotasCot / Number(primeraHabCotD.mascotas)
+              : 0,
+          total: totalMascotasCot,
+        });
+      }
+      if (iva > 0) {
+        desgloseCot.push({ concepto: "impuestos", detalle: `IVA ${Math.round(tasaIVA * 100)}%`, total: iva });
+      }
+      if (DatosRetenciones != null) {
+        const retencionesDesg = [
+          { etiqueta: "ReteFuente", valor: DatosRetenciones.calculo_rtf_fte, porcentaje: RetencionesPorcentaje?.reteFuente },
+          { etiqueta: "ReteIca", valor: DatosRetenciones.calculo_rtf_ica, porcentaje: RetencionesPorcentaje?.reteIca },
+          { etiqueta: "ReteIva", valor: DatosRetenciones.calculo_rtf_iva, porcentaje: RetencionesPorcentaje?.reteIva },
+        ];
+        retencionesDesg.forEach((r) => {
+          const valor = Number(r.valor) || 0;
+          if (valor > 0) {
+            desgloseCot.push({
+              concepto: "retencion",
+              detalle: r.porcentaje ? `${r.etiqueta} ${r.porcentaje}%` : r.etiqueta,
+              total: -valor,
+            });
+          }
+        });
+      }
+      if (incluyeVuelo && precioVuelo > 0) {
+        desgloseCot.push({ concepto: "vuelo", detalle: "Paquete de vuelo", total: precioVuelo });
+      }
+      if (markupPorcentaje > 0 && markupAmount > 0) {
+        desgloseCot.push({
+          concepto: "markup",
+          detalle: `Markup ${markupPorcentaje}%`,
+          total: markupAmount,
+        });
+      }
+
       const tipoDocumentoNormalizado = normalizarTipoDocumento(formData.tipoDocumento);
       const informacionD = JSON.stringify({
         total: totalParaPost,
@@ -1209,6 +1332,7 @@ export default function ReservaHotelComponent() {
         planAlimentario: datosReserva[0]?.plandealimentacion || "Solo desayuno",
         exentoIva: exentoIva,
         landingHtml: generarLandingHtml(),
+        desglosePrecios: desgloseCot,
         reservaInfo: {
           agency: {
             is_agency: true,
@@ -1246,6 +1370,12 @@ export default function ReservaHotelComponent() {
                 quantity: "1",
                 rateId: dato.rateId,
                 unitaryPrice: dato.precio,
+                precioHabitacion: Number(dato.precioHabitacion) || 0,
+                precioNocheHabitacion: Number(dato.precioNocheHabitacion) || 0,
+                precioToursHabitacion: Number(dato.precioToursHabitacion) || 0,
+                precioTrasladoHabitacion: Number(dato.precioTrasladoHabitacion) || 0,
+                precioMascotasHabitacion: Number(dato.precioMascotasHabitacion) || 0,
+                noches: Number(dato.nights) || Number(datosReserva[0]?.nights) || 1,
               };
             }),
             telephone: formData.celular,
@@ -1617,17 +1747,23 @@ export default function ReservaHotelComponent() {
                         <td className="td">{data.NombreH || 'Habitación estándar'}</td>
                         <td className="td">{data.descripcion || descripcionPension}</td>
                         <td className="td">{data.nights}</td>
-                        <td className="td">${data.precioBase ? data.precioBase.toLocaleString() : '0'}</td>
-                        <td className="td">${data.precio ? data.precio.toLocaleString() : '0'}</td>
+                        <td className="td">${(Number(data.precioNocheHabitacion) || 0).toLocaleString()}</td>
+                        <td className="td">${(Number(data.precioHabitacion) || 0).toLocaleString()}</td>
                       </tr>
                     );
                     })}
                     <tr className="table-subtotal">
-                      <td colSpan="4" className="td-total">Subtotal</td>
+                      <td colSpan="4" className="td-total">Subtotal hospedaje</td>
                       <td className="td-amount">${subtotal.toLocaleString()}</td>
                     </tr>
+                    {extrasCot > 0 && (
+                      <tr className="table-subtotal">
+                        <td colSpan="4" className="td-total">Extras (tours, traslado, mascotas)</td>
+                        <td className="td-amount">${extrasCot.toLocaleString()}</td>
+                      </tr>
+                    )}
                     <tr className="table-subtotal">
-                      <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : 'IVA 19%'}</td>
+                      <td colSpan="4" className="td-total">{exentoIva ? 'IVA 0% (Exento extranjero)' : `IVA ${Math.round(tasaIVA * 100)}%`}</td>
                       <td className="td-amount">${iva.toLocaleString()}</td>
                     </tr>
                     {incluyeVuelo && precioVuelo > 0 && (

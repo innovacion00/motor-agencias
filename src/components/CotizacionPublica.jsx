@@ -318,10 +318,20 @@ export const CotizacionPublica = ({ id }) => {
     const nights = Number(reservaInfo?.nights) || calculateNights(reservaInfo?.checkin, reservaInfo?.checkout) || 1;
 
     // Calcular totales (respetar exención de IVA) y mostrar precio con markup si existe
-    const subtotal = roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
+    // El hospedaje se suma por cada habitación; los extras se cobran una sola vez.
+    const tieneDesglose = roomsData.some((r) => r.precioHabitacion != null);
+    const subtotal = tieneDesglose
+        ? roomsData.reduce((sum, room) => sum + (Number(room.precioHabitacion) || 0), 0)
+        : roomsData.reduce((sum, room) => sum + (room.unitaryPrice || 0), 0);
+    const primerosRoom = roomsData[0] || {};
+    const extrasCotizacion = tieneDesglose
+        ? (Number(primerosRoom.precioToursHabitacion) || 0) +
+          (Number(primerosRoom.precioTrasladoHabitacion) || 0) +
+          (Number(primerosRoom.precioMascotasHabitacion) || 0)
+        : 0;
     const exentoIva = !!cotizacion?.exentoIva;
     const iva = exentoIva ? 0 : Math.round(subtotal * 0.19);
-    const total = subtotal + iva;
+    const total = subtotal + extrasCotizacion + iva;
 
     // Total sin markup que asume la agencia: cotizacion.total ya incluye hospedaje + vuelo
     const retencionesTotal =
@@ -519,12 +529,14 @@ export const CotizacionPublica = ({ id }) => {
                     {roomsData.map((room, index) => {
                         const planAlimentacion = roomsData[0]?.planAlimentario || cotizacion?.planAlimentario || 'Solo desayuno';
                         const descripcionPension = generarDescripcionPension(planAlimentacion);
+                        const precioNocheHab = tieneDesglose ? (Number(room.precioNocheHabitacion) || 0) : (totalConMarkup && nights > 0 ? (totalConMarkup / nights) : 0);
+                        const precioTotalHab = tieneDesglose ? (Number(room.precioHabitacion) || Number(room.unitaryPrice) || 0) : totalSinIvaConMarkup;
                         return (
                         <div key={room.id || index} style={{ backgroundColor: '#f8f9fa', padding: '15px', margin: '10px 0', borderRadius: '5px' }}>
                             <h3 style={{ color: '#444', fontSize: '18px', margin: '0 0 10px 0' }}>Habitación {index + 1}: {room.nombreHabitacion || 'Habitación estándar'}</h3>
                             <p><strong>Descripción:</strong> {descripcionPension}</p>
-							<p><strong>Precio por noche:</strong> ${ (totalConMarkup && nights > 0 ? (totalConMarkup / nights) : 0).toLocaleString() }</p>
-							<p><strong>Total habitación:</strong> ${ totalSinIvaConMarkup.toLocaleString() }</p>
+							<p><strong>Precio por noche:</strong> ${ precioNocheHab.toLocaleString() }</p>
+							<p><strong>Total habitación:</strong> ${ precioTotalHab.toLocaleString() }</p>
                         </div>
                     );
                     })}
@@ -541,6 +553,16 @@ export const CotizacionPublica = ({ id }) => {
                             
                            
                         </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+                            <span>Subtotal hospedaje:</span>
+                            <span>${subtotal.toLocaleString()}</span>
+                        </div>
+                        {extrasCotizacion > 0 && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
+                                <span>Extras (tours, traslado, mascotas):</span>
+                                <span>${extrasCotizacion.toLocaleString()}</span>
+                            </div>
+                        )}
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
                             <span>{exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
                             <span>${iva.toLocaleString()}</span>

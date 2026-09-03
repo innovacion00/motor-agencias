@@ -883,7 +883,28 @@ export const Cid = ({ id }) => {
 
   //Enviar datos de reserva
   const enviardatos = () => {
-    localStorage.setItem("datosreserva", JSON.stringify(datohabitacion));
+    const huespedesG = ninos + adultos;
+    const ciudadG = habitaciones?.hotel?.city;
+    const catActualizado = datohabitacion.map((hab) => ({
+      ...hab,
+      tourSeleccionado: selectedTours,
+      tipoTraslado: mostrarTraslados ? tipoTraslado : null,
+      mascotas: mostrarMascotas ? cantidadMascotas : 0,
+      precioToursHabitacion: (selectedTours || []).reduce((total, tour) => {
+        const precioTourG = parseFloat(
+          currentCurrency === "USD" ? tour.preciousd : tour.preciocol
+        );
+        return total + (Number.isFinite(precioTourG) ? precioTourG : 0) * huespedesG;
+      }, 0),
+      precioTrasladoHabitacion:
+        mostrarTraslados && tipoTraslado != null
+          ? calculateTransferPrice(ciudadG, currentCurrency, tipoTraslado, huespedesG, hotelIdNumero)
+          : 0,
+      precioMascotasHabitacion:
+        (mostrarMascotas ? cantidadMascotas : 0) * getMascotaPrecio(currentCurrency),
+    }));
+    setDatohabitacion(catActualizado);
+    localStorage.setItem("datosreserva", JSON.stringify(catActualizado));
     const hotelActual = habitaciones?.hotel || {};
     const hotelId = Number(hotelActual.id ?? id);
     const hotelSeleccionado = {
@@ -1752,13 +1773,17 @@ export const Cid = ({ id }) => {
                                 ? "amountBeforeTaxUSD"
                                 : "amountBeforeTax"
                             ];
-                            const precioBaseHabitacion = conDescuentoHospedaje(
+                            const precioHabitacionTotal = conDescuentoHospedaje(
                               baseRate,
                               descuentoHospedaje
                             );
                             const basePrecioValido =
-                              typeof precioBaseHabitacion === "number" &&
-                              !Number.isNaN(precioBaseHabitacion);
+                              typeof precioHabitacionTotal === "number" &&
+                              !Number.isNaN(precioHabitacionTotal);
+                            const nochesHabitacion = rangosfechas.nights || 1;
+                            const precioNocheHabitacion = basePrecioValido
+                              ? precioHabitacionTotal / nochesHabitacion
+                              : 0;
                             const huespedesHabitacion = ninos + adultos;
                             const precioToursHabitacion = (selectedTours || []).reduce(
                               (total, tour) => {
@@ -1852,7 +1877,13 @@ export const Cid = ({ id }) => {
                                 )?.trm,
                                 mascotas: mostrarMascotas ? cantidadMascotas : 0,
                                 precioBaseHabitacion: basePrecioValido
-                                  ? precioBaseHabitacion
+                                  ? precioHabitacionTotal
+                                  : 0,
+                                precioNocheHabitacion: basePrecioValido
+                                  ? precioNocheHabitacion
+                                  : 0,
+                                precioHabitacion: basePrecioValido
+                                  ? precioHabitacionTotal
                                   : 0,
                                 precioToursHabitacion,
                                 precioTrasladoHabitacion,
@@ -1942,7 +1973,8 @@ export const Cid = ({ id }) => {
             </div>
 
             <div className={styles.reservationSelectedList}>
-            {datohabitacion.map((dato, index) => (
+            {datohabitacion.map((dato, index) => {
+              return (
               <div key={index} style={{ position: "relative" }}>
                 {" "}
                 {/* Contenedor relativo para posicionar el botón */}
@@ -1988,18 +2020,16 @@ export const Cid = ({ id }) => {
                     ))}
                   </h5>
                   <h5>Numero de mascotas: {cantidadMascotas}</h5>
-                  <h2>
-                    {formatCurrency(
-                      calculateTotalPrice(
-                        dato.precioBase,
-                        selectedTours,
-                        currentCurrency,
-                        ninos + adultos,
-                        habitaciones?.hotel?.city,
-                        tipoTraslado,
-                        cantidadMascotas // Add this parameter
-                      )
-                    )}{" "}
+                  <div style={{ fontSize: "0.85rem", lineHeight: "1.5" }}>
+                    <p style={{ margin: 0 }}>
+                      Hospedaje ({rangosfechas.nights} {rangosfechas.nights === 1 ? "noche" : "noches"}):{" "}
+                      {currentCurrency == "USD"
+                        ? `${formatCurrency(dato.precioHabitacion)} USD`
+                        : `${formatCurrency(dato.precioHabitacion)} COP`}
+                    </p>
+                  </div>
+                  <h2 style={{ marginTop: "6px" }}>
+                    {formatCurrency(Number(dato.precioHabitacion) || 0)}{" "}
                     {currentCurrency == "USD" ? "USD" : "COP"}
                   </h2>
                   <button
@@ -2028,7 +2058,68 @@ export const Cid = ({ id }) => {
                   <hr />
                 </ul>
               </div>
-            ))}
+            );
+            })}
+            {(() => {
+              const huespedesMap = ninos + adultos;
+              const precioToursRender = (selectedTours || []).reduce((total, tour) => {
+                const precioTourRender = parseFloat(
+                  currentCurrency === "USD" ? tour.preciousd : tour.preciocol
+                );
+                return total + (Number.isFinite(precioTourRender) ? precioTourRender : 0) * huespedesMap;
+              }, 0);
+              const precioTrasladoRender =
+                mostrarTraslados && tipoTraslado != null
+                  ? calculateTransferPrice(habitaciones?.hotel?.city, currentCurrency, tipoTraslado, huespedesMap, hotelIdNumero)
+                  : 0;
+              const precioMascotasRender =
+                (mostrarMascotas ? cantidadMascotas : 0) * getMascotaPrecio(currentCurrency);
+              if (
+                precioToursRender <= 0 &&
+                precioTrasladoRender <= 0 &&
+                precioMascotasRender <= 0
+              ) {
+                return null;
+              }
+              return (
+                <div
+                  style={{
+                    fontSize: "0.85rem",
+                    lineHeight: "1.5",
+                    border: "1px solid #d5dbe0",
+                    borderRadius: "5px",
+                    padding: "10px",
+                    marginTop: "10px",
+                  }}
+                >
+                  <strong style={{ color: "#26547B" }}>Extras de la reserva</strong>
+                  {precioToursRender > 0 && (
+                    <p style={{ margin: "4px 0 0 0" }}>
+                      Tours:{" "}
+                      {currentCurrency == "USD"
+                        ? `${formatCurrency(precioToursRender)} USD`
+                        : `${formatCurrency(precioToursRender)} COP`}
+                    </p>
+                  )}
+                  {precioTrasladoRender > 0 && (
+                    <p style={{ margin: "4px 0 0 0" }}>
+                      Traslado:{" "}
+                      {currentCurrency == "USD"
+                        ? `${formatCurrency(precioTrasladoRender)} USD`
+                        : `${formatCurrency(precioTrasladoRender)} COP`}
+                    </p>
+                  )}
+                  {precioMascotasRender > 0 && (
+                    <p style={{ margin: "4px 0 0 0" }}>
+                      Mascotas ({cantidadMascotas}):{" "}
+                      {currentCurrency == "USD"
+                        ? `${formatCurrency(precioMascotasRender)} USD`
+                        : `${formatCurrency(precioMascotasRender)} COP`}
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
             </div>
 
             <div className={styles.reservationFooter}>

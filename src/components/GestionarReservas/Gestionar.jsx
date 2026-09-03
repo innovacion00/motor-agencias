@@ -623,9 +623,12 @@ const Gestionar = ({ reservas }) => {
     }).format(value);
   };
 
-  // Precio solo de la habitación (sin tours, traslados ni mascotas). Para
-  // reservas antiguas sin `precioBase`, cae al `unitaryPrice` guardado.
+  // Precio total de la habitación (sin tours, traslados ni mascotas). Para
+  // reservas creadas desde cotización usa `precioHabitacion`; para reservas
+  // antiguas sin ese campo cae a `precioBase` y luego a `unitaryPrice`.
   const precioHabitacionDeRoom = (dato) => {
+    const desglose = Number(dato?.precioHabitacion);
+    if (Number.isFinite(desglose) && desglose > 0) return desglose;
     const base = Number(dato?.precioBase);
     if (Number.isFinite(base)) return base;
     return Number(dato?.unitaryPrice) || 0;
