@@ -1720,9 +1720,16 @@ const Gestionar = ({ reservas }) => {
                       <b>Total a pagar</b>
                     </span>
                     <span className={styles.desgloseImporte}>
-                      {reservas?.reservation.currency == "USD"
-                        ? `$${reservas?.total} USD`
-                        : `${formatCurrency(reservas?.total)} COP`}
+                      {(() => {
+                        const sumaDesglose = (reservas?.desglosePrecios || []).reduce(
+                          (acc, item) => acc + (Number(item.total) || 0),
+                          0
+                        );
+                        const valorTotal = sumaDesglose > 0 ? sumaDesglose : (Number(reservas?.total) || 0);
+                        return reservas?.reservation.currency == "USD"
+                          ? `$${valorTotal.toLocaleString("en-US", { maximumFractionDigits: 2 })} USD`
+                          : `${formatCurrency(valorTotal)} COP`;
+                      })()}
                     </span>
                   </div>
                 </div>
