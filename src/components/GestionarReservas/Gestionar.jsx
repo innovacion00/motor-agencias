@@ -550,12 +550,22 @@ const Gestionar = ({ reservas }) => {
   const generarLinkBilletera = async (id, booleano) => {
     setisLoading(true); // Deshabilitar el botón
     try {
-      const linkP = await generarLinkPagoBilletera(id, booleano); // Llamada a la API
-      console.log(linkP);
-      if (linkP.link) {      
-        window.location.href = linkP.link; // Redireccionar al link generado
+      const res = await generarLinkPagoBilletera(id, booleano); // Llamada a la API
+      console.log(res);
+      if (res.ok) {
+        Swal.fire({
+          title: "Pago exitoso",
+          text: res.message,
+          icon: "success",
+          confirmButtonColor: "#26547B",
+        }).then(() => window.location.reload());
       } else {
-        alert("No se pudo generar el link de pago.");
+        Swal.fire({
+          title: "Error",
+          text: res.message,
+          icon: "error",
+          confirmButtonColor: "#26547B",
+        }).then(() => window.location.reload());
       }
     } catch (error) {
       console.error("Error al generar el link:", error);
@@ -565,7 +575,7 @@ const Gestionar = ({ reservas }) => {
         text: `No se pudo realizar el pago con Mi saldo, Verifique su saldo o intente nuevamente mas tarde`,
         icon: "error",
         confirmButtonColor: "#26547B",
-      });
+      }).then(() => window.location.reload());
     } finally {
       setisLoading(false); // Habilitar el botón nuevamente
     }
