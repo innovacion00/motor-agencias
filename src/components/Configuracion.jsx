@@ -3,6 +3,11 @@ import "../../public/styles/UserDashboard.css"; // Asegúrate de tener este arch
 import Swal from "sweetalert2";
 import { refreshToken } from "../stores/authtoken";
 import Cookies from "js-cookie";
+import { useStore } from "@nanostores/react";
+import {
+  mantenimientoActivo,
+  consultarEstadoMantenimiento,
+} from "../stores/mantenimiento";
 
 const Configuracion = () => {
   const [userData, setUserData] = useState(null);
@@ -16,12 +21,16 @@ const Configuracion = () => {
     adminRole: false,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const mantenimiento = useStore(mantenimientoActivo);
+  const [cargandoMantenimiento, setCargandoMantenimiento] = useState(false);
 
   //#region Use effect general
   useEffect(() => {
     const datosdelusuario = JSON.parse(localStorage.getItem("datosUsuario"));
 
     setUserData(datosdelusuario);
+
+    consultarEstadoMantenimiento();
 
     // Determinar el límite según la categoría
     if (datosdelusuario) {
@@ -32,6 +41,58 @@ const Configuracion = () => {
       }
     }
   }, []);
+
+  const toggleMantenimiento = async () => {
+    const nuevoEstado = !mantenimiento;
+    setCargandoMantenimiento(true);
+    const fetchMantenimiento = async (token) =>
+      fetch(
+        `${import.meta.env.PUBLIC_API_URL}/agencias/v1/app-config/mantenimiento`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ activo: nuevoEstado }),
+        }
+      );
+
+    try {
+      let response = await fetchMantenimiento(Cookies.get("accessToken"));
+
+      if (response.status === 401) {
+        const newToken = await refreshToken();
+        if (newToken) {
+          response = await fetchMantenimiento(newToken);
+        }
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Error al cambiar el modo mantenimiento");
+      }
+
+      mantenimientoActivo.set(data.mantenimiento === true);
+
+      Swal.fire({
+        icon: "success",
+        title: "Listo",
+        text: data.mantenimiento
+          ? "Modo mantenimiento activado: toda la plataforma está en mantenimiento."
+          : "Modo mantenimiento desactivado.",
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || "Ocurrió un error al cambiar el modo mantenimiento",
+      });
+    } finally {
+      setCargandoMantenimiento(false);
+    }
+  };
   const handleLogout = () => {
     // Eliminar el token de autenticación
     localStorage.removeItem("authToken");
@@ -192,6 +253,27 @@ const Configuracion = () => {
             <p>Muy pronto...</p>
             {/* <p>Configura roles personalizados: asigna permisos, crea, edita, consulta y elimina roles según tus necesidades.</p> */}
           </div>
+          {userData?.role?.includes("super-admin") && (
+            <div id="mnt" className="cardd">
+              <div style={{ fontSize: "32px", color: "#1C3D5A" }}>
+                <i className="fas fa-tools" aria-hidden="true" />
+              </div>
+              <h3>Modo mantenimiento</h3>
+              <p>
+                Muestra el cartel de "Plataforma en mantenimiento" en toda la
+                plataforma durante el despliegue.
+              </p>
+              <label className="maintenance-switch">
+                <input
+                  type="checkbox"
+                  checked={mantenimiento}
+                  onChange={toggleMantenimiento}
+                  disabled={cargandoMantenimiento}
+                />
+                <span className="maintenance-switch-slider" />
+              </label>
+            </div>
+          )}
           {/* <div className="cardd">
             <img src="https://space-img.sfo3.digitaloceanspaces.com/Agencias/apiIcon.png" alt="Documentación del API" />
             <h3>Documentación de la API</h3>

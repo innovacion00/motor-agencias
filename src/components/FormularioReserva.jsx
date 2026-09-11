@@ -783,6 +783,18 @@ const FormularioReserva = () => {
     return response;
   };
 
+  const obtenerMensajeErrorRespuesta = async (response) => {
+    let detalle = "";
+    try {
+      const body = await response.json();
+      const msg = body?.message;
+      detalle = Array.isArray(msg) ? msg.join(", ") : String(msg || "");
+    } catch {
+      detalle = "";
+    }
+    return detalle || "Error al consultar la API";
+  };
+
   const mapDocumentTypeForFlight = (tipoDocumento) => {
     if (normalizarTipoDocumento(tipoDocumento) === "PA") return "PASSPORT";
     return "IDENTITY_CARD";
@@ -1354,7 +1366,7 @@ const FormularioReserva = () => {
             text: "No se pudo completar la reserva porque una de las habitaciones ya no se encuentra disponible. Pruebe con otra acomodacion",
           });
         } else {
-          throw new Error("Error al consultar la API");
+          throw new Error(await obtenerMensajeErrorRespuesta(response));
         }
       } catch (error) {
         // MANEJO DE ERRORES CON SWEETALERT
@@ -1635,7 +1647,7 @@ const FormularioReserva = () => {
             text: "No se pudo completar la reserva porque una de las habitaciones ya no se encuentra disponible. Pruebe con otra acomodacion",
           });
         } else {
-          throw new Error("Error al consultar la API");
+          throw new Error(await obtenerMensajeErrorRespuesta(response));
         }
       } catch (error) {
         if (hotelYaReservado) {
