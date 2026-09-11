@@ -6,25 +6,44 @@ import "swiper/swiper-bundle.css";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "./Carrousel.css";
 
-const Carrousel = ({ images }) => {
+const Carrousel = ({ images, title, kicker, ctaHref }) => {
   return (
-    <Swiper
-      modules={[Navigation, Pagination, Autoplay, EffectFade]}
-      spaceBetween={3}
-      slidesPerView={1}
-      effect="fade"
-      navigation
-      pagination={{ clickable: true }}
-      autoplay={{ delay: 1500, disableOnInteraction: true }}
-      loop={true}
-    >
-      {images.map((src, i) => (
-        <SwiperSlide key={i}>
-          <img src={src} height={400} width={800} alt={`Slide ${i + 1}`} />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <div className="ih-carr">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay, EffectFade]}
+        spaceBetween={0}
+        slidesPerView={1}
+        effect="fade"
+        speed={900}
+        navigation
+        pagination={{ clickable: true }}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        loop={true}
+      >
+        {images.map((src, i) => (
+          <SwiperSlide key={i}>
+            <img src={src} alt={`${title ?? "Hotel"} - foto ${i + 1}`} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+      {title && (
+        <div className="ih-carr-overlay">
+          {kicker && <span className="ih-hero-kicker">{kicker}</span>}
+          <h1 className="ih-hero-title">{title}</h1>
+          {ctaHref && (
+            <a className="ih-carr-cta" href={ctaHref}>
+              Ver disponibilidad
+            </a>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

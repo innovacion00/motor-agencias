@@ -1,0 +1,221 @@
+/* Carrousel cinematográfico + heroe de galería para las páginas de info de hotel */
+
+.ih-carr {
+  position: relative;
+  width: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(21, 47, 71, 0.18);
+  background: #0e2233;
+}
+
+.ih-carr .swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.ih-carr .swiper-slide {
+  overflow: hidden;
+  background: #0e2233;
+}
+
+.ih-carr .swiper-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ih-carr .swiper-pagination-bullet {
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 1;
+  width: 9px;
+  height: 9px;
+}
+
+.ih-carr .swiper-pagination-bullet-active {
+  background: #f29c38;
+  width: 26px;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.ih-carr .swiper-button-prev,
+.ih-carr .swiper-button-next {
+  color: #fff;
+  width: 46px;
+  height: 46px;
+  background: rgba(21, 47, 71, 0.35);
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+  transition: background-color 0.25s ease, transform 0.25s ease;
+}
+
+.ih-carr .swiper-button-prev:hover,
+.ih-carr .swiper-button-next:hover {
+  background: rgba(242, 156, 56, 0.9);
+  transform: scale(1.06);
+}
+
+.ih-carr .swiper-button-prev::after,
+.ih-carr .swiper-button-next::after {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+@media (min-width: 768px) {
+  .ih-carr {
+    aspect-ratio: 21 / 8.5;
+  }
+}
+
+@media (max-width: 767px) {
+  .ih-carr {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* Overlay del carrusel */
+.ih-carr-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  padding: clamp(20px, 4vw, 48px);
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 22, 40, 0) 0%,
+    rgba(10, 22, 40, 0.55) 45%,
+    rgba(10, 22, 40, 0.85) 100%
+  );
+  text-align: left;
+  pointer-events: none;
+}
+
+/* Heroe de galería (hoteles sin carrusel) */
+.ih-hero-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(21, 47, 71, 0.18);
+}
+
+.ih-hero-figure {
+  margin: 0;
+  overflow: hidden;
+  background: #0e2233;
+  border-radius: 14px;
+}
+
+.ih-hero-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ih-hero-figure--main {
+  aspect-ratio: 21 / 10;
+}
+
+.ih-hero-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ih-hero-thumbs .ih-hero-figure {
+  flex: 1;
+  aspect-ratio: 16 / 9;
+}
+
+.ih-hero-grid .ih-hero-overlay {
+  border-radius: 0 0 22px 22px;
+}
+
+.ih-hero-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 6;
+  padding: clamp(18px, 3vw, 40px);
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 22, 40, 0) 0%,
+    rgba(10, 22, 40, 0.5) 45%,
+    rgba(10, 22, 40, 0.82) 100%
+  );
+  text-align: left;
+  pointer-events: none;
+}
+
+.ih-hero-overlay--static {
+  position: static;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #1c3d5a 0%, #152f47 100%);
+  text-align: center;
+  pointer-events: auto;
+}
+
+.ih-hero-kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #f5d7b4;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.ih-hero-title {
+  font-family: "Work Sans", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 4.2vw, 3rem);
+  line-height: 1.12;
+  margin: 0 0 0.6rem;
+  color: #fff !important;
+  text-shadow: 0 2px 18px rgba(10, 22, 40, 0.45);
+}
+
+.ih-carr-cta {
+  display: inline-block;
+  padding: 0.72rem 1.6rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f29c38 0%, #e08a28 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 26px rgba(242, 156, 56, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.ih-carr-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(242, 156, 56, 0.6);
+  color: #fff;
+  text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  .ih-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ih-hero-thumbs {
+    flex-direction: row;
+  }
+
+  .ih-hero-thumbs .ih-hero-figure {
+    aspect-ratio: 16 / 10;
+  }
+}

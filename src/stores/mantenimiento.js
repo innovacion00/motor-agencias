@@ -19,8 +19,7 @@ export const consultarEstadoMantenimiento = async () => {
     mantenimientoActivo.set(activo);
     return activo;
   } catch {
-    mantenimientoActivo.set(true);
-    return true;
+    return false;
   }
 };
 

@@ -2,157 +2,646 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import DropdownSearch from "../DropdownSearch";
 import Carrousel from "../Carrouseles/Carrousel.jsx";
-import HOTELES_DATA from "../../data/hoteles.json";
+import "../Carrouseles/Carrousel.css";
 
 const { hotel } = Astro.props;
-const estilosCss = HOTELES_DATA.estilos.find((e) => e.id === hotel.estilo)?.css ?? "";
 const tieneHabitaciones = Array.isArray(hotel.habitaciones) && hotel.habitaciones.length > 0;
+const conCarrusel = Array.isArray(hotel.carrusel) && hotel.carrusel.length > 0;
 const checkIcon = "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png";
+const titulo = hotel.titulo;
 ---
 
-<BaseLayout title="Bienvenido a GEH SUITES MOTOR DE AGENCIAS">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
-
-  <div class="search-form-wrapper">
+<BaseLayout title={`${titulo} | GEH Suites`}>
+  <div class="ih-search" id="ih-reservar">
     <DropdownSearch client:visible />
   </div>
 
-  <div class="container">
+  <div class="ih-page">
+    <!-- Hero: carrusel o galería -->
+    {conCarrusel ? (
+      <Carrousel
+        client:load
+        images={hotel.carrusel}
+        title={titulo}
+        kicker="GEH Suites · Tu próximo destino"
+        ctaHref="#ih-reservar"
+      />
+    ) : hotel.galeria ? (
+      <div class="ih-hero-grid">
+        <figure class="ih-hero-figure ih-hero-figure--main">
+          <img alt={titulo} src={hotel.galeria.principal} />
+        </figure>
+        <div class="ih-hero-thumbs">
+          {hotel.galeria.laterales?.map((src) => (
+            <figure class="ih-hero-figure">
+              <img alt={titulo} src={src} />
+            </figure>
+          ))}
+        </div>
+        <div class="ih-hero-overlay">
+          <span class="ih-hero-kicker">GEH Suites · Tu próximo destino</span>
+          <h1 class="ih-hero-title" style={hotel.tituloStyle}>{titulo}</h1>
+          <a class="ih-carr-cta" href="#ih-reservar">Ver disponibilidad</a>
+        </div>
+      </div>
+    ) : (
+      <div class="ih-hero-overlay ih-hero-overlay--static">
+        <span class="ih-hero-kicker">GEH Suites · Tu próximo destino</span>
+        <h1 class="ih-hero-title" style={hotel.tituloStyle}>{titulo}</h1>
+      </div>
+    )}
+
     <!-- Menú de botones General y Habitaciones -->
-    <div class="nav-tabs">
-      <button id="generalBtn" class="active">General</button>
+    <div class="ih-tabs" role="tablist" aria-label="Secciones del hotel">
+      <button id="generalBtn" class="active">El hotel</button>
       {tieneHabitaciones && <button id="roomsBtn">Habitaciones</button>}
     </div>
 
     <!-- Sección General -->
-    <div id="generalSection" class="section active">
-      <div class="gallery">
-        {hotel.carrusel && hotel.carrusel.length ? (
-          <Carrousel images={hotel.carrusel} client:load />
-        ) : (
-          <>
-            <img alt="Hotel" class="main-image" src={hotel.galeria?.principal} />
-            {hotel.galeria?.laterales && (
-              <div class="side-images">
-                {hotel.galeria.laterales.map((src) => (
-                  <img alt="Hotel" height="150" width="250" src={src} />
-                ))}
-              </div>
-            )}
-          </>
-        )}
+    <section id="generalSection" class="ih-section active">
+      <div class="ih-intro">
+        {hotel.introduccion?.map((p) => <p set:html={p} />)}
       </div>
 
-      {hotel.tituloStyle ? (
-        <h2 style={hotel.tituloStyle}>{hotel.titulo}</h2>
-      ) : (
-        <h2>{hotel.titulo}</h2>
+      {hotel.destacados?.length > 0 && (
+        <div class="ih-services">
+          <div class="ih-block-head">
+            <h2>Servicios destacados</h2>
+            <p>Todo lo que incluye tu estadía</p>
+          </div>
+          <div class="ih-services-grid">
+            {hotel.destacados.map((s) => (
+              <div class="ih-service-card">
+                <img src={s.icono} alt="check icon" />
+                <span>{s.texto}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
-      <br />
-      {hotel.introduccion && hotel.introduccion.map((p) => <p set:html={p} />)}
-
-      <hr />
-
-      <div class="services">
-        <h3>Servicios destacados</h3>
-        <div class="service-list">
-          {hotel.destacados.map((s) => (
-            <div class="service-item">
-              <span>
-                <img src={s.icono} alt="check icon" />
+      {hotel.generales?.length > 0 && (
+        <div class="ih-generales">
+          <div class="ih-block-head">
+            <h2>Servicios generales</h2>
+            <p>Comodidad y bienestar durante toda tu visita</p>
+          </div>
+          <ul class="ih-check-list">
+            {hotel.generales.map((s) => (
+              <li>
+                <span class="ih-check-dot">
+                  <img src={checkIcon} alt="check icon" />
+                </span>
                 {s.texto}
-              </span>
-            </div>
-          ))}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
+      )}
 
-      <div class="servicess">
-        <br />
-        <hr />
-        <br />
-        <h3>Servicios generales</h3>
-        <div class="service-list">
-          {hotel.generales.map((s) => (
-            <div class="service-item">
-              <span>
-                <img src={s.icono} alt="check icon" />
-                {s.texto}
-              </span>
+      <div class="ih-contact">
+        <div class="ih-contact-items">
+          <div class="ih-contact-item">
+            <span class="ih-contact-icon"><i class="fas fa-phone-alt"></i></span>
+            <div>
+              <small>Teléfono</small>
+              <span>{hotel.contacto?.telefono}</span>
             </div>
-          ))}
+          </div>
+          <div class="ih-contact-item">
+            <span class="ih-contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+            <div>
+              <small>Ubicación</small>
+              <span>{hotel.contacto?.direccion}</span>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div class="info-box">
-        <div class="contact-info">
-          <i class="fas fa-phone-alt"></i>
-          {hotel.contacto?.telefono}
-          <i class="fas fa-map-marker-alt" style="margin-left: 20px;"></i>
-          {hotel.contacto?.direccion}
-          <a href={hotel.contacto?.mapsUrl} target="_blank" rel="noopener noreferrer">
-            Ver mapa
+        <div class="ih-contact-actions">
+          <a class="ih-btn ih-btn-cta" href="#ih-reservar">
+            <i class="fas fa-calendar-check"></i> Ver disponibilidad
+          </a>
+          <a
+            class="ih-btn ih-btn-ghost"
+            href={hotel.contacto?.mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i class="fas fa-map-signs"></i> Ver mapa
           </a>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Sección Habitaciones -->
     {tieneHabitaciones && (
-      <div id="roomsSection" class="section">
+      <section id="roomsSection" class="ih-section">
+        <div class="ih-block-head ih-block-head--center">
+          <h2>Nuestras habitaciones</h2>
+          <p>Elige la que mejor se adapte a tu viaje</p>
+        </div>
         {hotel.habitaciones.map((room) => (
-          <div class="room">
-            <div class="room-header">
-              <div class="room-gallery">
-                <div class="room-main-image-container">
-                  <img src={room.imagenPrincipal} alt={room.nombre} class="room-main-image" />
+          <div class="ih-room-card">
+            <div class="ih-room-gallery">
+              <figure class="ih-room-main">
+                <img src={room.imagenPrincipal} alt={room.nombre} />
+              </figure>
+              {room.imagenesSecundarias?.length > 0 && (
+                <div class="ih-room-thumbs">
+                  {room.imagenesSecundarias.map((src, i) => (
+                    <figure class="ih-room-thumb">
+                      <img src={src} alt={`${room.nombre} - detalle ${i + 1}`} />
+                    </figure>
+                  ))}
                 </div>
-                {room.imagenesSecundarias?.length > 0 && (
-                  <div class="room-small-images-container">
-                    {room.imagenesSecundarias.map((src, i) => (
-                      <img src={src} alt={`Imagen pequeña ${i + 1}`} class="room-small-image" />
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div class="room-details">
-                <h3>{room.nombre}</h3>
-                <p>{room.descripcion}</p>
-                <br />
-                <hr />
-                <br />
-                {room.iconos?.length > 0 && (
-                  <div class="room-icons">
-                    {room.iconos.map((ic) => (
-                      <span>{ic}</span>
-                    ))}
-                  </div>
-                )}
-                <br />
-                <hr />
-                <br />
-                {room.instalaciones?.map((sec) => (
-                  <div class="room-services">
-                    <h4>{sec.titulo}</h4>
-                    <ul>
-                      {sec.items.map((it) => (
-                        <li>
+              )}
+            </div>
+            <div class="ih-room-info">
+              <h3>{room.nombre}</h3>
+              <p class="ih-room-desc">{room.descripcion}</p>
+
+              {room.iconos?.length > 0 && (
+                <div class="ih-room-tags">
+                  {room.iconos.map((ic) => (
+                    <span class="ih-tag">{ic}</span>
+                  ))}
+                </div>
+              )}
+
+              {room.instalaciones?.map((sec) => (
+                <div class="ih-room-facilities">
+                  <h4>{sec.titulo}</h4>
+                  <ul class="ih-check-list ih-check-list--2">
+                    {sec.items.map((it) => (
+                      <li>
+                        <span class="ih-check-dot">
                           <img src={checkIcon} alt="check icon" />
-                          {it}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
+                        </span>
+                        {it}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         ))}
-      </div>
+      </section>
     )}
   </div>
-
-  <style set:html={estilosCss} />
 </BaseLayout>
+
+<style>
+  .ih-search {
+    max-width: 1180px;
+    margin: 6px auto 0;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid rgba(28, 61, 90, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 10px 34px rgba(28, 61, 90, 0.1);
+    box-sizing: border-box;
+  }
+
+  .ih-page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    box-sizing: border-box;
+  }
+
+  /* Tabs */
+  .ih-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px auto 34px;
+    padding: 6px;
+    width: fit-content;
+    max-width: 100%;
+    background: #eef2f6;
+    border-radius: 999px;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+  }
+
+  .ih-tabs button {
+    padding: 0.65rem 1.9rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--home-navy, #1c3d5a);
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .ih-tabs button:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .ih-tabs button.active {
+    color: #fff;
+    background: linear-gradient(135deg, #1c3d5a 0%, #152f47 100%);
+    box-shadow: 0 6px 18px rgba(28, 61, 90, 0.35);
+  }
+
+  .ih-section {
+    display: none;
+  }
+
+  .ih-section.active {
+    display: block;
+  }
+
+  /* Introducción */
+  .ih-intro {
+    max-width: 820px;
+    margin: 0 auto 14px;
+    text-align: center;
+  }
+
+  .ih-intro p {
+    color: var(--home-muted, #5a6b7d);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin: 0 0 18px;
+  }
+
+  /* Cabeceras de bloque */
+  .ih-block-head {
+    text-align: center;
+    margin: 44px 0 24px;
+  }
+
+  .ih-block-head h2 {
+    font-family: "Work Sans", sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #1c3d5a;
+    margin: 0 0 6px;
+  }
+
+  .ih-block-head p {
+    color: #8a97a5;
+    font-size: 0.98rem;
+    margin: 0;
+  }
+
+  .ih-block-head--center {
+    margin-top: 8px;
+  }
+
+  /* Servicios destacados: cards de iconos */
+  .ih-services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 14px;
+  }
+
+  .ih-service-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border: 1px solid rgba(28, 61, 90, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 6px 22px rgba(28, 61, 90, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .ih-service-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 34px rgba(28, 61, 90, 0.12);
+    border-color: rgba(242, 156, 56, 0.45);
+  }
+
+  .ih-service-card img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .ih-service-card span {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1c3d5a;
+    line-height: 1.35;
+  }
+
+  /* Servicios generales: checklist */
+  .ih-generales {
+    margin-top: 20px;
+    padding: 28px 26px;
+    background: #f6f8fb;
+    border-radius: 20px;
+    border: 1px solid rgba(28, 61, 90, 0.06);
+  }
+
+  .ih-generales .ih-block-head {
+    margin: 0 0 20px;
+  }
+
+  .ih-check-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 28px;
+  }
+
+  .ih-check-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    color: #1c3d5a;
+    font-weight: 500;
+  }
+
+  .ih-check-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(242, 156, 56, 0.18);
+  }
+
+  .ih-check-dot img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+  }
+
+  /* Tarjeta de contacto */
+  .ih-contact {
+    margin-top: 20px;
+    padding: 26px 28px;
+    background: linear-gradient(135deg, #1c3d5a 0%, #152f47 100%);
+    border-radius: 20px;
+    box-shadow: 0 16px 40px rgba(21, 47, 71, 0.25);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .ih-contact-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 34px;
+  }
+
+  .ih-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+  }
+
+  .ih-contact-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(242, 156, 56, 0.2);
+    color: #f5d7b4;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .ih-contact-item div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ih-contact-item small {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9db1c4;
+  }
+
+  .ih-contact-item span {
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+
+  .ih-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Botones */
+  .ih-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .ih-btn-cta {
+    background: linear-gradient(135deg, #f29c38 0%, #e08a28 100%);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(242, 156, 56, 0.4);
+  }
+
+  .ih-btn-ghost {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+  }
+
+  .ih-btn:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #fff;
+  }
+
+  .ih-btn-cta:hover {
+    box-shadow: 0 14px 32px rgba(242, 156, 56, 0.55);
+  }
+
+  .ih-btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  /* Habitaciones */
+  .ih-room-card {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin: 0 0 26px;
+    background: #ffffff;
+    border: 1px solid rgba(28, 61, 90, 0.08);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 10px 34px rgba(28, 61, 90, 0.08);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .ih-room-card:hover {
+    box-shadow: 0 18px 46px rgba(28, 61, 90, 0.14);
+    transform: translateY(-3px);
+  }
+
+  .ih-room-gallery {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f2f5f8;
+  }
+
+  .ih-room-main {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .ih-room-main img,
+  .ih-room-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ih-room-thumbs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .ih-room-thumb {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    aspect-ratio: 16 / 10;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .ih-room-thumb:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 20px rgba(28, 61, 90, 0.18);
+  }
+
+  .ih-room-info {
+    padding: 28px 28px 26px;
+  }
+
+  .ih-room-info h3 {
+    font-family: "Work Sans", sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: #1c3d5a;
+    margin: 0 0 8px;
+  }
+
+  .ih-room-desc {
+    color: var(--home-muted, #5a6b7d);
+    font-size: 0.98rem;
+    line-height: 1.65;
+    margin: 0 0 16px;
+  }
+
+  .ih-room-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .ih-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1c3d5a;
+    background: #f6f8fb;
+    border: 1px solid rgba(28, 61, 90, 0.1);
+    border-radius: 999px;
+  }
+
+  .ih-room-facilities {
+    border-top: 1px solid rgba(28, 61, 90, 0.1);
+    padding-top: 16px;
+  }
+
+  .ih-room-facilities h4 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #8a97a5;
+    margin: 0 0 12px;
+  }
+
+  .ih-check-list--2 {
+    gap: 8px 22px;
+  }
+
+  @media (max-width: 900px) {
+    .ih-room-card {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ih-page {
+      padding: 20px 14px 44px;
+    }
+
+    .ih-search {
+      padding: 10px;
+      border-radius: 14px;
+    }
+
+    .ih-tabs button {
+      padding: 0.6rem 1.3rem;
+    }
+
+    .ih-intro p {
+      font-size: 0.98rem;
+    }
+
+    .ih-services-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ih-check-list {
+      grid-template-columns: 1fr;
+    }
+
+    .ih-contact {
+      padding: 20px 18px;
+    }
+
+    .ih-contact-actions {
+      width: 100%;
+    }
+
+    .ih-contact-actions .ih-btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>

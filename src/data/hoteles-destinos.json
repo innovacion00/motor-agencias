@@ -1,0 +1,187 @@
+{
+  "destinos": [
+    {
+      "id": "cartagenadeindias",
+      "titulo": "Cartagena de Indias",
+      "descripcion": "Si deseas conocer a Cartagena y disfrutar de su maximo esplendor, no dejes de visitar nuestros hoteles y la calidez de sus colaboradores.",
+      "hoteles": [
+        {
+          "nombre": "Hotel Aixo Suites",
+          "nombreStyle": null,
+          "alt": "Hotel Aixo Suites",
+          "img": "https://images.trvl-media.com/lodging/22000000/21350000/21343600/21343503/e5e1ec59.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaixo.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "buffet", "pool", "parking", "gym", "pet"],
+          "url": "/infoaixo"
+        },
+        {
+          "nombre": "Hotel Boutique El Marqués",
+          "nombreStyle": null,
+          "alt": "El Marques Hotel Boutique",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_marques.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logo%20marque%CC%81s%20by%20geh.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "buffet", "van", "pool", "pet"],
+          "url": "/infomarques"
+        },
+        {
+          "nombre": "Hotel Avexi Suites",
+          "nombreStyle": null,
+          "alt": "Hotel Avexi Suites",
+          "img": "https://media-cdn.tripadvisor.com/media/photo-s/1a/fe/a1/45/hotel-avexi-suites.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoavexi.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "parking", "van", "pet"],
+          "url": "/infoavexi"
+        },
+        {
+          "nombre": "Hotel Azuan Suites",
+          "nombreStyle": null,
+          "alt": "Hotel Azuán Suites",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Hoteles%20y%20habitaciones/azuan%20nuevas/AZUAN-3.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoazuan.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "parking", "wind", "pet"],
+          "url": "/infoazuan"
+        },
+        {
+          "nombre": "Hotel Abi Inn",
+          "nombreStyle": null,
+          "alt": "Hotel Abi Inn",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_hotelabi.webp",
+          "width": 400,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoabi.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "pool", "parking", "wind", "pet"],
+          "url": "/infoabi"
+        },
+        {
+          "nombre": "Hotel Marina Suites",
+          "nombreStyle": null,
+          "alt": "Hotel Marina Suites",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelMarina.webp",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomarina.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "buffet", "parking", "wind", "pet"],
+          "url": "/infomarina"
+        },
+        {
+          "nombre": "Hotel Boquilla Suites",
+          "nombreStyle": "font-size: 15px;",
+          "alt": "Hotel Boquilla Suites",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/BOQUILLA%20SUITES%20LOGO.png",
+          "logoStyle": null,
+          "especial": {
+            "src": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/4dbf8251-e0f9-4cca-a182-8e5295c5ac58.png",
+            "clase": "especial"
+          },
+          "iconos": ["playa", "coffee", "buffet", "parking", "wind", "pool", "pet"],
+          "url": "/infoboquilla"
+        }
+      ]
+    },
+    {
+      "id": "bogota",
+      "titulo": "Bogota",
+      "descripcion": "Un destino ideal para todo tipo de actividades turisticas, corporativas e historicas.",
+      "hoteles": [
+        {
+          "nombre": "Madisson Inn",
+          "nombreStyle": null,
+          "alt": "Madisson Inn",
+          "img": "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logomadisson.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["coffee", "buffet", "parking", "wind", "gym", "van", "pet"],
+          "url": "/infomadisson"
+        },
+        {
+          "nombre": "Hotel Windsor House",
+          "nombreStyle": null,
+          "alt": "Hotel Windsor House",
+          "img": "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logowindsor.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["coffee", "buffet", "parking", "van", "wind"],
+          "url": "/infowindsor"
+        }
+      ]
+    },
+    {
+      "id": "santamarta",
+      "titulo": "Santa Marta",
+      "descripcion": "Destino ideal para los amantes de la cultura, la aventura y el ecoturismo.",
+      "hoteles": [
+        {
+          "nombre": "Hotel Rodadero Inn",
+          "nombreStyle": null,
+          "alt": "Hotel Rodadero Inn",
+          "img": "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logorodadero.png",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "coffee", "parking", "van", "pet"],
+          "url": "/inforodadero"
+        },
+        {
+          "nombre": "Hotel Axis Inn",
+          "nombreStyle": "font-size: 15px;",
+          "alt": "Hotel Axis  Inn",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logoaxis.jpg",
+          "logoStyle": null,
+          "especial": {
+            "src": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/4dbf8251-e0f9-4cca-a182-8e5295c5ac58.png",
+            "clase": "especiall"
+          },
+          "iconos": ["playa", "buffet", "pool", "parking", "wind", "van", "pet"],
+          "url": "/infoaxis"
+        },
+        {
+          "nombre": "Hotel Sansiraka",
+          "nombreStyle": null,
+          "alt": "Hotel Sansiraka",
+          "img": "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-sansiraka.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/logo_sansiraka.jpeg",
+          "logoStyle": null,
+          "especial": null,
+          "iconos": ["playa", "buffet", "pool", "parking", "wind", "van", "pet"],
+          "url": "/infosansiraka"
+        },
+        {
+          "nombre": "Hotel Playa Salguero",
+          "nombreStyle": null,
+          "alt": "Hotel Playa Salguero",
+          "img": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_salguero.jpg",
+          "width": 300,
+          "logo": "https://space-img.sfo3.digitaloceanspaces.com/Logos/logo_Salguero.png",
+          "logoStyle": "width: 100px;",
+          "especial": null,
+          "iconos": ["playa", "buffet", "pool", "parking", "wind", "van", "pet"],
+          "url": "/infosalguero"
+        }
+      ]
+    }
+  ]
+}
