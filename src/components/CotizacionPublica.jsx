@@ -346,6 +346,8 @@ export const CotizacionPublica = ({ id }) => {
 
     const totalConMarkup = typeof cotizacion?.markup === 'number' && cotizacion.markup > 0 ? cotizacion.markup : totalAgencia;
     const totalSinIvaConMarkup = exentoIva ? totalConMarkup : Math.round(totalConMarkup / 1.19);
+    const subtotalHospedajeCliente = Math.max(0, totalConMarkup - extrasCotizacion);
+    const factorMarkupPublica = subtotal > 0 ? subtotalHospedajeCliente / subtotal : 1;
     const textoTrasladoResumen = textoTrasladoDesdeInfoTransporte(cotizacion?.infoTransporte);
     const toursNombresResumen = nombresToursValidos(cotizacion?.infoToures);
     const cotizacionIncluyeVuelo =
@@ -531,12 +533,14 @@ export const CotizacionPublica = ({ id }) => {
                         const descripcionPension = generarDescripcionPension(planAlimentacion);
                         const precioNocheHab = tieneDesglose ? (Number(room.precioNocheHabitacion) || 0) : (totalConMarkup && nights > 0 ? (totalConMarkup / nights) : 0);
                         const precioTotalHab = tieneDesglose ? (Number(room.precioHabitacion) || Number(room.unitaryPrice) || 0) : totalSinIvaConMarkup;
+                        const precioNocheMostrar = tieneDesglose ? Math.round(precioNocheHab * factorMarkupPublica) : Math.round(precioNocheHab);
+                        const precioTotalMostrar = tieneDesglose ? Math.round(precioTotalHab * factorMarkupPublica) : Math.round(precioTotalHab);
                         return (
                         <div key={room.id || index} style={{ backgroundColor: '#f8f9fa', padding: '15px', margin: '10px 0', borderRadius: '5px' }}>
                             <h3 style={{ color: '#444', fontSize: '18px', margin: '0 0 10px 0' }}>Habitación {index + 1}: {room.nombreHabitacion || 'Habitación estándar'}</h3>
                             <p><strong>Descripción:</strong> {descripcionPension}</p>
-							<p><strong>Precio por noche:</strong> ${ precioNocheHab.toLocaleString() }</p>
-							<p><strong>Total habitación:</strong> ${ precioTotalHab.toLocaleString() }</p>
+							<p><strong>Precio por noche:</strong> ${ precioNocheMostrar.toLocaleString() }</p>
+							<p><strong>Total habitación:</strong> ${ precioTotalMostrar.toLocaleString() }</p>
                         </div>
                     );
                     })}
@@ -554,8 +558,8 @@ export const CotizacionPublica = ({ id }) => {
                            
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
-                            <span>Subtotal hospedaje:</span>
-                            <span>${subtotal.toLocaleString()}</span>
+                            <span>Hospedaje (precio con impuestos incluidos):</span>
+                            <span>${subtotalHospedajeCliente.toLocaleString()}</span>
                         </div>
                         {extrasCotizacion > 0 && (
                             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
@@ -563,13 +567,12 @@ export const CotizacionPublica = ({ id }) => {
                                 <span>${extrasCotizacion.toLocaleString()}</span>
                             </div>
                         )}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ddd' }}>
-                            <span>{exentoIva ? 'IVA 0% (Exento extranjero):' : 'IVA 19%:'}</span>
-                            <span>${iva.toLocaleString()}</span>
-                        </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: 'none', fontWeight: 'bold', fontSize: '18px', color: '#886b43', marginTop: '10px', paddingTop: '15px', borderTop: '2px solid #886b43' }}>
                             <span>Total:</span>
                             <span>${totalConMarkup.toLocaleString()}</span>
+                        </div>
+                        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '6px', fontStyle: 'italic' }}>
+                            Los precios incluyen el IVA.
                         </div>
                     </div>
                 </section>

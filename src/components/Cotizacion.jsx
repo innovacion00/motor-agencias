@@ -468,6 +468,9 @@ export default function ReservaHotelComponent() {
     const baseImponibleMarkupPdf = subtotal + extrasCot;
     const markupAmountPdf = Math.round(baseImponibleMarkupPdf * (markupPorcentaje / 100));
     const totalConMarkupPdf = baseCombinadaPdf + markupAmountPdf;
+    const subtotalHospedajePdf = subtotal + markupAmountPdf + iva;
+    const factorMarkupPdf = markupPorcentaje > 0 ? 1 + markupPorcentaje / 100 : 1;
+    const factorIvaPdf = exentoIva ? 1 : 1 + tasaIVA;
     const precioPorNocheCalc = totalConMarkupPdf && noches > 0 ? (totalConMarkupPdf / noches) : 0;
     const totalSinIvaConMarkup = exentoIva ? totalConMarkupPdf : Math.round(totalConMarkupPdf / (1 + tasaIVA));
     const totalHuespedes = cantadultos + cantninos;
@@ -1009,8 +1012,8 @@ export default function ReservaHotelComponent() {
           <h2>Habitaciones Seleccionadas</h2>
           ${datosReserva.map((habitacion, index) => {
               const descripcionPension = generarDescripcionPension(planAlimentacion);
-              const precioNocheHab = Number(habitacion.precioNocheHabitacion) || 0;
-              const precioTotalHab = Number(habitacion.precioHabitacion) || Number(habitacion.precio) || 0;
+              const precioNocheHab = Math.round((Number(habitacion.precioNocheHabitacion) || 0) * factorMarkupPdf * factorIvaPdf);
+              const precioTotalHab = Math.round((Number(habitacion.precioHabitacion) || Number(habitacion.precio) || 0) * factorMarkupPdf * factorIvaPdf);
               const nochesHab = Number(habitacion.nights) || noches;
               return `
               <div class="room-card">
@@ -1031,8 +1034,8 @@ export default function ReservaHotelComponent() {
           <h2 style="margin-top: 30px;">Resumen de Tarifas</h2>
           <div class="pricing-box">
               <div class="price-row">
-                  <span>Subtotal hospedaje (${datosReserva.length} hab.)</span>
-                  <span>$${subtotalFormateado}</span>
+                  <span>Hospedaje (${datosReserva.length} hab.) - Precio con impuestos incluidos</span>
+                  <span>$${subtotalHospedajePdf.toLocaleString()}</span>
               </div>
               ${extrasCot > 0 ? `
               <div class="price-row">
@@ -1040,13 +1043,9 @@ export default function ReservaHotelComponent() {
                   <span>$${extrasCot.toLocaleString()}</span>
               </div>
               ` : ''}
-              <div class="price-row">
-                  <span>${exentoIva ? 'IVA 0% (Exento extranjero)' : `IVA ${Math.round(tasaIVA * 100)}%`}</span>
-                  <span>$${ivaFormateado}</span>
-              </div>
               ${precioVueloPdf > 0 ? `
               <div class="price-row">
-                  <span>Vuelo (sin markup)</span>
+                  <span>Vuelo</span>
                   <span>$${precioVueloFormateado}</span>
               </div>
               ` : ''}
@@ -1063,15 +1062,12 @@ export default function ReservaHotelComponent() {
               `
                   : ''
               }
-              ${markupPorcentaje > 0 ? `
-              <div class="price-row">
-                  <span>Markup (${markupPorcentaje}%)</span>
-                  <span>+$${markupAmountPdf.toLocaleString()}</span>
-              </div>
-              ` : ''}
               <div class="price-row total">
                   <span>Total a Pagar</span>
                   <span>$${totalFormateadoPaquete}</span>
+              </div>
+              <div style="font-size: 0.8rem; color: #666; margin-top: 6px; font-style: italic;">
+                  Los precios incluyen el IVA.
               </div>
           </div>
 
