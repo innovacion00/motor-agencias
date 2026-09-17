@@ -7,7 +7,6 @@ import Header from '../components/Header';
 import Footer from '../components/Footer.astro';
 import CurrencySelector from '../components/Cambiardivisas';
 import EncuestaAutoTrigger from '../components/EncuestaAutoTrigger.jsx';
-import BannerMantenimiento from '../components/BannerMantenimiento.jsx';
 import { ClientRouter } from "astro:transitions";
 import "sweetalert2/dist/sweetalert2.min.css";
 // import CurrencySelector from '../components/Cambiardivisas';
@@ -96,7 +95,6 @@ import "sweetalert2/dist/sweetalert2.min.css";
       <!-- <CurrencySelector client:load/> -->
       <CurrencySelector client:load/>
       <EncuestaAutoTrigger client:load />
-      <BannerMantenimiento client:load />
       <Header client:load />
       <main>
         <slot />
