@@ -376,6 +376,8 @@ const ICONOS: Record<string, string> = {
         width: 100%;
         max-width: 340px;
         margin: 0 auto;
+        display: flex;
+        flex-direction: column;
         box-shadow: var(--home-shadow);
         border-radius: var(--home-radius);
         overflow: hidden;
@@ -397,12 +399,16 @@ const ICONOS: Record<string, string> = {
       }
 
       .hotel .info {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
         padding: 16px 18px 20px;
       }
 
       .hotel .hotel-header {
         display: flex;
         align-items: center;
+        min-height: 80px;
         margin-bottom: 12px;
         gap: 12px;
       }
@@ -451,7 +457,8 @@ const ICONOS: Record<string, string> = {
 
       .hotel .info .button {
         text-align: center;
-        margin-top: 4px;
+        margin-top: auto;
+        padding-top: 4px;
       }
 
       .hotel .info .button a {
