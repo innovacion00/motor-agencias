@@ -1636,10 +1636,6 @@
         },
         {
           "icono": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png",
-          "texto": "Estacionamiento gratuito (Sujeto a disponibilidad)"
-        },
-        {
-          "icono": "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Iconcheck.png",
           "texto": "Wifi en todas las areas del hotel"
         },
         {
@@ -1660,7 +1656,7 @@
         }
       ],
       "contacto": {
-        "telefono": " +57 333 602 5021",
+        "telefono": " +57 3336025669",
         "direccion": "Calle 37 #10-85, en el barrio San Diego, Provincia de Cartagena, Bolívar",
         "mapsUrl": "https://maps.app.goo.gl/JZHkYx8ZW3sr445b9"
       },
