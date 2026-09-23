@@ -11,6 +11,10 @@ src/data/
 
 ---
 
+---
+# Explicación de hotelesConfig.js
+---
+
 ## 1. `hotelesConfig.js`
 
 ### ¿Qué es?
@@ -315,6 +319,10 @@ git push
 
 ---
 
+---
+# Explicación de hoteles.json
+---
+
 ## 2. `hoteles.json`
 
 ### ¿Qué es?
@@ -494,6 +502,10 @@ Ejemplo completo de una habitación:
 
 **Añadir un nuevo hotel:** añade una entrada nueva al array `hoteles[]` con todos los campos. El `slug` debe coincidir con el segmento de la ruta (`leermas`) definida en `hotelesConfig.js`.
 
+---
+
+---
+# Explicación de hoteles-destinos.json
 ---
 
 ## 3. `hoteles-destinos.json`
