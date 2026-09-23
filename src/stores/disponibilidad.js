@@ -2,7 +2,6 @@ import { atom } from "nanostores";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import { refreshToken } from "./authtoken";
-const token = Cookies.get("accessToken");
 // Crear una store para almacenar la disponibilidad
 export const disponibilidad = atom([]);
 export const reservasNano = atom([]);
@@ -38,6 +37,7 @@ export const getdisponibility = async (objetohotel) => {
   };
 
   try {
+    const token = Cookies.get("accessToken");
     let response = await fetchDisponibilidad(token);
 
     if (response.status === 401) {
@@ -94,6 +94,7 @@ export const getReservas = async (rolUsuario, page = 1, pageSize = 15) => {
   };
 
   try {
+    const token = Cookies.get("accessToken");
     let response = await fetchReservas(token);
 
     if (response.status === 401) {
@@ -351,40 +352,40 @@ const buscarUnaPagina = async (urlBase, accessToken, refreshTokenFn, pageNum = 1
 export const buscarReservaPorCodigo = async (reservaChatbotId, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas/buscar/chatbot-id?reservaChatbotId=${encodeURIComponent(reservaChatbotId)}`;
-  
-  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+
+  return await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
 };
 
 // Función para buscar reservas por nombre de huésped - Lazy loading
 export const buscarReservaPorHuesped = async (nombre, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas/buscar/huesped?nombre=${encodeURIComponent(nombre)}`;
-  
-  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+
+  return await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
 };
 
 // Función para buscar reservas por nombre de agente - Lazy loading
 export const buscarReservaPorAgente = async (nombre, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas/buscar/agente?nombre=${encodeURIComponent(nombre)}`;
-  
-  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+
+  return await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
 };
 
 // Función para buscar reservas por hotel - Lazy loading
 export const buscarReservaPorHotel = async (hotel, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas?hotel=${encodeURIComponent(hotel)}`;
-  
-  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+
+  return await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
 };
 
 // Función para buscar reservas por nombre de agencia - Lazy loading
 export const buscarReservaPorAgencia = async (nombreAgencia, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas?nombreAgencia=${encodeURIComponent(nombreAgencia)}`;
-  
-  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+
+  return await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
 };
 
 // Función para buscar reservas por fecha desde - Lazy loading
@@ -408,7 +409,7 @@ export const buscarReservaPorFecha = async (fechaDesde, page = 1) => {
   console.log('🔍 Búsqueda por fecha - URL:', urlBase);
   console.log('📅 Fecha formateada:', fechaFormateada);
   
-  const result = await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+  const result = await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
   
   console.log('📦 Respuesta del endpoint (búsqueda por fecha):', {
     url: urlBase,
@@ -457,13 +458,13 @@ export const buscarReservasCombinadas = async (rolUsuario, filtros = {}, page = 
 
   const url = params.length ? `${urlBase}?${params.join("&")}` : urlBase;
 
-  return await buscarUnaPagina(url, token, refreshToken, page, 15);
+  return await buscarUnaPagina(url, Cookies.get("accessToken"), refreshToken, page, 15);
 };
 
 // Función para buscar reservas por estado de pago - Lazy loading
 export const buscarReservaPorEstado = async (status, page = 1) => {
   const URL = import.meta.env.PUBLIC_API_URL;
   const urlBase = `${URL}/agencias/v1/reservas/buscar/estado?status=${encodeURIComponent(status)}`;
-  
-  return await buscarUnaPagina(urlBase, token, refreshToken, page, 15);
+
+  return await buscarUnaPagina(urlBase, Cookies.get("accessToken"), refreshToken, page, 15);
 };
