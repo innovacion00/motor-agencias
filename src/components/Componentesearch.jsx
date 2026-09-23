@@ -15,6 +15,7 @@ import {
   calcularTotalPaquete,
 } from "../utils/paqueteVueloHotel";
 import { aplicaDescuentoHospedaje } from "../utils/descuentoHospedaje";
+import { HOTELES } from '../data/hotelesConfig';
 
 //UseState
 const BusquedaCartagena = () => {
@@ -37,165 +38,9 @@ const BusquedaCartagena = () => {
     return `${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]}`;
   };
 
-  //Objeto de imagenes  para las fachadas
-  const hotelImages = {
-    9: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelMarina.webp", //marina
-    1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada-azuan.jpg",
-    6: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelavexi.jpg", //avexi
-    7: "https://www.gehsuites.com/images/fachada_hotel_boagrande.jpg", //bocagrande
-    4: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg", //aixo
-    5: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg", //abi
-    3: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-madisson-inn.jpg", //madison
-    10: "https://images.trvl-media.com/lodging/95000000/94320000/94314400/94314363/7ba08d14.jpg?impolicy=resizecrop&rw=575&rh=575&ra=fill", //windsor
-    8: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg", //rodadero
-    2: "https://www.gehsuites.com/images/fachada_1525.jpg", //1525
-    48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg", //axis
-    44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg", //sansiraka
-    41: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachadazulita.jpg", //Zulita
-    56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg", // Boquilla,
-    123:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg", //Salguero
-    124:"",
-    164:"https://space-img.sfo3.digitaloceanspaces.com/Agencias/lobby_marques.jpg"//Marquez
-  };
+  const hotelImages = Object.fromEntries(Object.values(HOTELES).map(h => [h.id, h.imgBusqueda]));
 
-  //Objeto con los arreglos de los iconos
-  const hotelIcons = {
-    9: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    1: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    6: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    7: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    4: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    5: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    3: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    10: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/icongym.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    8: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    2: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-    ],
-    48: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    44: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    41: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    56: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    123: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconparking.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconvan.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-    164: [
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconplaya.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconcoffee.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconbuffet.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconpool.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/iconwind.png",
-      "https://space-img.sfo3.digitaloceanspaces.com/Agencias/pet-friendly-black-glyph-ui-icon-vector-45097836-Photoroom.png",
-    ],
-  };
+  const hotelIcons = Object.fromEntries(Object.values(HOTELES).map(h => [h.id, h.iconos]));
 
   const cityMap = {
     CARTAGENA: "Cartagena de Indias",

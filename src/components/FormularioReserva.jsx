@@ -16,23 +16,9 @@ import {
   getBookingConnectRatePlansForHotel,
 } from "../constants/bookingConnectRatePlans";
 import { getAlimentacionPrecio, getIvaPorcentaje } from "../stores/preciosExtras";
+import { HOTELES } from '../data/hotelesConfig';
 
-const plan_alimentacion = {
-  9: false, //marina
-  1: false, //azuan
-  6: false, //avexi
-  7: false, //bocagrande ( proximamente )
-  4: true, //aixo
-  5: true, //abi
-  3: false, //madison
-  10: false, //windsor
-  8: false, //rodadero
-  2: false, //1525
-  48: true, //axis
-  44: true, //sansiraka
-  41: false, //Zulita
-  56: true, // Boquilla,
-};
+const plan_alimentacion = Object.fromEntries(Object.values(HOTELES).map(h => [h.id, h.planAlimentacionFormulario]));
 
 /** Reservas vía endpoint legacy `/reservas/reservar` (no mytool). */
 const FORCE_LEGACY_RESERVAS = true;
@@ -191,96 +177,9 @@ const construirDesglosePrecios = ({
   }));
 };
 
-const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze({
-  1: 7, // Azuan
-  3: 7, // Madisson
-  4: 2, // Aixo
-  5: 8, // Abi
-  6: 8, // Avexi
-  8: 8, // Rodadero
-  9: 8, // Marina
-  10: 7, // Windsor
-  44: 8, // Sansiraka
-  48: 8, // Axis
-  56: 8, // Boquilla
-  123: 8, // Playa Salguero
-  164: 8, // El Marques
-});
+const BOOKING_CONNECT_MOTIVO_ID_BY_HOTEL = Object.freeze(Object.fromEntries(Object.values(HOTELES).filter(h => h.motivoId != null).map(h => [h.id, h.motivoId])));
 
-const BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL = Object.freeze({
-  4: Object.freeze([
-    { roomId: 83422, mapName: "DBSuperior" },
-    { roomId: 83420, mapName: "DBEstandart" },
-    { roomId: 83421, mapName: "FMEstandart" },
-    { roomId: 83419, mapName: "FMSuperior" },
-  ]),
-  9: Object.freeze([
-    { roomId: 83527, mapName: "St.Triple" },
-    { roomId: 83528, mapName: "St. Doble" },
-    { roomId: 83527, mapName: "St. Cuadruple" },
-  ]),
-  6: Object.freeze([
-    { roomId: 83532, mapName: "St. Doble" },
-    { roomId: 83529, mapName: "St. Cuadruple" },
-    { roomId: 83529, mapName: "St. Doble2" },
-  ]),
-  1: Object.freeze([
-    { roomId: 83533, mapName: "FAMILIAR " },
-    { roomId: 83534, mapName: "MATRIMONIAL" },
-  ]),
-  5: Object.freeze([
-    { roomId: 125839, mapName: "Familiar 5pax" },
-    { roomId: 125838, mapName: "Cuadruple" },
-    { roomId: 125837, mapName: "Triple" },
-    { roomId: 125836, mapName: "Doble Estandar" },
-  ]),
-  48: Object.freeze([
-    { roomId: 145577, mapName: "Quintuple" },
-    { roomId: 145576, mapName: "Cuadruple" },
-    { roomId: 145573, mapName: "Triple" },
-    { roomId: 145571, mapName: "Doble" },
-  ]),
-  44: Object.freeze([
-    { roomId: 104184, mapName: "Quintuple" },
-    { roomId: 104183, mapName: "Cuadruple" },
-    { roomId: 104182, mapName: "Triple" },
-    { roomId: 104181, mapName: "Junior Suite" },
-    { roomId: 104179, mapName: "Doble" },
-    { roomId: 104979, mapName: "Twin" },
-  ]),
-  8: Object.freeze([
-    { roomId: 121966, mapName: "Doble" },
-    { roomId: 125832, mapName: "Triple" },
-    { roomId: 125833, mapName: "Cuadruple" },
-  ]),
-  123: Object.freeze([
-    { roomId: 164099, mapName: "Doble" },
-    { roomId: 164101, mapName: "Cuadruple" },
-    { roomId: 164100, mapName: "Triple" },
-  ]),
-  3: Object.freeze([
-    { roomId: 109452, mapName: "ESTANDAR" },
-    { roomId: 109509, mapName: "FAMILIAR" },
-    { roomId: 109508, mapName: "EJECUTIVA TWIN" },
-    { roomId: 109507, mapName: "SUITE BUSINESS" },
-    { roomId: 109505, mapName: "SUPERIOR CON TERRAZA" },
-    { roomId: 116068, mapName: "FAMILIAR3PAX" },
-  ]),
-  10: Object.freeze([
-    { roomId: 129037, mapName: "SUITE MATRIMONIAL" },
-    { roomId: 129036, mapName: "JUNIOR SUITE TWIN" },
-    { roomId: 129035, mapName: "JUNIOR SUITE DOBLE" },
-    { roomId: 129034, mapName: "TRIPLE ESTANDAR" },
-    { roomId: 129033, mapName: "DOBLE ESTANDAR TWIN" },
-    { roomId: 128299, mapName: "DOBLE SUPERIOR" },
-  ]),
-  // El Marques
-  164: Object.freeze([
-    { roomId: 168468, mapName: "Familiar" },
-    { roomId: 168467, mapName: "Delux" },
-    { roomId: 168465, mapName: "Junior Suite" },
-  ]),
-});
+const BOOKING_CONNECT_ROOM_MAPNAME_BY_HOTEL = Object.freeze(Object.fromEntries(Object.values(HOTELES).filter(h => h.roomsMapName).map(h => [h.id, Object.freeze(h.roomsMapName)])));
 
 //#region UseState
 const FormularioReserva = () => {

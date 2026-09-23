@@ -1,33 +1,16 @@
 import { conDescuentoHospedaje } from "./descuentoHospedaje";
+import { HOTELES } from '../data/hotelesConfig';
 
 /** Habitaciones excluidas del cálculo de precio mínimo (misma regla que DisponibilidadH). */
 const EXCLUDED_ROOM_IDS = new Set([164102]);
 
-export const HOTEL_FACADE_IMAGES = {
-  9: "https://www.gehsuites.com/images/portada_marian_suites.jpg",
-  1: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada-azuan.jpg",
-  6: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotelavexi.jpg",
-  4: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_aixo.jpg",
-  5: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Fachada_abi.jpg",
-  8: "https://www.gehsuites.com/recursos/imagenes/hotels/hotel-rodadero-inn.jpg",
-  48: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/Hotel-axis.jpg",
-  44: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/hotel_sansiraka.jpg",
-  56: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/fachada_boquilla.jpg",
-  123: "https://space-img.sfo3.digitaloceanspaces.com/Agencias/card_salguero.jpg",
-};
+export const HOTEL_FACADE_IMAGES = Object.fromEntries(
+  Object.values(HOTELES).filter(h => h.imgUpgrade).map(h => [h.id, h.imgUpgrade])
+);
 
-const HOTEL_DISPLAY_NAMES = {
-  1: "Hotel Azuan Suites",
-  4: "Hotel Aixo Suites",
-  5: "Hotel Abi Suites",
-  6: "Hotel Avexi Suites",
-  8: "Hotel Rodadero",
-  9: "Hotel Marina Suites",
-  44: "Hotel Sansiraka",
-  48: "Hotel Axis",
-  56: "Hotel El Marques Boquilla",
-  123: "Hotel Playa Salguero",
-};
+const HOTEL_DISPLAY_NAMES = Object.fromEntries(
+  Object.values(HOTELES).map(h => [h.id, h.nombre])
+);
 
 /** Cartagena: Boquilla → Azuan/Avexi/Marina; Azuan/Avexi/Marina → Abi/Aixo */
 const CARTAGENA_UPGRADE_TARGETS = {

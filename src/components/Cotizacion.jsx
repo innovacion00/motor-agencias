@@ -18,58 +18,10 @@ import {
 import { esModoBusquedaVueloHotel, limpiarDatosPaqueteVuelo } from '../utils/flightSearch';
 import { getHotelImagesById } from '../utils/hotelesImagenes';
 import { getIvaPorcentaje } from '../stores/preciosExtras';
+import { getHotelById } from '../data/hotelesConfig';
 
-// Función para obtener el nombre del hotel basado en el ID
-const nombreHotelId = (hotelId) => {
-  const hotelMap = {
-    // Hoteles Cartagena
-    1: "Hotel Azuan", // Hotel Azuan Suites
-    4: "Hotel Aixo", // Hotel Aixo Suites
-    5: "Hotel Abi", // Hotel Abi Inn
-    6: "Hotel Avexi", // Hotel Avexi Suites
-    7: "Hotel Bocagrande", // Hotel Bocagrande Suites
-    9: "Hotel Marina", // Hotel Marina Suites
-    56: "Hotel Boquilla", // Hotel Boquilla Suites
-    // Hoteles Santa Marta
-    8: "Hotel Rodadero", // Hotel Rodadero 
-    2: "Hotel 1525", // Hotel 1525
-    48: "Hotel Axis", // Hotel Axis Inn
-    44: "Hotel Sansiraka", // Hotel Sansiraka Inn
-    123: "Playa Salguero Hotel", // Hotel Playa Salguero
-
-    // Hoteles Bogota
-    10: "Hotel Windsor", // Hotel Windsor
-    3: "Hotel Madisson", // Hotel Madisson
-
-  };
-
-  return hotelMap[hotelId] || "Hotel no encontrado";
-};
-
-// Función para obtener la dirección del hotel basado en el ID
-const direccionHotelId = (hotelId) => {
-  const direccionMap = {
-    // Hoteles Cartagena
-    1: "Cra. 3 #8-156, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Azuan
-    4: "Cra. 1 #47-10, Marbella, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Aixo
-    5: "Cra. 1 #42-70, Barrio El Cabrero, Cartagena de Indias, Provincia de Cartagena, Bolívar ", // Hotel Abi
-    6: "Cra. 3 #No 4 -86, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Avexi
-    7: "Cra. 2 #7-159, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Bocagrande
-    9: "Cra. 3 #4 - 32, Cartagena de Indias, Provincia de Cartagena, Bolívar", // Hotel Marina
-    56: "Cra. 9 #38 - 76, La Boquilla, Provincia de Cartagena, Bolívar", // Hotel Boquilla
-    // Hoteles Santa Marta
-    8: "Cl. 20 #1B-64, Santa Marta, Gaira, Santa Marta, Magdalena", // Hotel Rodadero
-    2: "Calle 11 # 2 - 29 Centro Histórico, Santa Marta, Magdalena", // Hotel 1525
-    48: "Cra. 3 #10-14, El Rodadero, Gaira, Santa Marta, Magdalena", // Hotel Axis
-    44: "Cra. 4 #15-65, Gaira, Santa Marta, Magdalena", // Hotel Sansiraka
-    123: "CRA 4 N° 23F05 Gaira, 470002", // Playa Salguero Hotel
-    // Hoteles Bogotá
-    10: "Chapinero, Calle 95 #9-97, Bogotá, Colombia", // Hotel Windsor
-    3: "Cra 18 #93 - 97, Barrio el Chico, Bogotá, Colombia", // Hotel Madisson
-  };
-
-  return direccionMap[hotelId] || "Dirección no disponible";
-};
+const nombreHotelId = (hotelId) => getHotelById(hotelId)?.nombreCorto || "Hotel no encontrado";
+const direccionHotelId = (hotelId) => getHotelById(hotelId)?.direccion || "Dirección no disponible";
 
 const etiquetaTrasladoDesdeTipo = (tipo) => {
   if (tipo === "aeropuerto_hotel") return "Aeropuerto al hotel";
