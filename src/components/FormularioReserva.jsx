@@ -30,6 +30,21 @@ const LEGACY_RESERVA_HOTEL_AUTOCORE_IDS = new Set([48, 56]); // Axis, Boquilla
  * Conceptos: hospedaje, tour, transporte, mascotas, alimentacion, impuestos,
  * retencion (negativo), vuelo.
  */
+const resolverPrecioHabitacion = (dato, nochesFallback = 1) => {
+  const noches = Number(dato?.nights) || nochesFallback || 1;
+  const porNoche =
+    Number(dato?.precioNocheHabitacion) || Number(dato?.precioBase) || 0;
+  const totalDeclarado =
+    Number(dato?.precioHabitacion) ||
+    Number(dato?.precioBaseHabitacion) ||
+    Number(dato?.precio) ||
+    0;
+  const precioPorNoche =
+    porNoche > 0 ? porNoche : totalDeclarado > 0 ? Math.round(totalDeclarado / noches) : 0;
+  const total = porNoche > 0 ? porNoche * noches : totalDeclarado;
+  return { precioPorNoche, total, noches };
+};
+
 const construirDesglosePrecios = ({
   reserva,
   totalHuespedes,
@@ -47,18 +62,14 @@ const construirDesglosePrecios = ({
   const items = [];
 
   reserva.forEach((dato, index) => {
-    const total = Number(dato.precioHabitacion) || Number(dato.precioBaseHabitacion) || 0;
-    const noche = Number(dato.precioNocheHabitacion) || 0;
-    const noches = Number(dato.nights) || 1;
-    if (total > 0) {
-      items.push({
-        concepto: "hospedaje",
-        detalle: `Habitación ${dato.NombreH || `#${index + 1}`}`,
-        cantidad: noches,
-        precioUnitario: noche || total / noches,
-        total,
-      });
-    }
+    const { total, noches, precioPorNoche } = resolverPrecioHabitacion(dato, cantnoches);
+    items.push({
+      concepto: "hospedaje",
+      detalle: `Habitación ${dato.NombreH || `#${index + 1}`}`,
+      cantidad: noches,
+      precioUnitario: precioPorNoche,
+      total,
+    });
   });
 
   const tourSeleccionados = reserva[0]?.tourSeleccionado || [];
@@ -616,7 +627,7 @@ const FormularioReserva = () => {
     const prices = [];
     const current = new Date(startDate);
     const end = new Date(endDate);
-    const safePrice = Number(basePrice) || 0;
+    const safePrice = Number(basePrice) > 0 ? Number(basePrice) : 0;
 
     while (current < end) {
       prices.push({
@@ -1043,7 +1054,7 @@ const FormularioReserva = () => {
           dayPrice: buildDayPrice(
             checkin,
             checkout,
-            Number(dato?.precioNocheHabitacion) || Number(dato?.precioBase)
+            resolverPrecioHabitacion(dato).precioPorNoche
           ),
           guest: [],
         };
